@@ -177,6 +177,7 @@ def check(directory_path, hosts = "hosts.txt"):
     print("Running ssh version capturer")
     # Iterate over each host and run the command
     for host in hosts:
+        print(host)
         ip = host
         port = 22
         if ":" in host:
@@ -287,13 +288,15 @@ def check(directory_path, hosts = "hosts.txt"):
     with open(os.path.join(directory_path, "creds.txt"), "w") as file:
         for item in creds:
             file.write(f"{item}\n")
-    
-    print("Running sshwhirl, this might take a while")
-    command = ["sshwhirl.py", hosts_path, os.path.join(directory_path, "creds.txt"), os.path.join(directory_path, "result.txt")]
-    print(command)
-    result = subprocess.run(command, text=True, capture_output=True)
-    print(result.stdout)
-    print(result.stderr)
+    try:
+        print("Running sshwhirl, this might take a while")
+        command = ["sshwhirl.py", hosts_path, os.path.join(directory_path, "creds.txt"), os.path.join(directory_path, "result.txt")]
+        print(command)
+        result = subprocess.run(command, text=True, capture_output=True)
+        print(result.stdout)
+        print(result.stderr)
+    except e:
+        print(e)
     
 
 def main():
