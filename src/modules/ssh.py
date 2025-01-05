@@ -2,6 +2,16 @@ import subprocess
 import argparse
 import os
 
+cve_dict = {
+    
+}
+
+vuln_kex = []
+vuln_mac = []
+
+vuln_hosts = []
+
+
 def check(directory_path, hosts = "hosts.txt"):
     
     ### ssh-audit to capture version
@@ -24,7 +34,22 @@ def check(directory_path, hosts = "hosts.txt"):
 
         except Exception as e:
             # Handle errors (e.g., if the host is unreachable)
-            print(f"{e}")
+            continue
+            
+    for host in hosts:
+        command = ["ssh-audit", host]
+        try:
+            # Execute the command and capture the output
+            result = subprocess.run(command, text=True, capture_output=True)
+            lines = result.stdout.splitlines()
+            
+            for line in lines:
+                if "(rec)" in line:
+                    print(line)
+        
+        except Exception as e:
+            # Handle errors (e.g., if the host is unreachable)
+            continue
     
 
 def main():
