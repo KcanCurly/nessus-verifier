@@ -37,14 +37,14 @@ def check(directory_path, hosts = "hosts.txt"):
             continue
             
     for host in hosts:
-        command = ["ssh-audit", "--no-colors", host]
+        command = ["ssh-audit", host]
         try:
             # Execute the command and capture the output
             result = subprocess.run(command, text=True, capture_output=True)
             lines = result.stdout.splitlines()
             is_vul = False
             for line in lines:
-                if "(rec)" in line:
+                if "0;31m(rec)" in line:
                     is_vul = True
                     
                     if "kex" in line:
