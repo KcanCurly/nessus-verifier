@@ -166,7 +166,7 @@ creds = [
 
 
 def check(directory_path, hosts = "hosts.txt"):
-    hosts_path = hosts
+    hosts_path = os.path.join(directory_path, hosts)
     with open(os.path.join(directory_path, hosts), "r") as file:
         hosts = [line.strip() for line in file if line.strip()]  # Remove empty lines and whitespace
         
@@ -194,15 +194,15 @@ def check(directory_path, hosts = "hosts.txt"):
             if protocol_match:
                 protocol_version = protocol_match.group(1)
                 if protocol_version != "2.0":
-                    protocol1.append(host)
-            else: print(f"Could not found protocol version for {host}")
+                    protocol1.append(host + ":" + port)
+            else: print(f"Could not found protocol version for {host + ":" + port}")
             
             if software_match:
                 software_version = software_match.group(1)
                 if software_version not in versions:
                     versions[software_version] = []
-                versions[software_version].append(host)
-            else: print(f"Could not found software version for {host}")
+                versions[software_version].append(host + ":" + port)
+            else: print(f"Could not found software version for {host + ":" + port}")
                 
 
         except Exception as e:
