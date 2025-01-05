@@ -29,7 +29,11 @@ def check(directory_path, hosts = "hosts.txt"):
     
     # Iterate over each host and run the command
     for host in hosts:
-        command = ["ssh", "-vvv", "-o", "StrictHostKeyChecking=no", "-o", "BatchMode=yes", host]
+        port = 22
+        if ":" in host:
+            host = host.split(":")[0]
+            port  = host.split(":")[1]
+        command = ["ssh", "-vvv", "-p", port, "-o", "StrictHostKeyChecking=no", "-o", "BatchMode=yes", host]
         try:
             # Execute the command and capture the output
             result = subprocess.run(command, text=True, capture_output=True)
@@ -42,6 +46,7 @@ def check(directory_path, hosts = "hosts.txt"):
                 protocol_version = protocol_match.group(1)
                 if protocol_version != "2.0":
                     protocol1.append(host)
+            else: print(f"Could not found protocol version for {host}")
             
             if software_match:
                 software_version = software_match.group(1)
@@ -49,12 +54,24 @@ def check(directory_path, hosts = "hosts.txt"):
                 if software_version not in versions:
                     versions[software_version] = []
                 versions[software_version].append(host)
+            else: print(f"Could not found software version for {host}")
                 
 
         except Exception as e:
             # Handle errors (e.g., if the host is unreachable)
             continue
-            
+    
+    if len(protocol1) > 0:
+        print("Protocol Version 1:")
+        for p in protocol1:
+            print(f"\t{p}")
+    
+    for index, (key, value) in enumerate(versions.items()):
+        print(key + ":")
+        for v in value:
+            print(f"\t{v}")
+        
+    
     for host in hosts:
         command = ["ssh-audit", host]
         try:
