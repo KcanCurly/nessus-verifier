@@ -21,6 +21,11 @@ def check(directory_path, hosts = "hosts.txt"):
         try:
             # Execute the command and capture the output
             result = subprocess.run(command, text=True, capture_output=True, check=True)
+            first_line = result.stdout.splitlines()[0]
+            first_word = first_line.split()[0]
+        
+            # Print the output of the command
+            print(f"{host}: {first_word}")
 
         except subprocess.CalledProcessError as e:
             # Handle errors (e.g., if the host is unreachable)
