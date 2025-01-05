@@ -21,6 +21,7 @@ def check(directory_path, hosts = "hosts.txt"):
         try:
             # Execute the command and capture the output
             result = subprocess.run(command, text=True, capture_output=True)
+            print(result.stdout)
             first_line = result.stdout.splitlines()[0]
             first_word = first_line.split()[0]
         
