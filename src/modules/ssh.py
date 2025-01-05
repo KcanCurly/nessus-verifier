@@ -28,11 +28,11 @@ def check(directory_path, hosts = "hosts.txt"):
     software_pattern = r"remote software version ([\w_]+)"
     
     # Iterate over each host and run the command
-    for host in hosts:
+    for host1 in hosts:
         port = 22
-        if ":" in host:
-            host = host.split(":")[0]
-            port  = host.split(":")[1]
+        if ":" in host1:
+            host = host1.split(":")[0]
+            port  = host1.split(":")[1]
         command = ["ssh", "-vvv", "-p", port, "-o", "StrictHostKeyChecking=no", "-o", "BatchMode=yes", host]
         try:
             # Execute the command and capture the output
