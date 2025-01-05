@@ -284,6 +284,8 @@ def check(directory_path, hosts = "hosts.txt"):
     ######################################
     
     command = ["witnesschangeme", "-t", hosts]
+    result = subprocess.run(command, text=True, capture_output=True)
+    print(result.stdout)
     
 
 def main():
