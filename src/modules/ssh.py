@@ -2,6 +2,9 @@ import subprocess
 import argparse
 import os
 
+
+versions = {}
+
 cve_dict = {
     
 }
