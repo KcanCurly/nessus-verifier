@@ -20,6 +20,7 @@ def check(directory_path, hosts = "hosts.txt"):
             # Execute the command and capture the output
             result = subprocess.run(command, text=True, capture_output=True, shell=True)
             print(result.stdout)
+            print(result.stderr)
             first_line = result.stdout.splitlines()[0]
             first_word = first_line.split()[0]
         
