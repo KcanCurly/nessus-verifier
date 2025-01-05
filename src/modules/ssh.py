@@ -186,6 +186,7 @@ def check(directory_path, hosts = "hosts.txt"):
         try:
             # Execute the command and capture the output
             result = subprocess.run(command, text=True, capture_output=True)
+            print(result.stderr)
             
             # Find matches using the patterns
             protocol_match = re.search(protocol_pattern, result.stderr)
@@ -287,10 +288,8 @@ def check(directory_path, hosts = "hosts.txt"):
             file.write(f"{item}\n")
     
     print("Running sshwhirl, this might take a while")
-    print(hosts_path)
-    print(os.path.join(directory_path, "creds.txt"))
-    print(os.path.join(directory_path, "result.txt"))
     command = ["sshwhirl.py", hosts_path, os.path.join(directory_path, "creds.txt"), os.path.join(directory_path, "result.txt")]
+    print(command)
     result = subprocess.run(command, text=True, capture_output=True)
     print(result.stdout)
     
