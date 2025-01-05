@@ -172,7 +172,7 @@ def check(directory_path, hosts = "hosts.txt"):
         
     # Define regular expression patterns
     protocol_pattern = r"Remote protocol version (\d+\.\d+)"
-    software_pattern = r"remote software version ([\w_]+\.*)"
+    software_pattern = r"remote software version ([\w_]+\.*.*)"
     
     print("Running ssh version capturer")
     # Iterate over each host and run the command
@@ -194,15 +194,15 @@ def check(directory_path, hosts = "hosts.txt"):
             if protocol_match:
                 protocol_version = protocol_match.group(1)
                 if protocol_version != "2.0":
-                    protocol1.append(host + ":" + port)
-            else: print(f"Could not found protocol version for {host + ":" + port}")
+                    protocol1.append(ip + ":" + port)
+            else: print(f"Could not found protocol version for {ip + ":" + port}")
             
             if software_match:
                 software_version = software_match.group(1)
                 if software_version not in versions:
                     versions[software_version] = []
-                versions[software_version].append(host + ":" + port)
-            else: print(f"Could not found software version for {host + ":" + port}")
+                versions[software_version].append(ip + ":" + port)
+            else: print(f"Could not found software version for {ip + ":" + port}")
                 
 
         except Exception as e:
@@ -287,6 +287,9 @@ def check(directory_path, hosts = "hosts.txt"):
             file.write(f"{item}\n")
     
     print("Running sshwhirl, this might take a while")
+    print(hosts_path)
+    print(os.path.join(directory_path, "creds.txt"))
+    print(os.path.join(directory_path, "result.txt"))
     command = ["sshwhirl.py", hosts_path, os.path.join(directory_path, "creds.txt"), os.path.join(directory_path, "result.txt")]
     result = subprocess.run(command, text=True, capture_output=True)
     print(result.stdout)
