@@ -14,12 +14,14 @@ def check(directory_path, hosts = "hosts.txt"):
     for host in hosts:
         print(f"Running command for host: {host}")
         
+        # command = ["ssh", "-vvv", "-o", "StrictHostKeyChecking=no", "-o", "BatchMode=yes", host]
         command = ["ssh", "-vvv", "-o", "StrictHostKeyChecking=no", "-o", "BatchMode=yes", host]
-        
         try:
             # Execute the command and capture the output
             result = subprocess.run(command, text=True, capture_output=True, shell=True)
+            print("stdout")
             print(result.stdout)
+            print("stderr")
             print(result.stderr)
             first_line = result.stdout.splitlines()[0]
             first_word = first_line.split()[0]
