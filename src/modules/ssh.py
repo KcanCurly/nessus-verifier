@@ -6,10 +6,10 @@ cve_dict = {
     
 }
 
-vuln_kex = []
-vuln_mac = []
+vuln_kex = set()
+vuln_mac = set()
 
-vuln_hosts = []
+vuln_hosts = set()
 
 
 def check(directory_path, hosts = "hosts.txt"):
@@ -37,19 +37,42 @@ def check(directory_path, hosts = "hosts.txt"):
             continue
             
     for host in hosts:
-        command = ["ssh-audit", host]
+        command = ["ssh-audit", "--no-colors", host]
         try:
             # Execute the command and capture the output
             result = subprocess.run(command, text=True, capture_output=True)
             lines = result.stdout.splitlines()
-            
+            is_vul = False
             for line in lines:
                 if "(rec)" in line:
-                    print(line)
+                    is_vul = True
+                    
+                    if "kex" in line:
+                        vuln_kex.add(line.split()[1][1:])
+                    elif "mac" in line:
+                        vuln_mac.add(line.split()[1][1:])
+        
+            if is_vul:
+                vuln_hosts.add(host)
         
         except Exception as e:
             # Handle errors (e.g., if the host is unreachable)
             continue
+    
+    if len(vuln_kex) > 0:
+        print("Vulnerable KEX algorithms found:")
+        for k in vuln_kex:
+            print(f"\t{k}")
+            
+    if len(vuln_mac) > 0:
+        print("Vulnerable MAC algorithms found:")
+        for k in vuln_mac:
+            print(f"\t{k}")
+            
+    if len(vuln_hosts) > 0:
+        print("Vulnerable hosts found:")
+        for k in vuln_hosts:
+            print(f"\t{k}")
     
 
 def main():
