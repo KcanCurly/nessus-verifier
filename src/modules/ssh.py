@@ -166,8 +166,6 @@ creds = [
 
 
 def check(directory_path, hosts = "hosts.txt"):
-    
-    ### ssh-audit to capture version
     hosts_path = hosts
     with open(os.path.join(directory_path, hosts), "r") as file:
         hosts = [line.strip() for line in file if line.strip()]  # Remove empty lines and whitespace
@@ -176,6 +174,7 @@ def check(directory_path, hosts = "hosts.txt"):
     protocol_pattern = r"Remote protocol version (\d+\.\d+)"
     software_pattern = r"remote software version ([\w_]+\.*)"
     
+    print("Running ssh version capturer")
     # Iterate over each host and run the command
     for host in hosts:
         ip = host
@@ -221,7 +220,7 @@ def check(directory_path, hosts = "hosts.txt"):
             print(f"\t{v}")
         
     ######################################
-    
+    print("Running ssh audit")
     for host in hosts:
         command = ["ssh-audit", host]
         try:
@@ -282,8 +281,13 @@ def check(directory_path, hosts = "hosts.txt"):
             
             
     ######################################
+
+    with open(os.path.join(directory_path, "creds.txt"), "w") as file:
+        for item in creds:
+            file.write(f"{item}\n")
     
-    command = ["witnesschangeme", "-t", hosts_path]
+    print("Running sshwhirl, this might take a while")
+    command = ["sshwhirl.py", hosts_path, os.path.join(directory_path, "creds.txt"), os.path.join(directory_path, "result.txt")]
     result = subprocess.run(command, text=True, capture_output=True)
     print(result.stdout)
     
