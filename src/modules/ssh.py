@@ -27,7 +27,7 @@ def check(directory_path, hosts = "hosts.txt"):
         
     # Define regular expression patterns
     protocol_pattern = r"Remote protocol version (\d+\.\d+)"
-    software_pattern = r"remote software version ([\w_]+)"
+    software_pattern = r"remote software version ([\w_]+\.*)"
     
     # Iterate over each host and run the command
     for host in hosts:
@@ -53,7 +53,6 @@ def check(directory_path, hosts = "hosts.txt"):
             
             if software_match:
                 software_version = software_match.group(1)
-                print(f"{host}: {software_version}")
                 if software_version not in versions:
                     versions[software_version] = []
                 versions[software_version].append(host)
