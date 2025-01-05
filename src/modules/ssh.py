@@ -8,7 +8,7 @@ def check(directory_path, hosts = "hosts.txt"):
 
     command = ["ssh", "-vvv", "-o", "StrictHostKeyChecking=no", "-o", "BatchMode=yes"]
     
-    with open(directory_path + hosts, "r") as file:
+    with open(os.path.join(directory_path, hosts), "r") as file:
         hosts = [line.strip() for line in file if line.strip()]  # Remove empty lines and whitespace
         
     
