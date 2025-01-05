@@ -168,7 +168,7 @@ creds = [
 def check(directory_path, hosts = "hosts.txt"):
     
     ### ssh-audit to capture version
-    
+    hosts_path = hosts
     with open(os.path.join(directory_path, hosts), "r") as file:
         hosts = [line.strip() for line in file if line.strip()]  # Remove empty lines and whitespace
         
@@ -283,7 +283,7 @@ def check(directory_path, hosts = "hosts.txt"):
             
     ######################################
     
-    command = ["witnesschangeme", "-t", hosts]
+    command = ["witnesschangeme", "-t", hosts_path]
     result = subprocess.run(command, text=True, capture_output=True)
     print(result.stdout)
     
