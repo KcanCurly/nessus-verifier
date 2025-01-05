@@ -27,8 +27,9 @@ def check(directory_path, hosts = "hosts.txt"):
             # Print the output of the command
             print(f"{host}: {first_word}")
 
-        except subprocess.CalledProcessError as e:
+        except Exception as e:
             # Handle errors (e.g., if the host is unreachable)
+            print(f"{e}")
             try:
                 
                 first_line = result.stdout.splitlines()[0]
