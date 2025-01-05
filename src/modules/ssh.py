@@ -222,7 +222,7 @@ def check(directory_path, hosts = "hosts.txt"):
     ######################################
     print("Running ssh audit")
     for host in hosts:
-        command = ["ssh-audit", host]
+        command = ["ssh-audit", "--skip-rate-test", host]
         try:
             # Execute the command and capture the output
             result = subprocess.run(command, text=True, capture_output=True)
