@@ -288,10 +288,10 @@ def check(directory_path, hosts = "hosts.txt"):
     try:
         print("Running sshwhirl, this might take a while")
         command = ["sshwhirl.py", hosts_path, os.path.join(directory_path, "creds.txt"), os.path.join(directory_path, "result.txt"), "--verbose"]
-        print(command)
-        result = subprocess.run(command, text=True, capture_output=True)
-        print(result.stdout)
-        print(result.stderr)
+        result = subprocess.Popen(command, text=True, stdout=subprocess.PIPE)
+        for line in result.stdout:
+            print(line.strip())  # Print each line without additional newlines
+        result.wait()
     except e:
         print(e)
     
