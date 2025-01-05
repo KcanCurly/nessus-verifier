@@ -208,6 +208,7 @@ def check(directory_path, hosts = "hosts.txt"):
 
         except Exception as e:
             # Handle errors (e.g., if the host is unreachable)
+            print(e)
             continue
     
     if len(protocol1) > 0:
@@ -292,6 +293,7 @@ def check(directory_path, hosts = "hosts.txt"):
     print(command)
     result = subprocess.run(command, text=True, capture_output=True)
     print(result.stdout)
+    print(result.stderr)
     
 
 def main():
