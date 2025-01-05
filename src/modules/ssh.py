@@ -5,8 +5,6 @@ import os
 def check(directory_path, hosts = "hosts.txt"):
     
     ### ssh-audit to capture version
-
-    command = ["ssh", "-vvv", "-o", "StrictHostKeyChecking=no", "-o", "BatchMode=yes"]
     
     with open(os.path.join(directory_path, hosts), "r") as file:
         hosts = [line.strip() for line in file if line.strip()]  # Remove empty lines and whitespace
@@ -14,7 +12,7 @@ def check(directory_path, hosts = "hosts.txt"):
     
     # Iterate over each host and run the command
     for host in hosts:
-        # print(f"Running command for host: {host}")
+        print(f"Running command for host: {host}")
         
         command = ["ssh", "-vvv", "-o", "StrictHostKeyChecking=no", "-o", "BatchMode=yes", host]
         
