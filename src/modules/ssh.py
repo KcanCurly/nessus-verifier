@@ -177,17 +177,15 @@ def check(directory_path, hosts = "hosts.txt"):
     print("Running ssh version capturer")
     # Iterate over each host and run the command
     for host in hosts:
-        print(host)
         ip = host
         port = 22
         if ":" in host:
             ip = host.split(":")[0]
             port  = host.split(":")[1]
-        command = ["ssh", "-vvv", "-p", port, "-o", "StrictHostKeyChecking=no", "-o", "BatchMode=yes", ip]
+        command = ["ssh", "-vvv", "-p", str(port), "-o", "StrictHostKeyChecking=no", "-o", "BatchMode=yes", ip]
         try:
             # Execute the command and capture the output
             result = subprocess.run(command, text=True, capture_output=True)
-            print(result.stderr)
             
             # Find matches using the patterns
             protocol_match = re.search(protocol_pattern, result.stderr)
@@ -209,7 +207,6 @@ def check(directory_path, hosts = "hosts.txt"):
 
         except Exception as e:
             # Handle errors (e.g., if the host is unreachable)
-            print(e)
             continue
     
     if len(protocol1) > 0:
@@ -290,7 +287,7 @@ def check(directory_path, hosts = "hosts.txt"):
             file.write(f"{item}\n")
     try:
         print("Running sshwhirl, this might take a while")
-        command = ["sshwhirl.py", hosts_path, os.path.join(directory_path, "creds.txt"), os.path.join(directory_path, "result.txt")]
+        command = ["sshwhirl.py", hosts_path, os.path.join(directory_path, "creds.txt"), os.path.join(directory_path, "result.txt"), "--verbose"]
         print(command)
         result = subprocess.run(command, text=True, capture_output=True)
         print(result.stdout)
