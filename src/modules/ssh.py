@@ -31,6 +31,7 @@ def check(directory_path, hosts = "hosts.txt"):
         except Exception as e:
             # Handle errors (e.g., if the host is unreachable)
             print(f"{e}")
+            print(result.stdout)
             try:
                 
                 first_line = result.stdout.splitlines()[0]
