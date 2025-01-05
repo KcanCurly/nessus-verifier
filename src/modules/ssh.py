@@ -178,11 +178,11 @@ def check(directory_path, hosts = "hosts.txt"):
     # Iterate over each host and run the command
     for host in hosts:
         ip = host
-        port = 22
+        port = "22"
         if ":" in host:
             ip = host.split(":")[0]
             port  = host.split(":")[1]
-        command = ["ssh", "-vvv", "-p", str(port), "-o", "StrictHostKeyChecking=no", "-o", "BatchMode=yes", ip]
+        command = ["ssh", "-vvv", "-p", port, "-o", "StrictHostKeyChecking=no", "-o", "BatchMode=yes", ip]
         try:
             # Execute the command and capture the output
             result = subprocess.run(command, text=True, capture_output=True)
