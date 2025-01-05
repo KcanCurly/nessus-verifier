@@ -15,7 +15,7 @@ def check(directory_path, hosts = "hosts.txt"):
         print(f"Running command for host: {host}")
         
         # command = ["ssh", "-vvv", "-o", "StrictHostKeyChecking=no", "-o", "BatchMode=yes", host]
-        command = ["ssh", "-vvv", host]
+        command = ["ssh", "-vvv", "-o", "StrictHostKeyChecking=no", host]
         try:
             # Execute the command and capture the output
             result = subprocess.run(command, text=True, capture_output=True)
