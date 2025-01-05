@@ -18,7 +18,7 @@ def check(directory_path, hosts = "hosts.txt"):
         command = ["ssh", "-vvv", host]
         try:
             # Execute the command and capture the output
-            result = subprocess.run(command, text=True, capture_output=True, shell=True)
+            result = subprocess.run(command, text=True, capture_output=True)
             print("stdout")
             print(result.stdout)
             print("stderr")
