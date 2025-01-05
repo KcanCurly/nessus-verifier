@@ -12,6 +12,8 @@ cve_dict = {
 
 vuln_kex = set()
 vuln_mac = set()
+vuln_key = set()
+vuln_cipher = set()
 
 vuln_hosts = set()
 
@@ -88,6 +90,11 @@ def check(directory_path, hosts = "hosts.txt"):
                         vuln_kex.add(line.split()[1][1:])
                     elif "mac" in line:
                         vuln_mac.add(line.split()[1][1:])
+                    elif "key" in line:
+                        vuln_key.add(line.split()[1][1:])
+                elif "vulnerable to the Terrapin attack" in line:
+                    is_vul = True
+                    vuln_cipher.add(line.split()[1][1:])
         
             if is_vul:
                 vuln_hosts.add(host)
@@ -100,11 +107,25 @@ def check(directory_path, hosts = "hosts.txt"):
         print("Vulnerable KEX algorithms found:")
         for k in vuln_kex:
             print(f"\t{k}")
-            
+        print()
+        
     if len(vuln_mac) > 0:
         print("Vulnerable MAC algorithms found:")
         for k in vuln_mac:
             print(f"\t{k}")
+        print()
+            
+    if len(vuln_key) > 0:
+        print("Vulnerable Host-Key algorithms found:")
+        for k in vuln_key:
+            print(f"\t{k}")
+        print()
+    
+    if len(vuln_cipher) > 0:
+        print("Vulnerable Cipher algorithms found:")
+        for k in vuln_cipher:
+            print(f"\t{k}")
+        print()
             
     if len(vuln_hosts) > 0:
         print("Vulnerable hosts found:")
