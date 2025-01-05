@@ -40,7 +40,7 @@ def check(directory_path, hosts = "hosts.txt"):
                 # Print the output of the command
                 print(f"{host}: {first_word}")
             except Exception as e:
-                continue
+                print(f"{e}")
     
 
 def main():
