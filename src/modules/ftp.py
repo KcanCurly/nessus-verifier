@@ -45,10 +45,10 @@ def check(directory_path, hosts = "hosts.txt"):
                     
                     
     if len(anon) > 0:
-        with open(os.path.join(directory_path, "result.txt"), "a") as z:
-            z.write("Anonymous access:")               
-            for a in anon:
-                z.write(f"\t{a}")
+        print("Anonymous Access on Hosts:")               
+        for a in anon:
+            print(f"\t{a}")
+            
                 
     for host in hosts:
         ip = host
@@ -100,8 +100,8 @@ def check(directory_path, hosts = "hosts.txt"):
                 if "[32m" not in cipher:
                     if host not in weak_ciphers:
                         weak_ciphers[host] = []
-                    if cipher.startswith("["):
-                        weak_ciphers[host].append(cipher[4:])
+                    if cipher.startswith("^"):
+                        weak_ciphers[host].append(cipher[6:])
                     else: weak_ciphers[host].append(cipher)
       
     if len(weak_ciphers) > 0:              
