@@ -43,7 +43,7 @@ def check(directory_path, hosts = "hosts.txt"):
                     print("something went wrong")
                     
                     
-    if anon.count() > 0:
+    if len(anon) > 0:
         with open(os.path.join(directory_path, "result.txt"), "a") as z:
             z.write("Anonymous access:")               
             for a in anon:
