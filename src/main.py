@@ -66,7 +66,7 @@ def main():
     nessus_file = args.file
     services = parse_nessus_file(nessus_file)
     save_services_and_hosts(services)
-    handle_services()
+    # handle_services()
 
 if __name__ == '__main__':
     main()

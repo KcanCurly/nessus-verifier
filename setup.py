@@ -20,7 +20,7 @@ setup(
     python_requires=">=3.12",
     entry_points={
         "console_scripts": [
-            "nv=src.main:main",
+            "nv-parse=src.main:main",
             "nv-ssh=src.modules.ssh:main"
         ],
     },

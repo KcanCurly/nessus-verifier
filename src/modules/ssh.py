@@ -168,7 +168,7 @@ creds = [
 def check(directory_path, hosts = "hosts.txt"):
     hosts_path = os.path.join(directory_path, hosts)
     with open(os.path.join(directory_path, hosts), "r") as file:
-        hosts = [line.strip() for line in file if line.strip()]  # Remove empty lines and whitespace
+        hosts = [line.strip() for line in file if line.strip()] 
         
     # Define regular expression patterns
     protocol_pattern = r"Remote protocol version (\d+\.\d+)"
@@ -287,7 +287,7 @@ def check(directory_path, hosts = "hosts.txt"):
             file.write(f"{item}\n")
     try:
         print("Running sshwhirl, this might take a while")
-        command = ["sshwhirl.py", hosts_path, os.path.join(directory_path, "creds.txt"), os.path.join(directory_path, "result.txt"), "--verbose"]
+        command = ["sshwhirl.py", hosts_path, os.path.join(directory_path, "creds.txt"), os.path.join(directory_path, "result.txt")]
         result = subprocess.Popen(command, text=True, stdout=subprocess.PIPE)
         for line in result.stdout:
             print(line.strip())  # Print each line without additional newlines
