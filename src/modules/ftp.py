@@ -228,7 +228,8 @@ def check(directory_path, hosts = "hosts.txt"):
             port  = host.split(":")[1]
     
     threads = 10
-    
+    print()
+    print("Trying default credentials, this can take time.")
     with ThreadPoolExecutor(threads) as executor:
         executor.map(lambda host: bruteforce(host), hosts)
             
