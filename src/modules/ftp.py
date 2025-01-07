@@ -20,7 +20,7 @@ def check(directory_path, hosts = "hosts.txt"):
                 try:
                     l = ftp.login()
                 except Error as ee:
-                    print("ee: ", ee)
+                    print("ee: ", str(type(ee)))
 
 def main():
     parser = argparse.ArgumentParser(description="FTP module of nessus-verifier.")
