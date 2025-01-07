@@ -6,6 +6,7 @@ import argparse
 import os
 import subprocess
 import re
+from concurrent.futures import ThreadPoolExecutor
 
 anon = []
 weak_versions = {}
@@ -226,6 +227,10 @@ def check(directory_path, hosts = "hosts.txt"):
             ip = host.split(":")[0]
             port  = host.split(":")[1]
     
+    threads = 10
+    
+    with ThreadPoolExecutor(threads) as executor:
+        executor.map(lambda host: bruteforce(host), hosts)
             
 
 def main():
