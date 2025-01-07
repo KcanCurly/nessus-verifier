@@ -52,7 +52,7 @@ def check(directory_path, hosts = "hosts.txt"):
                 
     for host in hosts:
         ip = host
-        port = 21
+        port = "21"
         if ":" in host:
             ip = host.split(":")[0]
             port  = host.split(":")[1]
