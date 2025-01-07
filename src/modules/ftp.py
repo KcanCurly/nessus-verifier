@@ -81,27 +81,27 @@ def check(directory_path, hosts = "hosts.txt"):
                     if "SSLv2" in line:
                         if ip + ":" + port not in weak_versions:
                             weak_versions[ip + ":" + port] = []
-                        weak_versions[ip + ":" + port].append(host)
+                        weak_versions[ip + ":" + port].append("SSLv2")
                     elif "SSLv3" in line:
                         if ip + ":" + port not in weak_versions:
                             weak_versions[ip + ":" + port] = []
-                        weak_versions[ip + ":" + port].append(host)
+                        weak_versions[ip + ":" + port].append("SSLv3")
                     elif "TLSv1.0" in line:
                         if ip + ":" + port not in weak_versions:
                             weak_versions[ip + ":" + port] = []
-                        weak_versions[ip + ":" + port].append(host)
+                        weak_versions[ip + ":" + port].append("TLSv1.0")
                     elif "TLSv1.1" in line:
                         if ip + ":" + port not in weak_versions:
                             weak_versions[ip + ":" + port] = []
-                        weak_versions[ip + ":" + port].append(host)
+                        weak_versions[ip + ":" + port].append("TLSv1.1")
             
             if cipher_line and line:
                 cipher = line.split()[4]
-                if "[[32m" not in cipher:
+                if "[32m" not in cipher:
                     if host not in weak_ciphers:
                         weak_ciphers[host] = []
-                    if cipher.startswith("^[["):
-                        weak_ciphers[host].append(cipher[6:])
+                    if cipher.startswith("["):
+                        weak_ciphers[host].append(cipher[4:])
                     else: weak_ciphers[host].append(cipher)
       
     if len(weak_ciphers) > 0:              
