@@ -23,6 +23,13 @@ setup(
             "nv-parse=src.main:main",
             "nv-ssh=src.modules.ssh:main",
             "nv-ftp=src.modules.ftp:main",
+            "nv-chargen=src.modules.chargen:main",
+            "nv-qotd=src.modules.qotd:main",
+            "nv-daytime=src.modules.daytime:main",
+            "nv-systat=src.modules.systat:main",
+            "nv-discard=src.modules.discard:main",
+            "nv-echo=src.modules.echo:main",
+            "nv-netstat=src.modules.netstat:main",
         ],
     },
 )
