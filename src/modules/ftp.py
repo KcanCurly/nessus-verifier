@@ -7,6 +7,11 @@ import os
 import subprocess
 
 anon = []
+sslv2 = []
+sslv3 = []
+tls10 = []
+tls11 = []
+weak_ciphers = {}
 
 def check(directory_path, hosts = "hosts.txt"):
     with open(os.path.join(directory_path, hosts), "r") as file:
@@ -53,7 +58,45 @@ def check(directory_path, hosts = "hosts.txt"):
             
         command = ["sslscan", "--starttls-ftp", "-no-fallback", "--no-renegotiation", "--no-group", "--no-check-certificate", "--no-heartbleed", "--iana-names", ip + ":" + port]
         result = subprocess.run(command, text=True, capture_output=True)
-        print(result)
+        if "Connection refused" in result.stderr or "enabled" not in result.stdout:
+            continue
+        
+        lines = result.stdout.splitlines()
+        protocol_line = False
+        cipher_line = False
+        for line in lines:
+            if "SSL/TLS Protocols" in line:
+                protocol_line = True
+                continue
+            if "Supported Server Cipher(s)" in line:
+                protocol_line = False
+                cipher_line = True
+            if protocol_line:
+                if "enabled" in line:
+                    if "SSLv2" in line:
+                        sslv2.append(host)
+                    elif "SSLv3" in line:
+                        sslv3.append(host)
+                    elif "TLSv1.0" in line:
+                        tls10.append(host)
+                    elif "TLSv1.1" in line:
+                        tls11.append(host)
+            
+            if cipher_line:
+                cipher = line.split(" ")[4]
+                if "[[32m" not in cipher:
+                    if host not in weak_ciphers:
+                        weak_ciphers[host] = []
+                    if cipher.startswith("^[["):
+                        weak_ciphers[host].append(cipher[6:])
+                    else: weak_ciphers[host].append(cipher)
+                    
+    print("Vulnerable hosts:")                
+    for key, value in weak_ciphers.items():
+        print(f"\n{key} - {", ".join(value)}")
+                
+            
+                
         
 
 def main():
