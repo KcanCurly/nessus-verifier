@@ -55,7 +55,7 @@ def check(directory_path, hosts = "hosts.txt"):
         port = 21
         if ":" in host:
             ip = host.split(":")[0]
-            port  = int(host.split(":")[1])
+            port  = host.split(":")[1]
             
         command = ["sslscan", "--starttls-ftp", "-no-fallback", "--no-renegotiation", "--no-group", "--no-check-certificate", "--no-heartbleed", "--iana-names", ip + ":" + port]
         result = subprocess.run(command, text=True, capture_output=True)
