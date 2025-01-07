@@ -11,6 +11,7 @@ sslv2 = []
 sslv3 = []
 tls10 = []
 tls11 = []
+weak_versions = {}
 weak_ciphers = {}
 
 def check(directory_path, hosts = "hosts.txt"):
@@ -74,13 +75,21 @@ def check(directory_path, hosts = "hosts.txt"):
             if protocol_line:
                 if "enabled" in line:
                     if "SSLv2" in line:
-                        sslv2.append(host)
+                        if ip + ":" + port not in weak_versions:
+                            weak_versions[ip + ":" + port] = []
+                        weak_versions[ip + ":" + port].append(host)
                     elif "SSLv3" in line:
-                        sslv3.append(host)
+                        if ip + ":" + port not in weak_versions:
+                            weak_versions[ip + ":" + port] = []
+                        weak_versions[ip + ":" + port].append(host)
                     elif "TLSv1.0" in line:
-                        tls10.append(host)
+                        if ip + ":" + port not in weak_versions:
+                            weak_versions[ip + ":" + port] = []
+                        weak_versions[ip + ":" + port].append(host)
                     elif "TLSv1.1" in line:
-                        tls11.append(host)
+                        if ip + ":" + port not in weak_versions:
+                            weak_versions[ip + ":" + port] = []
+                        weak_versions[ip + ":" + port].append(host)
             
             if cipher_line:
                 cipher = line.split(" ")[4]
@@ -90,11 +99,16 @@ def check(directory_path, hosts = "hosts.txt"):
                     if cipher.startswith("^[["):
                         weak_ciphers[host].append(cipher[6:])
                     else: weak_ciphers[host].append(cipher)
-                    
-    print("Vulnerable hosts:")                
-    for key, value in weak_ciphers.items():
-        print(f"\n{key} - {", ".join(value)}")
-                
+      
+    if len(weak_ciphers) > 0:              
+        print("Vulnerable hosts:")                
+        for key, value in weak_ciphers.items():
+            print(f"\n{key} - {", ".join(value)}")
+    
+    if len(weak_versions) > 0:              
+        print("Vulnerable hosts:")                
+        for key, value in weak_versions.items():
+            print(f"\n{key} - {", ".join(value)}")
             
                 
         
