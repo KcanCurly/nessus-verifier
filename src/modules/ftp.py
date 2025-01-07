@@ -5,6 +5,7 @@ from ftplib import FTP_TLS
 import argparse
 import os
 import subprocess
+import re
 
 anon = []
 sslv2 = []
@@ -100,9 +101,10 @@ def check(directory_path, hosts = "hosts.txt"):
                 if "[32m" not in cipher:
                     if host not in weak_ciphers:
                         weak_ciphers[host] = []
-                    if cipher.startswith("^"):
-                        weak_ciphers[host].append(cipher[6:])
-                    else: weak_ciphers[host].append(cipher)
+                    weak_ciphers[host].append(re.sub(r'^\x1b\[[0-9;]*m', '', cipher))
+                    # if cipher.startswith("^"):
+                    #    weak_ciphers[host].append(cipher[6:])
+                    # else: weak_ciphers[host].append(cipher)
       
     if len(weak_ciphers) > 0:              
         print("Vulnerable TLS Cipher on Hosts:")                
