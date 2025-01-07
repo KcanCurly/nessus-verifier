@@ -1,5 +1,6 @@
 from ftplib import FTP
 from ftplib import Error
+from ftplib import error_perm
 from ftplib import FTP_TLS
 import argparse
 import os
@@ -19,9 +20,10 @@ def check(directory_path, hosts = "hosts.txt"):
                 ftp = FTP_TLS(host)
                 try:
                     l = ftp.login()
-                    print("l: ", l)
-                except Error as ee:
-                    print("ee: ", str(type(ee)))
+                    if "230" in l:
+                        print("l: ", l)
+                except error_perm as ee:
+                    print("ee: ", ee)
 
 def main():
     parser = argparse.ArgumentParser(description="FTP module of nessus-verifier.")
