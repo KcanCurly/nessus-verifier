@@ -39,9 +39,9 @@ def check(directory_path, hosts = "hosts.txt"):
                     if "230" in l:
                         anon.append(host)
                 except error_perm as ee:
-                    print("ee: ", ee)
+                    continue
                 except Error as eee:
-                    print("something went wrong")
+                    continue
                     
                     
     if len(anon) > 0:
@@ -72,6 +72,10 @@ def check(directory_path, hosts = "hosts.txt"):
             if "Supported Server Cipher(s)" in line:
                 protocol_line = False
                 cipher_line = True
+                continue
+            if "erver Key Exchange Group(s)" in line:
+                cipher_line = False
+                continue
             if protocol_line:
                 if "enabled" in line:
                     if "SSLv2" in line:
@@ -91,8 +95,8 @@ def check(directory_path, hosts = "hosts.txt"):
                             weak_versions[ip + ":" + port] = []
                         weak_versions[ip + ":" + port].append(host)
             
-            if cipher_line:
-                cipher = line.split(" ")[4]
+            if cipher_line and line:
+                cipher = line.split()[4]
                 if "[[32m" not in cipher:
                     if host not in weak_ciphers:
                         weak_ciphers[host] = []
