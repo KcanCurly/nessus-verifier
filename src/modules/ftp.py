@@ -15,7 +15,7 @@ def check(directory_path, hosts = "hosts.txt"):
             l = ftp.login()
             print("l: ", l)
         except Error as e:
-            if "must use encryption" in e:
+            if "must use encryption" in str(e):
                 ftp = FTP_TLS(host)
                 try:
                     l = ftp.login()
