@@ -19,6 +19,7 @@ def check(directory_path, hosts = "hosts.txt"):
                 ftp = FTP_TLS(host)
                 try:
                     l = ftp.login()
+                    print("l: ", l)
                 except Error as ee:
                     print("ee: ", str(type(ee)))
 
