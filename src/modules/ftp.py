@@ -101,7 +101,7 @@ def bruteforce(host):
                 ftp = FTP_TLS()
                 ftp.connect(ip, port)
                 try:
-                    l = ftp.login()
+                    l = ftp.login(username, password)
                     if "230" in l:
                         print(f"[+] {host} => {username}:{password}")
                 except error_perm as ee:
