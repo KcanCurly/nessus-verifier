@@ -1,6 +1,6 @@
 import xml.etree.ElementTree as ET
 import os
-from modules import ssh
+from src.modules import ssh
 import argparse
 
 # Function to parse the Nessus file (.nessus format) and extract services and associated hosts
@@ -67,6 +67,3 @@ def main():
     services = parse_nessus_file(nessus_file)
     save_services_and_hosts(services)
     # handle_services()
-
-if __name__ == '__main__':
-    main()

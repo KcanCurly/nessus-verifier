@@ -22,6 +22,7 @@ setup(
         "console_scripts": [
             "nv-parse=src.main:main",
             "nv-ssh=src.modules.ssh:main"
+            "nv-ftp=src.modules.ftp:main"
         ],
     },
 )

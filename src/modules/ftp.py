@@ -9,7 +9,7 @@ def check(directory_path, hosts = "hosts.txt"):
         
     for host in hosts:
         ftp = FTP(host)
-        ftp.login()
+        print(ftp.login())
 
 def main():
     parser = argparse.ArgumentParser(description="FTP module of nessus-verifier.")
