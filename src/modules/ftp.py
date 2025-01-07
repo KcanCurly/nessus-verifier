@@ -105,12 +105,12 @@ def check(directory_path, hosts = "hosts.txt"):
                     else: weak_ciphers[host].append(cipher)
       
     if len(weak_ciphers) > 0:              
-        print("Vulnerable hosts:")                
+        print("Vulnerable TLS Cipher on Hosts:")                
         for key, value in weak_ciphers.items():
             print(f"\n{key} - {", ".join(value)}")
     
     if len(weak_versions) > 0:              
-        print("Vulnerable hosts:")                
+        print("Vulnerable TLS Version on Hosts:")                
         for key, value in weak_versions.items():
             print(f"\n{key} - {", ".join(value)}")
             
