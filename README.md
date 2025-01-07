@@ -4,7 +4,7 @@ This is a project for penetration testing for nessus service outputs.
 
 ## Installation
 
-A step by step guide that will tell you how to get the development environment up and running.
+To install:
 
 ```
 pipx install git+https://github.com/KcanCurly/nessus-verifier
