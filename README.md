@@ -21,26 +21,34 @@ nv-parse file.nessus
 This will create ports directory with service directories inside, after that you can use smaller modules to target the service directory
 
 ```
-nv-ssh ports/ssh
-nv-ftp ports/ftp
+nv-ssh ports/ssh [directory path] [filename of the hosts]
+nv-ftp ports/ftp [directory path] [filename of the hosts]
 ```
 
 ## Implemented services
 
 * Echo
+  * Simply checks usage and prints out the hosts
 * Discard
+  * Simply checks usage and prints out the hosts
 * Systat
+  * Simply checks usage and prints out the hosts
 * Daytime
+  * Simply checks usage and prints out the hosts
 * QOTD
+  * Simply checks usage and prints out the hosts
 * CHARGEN
+  * Simply checks usage and prints out the hosts
 * FTP
   * Check Anonymous access
   * Check common/default credentials
   * Check TSL/SSL versions and ciphers
-  * (FUTURE) Check if anonymous and local users are forced to use SSL
+  * Check if anonymous and local users are forced to use SSL
 * SSH
   * Check common/default credentials
   * Check hostkey/kex/mac/ciphers and protocol version
   * Check software version and (FUTURE) print CVEs related to those version
+* Telnet
+  * Simply checks usage and prints out the hosts
 
 

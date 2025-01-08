@@ -8,9 +8,6 @@ import subprocess
 import re
 from concurrent.futures import ThreadPoolExecutor
 
-anon = []
-weak_versions = {}
-weak_ciphers = {}
 creds = [
 "anonymous:anonymous",
 "root:rootpasswd",
@@ -107,18 +104,10 @@ def bruteforce(host):
                 except error_perm as ee:
                     continue
                 except Error as eee:
-                    continue
-    
+                    continue   
         
-    
-
-def check(directory_path, hosts = "hosts.txt"):
-    with open(os.path.join(directory_path, hosts), "r") as file:
-        
-        hosts = [line.strip() for line in file if line.strip()] 
-        
-        
-    # Anon    
+def anon(hosts):
+    anon = []
     for host in hosts:
         ip = host
         port = 21
@@ -152,7 +141,9 @@ def check(directory_path, hosts = "hosts.txt"):
         for a in anon:
             print(f"\t{a}")
 
-    # Check TLS      
+def tls(hosts):
+    weak_versions = {}
+    weak_ciphers = {}
     for host in hosts:
         ip = host
         port = "21"
@@ -207,7 +198,6 @@ def check(directory_path, hosts = "hosts.txt"):
 
       
     if len(weak_ciphers) > 0:       
-        print()       
         print("Vulnerable TLS Ciphers on Hosts:")                
         for key, value in weak_ciphers.items():
             print(f"\t{key} - {", ".join(value)}")
@@ -218,20 +208,67 @@ def check(directory_path, hosts = "hosts.txt"):
         print("Vulnerable TLS Versions on Hosts:")                
         for key, value in weak_versions.items():
             print(f"\t{key} - {", ".join(value)}")
-            
-    # bruteforce
-    for host in hosts:
-        ip = host
-        port = "21"
-        if ":" in host:
-            ip = host.split(":")[0]
-            port  = host.split(":")[1]
-    
+
+def brute(hosts):
     threads = 10
-    print()
+    
     print("Trying default credentials, this can take time.")
     with ThreadPoolExecutor(threads) as executor:
         executor.map(lambda host: bruteforce(host), hosts)
+        
+def ssl(hosts):
+    dict = {}
+    for host in hosts:
+        ip = host
+        port = 21
+        if ":" in host:
+            ip = host.split(":")[0]
+            port  = int(host.split(":")[1])
+        host = ip + ":" + str(port)
+        ftp = FTP()
+        ftp.connect(ip, port)
+        try:
+            l = ftp.login()
+            if "230" in l:
+                if host not in dict:
+                    dict[host] = []
+                dict[host].append("Anonymous")
+        except Error as e:
+            pass
+        
+        ftp = FTP()
+        ftp.connect(ip, port)
+        try:
+            l = ftp.login()
+            if "230" in l:
+                if host not in dict:
+                    dict[host] = []
+                dict[host].append("Local")
+        except Error as e:
+            pass
+        
+    if len(dict) > 0:
+        print("SSL Not Forced:")
+        for key, value in dict.items():
+            print(f"\t{key} - {", ".join(value)}")
+        
+
+def check(directory_path, hosts = "hosts.txt"):
+    with open(os.path.join(directory_path, hosts), "r") as file:
+        hosts = [line.strip() for line in file if line.strip()] 
+        
+        
+    # Anon
+    print()
+    anon(hosts)
+
+    # Check TLS
+    print()
+    tls(hosts)
+            
+    # bruteforce
+    print()
+    brute(hosts)
             
 
 def main():
