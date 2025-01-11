@@ -3,3 +3,4 @@ ports
 *.nessus
 __pycache*
 solutions
+nessus_*
