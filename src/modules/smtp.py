@@ -15,8 +15,11 @@ def tls(directory_path, hosts = "hosts.txt"):
             sm = smtplib.SMTP()
             sm.connect(host)
             sm.helo() # Some smtp services requires helo first
-            print(sm.helo_resp.decode())
-            answer = sm.docmd("MAIL FROM:", "test")
+            helo = sm.helo_resp.decode()
+            dom = helo[1].split()[0]
+            dom = dom.split(".", 1)[1]
+            print(dom)            
+            answer = sm.docmd("MAIL FROM:", f"test@{dom}")
             print(answer)
             
         except Exception as e:
