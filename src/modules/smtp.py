@@ -51,8 +51,8 @@ def open_relay(directory_path, config, hosts = "hosts.txt"):
     fake_out = config["smtp"]["Fake_out"]
     temp = config["smtp"]["Temp"]
     
-    exec(config["smtp"]["Subject"])
-    exec(config["smtp"]["Subject"])
+    subject = eval(config["smtp"]["Subject"])
+    message = eval(config["smtp"]["Message"])
     
     print(subject)
     print(message)
