@@ -82,6 +82,7 @@ def main():
     args = parser.parse_args()
     
     if not args.config:
+        print(os.path.join(Path(__file__).resolve().parent.parent, "nvconfig.config"))
         os.path.join(Path(__file__).resolve().parent.parent, "nvconfig.config")
         
     config = configparser.ConfigParser()
