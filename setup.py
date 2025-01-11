@@ -30,6 +30,8 @@ setup(
             "nv-discard=src.modules.discard:main",
             "nv-echo=src.modules.echo:main",
             "nv-netstat=src.modules.netstat:main",
+            "nv-telnet=src.modules.telnet:main",
+            "nv-smtp=src.modules.smtp:main",
         ],
     },
 )
