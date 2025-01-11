@@ -51,11 +51,9 @@ def open_relay(directory_path, config, hosts = "hosts.txt"):
     fake_out = config["smtp"]["Fake_out"]
     temp = config["smtp"]["Temp"]
     
-    subject = eval(config["smtp"]["Subject"])
-    message = eval(config["smtp"]["Message"])
+
     
-    print(subject)
-    print(message)
+
     
     for host in hosts:
         ip = host
@@ -63,6 +61,11 @@ def open_relay(directory_path, config, hosts = "hosts.txt"):
         if ":" in host:
             ip = host.split(":")[0]
             port = host.split(":")[1]
+            
+        subject = eval(config["smtp"]["Subject"])
+        message = eval(config["smtp"]["Message"])
+        print(subject)
+        print(message)
         
     
     pass
