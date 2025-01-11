@@ -32,6 +32,8 @@ def tls(directory_path, config, hosts = "hosts.txt"):
             
 def open_relay(directory_path, config, hosts = "hosts.txt"):
     vuln = {}
+    with open(os.path.join(directory_path, hosts), "r") as file:
+        hosts = [line.strip() for line in file if line.strip()] 
     def sendmail(sender, receiver, subject, message, tag):
         message = f'Subject: {subject}\n\n{message}'
         try:
@@ -44,16 +46,13 @@ def open_relay(directory_path, config, hosts = "hosts.txt"):
             pass
     
     
-    sender = config["smtp"]["Client1"]
-    receiver = config["smtp"]["Client2"]
+    client1 = config["smtp"]["Client1"]
+    client2 = config["smtp"]["Client2"]
     fake_in = config["smtp"]["Fake_in"]
     real_out = config["smtp"]["Real_out"]
     fake_out = config["smtp"]["Fake_out"]
     temp = config["smtp"]["Temp"]
     
-
-    
-
     
     for host in hosts:
         ip = host
@@ -64,11 +63,19 @@ def open_relay(directory_path, config, hosts = "hosts.txt"):
             
         subject = eval(config["smtp"]["Subject"])
         message = eval(config["smtp"]["Message"])
-        print(subject)
-        print(message)
         
+        sendmail(client1, client1, subject, message, "Client 1 -> Client 1")
+        sendmail(client2, client1, subject, message, "Client 2 -> Client 1")
+        sendmail(fake_in, client1, subject, message, "Fake In -> Client 1")
+        sendmail(real_out, client1, subject, message, "Real Out -> Client 1")
+        sendmail(client1, real_out, subject, message, "Client 1 -> Real Out")
+        sendmail(fake_in, real_out, subject, message, "Fake In -> Real Out")
+        sendmail(fake_out, client1, subject, message, "Fake Out -> Client 1")
+        sendmail(fake_out, temp, subject, message, "Fake Out -> Temporary Mail")
     
-    pass
+    if len(vuln) > 0:
+        for key, value in vuln.items():
+            print(f"{key}: {", ".join(value)}")
     
             
 def check(directory_path, config, hosts = "hosts.txt"):
