@@ -35,6 +35,8 @@ def open_relay(directory_path, config, hosts = "hosts.txt"):
     with open(os.path.join(directory_path, hosts), "r") as file:
         hosts = [line.strip() for line in file if line.strip()] 
     def sendmail(sender, receiver, subject, message, tag):
+        subject = eval(config["smtp"]["Subject"])
+        message = eval(config["smtp"]["Message"])
         message = f'Subject: {subject}\n\n{message}'
         try:
             smtp = smtplib.SMTP(ip, port, timeout=5)
@@ -61,17 +63,15 @@ def open_relay(directory_path, config, hosts = "hosts.txt"):
             ip = host.split(":")[0]
             port = host.split(":")[1]
             
-        subject = eval(config["smtp"]["Subject"])
-        message = eval(config["smtp"]["Message"])
         
-        sendmail(client1, client1, subject, message, "Client 1 -> Client 1")
-        sendmail(client2, client1, subject, message, "Client 2 -> Client 1")
-        sendmail(fake_in, client1, subject, message, "Fake In -> Client 1")
-        sendmail(real_out, client1, subject, message, "Real Out -> Client 1")
-        sendmail(client1, real_out, subject, message, "Client 1 -> Real Out")
-        sendmail(fake_in, real_out, subject, message, "Fake In -> Real Out")
-        sendmail(fake_out, client1, subject, message, "Fake Out -> Client 1")
-        sendmail(fake_out, temp, subject, message, "Fake Out -> Temporary Mail")
+        sendmail(client1, client1, "Client 1 -> Client 1")
+        sendmail(client2, client1, "Client 2 -> Client 1")
+        sendmail(fake_in, client1, "Fake In -> Client 1")
+        sendmail(real_out, client1, "Real Out -> Client 1")
+        sendmail(client1, real_out, "Client 1 -> Real Out")
+        sendmail(fake_in, real_out, "Fake In -> Real Out")
+        sendmail(fake_out, client1, "Fake Out -> Client 1")
+        sendmail(fake_out, temp, "Fake Out -> Temporary Mail")
     
     if len(vuln) > 0:
         for key, value in vuln.items():
