@@ -34,7 +34,8 @@ def open_relay(directory_path, config, hosts = "hosts.txt"):
     vuln = {}
     with open(os.path.join(directory_path, hosts), "r") as file:
         hosts = [line.strip() for line in file if line.strip()] 
-    def sendmail(sender, receiver, subject, message, tag):
+        
+    def sendmail(sender, receiver, tag):
         subject = eval(config["smtp"]["Subject"])
         message = eval(config["smtp"]["Message"])
         message = f'Subject: {subject}\n\n{message}'
