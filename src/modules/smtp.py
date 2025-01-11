@@ -2,6 +2,8 @@ import argparse
 import smtplib
 import os
 
+
+
 def tls(directory_path, hosts = "hosts.txt"):
     if not os.path.exists(os.path.join(directory_path, hosts)):
         return
@@ -21,7 +23,9 @@ def tls(directory_path, hosts = "hosts.txt"):
         
          
              
-        
+def check(directory_path, hosts = "hosts.txt"):
+    tls(directory_path, hosts)
+    
              
     
 
