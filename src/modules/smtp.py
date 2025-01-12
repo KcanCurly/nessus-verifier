@@ -15,7 +15,7 @@ def userenum(directory_path, config, hosts = "hosts.txt"):
                 if host not in vuln:
                     vuln[host] = []
                 vuln[host].append("VRFY")
-        except: pass
+        except Exception as e: print("5 ", e)
         
         try:
             answer = smtp.docmd("EXPN", "test")
@@ -23,7 +23,7 @@ def userenum(directory_path, config, hosts = "hosts.txt"):
                 if host not in vuln:
                     vuln[host] = []
                 vuln[host].append("EXPN")
-        except: pass
+        except Exception as e: print("4 ", e)
         
         try:
             smtp.docmd("MAIL FROM:", "test@test.com")
@@ -32,7 +32,7 @@ def userenum(directory_path, config, hosts = "hosts.txt"):
                 if host not in vuln:
                     vuln[host] = []
                 vuln[host].append("RCPT")
-        except: pass
+        except Exception as e: print("3 ", e)
             
     
     with open(os.path.join(directory_path, hosts), "r") as file:
