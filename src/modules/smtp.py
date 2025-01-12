@@ -6,9 +6,9 @@ from pathlib import Path
 import re
 import subprocess
 
-def userenum(smtpp, directory_path, config, hosts = "hosts.txt"):
+def userenum(directory_path, config, hosts = "hosts.txt"):
     vuln = {}
-    def check_enum():
+    def check_enum(smtpp):
         try:
             answer = smtpp.docmd("VRFY", "test")
             if answer[0] == 250 or "unknown" in answer[1].decode().lower():
@@ -30,7 +30,7 @@ def userenum(smtpp, directory_path, config, hosts = "hosts.txt"):
             if "STARTTLS" in answer[1].decode():
                 smtp = smtplib.SMTP(ip, port, timeout=5)
                 smtp.starttls()
-                userenum(smtp, directory_path, config, hosts)
+                check_enum(smtp)
                 return
             print(answer)
             answer = smtpp.docmd("RCPT TO:", f"<a@{config["smtp"]["Domain"]}>")
@@ -49,13 +49,13 @@ def userenum(smtpp, directory_path, config, hosts = "hosts.txt"):
         port  = host.split(":")[1]
         try:
             smtp = smtplib.SMTP(ip, port, timeout=5)
-            smtp.helo(smtp)
+            smtp.helo()
             check_enum()
         except smtplib.SMTPServerDisconnected as t: # It could be that server requires TLS/SSL so we need to connect again with TLS
             try:
                 smtp = smtplib.SMTP_SSL(ip, port, timeout=5)
                 smtp.helo()
-                check_enum(smtp)
+                check_enum()
             except Exception as e: print("2 ", e)
         except Exception as e: print(e)
                 
