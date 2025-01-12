@@ -6,6 +6,66 @@ from pathlib import Path
 import re
 import subprocess
 
+def userenum(directory_path, config, hosts = "hosts.txt"):
+    vuln = {}
+    def check_enum():
+        try:
+            answer = smtp.docmd("VRFY", "test")
+            if answer[0] == 250 or "unknown" in answer[1]:
+                if host not in vuln:
+                    vuln[host] = []
+                vuln[host].append("VRFY")
+        except: pass
+        
+        try:
+            answer = smtp.docmd("EXPN", "test")
+            if answer[0] == 250 or "unknown" in answer[1]:
+                if host not in vuln:
+                    vuln[host] = []
+                vuln[host].append("EXPN")
+        except: pass
+        
+        try:
+            smtp.docmd("MAIL FROM:", "test@test.com")
+            answer = smtp.docmd("RCPT TO:", f"<a@{config["smtp"]["Domain"]}")
+            if answer[0] == 250 or "unknown" in answer[1]:
+                if host not in vuln:
+                    vuln[host] = []
+                vuln[host].append("RCPT")
+        except: pass
+            
+    
+    with open(os.path.join(directory_path, hosts), "r") as file:
+        hosts = [line.strip() for line in file if line.strip()] 
+    for host in hosts:
+        ip = host.split(":")[0]
+        port  = host.split(":")[1]
+        try:
+            smtp = smtplib.SMTP(ip, port, timeout=5)
+            check_enum()
+        except smtplib.SMTPServerDisconnected as t: # It could be that server requires TLS/SSL so we need to connect again with TLS
+            try:
+                smtp = smtplib.SMTP_SSL(ip, port, timeout=5)
+                check_enum()
+            except: pass
+            
+        except smtplib.SMTPSenderRefused as ref: # It could be that server requires starttls
+            if "STARTTLS" in ref.smtp_error.decode():
+                try:
+                    smtp = smtplib.SMTP(ip, port, timeout=5)
+                    smtp.starttls()
+                    check_enum()
+                except: pass
+                
+    
+    if len(vuln) > 0:
+        print("User Enumeration Was Possible with Given Methods on Hosts:")
+        for key, value in vuln.items():
+            print(f"\t{key} - {", ".join(value)}")
+            
+            
+        
+
 def tls(directory_path, config, hosts = "hosts.txt"):
     weak_versions = {}
     weak_ciphers = {}
@@ -200,9 +260,9 @@ def open_relay(directory_path, config, hosts = "hosts.txt"):
 def check(directory_path, config, verbose, hosts = "hosts.txt"):
     if verbose: print("Starting TLS Check")
     tls_check(directory_path, config, hosts)
-    if verbose: print("Starting TLS Version/Cipher/Bit Check")
+    if verbose: print("\nStarting TLS Version/Cipher/Bit Check")
     tls(directory_path, config, hosts)
-    if verbose: print("Starting Open Relay Test")
+    if verbose: print("\nStarting Open Relay Test")
     open_relay(directory_path, config, hosts)
 
 def main():
