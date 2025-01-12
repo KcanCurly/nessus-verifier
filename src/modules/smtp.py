@@ -264,6 +264,8 @@ def check(directory_path, config, verbose, hosts = "hosts.txt"):
     tls(directory_path, config, hosts)
     if verbose: print("\nStarting Open Relay Test")
     open_relay(directory_path, config, hosts)
+    if verbose: print("\nStarting User Enumeration Test")
+    userenum(directory_path, config, hosts)
 
 def main():
     parser = argparse.ArgumentParser(description="SMTP module of nessus-verifier.")
