@@ -141,7 +141,6 @@ def open_relay(directory_path, config, hosts = "hosts.txt"):
                 vuln[f"{ip}:{port}"] = []
             vuln[f"{ip}:{port}"].append(tag)
         except smtplib.SMTPServerDisconnected as t: # It could be that server requires TLS/SSL so we need to connect again with TLS
-            print("Timeout: ", t)
             try:
                 smtp = smtplib.SMTP_SSL(ip, port, timeout=5)
                 smtp.sendmail(sender,receiver,message)
@@ -153,6 +152,16 @@ def open_relay(directory_path, config, hosts = "hosts.txt"):
                 pass
                 
         except Exception as error:
+            if "STARTTLS" in error:
+                try:
+                    smtp = smtplib.SMTP(ip, port, timeout=5)
+                    smtp.starttls()
+                    smtp.sendmail(sender,receiver,message)
+                    if f"{ip}:{port}" not in vuln:
+                        vuln[f"{ip}:{port}"] = []
+                    vuln[f"{ip}:{port}"].append(tag)
+                except: pass
+            else: pass
             print("Error: ", error, " ", type(error))
             pass
     
