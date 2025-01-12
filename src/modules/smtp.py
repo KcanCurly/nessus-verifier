@@ -152,7 +152,7 @@ def open_relay(directory_path, config, hosts = "hosts.txt"):
                 pass
                 
         except smtplib.SMTPSenderRefused as ref: # It could be that server requires starttls
-            if "STARTTLS" in ref.smtp_error:
+            if "STARTTLS" in ref.smtp_error.decode():
                 try:
                     smtp = smtplib.SMTP(ip, port, timeout=5)
                     smtp.starttls()
