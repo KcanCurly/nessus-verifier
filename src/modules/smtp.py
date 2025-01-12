@@ -101,16 +101,7 @@ def tls_check(directory_path, config, hosts = "hosts.txt"):
             sm = smtplib.SMTP()
             sm.connect(host)
             sm.helo() # Some smtp services requires helo first and also we need to get domain name
-            helo = sm.helo_resp.decode()
-            try:
-                dom = helo.split()[0]
-                dom = dom.split(".", 1)[1] # Get domain name
-                print(dom)
-            except:
-                dom = config["smtp"]["Domain"]
-                print(dom)
-                if dom is "None":
-                    continue # HELO didn't give domain name
+            dom = config["smtp"]["Domain"]
             answer = sm.docmd("MAIL FROM:", f"nessus-verifier-test@{dom}")[1].decode()
             if "STARTTLS" not in answer:
                 tls.append(host)
