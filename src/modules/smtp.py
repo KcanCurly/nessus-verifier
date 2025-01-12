@@ -11,6 +11,7 @@ def userenum(directory_path, config, hosts = "hosts.txt"):
     def check_enum():
         try:
             answer = smtp.docmd("VRFY", "test")
+            print(answer)
             if answer[0] == 250 or "unknown" in answer[1].decode().lower():
                 if host not in vuln:
                     vuln[host] = []
@@ -19,6 +20,7 @@ def userenum(directory_path, config, hosts = "hosts.txt"):
         
         try:
             answer = smtp.docmd("EXPN", "test")
+            print(answer)
             if answer[0] == 250 or "unknown" in answer[1].decode().lower():
                 if host not in vuln:
                     vuln[host] = []
@@ -28,13 +30,14 @@ def userenum(directory_path, config, hosts = "hosts.txt"):
         try:
             smtp.docmd("MAIL FROM:", "test@test.com")
             answer = smtp.docmd("RCPT TO:", f"<a@{config["smtp"]["Domain"]}>")
+            print(answer)
             if answer[0] == 250 or "unknown" in answer[1].decode().lower():
                 if host not in vuln:
                     vuln[host] = []
                 vuln[host].append("RCPT")
         except Exception as e: print("3 ", e)
             
-    
+    print("a")
     with open(os.path.join(directory_path, hosts), "r") as file:
         hosts = [line.strip() for line in file if line.strip()] 
     for host in hosts:
