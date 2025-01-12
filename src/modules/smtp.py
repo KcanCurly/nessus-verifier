@@ -52,6 +52,7 @@ def userenum(directory_path, config, hosts = "hosts.txt"):
             except: pass
             
         except smtplib.SMTPSenderRefused as ref: # It could be that server requires starttls
+            print(ref.smtp_error.decode())
             if "STARTTLS" in ref.smtp_error.decode():
                 try:
                     smtp = smtplib.SMTP(ip, port, timeout=5)
