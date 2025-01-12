@@ -49,17 +49,18 @@ def userenum(directory_path, config, hosts = "hosts.txt"):
                 smtp = smtplib.SMTP_SSL(ip, port, timeout=5)
                 smtp.helo()
                 check_enum()
-            except: pass
+            except Exception as e: print("2 ", e)
             
         except smtplib.SMTPSenderRefused as ref: # It could be that server requires starttls
             print(ref.smtp_error.decode())
             if "STARTTLS" in ref.smtp_error.decode():
                 try:
                     smtp = smtplib.SMTP(ip, port, timeout=5)
-                    smtp.helo()
                     smtp.starttls()
+                    smtp.helo()
                     check_enum()
-                except: pass
+                except Exception as e: print("1 ", e)
+        except Exception as e: print(e)
                 
     
     if len(vuln) > 0:
