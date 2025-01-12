@@ -32,7 +32,8 @@ def tls(directory_path, config, hosts = "hosts.txt"):
                 if "Connection refused" in result.stderr or "enabled" not in result.stdout:
                     print(3)
                     continue
-            continue
+            else: continue
+
        
         
         lines = result.stdout.splitlines()
@@ -154,7 +155,7 @@ def open_relay(directory_path, config, hosts = "hosts.txt"):
                 pass
                 
         except Exception as error:
-            print("Error: ", error)
+            print("Error: ", error, " ", type(error))
             pass
     
     
