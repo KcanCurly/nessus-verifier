@@ -101,7 +101,7 @@ def host_name_exposure(directory_path, config, verbose, hosts = "hosts.txt"):
     if len(l) > 0:
         print("Hostname Exposure:")
         for a in l:
-            print(f"\n{a}")
+            print(f"\t{a}")
 
 def version_check(directory_path, config, verbose, hosts = "hosts.txt"):
     d = {}
@@ -114,6 +114,7 @@ def version_check(directory_path, config, verbose, hosts = "hosts.txt"):
             exchange_version = response.headers.get("X-OWA-Version")
                 
             if exchange_version:
+                exchange_version = f"{exchange_version} - {exch_versions[exchange_version]}"
                 if exchange_version not in d:
                     d[exchange_version] = []
                 d[exchange_version].append(f"{host}")
@@ -121,11 +122,11 @@ def version_check(directory_path, config, verbose, hosts = "hosts.txt"):
         except: continue
         
     if len(d) > 0:
-        print("Exchange Server information:")
+        print("\nExchange Server information:\n")
         for key, value in d.items():
-            print(f"\t{key}:")
+            print(f"{key}:")
             for v in value:
-                print(f"\t\t{v}")
+                print(f"\t{v}")
     
 
 def check(directory_path, config, verbose, hosts = "hosts.txt"):
