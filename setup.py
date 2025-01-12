@@ -33,7 +33,7 @@ setup(
             "nv-netstat=src.modules.netstat:main",
             "nv-telnet=src.modules.telnet:main",
             "nv-smtp=src.modules.smtp:main",
-            "nv-ms-exchange=src.modules.ms-exchange:main",
+            "nv-ms-exchange=src.modules.ms_exchange:main",
         ],
     },
 )
