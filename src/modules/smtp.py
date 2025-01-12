@@ -106,6 +106,8 @@ def tls_check(directory_path, config, hosts = "hosts.txt"):
             if "STARTTLS" not in answer:
                 tls.append(host)
                 
+        except TimeoutError as t: # If we get time out its either host is not up or it requires TLS/SSL, in either case we don't need to check it
+           pass
         except Exception as e:
             print("Error: ", e)
                 
@@ -129,9 +131,20 @@ def open_relay(directory_path, config, hosts = "hosts.txt"):
             if f"{ip}:{port}" not in vuln:
                 vuln[f"{ip}:{port}"] = []
             vuln[f"{ip}:{port}"].append(tag)
+        except TimeoutError as t: # It could be that server requires TLS/SSL so we need to connect again with TLS
+            try:
+                smtp = smtplib.SMTP_SSL(ip, port, timeout=5)
+                smtp.sendmail(sender,receiver,message)
+                if f"{ip}:{port}" not in vuln:
+                    vuln[f"{ip}:{port}"] = []
+                vuln[f"{ip}:{port}"].append(tag)
+            except Exception as er:
+                # print(error)
+                pass
+                
         except Exception as error:
-            print(error)
-            # pass
+            # print(error)
+            pass
     
     
     client1 = config["smtp"]["Client1"]
