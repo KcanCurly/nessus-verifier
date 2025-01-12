@@ -6,11 +6,11 @@ from pathlib import Path
 import re
 import subprocess
 
-def userenum(directory_path, config, hosts = "hosts.txt"):
+def userenum(smtpp, directory_path, config, hosts = "hosts.txt"):
     vuln = {}
     def check_enum():
         try:
-            answer = smtp.docmd("VRFY", "test")
+            answer = smtpp.docmd("VRFY", "test")
             if answer[0] == 250 or "unknown" in answer[1].decode().lower():
                 if host not in vuln:
                     vuln[host] = []
@@ -18,7 +18,7 @@ def userenum(directory_path, config, hosts = "hosts.txt"):
         except Exception as e: print("5 ", e)
         
         try:
-            answer = smtp.docmd("EXPN", "test")
+            answer = smtpp.docmd("EXPN", "test")
             if answer[0] == 250 or "unknown" in answer[1].decode().lower():
                 if host not in vuln:
                     vuln[host] = []
@@ -26,13 +26,14 @@ def userenum(directory_path, config, hosts = "hosts.txt"):
         except Exception as e: print("4 ", e)
         
         try:
-            answer = smtp.docmd("MAIL FROM:", "test@test.com")
+            answer = smtpp.docmd("MAIL FROM:", "test@test.com")
             if "STARTTLS" in answer[1].decode():
                 smtp = smtplib.SMTP(ip, port, timeout=5)
                 smtp.starttls()
-                answer = smtp.docmd("MAIL FROM:", "test@test.com")
+                userenum(smtp, directory_path, config, hosts)
+                return
             print(answer)
-            answer = smtp.docmd("RCPT TO:", f"<a@{config["smtp"]["Domain"]}>")
+            answer = smtpp.docmd("RCPT TO:", f"<a@{config["smtp"]["Domain"]}>")
             print(answer)
             if answer[0] == 250 or "unknown" in answer[1].decode().lower():
                 if host not in vuln:
@@ -48,24 +49,14 @@ def userenum(directory_path, config, hosts = "hosts.txt"):
         port  = host.split(":")[1]
         try:
             smtp = smtplib.SMTP(ip, port, timeout=5)
-            smtp.helo()
+            smtp.helo(smtp)
             check_enum()
         except smtplib.SMTPServerDisconnected as t: # It could be that server requires TLS/SSL so we need to connect again with TLS
             try:
                 smtp = smtplib.SMTP_SSL(ip, port, timeout=5)
                 smtp.helo()
-                check_enum()
+                check_enum(smtp)
             except Exception as e: print("2 ", e)
-            
-        except smtplib.SMTPSenderRefused as ref: # It could be that server requires starttls
-            print(ref.smtp_error.decode())
-            if "STARTTLS" in ref.smtp_error.decode():
-                try:
-                    smtp = smtplib.SMTP(ip, port, timeout=5)
-                    smtp.starttls()
-                    smtp.helo()
-                    check_enum()
-                except Exception as e: print("1 ", e)
         except Exception as e: print(e)
                 
     
