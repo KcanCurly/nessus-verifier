@@ -27,7 +27,7 @@ def userenum(directory_path, config, hosts = "hosts.txt"):
         
         try:
             smtp.docmd("MAIL FROM:", "test@test.com")
-            answer = smtp.docmd("RCPT TO:", f"<a@{config["smtp"]["Domain"]}")
+            answer = smtp.docmd("RCPT TO:", f"<a@{config["smtp"]["Domain"]}>")
             if answer[0] == 250 or "unknown" in answer[1]:
                 if host not in vuln:
                     vuln[host] = []
