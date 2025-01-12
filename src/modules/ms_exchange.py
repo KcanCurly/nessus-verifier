@@ -45,7 +45,7 @@ def version_check(directory_path, config, verbose, hosts = "hosts.txt"):
     
 
 def check(directory_path, config, verbose, hosts = "hosts.txt"):
-    check(directory_path, config, verbose, hosts)
+    version_check(directory_path, config, verbose, hosts)
 
 def main():
     parser = argparse.ArgumentParser(description="Microsoft Exchange application module of nessus-verifier.")
