@@ -37,18 +37,20 @@ def userenum(directory_path, config, hosts = "hosts.txt"):
                 vuln[host].append("RCPT")
         except Exception as e: print("3 ", e)
             
-    print("a")
+
     with open(os.path.join(directory_path, hosts), "r") as file:
         hosts = [line.strip() for line in file if line.strip()] 
     for host in hosts:
         ip = host.split(":")[0]
         port  = host.split(":")[1]
         try:
+            print("a")
             smtp = smtplib.SMTP(ip, port, timeout=5)
             smtp.helo()
             check_enum()
         except smtplib.SMTPServerDisconnected as t: # It could be that server requires TLS/SSL so we need to connect again with TLS
             try:
+                print("b")
                 smtp = smtplib.SMTP_SSL(ip, port, timeout=5)
                 smtp.helo()
                 check_enum()
@@ -57,6 +59,7 @@ def userenum(directory_path, config, hosts = "hosts.txt"):
         except smtplib.SMTPSenderRefused as ref: # It could be that server requires starttls
             print(ref.smtp_error.decode())
             if "STARTTLS" in ref.smtp_error.decode():
+                print("c")
                 try:
                     smtp = smtplib.SMTP(ip, port, timeout=5)
                     smtp.starttls()
