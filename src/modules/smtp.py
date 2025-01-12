@@ -187,8 +187,7 @@ def main():
         
     config = configparser.ConfigParser()
     c = config.read(args.config)
-    if len(c) == 0:
-        print("Config file read failed.")
+    print(c)
         
     
     check(args.directory or os.curdir, config, args.filename or "hosts.txt")
