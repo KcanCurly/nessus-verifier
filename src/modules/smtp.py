@@ -17,7 +17,7 @@ def tls(directory_path, config, hosts = "hosts.txt"):
             ip = host.split(":")[0]
             port  = host.split(":")[1]
             
-        command = ["sslscan", "--starttls-smtp", "-no-fallback", "--no-renegotiation", "--no-group", "--no-check-certificate", "--no-heartbleed", "--iana-names", host]
+        command = ["sslscan", "--starttls-smtp", "-no-fallback", "--no-renegotiation", "--no-group", "--no-check-certificate", "--no-heartbleed", "--iana-names", "--connect-timeout=3", host]
         result = subprocess.run(command, text=True, capture_output=True)
         if "Connection refused" in result.stderr or "enabled" not in result.stdout:
             continue
@@ -186,7 +186,9 @@ def main():
         args.config = os.path.join(Path(__file__).resolve().parent.parent, "nvconfig.config")
         
     config = configparser.ConfigParser()
-    config.read(args.config)
+    c = config.read(args.config)
+    if len(c) == 0:
+        print("Config file read failed.")
         
     
     check(args.directory or os.curdir, config, args.filename or "hosts.txt")
