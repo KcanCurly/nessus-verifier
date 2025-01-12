@@ -98,7 +98,7 @@ def tls_check(directory_path, config, hosts = "hosts.txt"):
     tls = []
     for host in hosts:
         try:
-            sm = smtplib.SMTP()
+            sm = smtplib.SMTP(timeout=5)
             sm.connect(host)
             sm.helo() # Some smtp services requires helo first and also we need to get domain name
             dom = config["smtp"]["Domain"]
