@@ -42,10 +42,12 @@ def userenum(directory_path, config, hosts = "hosts.txt"):
         port  = host.split(":")[1]
         try:
             smtp = smtplib.SMTP(ip, port, timeout=5)
+            smtp.helo()
             check_enum()
         except smtplib.SMTPServerDisconnected as t: # It could be that server requires TLS/SSL so we need to connect again with TLS
             try:
                 smtp = smtplib.SMTP_SSL(ip, port, timeout=5)
+                smtp.helo()
                 check_enum()
             except: pass
             
@@ -53,6 +55,7 @@ def userenum(directory_path, config, hosts = "hosts.txt"):
             if "STARTTLS" in ref.smtp_error.decode():
                 try:
                     smtp = smtplib.SMTP(ip, port, timeout=5)
+                    smtp.helo()
                     smtp.starttls()
                     check_enum()
                 except: pass
