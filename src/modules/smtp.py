@@ -129,6 +129,7 @@ def open_relay(directory_path, config, hosts = "hosts.txt"):
         message = eval(config["smtp"]["Message"])
         message = f'Subject: {subject}\n\n{message}'
         print(message)
+        print("what")
         try:
             smtp = smtplib.SMTP(ip, port, timeout=5)
             smtp.sendmail(sender,receiver,message)
@@ -166,8 +167,10 @@ def open_relay(directory_path, config, hosts = "hosts.txt"):
         sendmail(fake_out, temp, "Fake Out -> Temporary Mail")
     
     if len(vuln) > 0:
+        print()
+        print("Open Relay Test:")
         for key, value in vuln.items():
-            print(f"{key}: {", ".join(value)}")
+            print(f"\t{key}: {", ".join(value)}")
     
             
 def check(directory_path, config, hosts = "hosts.txt"):
