@@ -50,5 +50,8 @@ nv-ftp ports/ftp [directory path] [filename of the hosts]
   * Check software version and (FUTURE) print CVEs related to those version
 * Telnet
   * Simply checks usage and prints out the hosts
+* SMTP
+  * Checks if TLS is enforced
+  * Checks if it is open relay 
 
 

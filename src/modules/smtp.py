@@ -18,7 +18,7 @@ def tls(directory_path, config, hosts = "hosts.txt"):
             helo = sm.helo_resp.decode()
             dom = helo.split()[0]
             dom = dom.split(".", 1)[1] # Get domain name
-            answer = sm.docmd("MAIL FROM:", f"test@{dom}")[1].decode()
+            answer = sm.docmd("MAIL FROM:", f"nessus-verifier-test@{dom}")[1].decode()
             if "STARTTLS is required to send mail" not in answer:
                 tls.append(host)
                 
@@ -26,7 +26,7 @@ def tls(directory_path, config, hosts = "hosts.txt"):
             print("Error: ", e)
                 
     if len(tls) > 0:
-        print("SMTP that does NOT force TLS/SSL")
+        print("SMTP servers that does NOT force TLS/SSL:")
         for t in tls:
             print(f"\t{t}")
             
