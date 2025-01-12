@@ -4,9 +4,17 @@ import os
 from pathlib import Path
 import requests
 from src.utilities import get_hosts_from_file
+from requests.packages import urllib3  
+
+# Suppress only the InsecureRequestWarning
+urllib3.disable_warnings(category=urllib3.exceptions.InsecureRequestWarning)
 
 exch_versions = {
     "15.2.1544.14" : "Exchange Server 2019 CU14 Nov24SUv2",
+    "15.2.1544.13" : "Exchange Server 2019 CU14 Nov24SU",
+    "15.2.1544.11" : "Exchange Server 2019 CU14 Apr24HU",
+    "15.2.1544.9" : "Exchange Server 2019 CU14 Mar24SU",
+    "15.2.1544.4" : "Exchange Server 2019 CU13 Nov24SUv2",
 }
 
 
@@ -31,7 +39,7 @@ def version_check(directory_path, config, verbose, hosts = "hosts.txt"):
             if exchange_version:
                 if host not in d:
                     d[host] = []
-                d[host].append(f"Exchange Version: {exchange_version}")
+                d[host].append(f"Exchange Version: {exchange_version} ({exch_versions[exchange_version]})")
             
         except: continue
         
