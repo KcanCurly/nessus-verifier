@@ -18,7 +18,9 @@ def tls(directory_path, config, hosts = "hosts.txt"):
             port  = host.split(":")[1]
         
         host = ip + ":" + port
+        print("comm")
         command = ["sslscan", "--starttls-smtp", "-no-fallback", "--no-renegotiation", "--no-group", "--no-check-certificate", "--no-heartbleed", "--iana-names", "--connect-timeout=3", host]
+        print("comm1")
         result = subprocess.run(command, text=True, capture_output=True)
         if "Connection refused" in result.stderr or "enabled" not in result.stdout:
             continue
@@ -103,6 +105,7 @@ def tls_check(directory_path, config, hosts = "hosts.txt"):
             try:
                 dom = helo.split()[0]
                 dom = dom.split(".", 1)[1] # Get domain name
+                print(dom)
             except:
                 dom = config["smtp"]["Domain"]
                 print(dom)
