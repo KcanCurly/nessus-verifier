@@ -42,7 +42,7 @@ nv-ftp ports/ftp [directory path] [filename of the hosts]
 * FTP
   * Check Anonymous access
   * Check common/default credentials
-  * Check TSL/SSL versions and ciphers
+  * Check TSL/SSL versions and ciphers and bits
   * Check if anonymous and local users are forced to use SSL
 * SSH
   * Check common/default credentials
@@ -52,6 +52,7 @@ nv-ftp ports/ftp [directory path] [filename of the hosts]
   * Simply checks usage and prints out the hosts
 * SMTP
   * Checks if TLS is enforced
-  * Checks if it is open relay 
+  * If TLS is used check TSL/SSL versions and ciphers and bits
+  * Checks if it is open relay (Please check configuration file to specify e-mails)
 
 

@@ -144,6 +144,7 @@ def anon(hosts):
 def tls(hosts):
     weak_versions = {}
     weak_ciphers = {}
+    weak_bits = {}
     for host in hosts:
         ip = host
         port = "21"
@@ -151,11 +152,12 @@ def tls(hosts):
             ip = host.split(":")[0]
             port  = host.split(":")[1]
             
-        command = ["sslscan", "--starttls-ftp", "-no-fallback", "--no-renegotiation", "--no-group", "--no-check-certificate", "--no-heartbleed", "--iana-names", ip + ":" + port]
+        command = ["sslscan", "--starttls-ftp", "-no-fallback", "--no-renegotiation", "--no-group", "--no-check-certificate", "--no-heartbleed", "--iana-names", host]
         result = subprocess.run(command, text=True, capture_output=True)
         if "Connection refused" in result.stderr or "enabled" not in result.stdout:
             continue
         
+        host = ip + ":" + port
         lines = result.stdout.splitlines()
         protocol_line = False
         cipher_line = False
@@ -173,29 +175,35 @@ def tls(hosts):
             if protocol_line:
                 if "enabled" in line:
                     if "SSLv2" in line:
-                        if ip + ":" + port not in weak_versions:
-                            weak_versions[ip + ":" + port] = []
-                        weak_versions[ip + ":" + port].append("SSLv2")
+                        if host not in weak_versions:
+                            weak_versions[host] = []
+                        weak_versions[host].append("SSLv2")
                     elif "SSLv3" in line:
-                        if ip + ":" + port not in weak_versions:
-                            weak_versions[ip + ":" + port] = []
-                        weak_versions[ip + ":" + port].append("SSLv3")
+                        if host not in weak_versions:
+                            weak_versions[host] = []
+                        weak_versions[host].append("SSLv3")
                     elif "TLSv1.0" in line:
-                        if ip + ":" + port not in weak_versions:
-                            weak_versions[ip + ":" + port] = []
-                        weak_versions[ip + ":" + port].append("TLSv1.0")
+                        if host not in weak_versions:
+                            weak_versions[host] = []
+                        weak_versions[host].append("TLSv1.0")
                     elif "TLSv1.1" in line:
-                        if ip + ":" + port not in weak_versions:
-                            weak_versions[ip + ":" + port] = []
-                        weak_versions[ip + ":" + port].append("TLSv1.1")
+                        if host not in weak_versions:
+                            weak_versions[host] = []
+                        weak_versions[host].append("TLSv1.1")
             
             if cipher_line and line:
                 cipher = line.split()[4]
-                if "[32m" not in cipher:
+                if "[32m" not in cipher: # If it is not green output
                     if host not in weak_ciphers:
                         weak_ciphers[host] = []
                     weak_ciphers[host].append(re.sub(r'^\x1b\[[0-9;]*m', '', cipher))
-
+                    continue
+                bit = line.split()[2] # If it is a green output and bit is low
+                if "[33m]" in bit:
+                    if host not in weak_bits:
+                        weak_bits[host] = []
+                    weak_bits[host].append(re.sub(r'^\x1b\[[0-9;]*m', '', bit) + "->" + re.sub(r'^\x1b\[[0-9;]*m', '', cipher))
+                    
       
     if len(weak_ciphers) > 0:       
         print("Vulnerable TLS Ciphers on Hosts:")                
@@ -206,6 +214,12 @@ def tls(hosts):
     if len(weak_versions) > 0: 
         print()             
         print("Vulnerable TLS Versions on Hosts:")                
+        for key, value in weak_versions.items():
+            print(f"\t{key} - {", ".join(value)}")
+            
+    if len(weak_bits) > 0:
+        print()
+        print("Low Bits on Good Algorithms on Hosts:")
         for key, value in weak_versions.items():
             print(f"\t{key} - {", ".join(value)}")
 
