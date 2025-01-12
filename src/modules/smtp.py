@@ -23,13 +23,14 @@ def tls(directory_path, config, hosts = "hosts.txt"):
         command = ["sslscan", "--starttls-smtp", "-no-fallback", "--no-renegotiation", "--no-group", "--no-check-certificate", "--no-heartbleed", "--iana-names", "--connect-timeout=3", host]
         result = subprocess.run(command, text=True, capture_output=True)
         if "Connection refused" in result.stderr or "enabled" not in result.stdout:
+            if "did not appear to be an SMTP service" in result.stderr:
+                # If TLS is enforced but not thru starttls we can get this error, so in this case we have to do the same command without starttls
+                command = ["sslscan", "-no-fallback", "--no-renegotiation", "--no-group", "--no-check-certificate", "--no-heartbleed", "--iana-names", "--connect-timeout=3", host]
+                result = subprocess.run(command, text=True, capture_output=True)
+                if "Connection refused" in result.stderr or "enabled" not in result.stdout:
+                    continue
             continue
-        if "did not appear to be an SMTP service" in result.stderr:
-            # If TLS is enforced but not thru starttls we can get this error, so in this case we have to do the same command without starttls
-            command = ["sslscan", "-no-fallback", "--no-renegotiation", "--no-group", "--no-check-certificate", "--no-heartbleed", "--iana-names", "--connect-timeout=3", host]
-            result = subprocess.run(command, text=True, capture_output=True)
-            if "Connection refused" in result.stderr or "enabled" not in result.stdout:
-                continue
+       
         
         lines = result.stdout.splitlines()
         protocol_line = False
@@ -145,7 +146,7 @@ def open_relay(directory_path, config, hosts = "hosts.txt"):
                     vuln[f"{ip}:{port}"] = []
                 vuln[f"{ip}:{port}"].append(tag)
             except Exception as er:
-                print(error)
+                print(er)
                 pass
                 
         except Exception as error:
