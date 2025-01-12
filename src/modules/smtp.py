@@ -15,7 +15,7 @@ def userenum(directory_path, config, hosts = "hosts.txt"):
                 if host not in vuln:
                     vuln[host] = []
                 vuln[host].append("VRFY")
-        except Exception as e: print("5 ", e)
+        except: pass
         
         try:
             answer = smtpp.docmd("EXPN", "test")
@@ -23,7 +23,7 @@ def userenum(directory_path, config, hosts = "hosts.txt"):
                 if host not in vuln:
                     vuln[host] = []
                 vuln[host].append("EXPN")
-        except Exception as e: print("4 ", e)
+        except: pass
         
         try:
             answer = smtpp.docmd("MAIL FROM:", "test@test.com")
@@ -32,14 +32,13 @@ def userenum(directory_path, config, hosts = "hosts.txt"):
                 smtp.starttls()
                 check_enum(smtp)
                 return
-            print(answer)
+
             answer = smtpp.docmd("RCPT TO:", f"<a@{config["smtp"]["Domain"]}>")
-            print(answer)
             if answer[0] == 250 or "unknown" in answer[1].decode().lower():
                 if host not in vuln:
                     vuln[host] = []
                 vuln[host].append("RCPT")
-        except Exception as e: print("3 ", e)
+        except: pass
             
 
     with open(os.path.join(directory_path, hosts), "r") as file:
@@ -56,8 +55,8 @@ def userenum(directory_path, config, hosts = "hosts.txt"):
                 smtp = smtplib.SMTP_SSL(ip, port, timeout=5)
                 smtp.helo()
                 check_enum(smtp)
-            except Exception as e: print("2 ", e)
-        except Exception as e: print(e)
+            except: pass
+        except: pass
                 
     
     if len(vuln) > 0:
