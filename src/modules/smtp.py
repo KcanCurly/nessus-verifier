@@ -11,6 +11,7 @@ def tls(directory_path, config, hosts = "hosts.txt"):
     weak_ciphers = {}
     weak_bits = {}
     for host in hosts:
+        print(host)
         ip = host
         port = "21"
         if ":" in host:
