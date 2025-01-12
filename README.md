@@ -25,7 +25,7 @@ nv-ssh ports/ssh [directory path] [filename of the hosts]
 nv-ftp ports/ftp [directory path] [filename of the hosts]
 ```
 
-## Implemented services
+## Implemented Applications
 
 * Echo
   * Simply checks usage and prints out the hosts
@@ -54,5 +54,10 @@ nv-ftp ports/ftp [directory path] [filename of the hosts]
   * Checks if TLS is enforced
   * If TLS is used check TSL/SSL versions and ciphers and bits
   * Checks if it is open relay (Please check configuration file to specify e-mails)
+  * Checks if user enum is possible with VRFY,EXPN,RCPT
 
 
+## Implemented Applications
+
+* Microsoft Exchange
+  * Check computer name with autodiscover and exchange version with Exchange.asmx

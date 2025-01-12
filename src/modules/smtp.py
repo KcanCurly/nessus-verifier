@@ -6,6 +6,7 @@ from pathlib import Path
 import re
 import subprocess
 
+
 def userenum(directory_path, config, hosts = "hosts.txt"):
     vuln = {}
     def check_enum(smtpp):
