@@ -16,13 +16,13 @@ def tls(directory_path, config, hosts = "hosts.txt"):
         if ":" in host:
             ip = host.split(":")[0]
             port  = host.split(":")[1]
-            
+        
+        host = ip + ":" + port
         command = ["sslscan", "--starttls-smtp", "-no-fallback", "--no-renegotiation", "--no-group", "--no-check-certificate", "--no-heartbleed", "--iana-names", "--connect-timeout=3", host]
         result = subprocess.run(command, text=True, capture_output=True)
         if "Connection refused" in result.stderr or "enabled" not in result.stdout:
             continue
         
-        host = ip + ":" + port
         lines = result.stdout.splitlines()
         protocol_line = False
         cipher_line = False
@@ -105,6 +105,7 @@ def tls_check(directory_path, config, hosts = "hosts.txt"):
                 dom = dom.split(".", 1)[1] # Get domain name
             except:
                 dom = config["smtp"]["Domain"]
+                print(dom)
                 if dom is "None":
                     continue # HELO didn't give domain name
             answer = sm.docmd("MAIL FROM:", f"nessus-verifier-test@{dom}")[1].decode()
@@ -128,8 +129,6 @@ def open_relay(directory_path, config, hosts = "hosts.txt"):
         subject = eval(config["smtp"]["Subject"])
         message = eval(config["smtp"]["Message"])
         message = f'Subject: {subject}\n\n{message}'
-        print(message)
-        print("what")
         try:
             smtp = smtplib.SMTP(ip, port, timeout=5)
             smtp.sendmail(sender,receiver,message)
