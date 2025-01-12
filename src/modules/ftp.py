@@ -169,7 +169,7 @@ def tls(hosts):
                 protocol_line = False
                 cipher_line = True
                 continue
-            if "erver Key Exchange Group(s)" in line:
+            if "Server Key Exchange Group(s)" in line:
                 cipher_line = False
                 continue
             if protocol_line:

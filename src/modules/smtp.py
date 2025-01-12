@@ -10,8 +10,9 @@ def tls(directory_path, config, hosts = "hosts.txt"):
     weak_versions = {}
     weak_ciphers = {}
     weak_bits = {}
+    with open(os.path.join(directory_path, hosts), "r") as file:
+        hosts = [line.strip() for line in file if line.strip()] 
     for host in hosts:
-        print(host)
         ip = host
         port = "21"
         if ":" in host:
@@ -19,9 +20,7 @@ def tls(directory_path, config, hosts = "hosts.txt"):
             port  = host.split(":")[1]
         
         host = ip + ":" + port
-        print("comm")
         command = ["sslscan", "--starttls-smtp", "-no-fallback", "--no-renegotiation", "--no-group", "--no-check-certificate", "--no-heartbleed", "--iana-names", "--connect-timeout=3", host]
-        print("comm1")
         result = subprocess.run(command, text=True, capture_output=True)
         if "Connection refused" in result.stderr or "enabled" not in result.stdout:
             continue
@@ -37,7 +36,7 @@ def tls(directory_path, config, hosts = "hosts.txt"):
                 protocol_line = False
                 cipher_line = True
                 continue
-            if "erver Key Exchange Group(s)" in line:
+            if "Server Key Exchange Group(s)" in line:
                 cipher_line = False
                 continue
             if protocol_line:
@@ -67,7 +66,7 @@ def tls(directory_path, config, hosts = "hosts.txt"):
                     weak_ciphers[host].append(re.sub(r'^\x1b\[[0-9;]*m', '', cipher))
                     continue
                 bit = line.split()[2] # If it is a green output and bit is low
-                if "[33m]" in bit:
+                if "[33m" in bit:
                     if host not in weak_bits:
                         weak_bits[host] = []
                     weak_bits[host].append(re.sub(r'^\x1b\[[0-9;]*m', '', bit) + "->" + re.sub(r'^\x1b\[[0-9;]*m', '', cipher))
