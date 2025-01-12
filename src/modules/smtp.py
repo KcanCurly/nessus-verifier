@@ -28,7 +28,8 @@ def userenum(directory_path, config, hosts = "hosts.txt"):
         try:
             answer = smtp.docmd("MAIL FROM:", "test@test.com")
             if "STARTTLS" in answer[1].decode():
-                smtp.docmd("starttls")
+                smtp = smtplib.SMTP(ip, port, timeout=5)
+                smtp.starttls()
                 answer = smtp.docmd("MAIL FROM:", "test@test.com")
             print(answer)
             answer = smtp.docmd("RCPT TO:", f"<a@{config["smtp"]["Domain"]}>")
