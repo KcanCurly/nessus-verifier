@@ -151,8 +151,8 @@ def open_relay(directory_path, config, hosts = "hosts.txt"):
                 print("Er: ", er)
                 pass
                 
-        except Exception as error:
-            if "STARTTLS" in error:
+        except smtplib.SMTPSenderRefused as ref: # It could be that server requires starttls
+            if "STARTTLS" in ref.smtp_error:
                 try:
                     smtp = smtplib.SMTP(ip, port, timeout=5)
                     smtp.starttls()
@@ -162,8 +162,7 @@ def open_relay(directory_path, config, hosts = "hosts.txt"):
                     vuln[f"{ip}:{port}"].append(tag)
                 except: pass
             else: pass
-            print("Error: ", error, " ", type(error))
-            pass
+        except: pass
     
     
     client1 = config["smtp"]["Client1"]
