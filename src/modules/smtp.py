@@ -166,9 +166,12 @@ def open_relay(directory_path, config, hosts = "hosts.txt"):
             print(f"\t{key}: {", ".join(value)}")
     
             
-def check(directory_path, config, hosts = "hosts.txt"):
+def check(directory_path, config, verbose, hosts = "hosts.txt"):
+    if verbose: print("Starting TLS Check")
     tls_check(directory_path, config, hosts)
+    if verbose: print("Starting TLS Version/Cipher/Bit Check")
     tls(directory_path, config, hosts)
+    if verbose: print("Starting Open Relay Test")
     open_relay(directory_path, config, hosts)
 
 def main():
@@ -176,6 +179,7 @@ def main():
     parser.add_argument("-d", "--directory", type=str, required=False, help="Directory to process (Default = current directory).")
     parser.add_argument("-f", "--filename", type=str, required=False, help="File that has host:port information.")
     parser.add_argument("-c", "--config", type=str, required=False, help="Config file.")
+    parser.add_argument("-v", "--verbose", action="store_true", help="Verbose")
     
     
     args = parser.parse_args()
@@ -184,8 +188,7 @@ def main():
         args.config = os.path.join(Path(__file__).resolve().parent.parent, "nvconfig.config")
         
     config = configparser.ConfigParser()
-    c = config.read(args.config)
-    print(c)
+    config.read(args.config)
         
     
-    check(args.directory or os.curdir, config, args.filename or "hosts.txt")
+    check(args.directory or os.curdir, config, args.verbose, args.filename or "hosts.txt")
