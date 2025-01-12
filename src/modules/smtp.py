@@ -128,6 +128,7 @@ def open_relay(directory_path, config, hosts = "hosts.txt"):
         subject = eval(config["smtp"]["Subject"])
         message = eval(config["smtp"]["Message"])
         message = f'Subject: {subject}\n\n{message}'
+        print(message)
         try:
             smtp = smtplib.SMTP(ip, port, timeout=5)
             smtp.sendmail(sender,receiver,message)
@@ -135,7 +136,8 @@ def open_relay(directory_path, config, hosts = "hosts.txt"):
                 vuln[f"{ip}:{port}"] = []
             vuln[f"{ip}:{port}"].append(tag)
         except Exception as error:
-            pass
+            print(error)
+            # pass
     
     
     client1 = config["smtp"]["Client1"]
