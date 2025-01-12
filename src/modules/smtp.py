@@ -11,7 +11,6 @@ def userenum(directory_path, config, hosts = "hosts.txt"):
     def check_enum():
         try:
             answer = smtp.docmd("VRFY", "test")
-            print(answer)
             if answer[0] == 250 or "unknown" in answer[1].decode().lower():
                 if host not in vuln:
                     vuln[host] = []
@@ -20,7 +19,6 @@ def userenum(directory_path, config, hosts = "hosts.txt"):
         
         try:
             answer = smtp.docmd("EXPN", "test")
-            print(answer)
             if answer[0] == 250 or "unknown" in answer[1].decode().lower():
                 if host not in vuln:
                     vuln[host] = []
@@ -28,7 +26,8 @@ def userenum(directory_path, config, hosts = "hosts.txt"):
         except Exception as e: print("4 ", e)
         
         try:
-            smtp.docmd("MAIL FROM:", "test@test.com")
+            answer = smtp.docmd("MAIL FROM:", "test@test.com")
+            print(answer)
             answer = smtp.docmd("RCPT TO:", f"<a@{config["smtp"]["Domain"]}>")
             print(answer)
             if answer[0] == 250 or "unknown" in answer[1].decode().lower():
@@ -44,13 +43,11 @@ def userenum(directory_path, config, hosts = "hosts.txt"):
         ip = host.split(":")[0]
         port  = host.split(":")[1]
         try:
-            print("a")
             smtp = smtplib.SMTP(ip, port, timeout=5)
             smtp.helo()
             check_enum()
         except smtplib.SMTPServerDisconnected as t: # It could be that server requires TLS/SSL so we need to connect again with TLS
             try:
-                print("b")
                 smtp = smtplib.SMTP_SSL(ip, port, timeout=5)
                 smtp.helo()
                 check_enum()
@@ -59,7 +56,6 @@ def userenum(directory_path, config, hosts = "hosts.txt"):
         except smtplib.SMTPSenderRefused as ref: # It could be that server requires starttls
             print(ref.smtp_error.decode())
             if "STARTTLS" in ref.smtp_error.decode():
-                print("c")
                 try:
                     smtp = smtplib.SMTP(ip, port, timeout=5)
                     smtp.starttls()
