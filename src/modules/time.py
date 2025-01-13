@@ -14,7 +14,7 @@ def check(directory_path, config, verbose, hosts = "hosts.txt"):
     
     for host in hosts:
         ip = host.split(":")[0]
-        port = host.split(":")[0]
+        port = host.split(":")[1]
         try:
         # Create a socket for the Time Protocol (TCP)
             with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
