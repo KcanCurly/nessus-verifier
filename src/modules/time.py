@@ -24,7 +24,7 @@ def check(directory_path, config, verbose, hosts = "hosts.txt"):
                 # Receive the 4-byte binary time response
                 data = s.recv(4)
                 if len(data) != 4:
-                    # print("Invalid response length.")
+                    print("Invalid response length.")
                     return
                 
                 # Unpack the 4-byte response as an unsigned integer
@@ -36,10 +36,10 @@ def check(directory_path, config, verbose, hosts = "hosts.txt"):
                 # Display the time in human-readable format
                 vuln[host] = f"Server time: {time.ctime(unix_time)}"
         except socket.timeout:
-            # print("Connection timed out.")
+            print("Connection timed out.")
             pass
         except Exception as e:
-            # print(f"An error occurred: {e}")
+            print(f"An error occurred: {e}")
             pass
     
     if len(vuln):
