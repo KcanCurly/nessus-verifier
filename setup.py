@@ -34,6 +34,7 @@ setup(
             "nv-telnet=src.modules.telnet:main",
             "nv-smtp=src.modules.smtp:main",
             "nv-ms-exchange=src.modules.ms_exchange:main",
+            "nv-time=src.modules.time:main",
         ],
     },
 )

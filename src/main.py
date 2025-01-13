@@ -1,6 +1,5 @@
 import xml.etree.ElementTree as ET
 import os
-from src.modules import ssh
 import argparse
 
 # Function to parse the Nessus file (.nessus format) and extract services and associated hosts
@@ -53,11 +52,7 @@ def save_services_and_hosts(services):
                 f.write(f"{host}\n")
                 
 def handle_services():
-    cdir = os.curdir
-    
-    if os.path.isdir(cdir+ "/ports/ssh"):
-        ssh.check(cdir + "/ports/ssh")
-
+    pass
 # Main function to execute the script
 def main():
     parser = argparse.ArgumentParser(description="nessus-verifier.")
