@@ -5,7 +5,7 @@ import struct
 import time
 from pathlib import Path
 import os
-from utilities import get_hosts_from_file
+from src.utilities import get_hosts_from_file
 
 
 def check(directory_path, config, verbose, hosts = "hosts.txt"):
@@ -43,7 +43,9 @@ def check(directory_path, config, verbose, hosts = "hosts.txt"):
             pass
     
     if len(vuln):
-        print("")
+        print("Time protocol detected:")
+        for k,v in vuln.items:
+            print(f"{k} -> {v}")
 
 def main():
     parser = argparse.ArgumentParser(description="Time Protocol module of nessus-verifier.")

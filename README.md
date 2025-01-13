@@ -55,6 +55,8 @@ nv-ftp ports/ftp [directory path] [filename of the hosts]
   * If TLS is used check TSL/SSL versions and ciphers and bits
   * Checks if it is open relay (Please check configuration file to specify e-mails)
   * Checks if user enum is possible with VRFY,EXPN,RCPT
+* Time
+  * Checks the usage and prints out the server time
 
 
 ## Implemented Applications
