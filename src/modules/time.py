@@ -19,7 +19,7 @@ def check(directory_path, config, verbose, hosts = "hosts.txt"):
         # Create a socket for the Time Protocol (TCP)
             with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                 s.settimeout(3)  # Set a timeout for the connection
-                s.connect((ip, port))  # Connect to the server
+                s.connect((ip, int(port)))  # Connect to the server
                 
                 # Receive the 4-byte binary time response
                 data = s.recv(4)
