@@ -34,7 +34,7 @@ def check(directory_path, config, verbose, hosts = "hosts.txt"):
                 unix_time = server_time - 2208988800  # Subtract Time Protocol epoch (1900) offset
                 
                 # Display the time in human-readable format
-                vuln[host] = f"Server time: {time.ctime(unix_time)}"
+                vuln[host] = f"{time.ctime(unix_time)}"
         except socket.timeout:
             print("Connection timed out.")
             pass
