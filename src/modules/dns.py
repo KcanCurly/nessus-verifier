@@ -21,7 +21,7 @@ def recursion(directory_path, config, verbose, hosts = "hosts.txt"):
         port = host.split(":")[1]
 
         try:
-            response = dns.query.udp(query, ip, port=port ,timeout=5)
+            response = dns.query.udp(query, ip, port=int(port), timeout=3)
             
             # Check if the Recursion Available (RA) flag is set in the response
             if response.flags & dns.flags.RA:
