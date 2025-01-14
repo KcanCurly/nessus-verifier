@@ -45,7 +45,7 @@ def check(directory_path, config, verbose, hosts = "hosts.txt"):
     if len(vuln):
         print("Time protocol detected:")
         for k,v in vuln.items():
-            print(f"{k} -> {v}")
+            print(f"\t{k} -> {v}")
 
 def main():
     parser = argparse.ArgumentParser(description="Time Protocol module of nessus-verifier.")

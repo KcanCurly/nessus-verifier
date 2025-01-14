@@ -57,6 +57,10 @@ nv-ftp ports/ftp [directory path] [filename of the hosts]
   * Checks if user enum is possible with VRFY,EXPN,RCPT
 * Time
   * Checks the usage and prints out the server time
+* TACACS
+  * (FUTURE)
+* DNS
+
 
 
 ## Implemented Applications
