@@ -8,7 +8,7 @@ from src.utilities import get_hosts_from_file
 
 def recursion(directory_path, config, verbose, hosts = "hosts.txt"):
     vuln = []
-    hosts = get_hosts_from_file
+    hosts = get_hosts_from_file(hosts)
     
     # Create a DNS query message
     query = dns.message.make_query('google.com.', dns.rdatatype.A)
