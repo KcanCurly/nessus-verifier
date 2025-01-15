@@ -37,7 +37,7 @@ def recursion(directory_path, config, args, hosts = "hosts.txt"):
     if len(vuln) > 0:
         print("Recursion is SUPPORTED on Hosts:")
         for v in vuln:
-            print(v)
+            print(f"\t{v}")
 
 
 def axfr(directory_path, config, args, hosts):
@@ -71,9 +71,9 @@ def axfr(directory_path, config, args, hosts):
         try:
             zone = dns.zone.from_xfr(dns.query.xfr(ip, domain, port=int(port), timeout=3))
             vuln.append(host)
-            if args.n > 0 and len(zone.nodes) > args.n:
+            if args.n > 0 and len(zone.nodes.items()) > args.n:
                 print(f"More than {args.n} records were found, printing up to {args.n}")
-            else: args.n = len(zone.nodes)
+            else: args.n = len(zone.nodes.items())
             for i, (name, node) in enumerate(zone.nodes.items()):
                 print(zone[name].to_text(name))
                 if i + 1 >= args.n:
