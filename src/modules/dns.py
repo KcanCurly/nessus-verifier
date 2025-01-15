@@ -63,7 +63,6 @@ def axfr(directory_path, config, args, hosts):
                     domain = rdata.to_text()
                     parts = domain.split('.')
                     domain = '.'.join(parts[-3:])
-                    print(f"PTR Result: {ip} -> {domain}")
             except Exception as e:
                 print("Error: ", e)
                 continue
@@ -72,7 +71,7 @@ def axfr(directory_path, config, args, hosts):
         try:
             zone = dns.zone.from_xfr(dns.query.xfr(ip, domain, port=int(port), timeout=3))
             vuln.append(host)
-            if args.n and len(zone.nodes) > args.n:
+            if args.n > 0 and len(zone.nodes) > args.n:
                 print(f"More than {args.n} records were found, printing up to {args.n}")
             else: args.n = len(zone.nodes)
             for i, (name, node) in enumerate(zone.nodes.items()):
