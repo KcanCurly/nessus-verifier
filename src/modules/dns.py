@@ -48,20 +48,26 @@ def axfr(directory_path, config, domain, verbose, hosts):
         
         # If we don't have domain, we first need to get domain from ptr record
         if not domain:
-            reverse_name = dns.reversename.from_address(ip)
-            
-            # Perform the PTR query
-            resolver = dns.resolver.Resolver()
-            resolver.nameservers = [ip]
-            resolver.port = int(port)  # Specify the port for the resolver
-            
-            answers = resolver.resolve(reverse_name, 'PTR')
-            
-            print(answers)
+            try:
+                reverse_name = dns.reversename.from_address(ip)
+                
+                # Perform the PTR query
+                resolver = dns.resolver.Resolver()
+                resolver.nameservers = [ip]
+                resolver.port = int(port)  # Specify the port for the resolver
+                
+                answers = resolver.resolve(reverse_name, 'PTR')
+                
+                for rdata in answers:
+                    domain = rdata.to_text()
+                    print(f"PTR Result: {ip} -> {domain}")
+            except Exception as e:
+                print("Error: ", e)
+                continue
         
         
         
-        zone = dns.zone.from_xfr(dns.query.xfr(ip, "a", port=int(port), timeout=3))
+        zone = dns.zone.from_xfr(dns.query.xfr(ip, domain, port=int(port), timeout=3))
 
 def check(directory_path, config, domain, verbose, hosts):
     recursion(directory_path, config, verbose, hosts)
