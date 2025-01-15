@@ -76,7 +76,7 @@ def axfr(directory_path, config, args, hosts):
                 print(f"\tMore than {args.number} records were found, printing up to {args.number}")
             else: args.number = len(zone.nodes.items())
             for i, (name, node) in enumerate(zone.nodes.items()):
-                print("\t", zone[name].to_text(name))
+                print("\tz", zone[name].to_text(name))
                 if i + 1 >= args.number:
                     break
         except Exception as e: print(e)
