@@ -122,7 +122,7 @@ def update(directory_path, config, args, hosts):
             u = dns.update.Update(domain)
             u.add("nessus-verifier-test", 3600, "A", "1.1.1.254")
             r = dns.query.tcp(u, ip, port=int(port))
-            print(r)
+            print(r.rcode)
             vuln.append(host)
         except Exception as e: print("Error: ", e)
         
