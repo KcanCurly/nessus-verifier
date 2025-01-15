@@ -71,17 +71,18 @@ def axfr(directory_path, config, args, hosts):
         try:
             zone = dns.zone.from_xfr(dns.query.xfr(ip, domain, port=int(port), timeout=3))
             vuln.append(host)
+            print(f"\nZone transfer on {host} was successful:")
             if args.number > 0 and len(zone.nodes.items()) > args.number:
-                print(f"More than {args.number} records were found, printing up to {args.number}")
+                print(f"\tMore than {args.number} records were found, printing up to {args.number}")
             else: args.number = len(zone.nodes.items())
             for i, (name, node) in enumerate(zone.nodes.items()):
-                print(zone[name].to_text(name))
+                print("\t", zone[name].to_text(name))
                 if i + 1 >= args.number:
                     break
         except Exception as e: print(e)
         
     if len(vuln) > 0:
-        print("Zone Transfer was successful on Hosts:")
+        print("Zone Transfer Was Successful on Hosts:")
         for v in vuln:
             print(f"\t{v}")
 
