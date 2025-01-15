@@ -7,9 +7,10 @@ import configparser
 
 import dns.resolver
 import dns.reversename
+import dns.zone
 from src.utilities import get_hosts_from_file
 
-def recursion(directory_path, config, verbose, hosts = "hosts.txt"):
+def recursion(directory_path, config, args, hosts = "hosts.txt"):
     vuln = []
     hosts = get_hosts_from_file(hosts)
     
@@ -39,7 +40,7 @@ def recursion(directory_path, config, verbose, hosts = "hosts.txt"):
             print(v)
 
 
-def axfr(directory_path, config, domain, verbose, hosts):
+def axfr(directory_path, config, args, hosts):
     vuln = []
     hosts = get_hosts_from_file(hosts)
     for host in hosts:
@@ -47,7 +48,7 @@ def axfr(directory_path, config, domain, verbose, hosts):
         port = host.split(":")[1]
         
         # If we don't have domain, we first need to get domain from ptr record
-        if not domain:
+        if not args.domain:
             try:
                 reverse_name = dns.reversename.from_address(ip)
                 
@@ -68,18 +69,34 @@ def axfr(directory_path, config, domain, verbose, hosts):
                 continue
         
         
+        try:
+            zone = dns.zone.from_xfr(dns.query.xfr(ip, domain, port=int(port), timeout=3))
+            vuln.append(host)
+            if args.n and len(zone.nodes) > args.n:
+                print(f"More than {args.n} records were found, printing up to {args.n}")
+            else: args.n = len(zone.nodes)
+            for i, (name, node) in enumerate(zone.nodes.items()):
+                print(zone[name].to_text(name))
+                if i + 1 >= args.n:
+                    break
+        except: pass
         
-        zone = dns.zone.from_xfr(dns.query.xfr(ip, domain, port=int(port), timeout=3))
+    if len(vuln) > 0:
+        print("Zone Transfer was successful on Hosts:")
+        for v in vuln:
+            print(f"\t{v}")
 
-def check(directory_path, config, domain, verbose, hosts):
-    recursion(directory_path, config, verbose, hosts)
-    axfr(directory_path, config, domain, verbose, hosts)
+
+def check(directory_path, config, args, hosts):
+    recursion(directory_path, config, args, hosts)
+    axfr(directory_path, config, args, hosts)
 
 def main():
     parser = argparse.ArgumentParser(description="Time Protocol module of nessus-verifier.")
     parser.add_argument("-d", "--directory", type=str, required=False, help="Directory to process (Default = current directory).")
     parser.add_argument("-f", "--filename", type=str, required=False, help="File that has host:port information.")
     parser.add_argument("-c", "--config", type=str, required=False, help="Config file.")
+    parser.add_argument("-n", "--number of amount", default=0, type=int, required=False, help="Config file.")
     parser.add_argument("--domain", type=str, required=False, help="Config file.")
     parser.add_argument("-v", "--verbose", action="store_true", help="Verbose")
     
@@ -93,4 +110,4 @@ def main():
     config.read(args.config)
         
     
-    check(args.directory or os.curdir, config, args.domain, args.verbose, args.filename or "hosts.txt")
+    check(args.directory or os.curdir, config, args, args.filename or "hosts.txt")
