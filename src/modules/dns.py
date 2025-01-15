@@ -71,13 +71,12 @@ def axfr(directory_path, config, args, hosts):
         try:
             zone = dns.zone.from_xfr(dns.query.xfr(ip, domain, port=int(port), timeout=3))
             vuln.append(host)
-            if args.n > 0 and len(zone.nodes.items()) > args.n:
-                print(f"More than {args.n} records were found, printing up to {args.n}")
-            else: args.n = len(zone.nodes.items())
+            if args.number > 0 and len(zone.nodes.items()) > args.number:
+                print(f"More than {args.number} records were found, printing up to {args.number}")
+            else: args.number = len(zone.nodes.items())
             for i, (name, node) in enumerate(zone.nodes.items()):
-                print("z")
                 print(zone[name].to_text(name))
-                if i + 1 >= args.n:
+                if i + 1 >= args.number:
                     break
         except Exception as e: print(e)
         
@@ -96,7 +95,7 @@ def main():
     parser.add_argument("-d", "--directory", type=str, required=False, help="Directory to process (Default = current directory).")
     parser.add_argument("-f", "--filename", type=str, required=False, help="File that has host:port information.")
     parser.add_argument("-c", "--config", type=str, required=False, help="Config file.")
-    parser.add_argument("-n", "--number of amount", default=0, type=int, required=False, help="Config file.")
+    parser.add_argument("-n", "--number", default=0, type=int, required=False, help="Config file.")
     parser.add_argument("--domain", type=str, required=False, help="Config file.")
     parser.add_argument("-v", "--verbose", action="store_true", help="Verbose")
     
