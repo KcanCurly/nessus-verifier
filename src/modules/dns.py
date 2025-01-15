@@ -86,7 +86,8 @@ def axfr(directory_path, config, args, hosts):
             print(f"\t{v}")
             
         print("Printing last one as an example")
-        subprocess.run("dig", f"@{last_host}", last_domain)
+        cmd = ["dig", f"@{last_host}", last_domain]
+        subprocess.run(cmd)
         
 
 def update(directory_path, config, args, hosts):
