@@ -53,7 +53,7 @@ def axfr(directory_path, config, domain, verbose, hosts):
             # Perform the PTR query
             resolver = dns.resolver.Resolver()
             resolver.nameservers = [ip]
-            resolver.port = port  # Specify the port for the resolver
+            resolver.port = int(port)  # Specify the port for the resolver
             
             answers = resolver.resolve(reverse_name, 'PTR')
             
