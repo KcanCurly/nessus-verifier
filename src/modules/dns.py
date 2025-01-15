@@ -4,7 +4,7 @@ from pathlib import Path
 import dns.query
 import dns.message
 import configparser
-
+import subprocess
 import dns.resolver
 import dns.reversename
 import dns.update
@@ -44,6 +44,8 @@ def recursion(directory_path, config, args, hosts = "hosts.txt"):
 def axfr(directory_path, config, args, hosts):
     vuln = []
     hosts = get_hosts_from_file(hosts)
+    last_host = ""
+    last_domain = ""
     for host in hosts:
         ip = host.split(":")[0]
         port = host.split(":")[1]
@@ -72,20 +74,20 @@ def axfr(directory_path, config, args, hosts):
         try:
             zone = dns.zone.from_xfr(dns.query.xfr(ip, domain, port=int(port), timeout=3))
             vuln.append(host)
-            print(f"\nZone transfer on {host} was successful:")
-            if args.number > 0 and len(zone.nodes.items()) > args.number:
-                print(f"\tMore than {args.number} records were found, printing up to {args.number}")
-            else: args.number = len(zone.nodes.items())
-            for i, (name, node) in enumerate(zone.nodes.items()):
-                print("\tz", zone[name].to_text(name))
-                if i + 1 >= args.number:
-                    break
+            print(f"\nZone transfer on {host} was successful")
+            last_host = host
+            last_domain = domain
+
         except Exception as e: print(e)
         
     if len(vuln) > 0:
         print("Zone Transfer Was Successful on Hosts:")
         for v in vuln:
             print(f"\t{v}")
+            
+        print("Printing last one as an example")
+        subprocess.run("dig", f"@{last_host}", last_domain)
+        
 
 def update(directory_path, config, args, hosts):
     vuln = []
@@ -116,7 +118,7 @@ def update(directory_path, config, args, hosts):
         try:
             u = dns.update.Update(domain)
             u.add("nessus-verifier-test", 3600, "A", "1.1.1.254")
-            r = dns.query.tcp(u, ip, port=port)
+            r = dns.query.tcp(u, int(ip), port=port)
             vuln.append(host)
         except Exception as e: print("Error: ", e)
         
