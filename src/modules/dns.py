@@ -79,7 +79,7 @@ def axfr(directory_path, config, args, hosts):
                 print(zone[name].to_text(name))
                 if i + 1 >= args.n:
                     break
-        except: pass
+        except Exception as e: print(e)
         
     if len(vuln) > 0:
         print("Zone Transfer was successful on Hosts:")
