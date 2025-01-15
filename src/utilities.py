@@ -9,3 +9,18 @@ def get_hosts_from_file(name):
         with open(name, "r") as file:
             return [line.strip() for line in file if line.strip()] 
     except: return None
+    
+def confirm_prompt(prompt="Are you sure? [y/N]: "):
+    while True:
+        # Display the prompt and get user input
+        response = input(prompt).strip().lower()
+        # Default to "n" if input is empty
+        if response == "":
+            return False
+        # Handle valid inputs
+        elif response in ["y", "yes"]:
+            return True
+        elif response in ["n", "no"]:
+            return False
+        else:
+            print("Please respond with 'y/yes' or 'n/no'.")

@@ -5,6 +5,7 @@ import os
 from pathlib import Path
 import re
 import subprocess
+from src.utilities import confirm_prompt
 
 
 def userenum(directory_path, config, hosts = "hosts.txt"):
@@ -187,7 +188,7 @@ def tls_check(directory_path, config, hosts = "hosts.txt"):
         for t in tls:
             print(f"\t{t}")
             
-def open_relay(directory_path, config, hosts = "hosts.txt"):
+def open_relay(directory_path, config, confirm, hosts = "hosts.txt"):
     vuln = {}
     with open(os.path.join(directory_path, hosts), "r") as file:
         hosts = [line.strip() for line in file if line.strip()] 
@@ -234,6 +235,18 @@ def open_relay(directory_path, config, hosts = "hosts.txt"):
     fake_out = config["smtp"]["Fake_out"]
     temp = config["smtp"]["Temp"]
     
+    if not confirm:
+        print(f"Client1 is {client1}")
+        print(f"Client2 is {client2}")
+        print(f"Fake in is {fake_in}")
+        print(f"Real out is {real_out}")
+        print(f"Fake out is {fake_out}")
+        print(f"Temp is {temp}")
+        print("Note: You can bypass this prompt by adding --confirm")
+        if not confirm_prompt("Do you want to continue with those emails? [y/N]: "):
+            return
+        
+    
     
     for host in hosts:
         ip = host
@@ -259,13 +272,13 @@ def open_relay(directory_path, config, hosts = "hosts.txt"):
             print(f"\t{key}: {", ".join(value)}")
     
             
-def check(directory_path, config, verbose, hosts = "hosts.txt"):
+def check(directory_path, config, confirm, verbose, hosts = "hosts.txt"):
     if verbose: print("Starting TLS Check")
     tls_check(directory_path, config, hosts)
     if verbose: print("\nStarting TLS Version/Cipher/Bit Check")
     tls(directory_path, config, hosts)
     if verbose: print("\nStarting Open Relay Test")
-    open_relay(directory_path, config, hosts)
+    open_relay(directory_path, config, confirm, hosts)
     if verbose: print("\nStarting User Enumeration Test")
     userenum(directory_path, config, hosts)
 
@@ -274,6 +287,7 @@ def main():
     parser.add_argument("-d", "--directory", type=str, required=False, help="Directory to process (Default = current directory).")
     parser.add_argument("-f", "--filename", type=str, required=False, help="File that has host:port information.")
     parser.add_argument("-c", "--config", type=str, required=False, help="Config file.")
+    parser.add_argument("--confirm", action="store_true", help="Verbose")
     parser.add_argument("-v", "--verbose", action="store_true", help="Verbose")
     
     
@@ -286,4 +300,4 @@ def main():
     config.read(args.config)
         
     
-    check(args.directory or os.curdir, config, args.verbose, args.filename or "hosts.txt")
+    check(args.directory or os.curdir, config, args.confirm, args.verbose, args.filename or "hosts.txt")
