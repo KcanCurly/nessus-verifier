@@ -7,6 +7,7 @@ import configparser
 
 import dns.resolver
 import dns.reversename
+import dns.update
 import dns.zone
 from src.utilities import get_hosts_from_file
 
@@ -86,10 +87,46 @@ def axfr(directory_path, config, args, hosts):
         for v in vuln:
             print(f"\t{v}")
 
+def update(directory_path, config, args, hosts):
+    vuln = []
+    hosts = get_hosts_from_file(hosts)
+    for host in hosts:
+        ip = host.split(":")[0]
+        port = host.split(":")[1]
+        
+        # If we don't have domain, we first need to get domain from ptr record
+        if not args.domain:
+            try:
+                reverse_name = dns.reversename.from_address(ip)
+                
+                # Perform the PTR query
+                resolver = dns.resolver.Resolver()
+                resolver.nameservers = [ip]
+                resolver.port = int(port)  # Specify the port for the resolver
+                
+                answers = resolver.resolve(reverse_name, 'PTR')
+                
+                for rdata in answers:
+                    domain = rdata.to_text()
+                    parts = domain.split('.')
+                    domain = '.'.join(parts[-3:])
+            except Exception as e:
+                print("Error: ", e)
+                continue
+        try:
+            u = dns.update.Update(domain)
+            u.add("nessus-verifier-test", 3600, "A", "1.1.1.254")
+            r = dns.query.tcp(u, ip, port=port)
+            vuln.append(host)
+        except Exception as e: print("Error: ", e)
+        
+    if len(vuln) > 0:
+        print("Record for")
 
 def check(directory_path, config, args, hosts):
     recursion(directory_path, config, args, hosts)
     axfr(directory_path, config, args, hosts)
+    update(directory_path, config, args, hosts)
 
 def main():
     parser = argparse.ArgumentParser(description="Time Protocol module of nessus-verifier.")
