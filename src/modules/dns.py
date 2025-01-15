@@ -60,6 +60,8 @@ def axfr(directory_path, config, domain, verbose, hosts):
                 
                 for rdata in answers:
                     domain = rdata.to_text()
+                    parts = domain.split('.')
+                    domain = '.'.join(parts[-2:])
                     print(f"PTR Result: {ip} -> {domain}")
             except Exception as e:
                 print("Error: ", e)
