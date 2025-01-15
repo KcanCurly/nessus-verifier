@@ -44,7 +44,8 @@ def recursion(directory_path, config, args, hosts = "hosts.txt"):
 def axfr(directory_path, config, args, hosts):
     vuln = []
     hosts = get_hosts_from_file(hosts)
-    last_host = ""
+    last_ip = ""
+    last_port = ""
     last_domain = ""
     for host in hosts:
         ip = host.split(":")[0]
@@ -75,18 +76,19 @@ def axfr(directory_path, config, args, hosts):
             zone = dns.zone.from_xfr(dns.query.xfr(ip, domain, port=int(port), timeout=3))
             vuln.append(host)
             print(f"\nZone transfer on {host} was successful")
-            last_host = host
+            last_port = port
+            last_ip = ip
             last_domain = domain
 
         except Exception as e: print(e)
         
     if len(vuln) > 0:
-        print("Zone Transfer Was Successful on Hosts:")
+        print("\nZone Transfer Was Successful on Hosts:")
         for v in vuln:
             print(f"\t{v}")
             
         print("Printing last one as an example")
-        cmd = ["dig", f"@{last_host}", last_domain]
+        cmd = ["dig", "-p", last_port, f"@{last_ip}", last_domain]
         subprocess.run(cmd)
         
 
