@@ -72,7 +72,7 @@ def main():
     parser.add_argument("-d", "--directory", type=str, required=False, help="Directory to process (Default = current directory).")
     parser.add_argument("-f", "--filename", type=str, required=False, help="File that has host:port information.")
     parser.add_argument("-c", "--config", type=str, required=False, help="Config file.")
-    parser.add_argument("-d", "--domain", type=str, required=False, help="Config file.")
+    parser.add_argument("--domain", type=str, required=False, help="Config file.")
     parser.add_argument("-v", "--verbose", action="store_true", help="Verbose")
     
     
