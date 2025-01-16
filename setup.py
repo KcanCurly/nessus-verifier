@@ -13,6 +13,7 @@ setup(
     install_requires=[
         "requests",
         "dnspython",
+        "dnslib",
     ],
     classifiers=[
         "Programming Language :: Python :: 3",
