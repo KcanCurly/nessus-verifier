@@ -12,6 +12,7 @@ import dns.update
 import dns.zone
 from dnslib import DNSRecord, DNSHeader, RR, A
 import socket
+import traceback
 from src.utilities import get_hosts_from_file
 
 def recursion(directory_path, config, args, hosts = "hosts.txt"):
@@ -195,13 +196,15 @@ def cacheposion(directory_path, config, args, hosts):
             sock.sendto(fake_response_packet, (ip, port))
             sock.close()
             print(f"Sent spoofed response for {"lab.com"} -> {ip}")
-        except Exception as e: print("Cacheposion function error: ", e)
+        except Exception as e: 
+            traceback.print_exc()
+            print("Cacheposion function error: ", e)
 
 def check(directory_path, config, args, hosts):
     recursion(directory_path, config, args, hosts)
     axfr(directory_path, config, args, hosts)
     update(directory_path, config, args, hosts)
-    any(directory_path, config, args, hosts)
+    # any(directory_path, config, args, hosts)
     cacheposion(directory_path, config, args, hosts)
 
 def main():
