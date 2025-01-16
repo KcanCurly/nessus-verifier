@@ -2,6 +2,7 @@ import subprocess
 import argparse
 import os
 import re
+from src.utilities import confirm_prompt
 
 protocol1 = []
 versions = {}
@@ -279,7 +280,7 @@ def check(directory_path, hosts = "hosts.txt"):
             print(f"\t{k}")
             
             
-            
+    if not confirm_prompt("Do you wish to continue for brute force?"): return        
     ######################################
 
     with open(os.path.join(directory_path, "creds.txt"), "w") as file:

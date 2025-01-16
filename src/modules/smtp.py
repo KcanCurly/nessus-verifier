@@ -243,7 +243,7 @@ def open_relay(directory_path, config, confirm, hosts = "hosts.txt"):
         print(f"Fake out is {fake_out}")
         print(f"Temp is {temp}")
         print("Note: You can bypass this prompt by adding --confirm")
-        if not confirm_prompt("Do you want to continue with those emails? [y/N]: "):
+        if not confirm_prompt("Do you want to continue with those emails?"):
             return
         
     

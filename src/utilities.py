@@ -10,10 +10,11 @@ def get_hosts_from_file(name):
             return [line.strip() for line in file if line.strip()] 
     except: return None
     
-def confirm_prompt(prompt="Are you sure? [y/N]: "):
+def confirm_prompt(prompt="Are you sure?", suppress = False):
+    extra = " [y/N]: " if not suppress else ""
     while True:
         # Display the prompt and get user input
-        response = input(prompt).strip().lower()
+        response = input(prompt + extra).strip().lower()
         # Default to "n" if input is empty
         if response == "":
             return False

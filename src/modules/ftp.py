@@ -7,6 +7,7 @@ import os
 import subprocess
 import re
 from concurrent.futures import ThreadPoolExecutor
+from src.utilities import confirm_prompt
 
 creds = [
 "anonymous:anonymous",
@@ -282,6 +283,7 @@ def check(directory_path, hosts = "hosts.txt"):
             
     # bruteforce
     print()
+    if not confirm_prompt("Do you wish to continue for brute force?"): return   
     brute(hosts)
             
 

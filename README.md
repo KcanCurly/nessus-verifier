@@ -60,7 +60,10 @@ nv-ftp ports/ftp [directory path] [filename of the hosts]
 * TACACS
   * (FUTURE)
 * DNS
-
+  * Check if recursion is enabled
+  * Check if zone transfer(AXFR) is possible
+  * Check if we can add a record to the dns server
+  * Check if ANY query reveals more than just NS records
 
 
 ## Implemented Applications
