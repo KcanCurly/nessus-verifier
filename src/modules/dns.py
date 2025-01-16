@@ -138,36 +138,37 @@ def any(directory_path, config, args, hosts):
     vuln = []
     hosts = get_hosts_from_file(hosts)
     for host in hosts:
-        ip = host.split(":")[0]
-        port = host.split(":")[1]
-        
-        reverse_name = dns.reversename.from_address(ip)
-        
-        resolver = dns.resolver.Resolver()
-        resolver.nameservers = [ip]
-        resolver.port = int(port)  # Specify the port for the resolver
-        
-        answers = resolver.resolve(reverse_name, 'PTR')
-                
-        for rdata in answers:
-            domain = rdata.to_text()
-            parts = domain.split('.')
-            domain = '.'.join(parts[-3:])
-        
-        answer = resolver.resolve(domain, "ANY")
-        
-        # Normally we should get 
-        a_records = []
-        ns_records = []
-        for rdata in answer:
-            if rdata.rdtype == dns.rdatatype.A:
-                a_records.append(rdata)
-            elif rdata.rdtype == dns.rdatatype.NS:
-                ns_records.append(rdata)
-                
-        if len(a_records) > len(ns_records):
-            vuln.append(host)
+        try:
+            ip = host.split(":")[0]
+            port = host.split(":")[1]
             
+            reverse_name = dns.reversename.from_address(ip)
+            
+            resolver = dns.resolver.Resolver()
+            resolver.nameservers = [ip]
+            resolver.port = int(port)  # Specify the port for the resolver
+            
+            answers = resolver.resolve(reverse_name, 'PTR')
+                    
+            for rdata in answers:
+                domain = rdata.to_text()
+                parts = domain.split('.')
+                domain = '.'.join(parts[-3:])
+            
+            answer = resolver.resolve(domain, "ANY")
+            
+            # Normally we should get 
+            a_records = []
+            ns_records = []
+            for rdata in answer:
+                if rdata.rdtype == dns.rdatatype.A:
+                    a_records.append(rdata)
+                elif rdata.rdtype == dns.rdatatype.NS:
+                    ns_records.append(rdata)
+                    
+            if len(a_records) > len(ns_records):
+                vuln.append(host)
+        except Exception as e: print("ANY function error: ", e)    
                 
     if len(vuln) > 0:
         print("There were more 'A' records than 'NS' Records on Hosts, check manually for 'ANY' query:")
@@ -179,26 +180,29 @@ def cacheposion(directory_path, config, args, hosts):
     hosts = get_hosts_from_file(hosts)
     
     for host in hosts:
-        ip = host.split(":")[0]
-        port = host.split(":")[1]    
-        fake_response = DNSRecord(
-            DNSHeader(id=12345, qr=1, aa=1, ra=1),
-            q=DNSRecord.question("lab.com"),
-            a=RR("lab.com", rdata=A("1.111.111.111"), ttl=60)
-        )
+        try:
+            ip = host.split(":")[0]
+            port = host.split(":")[1]    
+            fake_response = DNSRecord(
+                DNSHeader(id=12345, qr=1, aa=1, ra=1),
+                q=DNSRecord.question("lab.com"),
+                a=RR("lab.com", rdata=A("1.111.111.111"), ttl=60)
+            )
 
-        # Send the spoofed response to the resolver
-        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        fake_response_packet = fake_response.pack()
-        sock.sendto(fake_response_packet, (ip, port))
-        sock.close()
-        print(f"Sent spoofed response for {"lab.com"} -> {ip}")
+            # Send the spoofed response to the resolver
+            sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            fake_response_packet = fake_response.pack()
+            sock.sendto(fake_response_packet, (ip, port))
+            sock.close()
+            print(f"Sent spoofed response for {"lab.com"} -> {ip}")
+        except Exception as e: print("Cacheposion function error: ", e)
 
 def check(directory_path, config, args, hosts):
     recursion(directory_path, config, args, hosts)
     axfr(directory_path, config, args, hosts)
     update(directory_path, config, args, hosts)
     any(directory_path, config, args, hosts)
+    cacheposion(directory_path, config, args, hosts)
 
 def main():
     parser = argparse.ArgumentParser(description="Time Protocol module of nessus-verifier.")
