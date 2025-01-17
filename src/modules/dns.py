@@ -191,7 +191,7 @@ def cacheposion(directory_path, config, args, hosts):
             # Send the spoofed response to the resolver
             sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             fake_response_packet = a.pack()
-            sock.sendto(fake_response_packet, (ip, port))
+            sock.sendto(fake_response_packet, (ip, int(port)))
             sock.close()
             print(f"Sent spoofed response for {"lab.com"} -> {ip}")
         except Exception as e: 
