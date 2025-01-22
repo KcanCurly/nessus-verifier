@@ -50,7 +50,7 @@ def axfr1(directory_path, config, args, hosts):
     last_ip = ""
     last_port = ""
     last_domain = ""
-    domain_name_pattern = r"PTR\s(.*?)"
+    domain_name_pattern = r"PTR\s(.*?)\s+"
     for host in hosts:
         ip = host.split(":")[0]
         port = host.split(":")[1]
