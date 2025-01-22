@@ -10,8 +10,8 @@ import dns.resolver
 import dns.reversename
 import dns.update
 import dns.zone
-from dnslib import DNSRecord, DNSHeader, RR, A
-import socket
+import re
+from dnslib import DNSRecord, QTYPE, EDNS0
 import traceback
 from src.utilities import get_hosts_from_file
 
@@ -44,6 +44,50 @@ def recursion(directory_path, config, args, hosts = "hosts.txt"):
         for v in vuln:
             print(f"\t{v}")
 
+def axfr1(directory_path, config, args, hosts):
+    vuln = []
+    hosts = get_hosts_from_file(hosts)
+    last_ip = ""
+    last_port = ""
+    last_domain = ""
+    domain_name_pattern = r"PTR\s(.*?)"
+    for host in hosts:
+        ip = host.split(":")[0]
+        port = host.split(":")[1]
+        domain = args.domain
+        # If we don't have domain, we first need to get domain from ptr record
+        if not domain:
+            try:
+                command = ["dnsrecon", "-n", ip, "-t", "rvl", "-r", f"{ip}/31"]
+                result = subprocess.run(command, capture_output=True, text=True)
+                domain_match = re.search(domain_name_pattern, result)
+                if domain_match:
+                    domain = domain_match.group(1)
+                    domain = ".".join(domain.split(".")[1:])
+                    print(domain)
+                else: break # Couldn't find domain, break
+                
+            except Exception as e:
+                print("dnsrecon rvl failed: ", e)
+                continue
+
+        try:
+            command = ["dnsrecon", "-n", ip, "-t", "axfr", "-d", domain]
+            result = subprocess.run(command, capture_output=True, text=True)
+            if "Zone Transfer was successful" in result:
+                vuln.append(host)
+
+        except Exception as e: print("dnsrecond axfr failed: ", e)
+        
+    if len(vuln) > 0:
+        print("\nZone Transfer Was Successful on Hosts:")
+        for v in vuln:
+            print(f"\t{v}")
+            
+        print("Printing last one as an example")
+        cmd = ["dig", "-p", last_port, "axfr", f"@{last_ip}", last_domain]
+        subprocess.run(cmd)
+    
 
 def axfr(directory_path, config, args, hosts):
     vuln = []
@@ -92,13 +136,15 @@ def axfr(directory_path, config, args, hosts):
             print(f"\t{v}")
             
         print("Printing last one as an example")
-        cmd = ["dig", "-p", last_port, f"@{last_ip}", last_domain]
+        cmd = ["dig", "-p", last_port, "axfr", f"@{last_ip}", last_domain]
         subprocess.run(cmd)
         
 
 def update(directory_path, config, args, hosts):
     vuln = []
     hosts = get_hosts_from_file(hosts)
+    txt_record_name = "NV-TEST"
+    txt_record_value = "Nessus-verifier-test"
     for host in hosts:
         ip = host.split(":")[0]
         port = host.split(":")[1]
@@ -124,14 +170,14 @@ def update(directory_path, config, args, hosts):
                 continue
         try:
             u = dns.update.Update(domain)
-            u.add("NV-TEST", 3600, "TXT", "Nessus verifier test")
+            u.add(txt_record_name, 3600, "TXT", txt_record_value)
             r = dns.query.tcp(u, ip, port=int(port))
             if dns.rcode.to_text(r.rcode()) == "NOERROR":
                 vuln.append(host)
-        except Exception as e: print("Error: ", e)
+        except Exception as e: pass #print("Error: ", e)
         
     if len(vuln) > 0:
-        print("'TXT' record named 'NV-TEST' was added with value of 'Nessus verifier test' on hosts:")
+        print(f"'TXT' record named {txt_record_name} was added with value of '{txt_record_value}' on hosts:")
         for v in vuln:
             print(v)
 
@@ -176,7 +222,7 @@ def any(directory_path, config, args, hosts):
         for v in vuln:
             print(f"\t{v}")
 
-def cacheposion(directory_path, config, args, hosts):
+def dnssec(directory_path, config, args, hosts):
     vuln = []
     hosts = get_hosts_from_file(hosts)
     
@@ -184,33 +230,46 @@ def cacheposion(directory_path, config, args, hosts):
         try:
             ip = host.split(":")[0]
             port = host.split(":")[1]
-            fake_question = DNSRecord.question("z.lab.com")
-            fake_question.header.id = 12345
-            a = fake_question.replyZone("z.lab.com 60 A 1.111.111.111")
-            a.header.aa = 0
-            # Send the spoofed response to the resolver
-            sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-            fake_response_packet = a.pack()
-            sock.sendto(fake_response_packet, (ip, int(port)))
-            sock.close()
-            print(f"Sent spoofed response for {"lab.com"} -> {ip}")
+            
+            resolver = dns.resolver.Resolver()
+            resolver.nameservers = [ip]
+            resolver.port = int(port)
+            
+            qtype_id = QTYPE["DNSKEY"]
+            query = DNSRecord.question("example.com", qtype_id)
+            query.add_ar(EDNS0(flags="do", udp_len=4096))
+            query.header.ad = 1
+            
+            answer = resolver.resolve(query)
+            answer1 = DNSRecord.parse(answer)
+            
+            for record in answer1.rr:
+                if record.rtype == qtype_id:
+                    vuln.append(host)
+                    break
+
         except Exception as e: 
             traceback.print_exc()
-            print("Cacheposion function error: ", e)
+            print("DNSSEC function error: ", e)
+            
+    if len(vuln) > 0:
+        print("DNSSEC NOT enabled on hosts:")
+        for v in vuln:
+            print(f"\t{v}")
+        
 
 def check(directory_path, config, args, hosts):
     recursion(directory_path, config, args, hosts)
-    axfr(directory_path, config, args, hosts)
+    axfr1(directory_path, config, args, hosts)
     update(directory_path, config, args, hosts)
     # any(directory_path, config, args, hosts)
-    cacheposion(directory_path, config, args, hosts)
+    # dnssec(directory_path, config, args, hosts)
 
 def main():
     parser = argparse.ArgumentParser(description="Time Protocol module of nessus-verifier.")
     parser.add_argument("-d", "--directory", type=str, required=False, help="Directory to process (Default = current directory).")
     parser.add_argument("-f", "--filename", type=str, required=False, help="File that has host:port information.")
     parser.add_argument("-c", "--config", type=str, required=False, help="Config file.")
-    parser.add_argument("-n", "--number", default=0, type=int, required=False, help="Config file.")
     parser.add_argument("--domain", type=str, required=False, help="Config file.")
     parser.add_argument("-v", "--verbose", action="store_true", help="Verbose")
     

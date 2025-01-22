@@ -293,7 +293,7 @@ def check(directory_path, hosts = "hosts.txt"):
         for line in result.stdout:
             print(line.strip())  # Print each line without additional newlines
         result.wait()
-    except e:
+    except Exception as e:
         print(e)
     
 
