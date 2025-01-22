@@ -15,6 +15,22 @@ from dnslib import DNSRecord, QTYPE, EDNS0
 import traceback
 from src.utilities import get_hosts_from_file
 
+def find_domain_name(ip):
+    domain_name_pattern = r"PTR\s(.*?)\s+"
+    try:
+        command = ["dnsrecon", "-n", ip, "-t", "rvl", "-r", f"{ip}/31"]
+        result = subprocess.run(command, capture_output=True, text=True)
+        domain_match = re.search(domain_name_pattern, result.stdout)
+        if domain_match and "in-addr.arpa" not in domain_match.group(1):
+            domain = domain_match.group(1)
+            domain = ".".join(domain.split(".")[1:])
+            return domain
+        else: return None # Couldn't find domain name
+        
+    except Exception as e:
+        print("dnsrecon find domain name failed: ", e)
+        return None
+
 def recursion(directory_path, config, args, hosts = "hosts.txt"):
     vuln = []
     hosts = get_hosts_from_file(hosts)
@@ -44,7 +60,7 @@ def recursion(directory_path, config, args, hosts = "hosts.txt"):
         for v in vuln:
             print(f"\t{v}")
 
-def axfr1(directory_path, config, args, hosts):
+def axfr(directory_path, config, args, hosts):
     vuln = []
     hosts = get_hosts_from_file(hosts)
     last_ip = ""
@@ -57,24 +73,15 @@ def axfr1(directory_path, config, args, hosts):
         domain = args.domain
         # If we don't have domain, we first need to get domain from ptr record
         if not domain:
-            try:
-                command = ["dnsrecon", "-n", ip, "-t", "rvl", "-r", f"{ip}/31"]
-                result = subprocess.run(command, capture_output=True, text=True)
-                domain_match = re.search(domain_name_pattern, result.stdout)
-                if domain_match and "in-addr.arpa" not in domain_match.group(1):
-                    domain = domain_match.group(1)
-                    domain = ".".join(domain.split(".")[1:])
-                    print(domain)
-                else: break # Couldn't find domain, break
-                
-            except Exception as e:
-                print("dnsrecon rvl failed: ", e)
-                continue
+            domain = find_domain_name(ip)
+            if not domain: break
 
         try:
             command = ["dnsrecon", "-n", ip, "-t", "axfr", "-d", domain]
             result = subprocess.run(command, capture_output=True, text=True)
             if "Zone Transfer was successful" in result.stdout:
+                last_ip = ip
+                last_domain = domain
                 vuln.append(host)
 
         except Exception as e: print("dnsrecond axfr failed: ", e)
@@ -85,60 +92,10 @@ def axfr1(directory_path, config, args, hosts):
             print(f"\t{v}")
             
         print("Printing last one as an example")
-        cmd = ["dig", "-p", last_port, "axfr", f"@{last_ip}", last_domain]
-        subprocess.run(cmd)
+        print(f"Running command: dnsrecon -n {last_ip} -t axfr -d {last_domain}")
+        command = ["dnsrecon", "-n", last_ip, "-t", "axfr", "-d", last_domain]
+        subprocess.run(command)
     
-
-def axfr(directory_path, config, args, hosts):
-    vuln = []
-    hosts = get_hosts_from_file(hosts)
-    last_ip = ""
-    last_port = ""
-    last_domain = ""
-    for host in hosts:
-        ip = host.split(":")[0]
-        port = host.split(":")[1]
-        
-        # If we don't have domain, we first need to get domain from ptr record
-        if not args.domain:
-            try:
-                reverse_name = dns.reversename.from_address(ip)
-                
-                # Perform the PTR query
-                resolver = dns.resolver.Resolver()
-                resolver.nameservers = [ip]
-                resolver.port = int(port)  # Specify the port for the resolver
-                
-                answers = resolver.resolve(reverse_name, 'PTR')
-                
-                for rdata in answers:
-                    domain = rdata.to_text()
-                    parts = domain.split('.')
-                    domain = '.'.join(parts[-3:])
-            except Exception as e:
-                print("Error: ", e)
-                continue
-        
-        
-        try:
-            zone = dns.zone.from_xfr(dns.query.xfr(ip, domain, port=int(port), timeout=3))
-            vuln.append(host)
-            print(f"\nZone transfer on {host} was successful")
-            last_port = port
-            last_ip = ip
-            last_domain = domain
-
-        except Exception as e: print(e)
-        
-    if len(vuln) > 0:
-        print("\nZone Transfer Was Successful on Hosts:")
-        for v in vuln:
-            print(f"\t{v}")
-            
-        print("Printing last one as an example")
-        cmd = ["dig", "-p", last_port, "axfr", f"@{last_ip}", last_domain]
-        subprocess.run(cmd)
-        
 
 def update(directory_path, config, args, hosts):
     vuln = []
@@ -260,7 +217,7 @@ def dnssec(directory_path, config, args, hosts):
 
 def check(directory_path, config, args, hosts):
     recursion(directory_path, config, args, hosts)
-    axfr1(directory_path, config, args, hosts)
+    axfr(directory_path, config, args, hosts)
     update(directory_path, config, args, hosts)
     # any(directory_path, config, args, hosts)
     # dnssec(directory_path, config, args, hosts)
