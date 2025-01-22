@@ -61,7 +61,7 @@ def axfr1(directory_path, config, args, hosts):
                 command = ["dnsrecon", "-n", ip, "-t", "rvl", "-r", f"{ip}/31"]
                 result = subprocess.run(command, capture_output=True, text=True)
                 domain_match = re.search(domain_name_pattern, result.stdout)
-                if domain_match and "in-addr.arpa" not in domain_match:
+                if domain_match and "in-addr.arpa" not in domain_match.group(1):
                     domain = domain_match.group(1)
                     domain = ".".join(domain.split(".")[1:])
                     print(domain)
