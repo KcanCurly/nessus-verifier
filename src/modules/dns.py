@@ -74,7 +74,7 @@ def axfr1(directory_path, config, args, hosts):
         try:
             command = ["dnsrecon", "-n", ip, "-t", "axfr", "-d", domain]
             result = subprocess.run(command, capture_output=True, text=True)
-            if "Zone Transfer was successful" in result:
+            if "Zone Transfer was successful" in result.stdout:
                 vuln.append(host)
 
         except Exception as e: print("dnsrecond axfr failed: ", e)
