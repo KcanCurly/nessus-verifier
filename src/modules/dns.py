@@ -236,7 +236,7 @@ def update(directory_path, config, args, hosts):
     if len(vuln) > 0:
         print(f"'TXT' record named {txt_record_name} was added with value of '{txt_record_value}' on hosts:")
         for v in vuln:
-            print(v)
+            print(f"\t{v}")
 
 
 def cachepoison(directory_path, config, args, hosts):
@@ -252,7 +252,7 @@ def cachepoison(directory_path, config, args, hosts):
             print(result.stdout)
             answer = re.search("ANSWER: (.*), AUTHORITY", result.stdout)
             if answer:
-                answer = answer.group()
+                answer = answer.group(1)
                 print(answer)
                 if answer > 0:
                     command = ["dig", f"@{ip}", "example.com", "+norecurse"]
@@ -260,7 +260,7 @@ def cachepoison(directory_path, config, args, hosts):
                     print(result.stdout)
                     answer2 = re.search("ANSWER: (.*), AUTHORITY", result.stdout)
                     if answer2:
-                        answer2 = answer2.group()
+                        answer2 = answer2.group(1)
                         print(answer2)
                         if answer == answer2:
                             vuln.append(host)   
