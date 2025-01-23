@@ -38,6 +38,7 @@ setup(
             "nv-ms-exchange=src.modules.ms_exchange:main",
             "nv-time=src.modules.time:main",
             "nv-dns=src.modules.dns:main",
+            "nv-tftp=src.modules.tftp:main",
         ],
     },
 )

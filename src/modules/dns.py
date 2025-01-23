@@ -177,10 +177,12 @@ def dnsrecon(directory_path, config, args, hosts):
                 recursion_vuln.append(host)
         except Exception as e: print("dnsrecond axfr failed: ", e)
         
+    """
     if len(dnssec_vuln) > 0:
         print("\nDNSSEC is NOT configured on Hosts:")
         for v in dnssec_vuln:
             print(f"\t{v}")
+    """
     
     if len(dnssec_vuln) > 0:
         print("\nRecursion is ENABLED on Hosts:")
@@ -249,19 +251,15 @@ def cachepoison(directory_path, config, args, hosts):
             
             command = ["dig", f"@{ip}", "example.com"]
             result = subprocess.run(command, text=True, capture_output=True)
-            print(result.stdout)
             answer = re.search("ANSWER: (.*), AUTHORITY", result.stdout)
             if answer:
                 answer = int(answer.group(1))
-                print(answer)
                 if answer > 0:
                     command = ["dig", f"@{ip}", "example.com", "+norecurse"]
                     result = subprocess.run(command, text=True, capture_output=True)
-                    print(result.stdout)
                     answer2 = re.search("ANSWER: (.*), AUTHORITY", result.stdout)
                     if answer2:
                         answer2 = int(answer2.group(1))
-                        print(answer2)
                         if answer == answer2:
                             vuln.append(host)   
         except: pass
@@ -279,32 +277,19 @@ def any(directory_path, config, args, hosts):
             ip = host.split(":")[0]
             port = host.split(":")[1]
             
-            domain = find_domain_name(ip)
-            if not domain: continue
+            command = ["dig", "any", f"@{ip}", "example.com"]
+            result = subprocess.run(command, text=True, capture_output=True)
+            answer = re.search("ANSWER: (.*), AUTHORITY", result.stdout)
+            if answer:
+                answer = int(answer.group(1))
+                if answer > 0:
+                    vuln.append(host)
             
-            reverse_name = dns.reversename.from_address(ip)
-            
-            resolver = dns.resolver.Resolver()
-            resolver.nameservers = [ip]
-            resolver.port = int(port)  # Specify the port for the resolver
-            
-            answer = resolver.resolve(domain, "ANY")
-            
-            # Normally we should get 
-            a_records = []
-            ns_records = []
-            for rdata in answer:
-                if rdata.rdtype == dns.rdatatype.A:
-                    a_records.append(rdata)
-                elif rdata.rdtype == dns.rdatatype.NS:
-                    ns_records.append(rdata)
-                    
-            if len(a_records) > len(ns_records):
-                vuln.append(host)
         except Exception as e: print("ANY function error: ", e)    
+    
                 
     if len(vuln) > 0:
-        print("There were more 'A' records than 'NS' Records on Hosts, check manually for 'ANY' query:")
+        print("Hosts that answered to 'ANY' query:")
         for v in vuln:
             print(f"\t{v}")
         
