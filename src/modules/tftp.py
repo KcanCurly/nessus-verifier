@@ -21,7 +21,7 @@ def check(directory_path, config, args, hosts):
         for m in matches:
             if m[1] not in vuln:
                 vuln[m[1]] = []
-                vuln[m[1]].append(m[0])
+            vuln[m[1]].append(m[0])
             
     except Exception as e: print(e)
     
