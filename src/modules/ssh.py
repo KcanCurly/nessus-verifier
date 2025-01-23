@@ -172,8 +172,8 @@ def check(directory_path, hosts = "hosts.txt"):
         hosts = [line.strip() for line in file if line.strip()] 
         
     # Define regular expression patterns
-    protocol_pattern = r"Remote protocol version (\d+\.\d+)"
-    software_pattern = r"remote software version ([\w_]+\.*.*)"
+    protocol_pattern = r"Remote protocol version (.*),"
+    software_pattern = r"remote software version (.*)\s+"
     
     print("Running ssh version capturer")
     # Iterate over each host and run the command

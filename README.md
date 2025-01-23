@@ -9,7 +9,7 @@ To install:
 ```
 pipx install git+https://github.com/KcanCurly/nessus-verifier
 pipx install git+https://github.com/KcanCurly/ssh-whirl
-sudo apt install -y sslscan sshpass ssh-audit
+sudo apt install -y sslscan sshpass ssh-audit dig dnsrecon
 ```
 
 ## Usage
@@ -62,7 +62,11 @@ nv-ftp ports/ftp [directory path] [filename of the hosts]
 * DNS
   * Check if recursion is enabled
   * Check if zone transfer(AXFR) is possible
+  * Check if DNSSEC is configured
   * Check if we can add a record to the dns server
+  * Check if server can resolve malicious domain
+  * Check if server supports DNS over TLS, if so do usual TLS enumeration
+  * Check if server is vulnerable to cache posioning
   * Check if ANY query reveals more than just NS records
 
 
