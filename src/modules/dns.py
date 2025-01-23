@@ -252,7 +252,7 @@ def cachepoison(directory_path, config, args, hosts):
             print(result.stdout)
             answer = re.search("ANSWER: (.*), AUTHORITY", result.stdout)
             if answer:
-                answer = answer.group(1)
+                answer = int(answer.group(1))
                 print(answer)
                 if answer > 0:
                     command = ["dig", f"@{ip}", "example.com", "+norecurse"]
@@ -260,7 +260,7 @@ def cachepoison(directory_path, config, args, hosts):
                     print(result.stdout)
                     answer2 = re.search("ANSWER: (.*), AUTHORITY", result.stdout)
                     if answer2:
-                        answer2 = answer2.group(1)
+                        answer2 = int(answer2.group(1))
                         print(answer2)
                         if answer == answer2:
                             vuln.append(host)   
