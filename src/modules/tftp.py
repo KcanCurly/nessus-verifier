@@ -19,9 +19,9 @@ def check(directory_path, config, args, hosts):
         matches = re.findall(pattern, result.stdout)
 
         for m in matches:
-            if m[2] not in vuln:
-                vuln[m[2]] = []
-                vuln[m[2]].add(m[1])
+            if m[1] not in vuln:
+                vuln[m[1]] = []
+                vuln[m[1]].add(m[0])
             
     except Exception as e: print(e)
     
