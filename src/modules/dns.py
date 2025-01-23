@@ -249,17 +249,19 @@ def cachepoison(directory_path, config, args, hosts):
             
             command = ["dig", f"@{ip}", "example.com"]
             result = subprocess.run(command, text=True, capture_output=True)
-            print(result)
+            print(result.stdout)
             answer = re.search("ANSWER: (.*), AUTHORITY", result.stdout)
             if answer:
                 answer = answer.group()
+                print(answer)
                 if answer > 0:
                     command = ["dig", f"@{ip}", "example.com", "+norecurse"]
                     result = subprocess.run(command, text=True, capture_output=True)
-                    print(result)
+                    print(result.stdout)
                     answer2 = re.search("ANSWER: (.*), AUTHORITY", result.stdout)
                     if answer2:
                         answer2 = answer2.group()
+                        print(answer2)
                         if answer == answer2:
                             vuln.append(host)   
         except: pass
@@ -277,18 +279,14 @@ def any(directory_path, config, args, hosts):
             ip = host.split(":")[0]
             port = host.split(":")[1]
             
+            domain = find_domain_name(ip)
+            if not domain: continue
+            
             reverse_name = dns.reversename.from_address(ip)
             
             resolver = dns.resolver.Resolver()
             resolver.nameservers = [ip]
             resolver.port = int(port)  # Specify the port for the resolver
-            
-            answers = resolver.resolve(reverse_name, 'PTR')
-                    
-            for rdata in answers:
-                domain = rdata.to_text()
-                parts = domain.split('.')
-                domain = '.'.join(parts[-3:])
             
             answer = resolver.resolve(domain, "ANY")
             
