@@ -14,9 +14,11 @@ def check(directory_path, config, args, hosts):
     vuln = {}
     try:
         command = ["msfconsole", "-q", "-x", f"use auxiliary/scanner/tftp/tftpbrute; set RHOSTS {result}; run; exit"]
+        print(command)
         result = subprocess.run(command, text=True, capture_output=True)
         pattern = r"\[\+\] Found (.*) on (.*)"
         matches = re.findall(pattern, result.stdout)
+        print(matches)
         for m in matches:
             if m[2] not in vuln:
                 vuln[m[2]] = []
