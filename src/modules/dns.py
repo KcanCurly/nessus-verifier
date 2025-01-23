@@ -11,8 +11,6 @@ import dns.reversename
 import dns.update
 import dns.zone
 import re
-from dnslib import DNSRecord, QTYPE, EDNS0
-import traceback
 from src.utilities import get_hosts_from_file
 
 def find_domain_name(ip):
@@ -61,7 +59,9 @@ def recursion(directory_path, config, args, hosts = "hosts.txt"):
             print(f"\t{v}")
 
 def axfr(directory_path, config, args, hosts):
-    vuln = []
+    axfr_vuln = []
+    dnssec_vuln = []
+    recursion_vuln = []
     hosts = get_hosts_from_file(hosts)
     last_ip = ""
     last_port = ""
@@ -77,25 +77,42 @@ def axfr(directory_path, config, args, hosts):
             if not domain: break
 
         try:
-            command = ["dnsrecon", "-n", ip, "-t", "axfr", "-d", domain]
+            command = ["dnsrecon", "-n", ip, "-a", "-d", domain]
             result = subprocess.run(command, capture_output=True, text=True)
             if "Zone Transfer was successful" in result.stdout:
                 last_ip = ip
                 last_domain = domain
-                vuln.append(host)
+                axfr_vuln.append(host)
+                
+            if "DNSSEC is not configured" in result.stdout:
+                dnssec_vuln.append(host)
+                
+            if "Recursion enabled on" in result.stdout:
+                recursion_vuln.append(host)
+                
+                
 
         except Exception as e: print("dnsrecond axfr failed: ", e)
         
-    if len(vuln) > 0:
+    if len(axfr_vuln) > 0:
         print("\nZone Transfer Was Successful on Hosts:")
-        for v in vuln:
+        for v in axfr_vuln:
             print(f"\t{v}")
             
         print("Printing last one as an example")
         print(f"Running command: dnsrecon -n {last_ip} -t axfr -d {last_domain}")
         command = ["dnsrecon", "-n", last_ip, "-t", "axfr", "-d", last_domain]
         subprocess.run(command)
+        
+    if len(dnssec_vuln) > 0:
+        print("\nDNSSEC is NOT configured on Hosts:")
+        for v in dnssec_vuln:
+            print(f"\t{v}")
     
+    if len(dnssec_vuln) > 0:
+        print("\nRecursion is ENABLED on Hosts:")
+        for v in dnssec_vuln:
+            print(f"\t{v}")
 
 def update(directory_path, config, args, hosts):
     vuln = []
@@ -178,49 +195,13 @@ def any(directory_path, config, args, hosts):
         print("There were more 'A' records than 'NS' Records on Hosts, check manually for 'ANY' query:")
         for v in vuln:
             print(f"\t{v}")
-
-def dnssec(directory_path, config, args, hosts):
-    vuln = []
-    hosts = get_hosts_from_file(hosts)
-    
-    for host in hosts:
-        try:
-            ip = host.split(":")[0]
-            port = host.split(":")[1]
-            
-            resolver = dns.resolver.Resolver()
-            resolver.nameservers = [ip]
-            resolver.port = int(port)
-            
-            qtype_id = QTYPE["DNSKEY"]
-            query = DNSRecord.question("example.com", qtype_id)
-            query.add_ar(EDNS0(flags="do", udp_len=4096))
-            query.header.ad = 1
-            
-            answer = resolver.resolve(query)
-            answer1 = DNSRecord.parse(answer)
-            
-            for record in answer1.rr:
-                if record.rtype == qtype_id:
-                    vuln.append(host)
-                    break
-
-        except Exception as e: 
-            traceback.print_exc()
-            print("DNSSEC function error: ", e)
-            
-    if len(vuln) > 0:
-        print("DNSSEC NOT enabled on hosts:")
-        for v in vuln:
-            print(f"\t{v}")
         
 
 def check(directory_path, config, args, hosts):
-    recursion(directory_path, config, args, hosts)
+    # recursion(directory_path, config, args, hosts)
     axfr(directory_path, config, args, hosts)
     update(directory_path, config, args, hosts)
     # any(directory_path, config, args, hosts)
-    # dnssec(directory_path, config, args, hosts)
 
 def main():
     parser = argparse.ArgumentParser(description="Time Protocol module of nessus-verifier.")
