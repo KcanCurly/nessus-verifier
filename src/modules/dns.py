@@ -95,7 +95,7 @@ def tls(directory_path, config, args, hosts):
                     
       
     if len(no_tls) > 0:
-        print("No DNS over HTTPS supported on Hosts:")
+        print("No DNS over TLS supported on Hosts:")
         for v in no_tls:
             print(f"\t{v}")
     
@@ -249,12 +249,14 @@ def cachepoison(directory_path, config, args, hosts):
             
             command = ["dig", f"@{ip}", "example.com"]
             result = subprocess.run(command, text=True, capture_output=True)
+            print(result)
             answer = re.search("ANSWER: (.*), AUTHORITY", result.stdout)
             if answer:
                 answer = answer.group()
                 if answer > 0:
                     command = ["dig", f"@{ip}", "example.com", "+norecurse"]
                     result = subprocess.run(command, text=True, capture_output=True)
+                    print(result)
                     answer2 = re.search("ANSWER: (.*), AUTHORITY", result.stdout)
                     if answer2:
                         answer2 = answer2.group()
