@@ -22,7 +22,7 @@ def check(directory_path, config, args, hosts):
                 vuln[m[2]] = []
                 vuln[m[2]].add(m[1])
             
-    except: pass
+    except Exception as e: print(e)
     
     if len(vuln) > 0:
         print("TFTP files were found:")
