@@ -13,7 +13,7 @@ def check(directory_path, config, args, hosts):
     result = ", ".join(ips)
     vuln = {}
     try:
-        command = ["msfconsole", "-q", "-x", f"set RHOSTS {result}; run; exit"]
+        command = ["msfconsole", "-q", "-x", f"use auxiliary/scanner/tftp/tftpbrute; set RHOSTS {result}; run; exit"]
         result = subprocess.run(command, text=True, capture_output=True)
         pattern = r"\[\+\] Found (.*) on (.*)"
         matches = re.findall(pattern, result.stdout)
