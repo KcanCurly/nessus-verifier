@@ -28,7 +28,7 @@ def check(directory_path, config, args, hosts):
     if len(vuln) > 0:
         print("TFTP files were found:")
         for k,v in vuln.items():
-            print(k, ":69")
+            print(f"{k}:69")
             for a in v:
                 print(f"\t{a}")
         
