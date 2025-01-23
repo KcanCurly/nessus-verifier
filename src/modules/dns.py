@@ -40,7 +40,7 @@ def tls(directory_path, config, args, hosts):
         ip = host.split(":")[0]
         port  = 853
 
-        command = ["sslscan", "-no-fallback", "--no-renegotiation", "--no-group", "--no-check-certificate", "--no-heartbleed", "--iana-names", "--connect-timeout=2", host]
+        command = ["sslscan", "-no-fallback", "--no-renegotiation", "--no-group", "--no-check-certificate", "--no-heartbleed", "--iana-names", "--connect-timeout=2", f"{host}:{port}"]
         result = subprocess.run(command, text=True, capture_output=True)
         if "Connection refused" in result.stderr or "enabled" not in result.stdout:
             no_tls.append(host)
@@ -135,7 +135,7 @@ def malware(directory_path, config, args, hosts):
                 "status: NXDOMAIN" in result.stdout or \
                     "ANSWER: 0" in result.stdout:
                         continue
-            else: vuln.append[host]
+            else: vuln.append(host)
             
     if len(vuln) > 0:
         print(f"Host(s) that were able to resolve malicious domain '{malicious_domain}':")
