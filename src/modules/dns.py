@@ -135,7 +135,7 @@ def malware(directory_path, config, args, hosts):
                 "status: NXDOMAIN" in result.stdout or \
                     "ANSWER: 0" in result.stdout:
                         continue
-            else: vuln[host]
+            else: vuln.append[host]
             
     if len(vuln) > 0:
         print(f"Host(s) that were able to resolve malicious domain '{malicious_domain}':")
