@@ -15,7 +15,7 @@ def check(directory_path, config, args, hosts):
     try:
         command = ["msfconsole", "-q", "-x", f"color false; use auxiliary/scanner/tftp/tftpbrute; set RHOSTS {result}; run; exit"]
         result = subprocess.run(command, text=True, capture_output=True)
-        pattern = r"\[\+\] Found (.*) on (.*)"
+        pattern = r"\[\+\] Found (.*) on (.*)\s+"
         matches = re.findall(pattern, result.stdout)
 
         for m in matches:
