@@ -13,28 +13,28 @@ def check(directory_path, config, args, hosts):
     result = ", ".join(ips)
     vuln = {}
     try:
-        command = ["msfconsole", "-q", "-x", f"color false; use auxiliary/scanner/tftp/tftpbrute; set RHOSTS {result}; run; exit"]
+        command = ["msfconsole", "-q", "-x", f"color false; use scanner/finger/finger_users; set RHOSTS {result}; run; exit"]
         result = subprocess.run(command, text=True, capture_output=True)
-        pattern = r"\[\+\] Found (.*) on (.*)\s+"
+        pattern = r" (.*) Users found: (.*)"
         matches = re.findall(pattern, result.stdout)
 
         for m in matches:
-            if m[1] not in vuln:
-                vuln[m[1]] = []
-            vuln[m[1]].append(m[0])
+            if m[0] not in vuln:
+                vuln[m[0]] = []
+            vuln[m[0]].append(m[1])
             
     except Exception as e: print(e)
     
     if len(vuln) > 0:
-        print("TFTP files were found:")
+        print("Finger service user enumeration:")
         for k,v in vuln.items():
-            print(f"{k}:69")
+            print(f"{k}:79")
             for a in v:
                 print(f"\t{a}")
         
 
 def main():
-    parser = argparse.ArgumentParser(description="DNS module of nessus-verifier.")
+    parser = argparse.ArgumentParser(description="Finger module of nessus-verifier.")
     parser.add_argument("-d", "--directory", type=str, required=False, help="Directory to process (Default = current directory).")
     parser.add_argument("-f", "--filename", type=str, required=False, help="File that has host:port information.")
     parser.add_argument("-c", "--config", type=str, required=False, help="Config file.")

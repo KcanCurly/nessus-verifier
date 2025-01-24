@@ -39,6 +39,7 @@ setup(
             "nv-time=src.modules.time:main",
             "nv-dns=src.modules.dns:main",
             "nv-tftp=src.modules.tftp:main",
+            "nv-finger=src.modules.finger:main",
         ],
     },
 )
