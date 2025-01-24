@@ -15,7 +15,7 @@ def check(directory_path, config, args, hosts):
     try:
         command = ["msfconsole", "-q", "-x", f"color false; use scanner/finger/finger_users; set RHOSTS {result}; run; exit"]
         result = subprocess.run(command, text=True, capture_output=True)
-        pattern = r" (.*) Users found: (.*)"
+        pattern = r"- (.*) Users found: (.*)"
         matches = re.findall(pattern, result.stdout)
 
         for m in matches:
@@ -27,10 +27,9 @@ def check(directory_path, config, args, hosts):
     
     if len(vuln) > 0:
         print("Finger service user enumeration:")
+        print(f"{k}:79 - {", ".join(v)}")
         for k,v in vuln.items():
-            print(f"{k}:79")
-            for a in v:
-                print(f"\t{a}")
+            print(f"{k}:79 - {", ".join(v)}")
         
 
 def main():
