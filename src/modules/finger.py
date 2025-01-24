@@ -27,7 +27,6 @@ def check(directory_path, config, args, hosts):
     
     if len(vuln) > 0:
         print("Finger service user enumeration:")
-        print(f"{k}:79 - {", ".join(v)}")
         for k,v in vuln.items():
             print(f"{k}:79 - {", ".join(v)}")
         
