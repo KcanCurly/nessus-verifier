@@ -43,6 +43,7 @@ setup(
             "nv-ident=src.modules.ident:main",
             "nv-ntp=src.modules.ntp:main",
             "nv-imap=src.modules.imap:main",
+            "nv-rpc=src.modules.rpc:main",
         ],
     },
 )

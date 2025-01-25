@@ -2,7 +2,7 @@ import subprocess
 import argparse
 import os
 import re
-from src.utilities import confirm_prompt
+from src.utilities import confirm_prompt, get_hosts_from_file
 
 protocol1 = []
 versions = {}
@@ -168,9 +168,7 @@ creds = [
 
 
 def check(directory_path, args, hosts):
-    hosts_path = os.path.join(directory_path, hosts)
-    with open(os.path.join(directory_path, hosts), "r") as file:
-        hosts = [line.strip() for line in file if line.strip()] 
+    hosts = get_hosts_from_file(hosts)
         
     # Define regular expression patterns
     protocol_pattern = r"Remote protocol version (.*),"
@@ -315,4 +313,4 @@ def main():
     parser.add_argument("--overwrite-creds", type=str, required=False, help="Overwrite default cred file with this file.")
     args = parser.parse_args()
     
-    check(args.directory or os.curdir, args.filename or "hosts.txt")
+    check(args.directory or os.curdir, args, args.filename or "hosts.txt")
