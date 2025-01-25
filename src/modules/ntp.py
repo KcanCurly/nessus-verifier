@@ -18,7 +18,7 @@ def check(directory_path, config, args, hosts):
             port = host.split(":")[1]
             
             with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
-                s.settimeout(2)
+                s.settimeout(10)
                 s.sendto(request, (ip, int(port)))
                 data, addr = s.recvfrom(1024)
                 print(f"Received {len(data)} bytes from {addr}")
