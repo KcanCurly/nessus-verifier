@@ -40,6 +40,8 @@ setup(
             "nv-dns=src.modules.dns:main",
             "nv-tftp=src.modules.tftp:main",
             "nv-finger=src.modules.finger:main",
+            "nv-ident=src.modules.ident:main",
+            "nv-ntp=src.modules.ntp:main",
         ],
     },
 )

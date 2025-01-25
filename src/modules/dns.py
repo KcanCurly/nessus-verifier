@@ -300,6 +300,7 @@ def check(directory_path, config, args, hosts):
     tls(directory_path, config, args, hosts)
     malware(directory_path, config, args, hosts)
     cachepoison(directory_path, config, args, hosts)
+    any(directory_path, config, args, hosts)
 
 def main():
     parser = argparse.ArgumentParser(description="DNS module of nessus-verifier.")

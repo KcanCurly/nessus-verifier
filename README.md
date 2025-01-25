@@ -9,7 +9,7 @@ To install:
 ```
 pipx install git+https://github.com/KcanCurly/nessus-verifier
 pipx install git+https://github.com/KcanCurly/ssh-whirl
-sudo apt install -y sslscan sshpass ssh-audit dig dnsrecon metasploit-framework
+sudo apt install -y sslscan sshpass ssh-audit dig dnsrecon metasploit-framework ident-user-enum
 ```
 
 ## Usage
@@ -68,7 +68,14 @@ nv-ftp ports/ftp [directory path] [filename of the hosts]
   * Check if server supports DNS over TLS, if so do usual TLS enumeration
   * Check if server is vulnerable to cache posioning
   * Check if ANY query reveals more than just NS records
-
+* TFTP
+  * File enumeration with msf
+* Finger
+  * User enumeration with msf
+* Ident
+  * Process/User enumeration
+* NTP
+  * Check if monlist command is enabled
 
 ## Implemented Applications
 
