@@ -13,7 +13,7 @@ setup(
     install_requires=[
         "requests",
         "dnspython",
-        "dnslib",
+        "ntplib",
     ],
     classifiers=[
         "Programming Language :: Python :: 3",
@@ -42,6 +42,7 @@ setup(
             "nv-finger=src.modules.finger:main",
             "nv-ident=src.modules.ident:main",
             "nv-ntp=src.modules.ntp:main",
+            "nv-imap=src.modules.imap:main",
         ],
     },
 )

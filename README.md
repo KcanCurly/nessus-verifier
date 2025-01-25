@@ -75,7 +75,9 @@ nv-ftp ports/ftp [directory path] [filename of the hosts]
 * Ident
   * Process/User enumeration
 * NTP
-  * Check if monlist command is enabled
+  * (FUTURE)
+* IMAP
+  * (FUTURE)
 
 ## Implemented Applications
 
