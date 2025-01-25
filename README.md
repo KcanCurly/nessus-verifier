@@ -9,7 +9,7 @@ To install:
 ```
 pipx install git+https://github.com/KcanCurly/nessus-verifier
 pipx install git+https://github.com/KcanCurly/ssh-whirl
-sudo apt install -y sslscan sshpass ssh-audit dig dnsrecon metasploit-framework ident-user-enum
+sudo apt install -y sslscan sshpass ssh-audit dig dnsrecon metasploit-framework ident-user-enum smbclient
 ```
 
 ## Usage
@@ -76,8 +76,10 @@ nv-ftp ports/ftp [directory path] [filename of the hosts]
   * Process/User enumeration
 * NTP
   * (FUTURE)
+* RPC
+  * Check null access on pipes: LSARPC, SAMR, SPOOLSS, SRVSVC, DFS, WKSSVC, NTSVCS, DRSUAPI, EVENTLOG, WINREG, FSRVP
 * IMAP
-  * (FUTURE)
+  * Check if TLS is used or forced
 
 ## Implemented Applications
 

@@ -162,11 +162,12 @@ creds = [
 "apcsetup:apcsetup",
 "admin:service.",
 "admin:admin01",
-"linuxadmin:linuxadmin"
+"linuxadmin:linuxadmin",
+"rwa:rwa",
 ]
 
 
-def check(directory_path, hosts = "hosts.txt"):
+def check(directory_path, args, hosts):
     hosts_path = os.path.join(directory_path, hosts)
     with open(os.path.join(directory_path, hosts), "r") as file:
         hosts = [line.strip() for line in file if line.strip()] 
@@ -283,6 +284,16 @@ def check(directory_path, hosts = "hosts.txt"):
     if not confirm_prompt("Do you wish to continue for brute force?"): return        
     ######################################
 
+    if args.creds:
+        with open(args.creds, "r") as file:
+            c1 = [line.strip() for line in file if line.strip()] 
+        
+        creds = [*creds, *c1]
+    elif args.overwrite_creds:
+        with open(args.creds, "r") as file:
+            c2 = [line.strip() for line in file if line.strip()] 
+        creds = c2
+
     with open(os.path.join(directory_path, "creds.txt"), "w") as file:
         for item in creds:
             file.write(f"{item}\n")
@@ -293,15 +304,15 @@ def check(directory_path, hosts = "hosts.txt"):
         for line in result.stdout:
             print(line.strip())  # Print each line without additional newlines
         result.wait()
-    except Exception as e:
-        print(e)
-    
+    except Exception as e: print(e)
+        
 
 def main():
     parser = argparse.ArgumentParser(description="SSH module of nessus-verifier.")
     parser.add_argument("-d", "--directory", type=str, required=False, help="Directory to process (Default = current directory).")
     parser.add_argument("-f", "--filename", type=str, required=False, help="File that has host:port information.")
-    
+    parser.add_argument("--creds", type=str, required=False, help="Additional cred file to try.")
+    parser.add_argument("--overwrite-creds", type=str, required=False, help="Overwrite default cred file with this file.")
     args = parser.parse_args()
     
     check(args.directory or os.curdir, args.filename or "hosts.txt")

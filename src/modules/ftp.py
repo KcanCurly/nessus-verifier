@@ -7,7 +7,7 @@ import os
 import subprocess
 import re
 from concurrent.futures import ThreadPoolExecutor
-from src.utilities import confirm_prompt, control_TLS
+from src.utilities import confirm_prompt, control_TLS, get_hosts_from_file
 
 creds = [
 "anonymous:anonymous",
@@ -78,13 +78,25 @@ creds = [
 "PlcmSpIp:PlcmSpIp",
 ]
 
-def bruteforce(host):
+def bruteforce(args, host):
     ip = host
     port = 21
     if ":" in host:
         ip = host.split(":")[0]
         port  = int(host.split(":")[1])
     host = ip + ":" + str(port)
+    
+    if args.creds:
+        with open(args.creds, "r") as file:
+            c1 = [line.strip() for line in file if line.strip()] 
+        
+        creds = [*creds, *c1]
+    elif args.overwrite_creds:
+        with open(args.creds, "r") as file:
+            c2 = [line.strip() for line in file if line.strip()] 
+        creds = c2
+    
+    
     for cred in creds:
         username = cred.split(":")[0]
         password = cred.split(":")[1]
@@ -145,12 +157,12 @@ def anon(hosts):
 def tls(hosts):
     control_TLS(hosts, "--starttls-ftp")
 
-def brute(hosts):
+def brute(args, hosts):
     threads = 10
     
     print("Trying default credentials, this can take time.")
     with ThreadPoolExecutor(threads) as executor:
-        executor.map(lambda host: bruteforce(host), hosts)
+        executor.map(lambda host: bruteforce(args, host), hosts)
         
 def ssl(hosts):
     dict = {}
@@ -189,9 +201,8 @@ def ssl(hosts):
             print(f"\t{key} - {", ".join(value)}")
         
 
-def check(directory_path, hosts = "hosts.txt"):
-    with open(os.path.join(directory_path, hosts), "r") as file:
-        hosts = [line.strip() for line in file if line.strip()] 
+def check(directory_path, args, hosts):
+    hosts = get_hosts_from_file(hosts)
         
         
     # Anon
@@ -205,13 +216,15 @@ def check(directory_path, hosts = "hosts.txt"):
     # bruteforce
     print()
     if not confirm_prompt("Do you wish to continue for brute force?"): return   
-    brute(hosts)
+    brute(args, hosts)
             
 
 def main():
     parser = argparse.ArgumentParser(description="FTP module of nessus-verifier.")
     parser.add_argument("-d", "--directory", type=str, required=False, help="Directory to process (Default = current directory).")
     parser.add_argument("-f", "--filename", type=str, required=False, help="File that has host:port information.")
+    parser.add_argument("--creds", type=str, required=False, help="Additional cred file to try.")
+    parser.add_argument("--overwrite-creds", type=str, required=False, help="Overwrite default cred file with this file.")
     
     args = parser.parse_args()
     
