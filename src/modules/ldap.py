@@ -20,14 +20,12 @@ def check(directory_path, config, args, hosts):
             server = Server(f'ldap://{host}')
             conn = Connection(server, user=None, password=None, auto_bind=True)
             vuln.append(host)
-        except Exception as e: print(e)
+        except Exception as e: print(e, type(e))
     
     if len(vuln) > 0:
         print("LDAP anonymous access were found:")
-        for k,v in vuln.items():
-            print(k)
-            for a in v:
-                print(f"\t{a}")
+        for v in vuln:
+            print(f"\t{v}")
         
 
 def main():

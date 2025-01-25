@@ -81,6 +81,8 @@ nv-ftp ports/ftp [directory path] [filename of the hosts]
 * SNMP
   * Bruteforce credentials
 * IRC (FUTURE)
+* LDAP
+  * Check anonymous access
 
 ## Implemented Applications
 
