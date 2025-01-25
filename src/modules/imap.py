@@ -19,8 +19,7 @@ def check(directory_path, config, args, hosts):
             
             mail = imaplib.IMAP4_SSL(ip, int(port))
             print(f"SSL Connection to {ip}:{port} was a success")
-        except imaplib.IMAP4_SSL.error as p: print(type(p))
-        except Exception as e: print(e)
+        except Exception as e: print(type(e))
     
     if len(vuln) > 0:
         print("NTP service monlist enabled on hosts:")
