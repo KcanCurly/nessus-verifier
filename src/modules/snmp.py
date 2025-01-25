@@ -12,7 +12,7 @@ def check(directory_path, config, args, hosts):
     result = ", ".join(hosts)
     vuln = {}
     
-    command = ["msfconsole", "-q", "-x", f"color false; uuse auxiliary/scanner/snmp/snmp_login; set RHOSTS {result}; run; exit"]
+    command = ["msfconsole", "-q", "-x", f"color false; use auxiliary/scanner/snmp/snmp_login; set RHOSTS {result}; run; exit"]
     try:
         result = subprocess.run(command, text=True, capture_output=True)
         print(result.stdout)
