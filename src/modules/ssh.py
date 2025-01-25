@@ -18,7 +18,7 @@ vuln_cipher = set()
 
 vuln_hosts = set()
 
-creds = [
+main_creds = [
 "root:calvin",
 "root:root",
 "root:toor",
@@ -168,6 +168,7 @@ creds = [
 
 
 def check(directory_path, args, hosts):
+    hosts_path = os.path.join(directory_path, hosts)
     hosts = get_hosts_from_file(hosts)
         
     # Define regular expression patterns
@@ -282,11 +283,12 @@ def check(directory_path, args, hosts):
     if not confirm_prompt("Do you wish to continue for brute force?"): return        
     ######################################
 
+    creds = main_creds
     if args.creds:
         with open(args.creds, "r") as file:
             c1 = [line.strip() for line in file if line.strip()] 
         
-        creds = [*creds, *c1]
+        creds = [*main_creds, *c1]
     elif args.overwrite_creds:
         with open(args.creds, "r") as file:
             c2 = [line.strip() for line in file if line.strip()] 
