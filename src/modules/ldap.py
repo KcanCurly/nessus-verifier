@@ -4,28 +4,26 @@ import os
 from pathlib import Path
 import subprocess
 import re
+from ldap3 import Server, Connection, ALL
 from src.utilities import get_hosts_from_file
 
 
 def check(directory_path, config, args, hosts):
     hosts = get_hosts_from_file(hosts, False)
-    result = ", ".join(hosts)
-    vuln = {}
+    vuln = []
     
-    command = ["msfconsole", "-q", "-x", f"color false; use auxiliary/scanner/snmp/snmp_login; set RHOSTS {result}; run; exit"]
-    try:
-        result = subprocess.run(command, text=True, capture_output=True)
-        pattern = r"\[\+\] (.*) - Login Successful: (.*);"
-        matches = re.findall(pattern, result.stdout)
-        for m in matches:
-            if m[0] not in vuln:
-                vuln[m[0]] = []
-            vuln[m[0]].append(m[1])
-                
-    except Exception:pass
+    for host in hosts:
+        ip = host.split(":")[0]
+        port = host.split(":")[1]
+        
+        try:
+            server = Server(f'ldap://{host}')
+            conn = Connection(server, user=None, password=None, auto_bind=True)
+            vuln.append(host)
+        except Exception as e: print(e)
     
     if len(vuln) > 0:
-        print("SNMP default credentials were found:")
+        print("LDAP anonymous access were found:")
         for k,v in vuln.items():
             print(k)
             for a in v:
@@ -33,7 +31,7 @@ def check(directory_path, config, args, hosts):
         
 
 def main():
-    parser = argparse.ArgumentParser(description="SNMP module of nessus-verifier.")
+    parser = argparse.ArgumentParser(description="LDAP module of nessus-verifier.")
     parser.add_argument("-d", "--directory", type=str, required=False, help="Directory to process (Default = current directory).")
     parser.add_argument("-f", "--filename", type=str, required=False, help="File that has host:port information.")
     parser.add_argument("-c", "--config", type=str, required=False, help="Config file.")

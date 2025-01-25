@@ -14,6 +14,7 @@ setup(
         "requests",
         "dnspython",
         "ntplib",
+        "ldap3",
     ],
     classifiers=[
         "Programming Language :: Python :: 3",

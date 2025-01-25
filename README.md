@@ -57,8 +57,7 @@ nv-ftp ports/ftp [directory path] [filename of the hosts]
   * Checks if user enum is possible with VRFY,EXPN,RCPT
 * Time
   * Checks the usage and prints out the server time
-* TACACS
-  * (FUTURE)
+* TACACS (FUTURE)
 * DNS
   * Check if recursion is enabled
   * Check if zone transfer(AXFR) is possible
@@ -74,14 +73,14 @@ nv-ftp ports/ftp [directory path] [filename of the hosts]
   * User enumeration with msf
 * Ident
   * Process/User enumeration
-* NTP
-  * (FUTURE)
+* NTP (FUTURE)
 * RPC
   * Check null access on pipes: LSARPC, SAMR, SPOOLSS, SRVSVC, DFS, WKSSVC, NTSVCS, DRSUAPI, EVENTLOG, WINREG, FSRVP
 * IMAP
   * Check if TLS is used or forced
 * SNMP
   * Bruteforce credentials
+* IRC (FUTURE)
 
 ## Implemented Applications
 
