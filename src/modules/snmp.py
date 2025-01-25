@@ -15,6 +15,7 @@ def check(directory_path, config, args, hosts):
     command = ["msfconsole", "-q", "-x", f"color false; uuse auxiliary/scanner/snmp/snmp_login; set RHOSTS {result}; run; exit"]
     try:
         result = subprocess.run(command, text=True, capture_output=True)
+        print(result.stdout)
         pattern = r"\[\+\] (.*) - Login Successful: (.*);"
         matches = re.findall(pattern, result.stdout)
         for m in matches:
@@ -22,12 +23,12 @@ def check(directory_path, config, args, hosts):
                 vuln[m[0]] = []
             vuln[m[0]].append(m[1])
                 
-    except Exception:pass
+    except Exception as e:print(e)
     
     if len(vuln) > 0:
-        print("TFTP files were found:")
+        print("SNMP default credentials were found:")
         for k,v in vuln.items():
-            print(f"{k}:69")
+            print(k)
             for a in v:
                 print(f"\t{a}")
         
