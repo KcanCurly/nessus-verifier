@@ -19,7 +19,7 @@ def check(directory_path, config, args, hosts):
             ip = host.split(":")[0]
             port = host.split(":")[1]
             
-            mail = imaplib.IMAP4_SSL(ip, int(port))
+            mail = imaplib.IMAP4_SSL(ip, int(port), timeout=3)
             tls_enabled.append(host)
 
         except ssl.SSLError: vuln.append(host)
@@ -30,7 +30,7 @@ def check(directory_path, config, args, hosts):
             ip = host.split(":")[0]
             port = host.split(":")[1]
             
-            mail = imaplib.IMAP4(ip, int(port))
+            mail = imaplib.IMAP4(ip, int(port), 3)
             tls_not_forced.append(host)
 
         except Exception:pass
