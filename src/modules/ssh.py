@@ -290,7 +290,7 @@ def check(directory_path, args, hosts):
         
         creds = [*main_creds, *c1]
     elif args.overwrite_creds:
-        with open(args.creds, "r") as file:
+        with open(args.overwrite_creds, "r") as file:
             c2 = [line.strip() for line in file if line.strip()] 
         creds = c2
 

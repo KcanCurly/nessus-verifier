@@ -80,6 +80,8 @@ nv-ftp ports/ftp [directory path] [filename of the hosts]
   * Check null access on pipes: LSARPC, SAMR, SPOOLSS, SRVSVC, DFS, WKSSVC, NTSVCS, DRSUAPI, EVENTLOG, WINREG, FSRVP
 * IMAP
   * Check if TLS is used or forced
+* SNMP
+  * Bruteforce credentials
 
 ## Implemented Applications
 

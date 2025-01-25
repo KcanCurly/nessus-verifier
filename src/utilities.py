@@ -6,10 +6,13 @@ def savetofile(path, message, mode = "a+"):
     with open(path, mode) as f:
         f.write(message)
         
-def get_hosts_from_file(name):
+def get_hosts_from_file(name, get_ports = True):
     try:
         with open(name, "r") as file:
-            return [line.strip() for line in file if line.strip()] 
+            if get_ports: return [line.strip() for line in file if line.strip()] 
+            else: 
+                h = [line.strip() for line in file if line.strip()] 
+                return [line.split(":")[0] for line in h]
     except: return None
     
 def confirm_prompt(prompt="Are you sure?", suppress = False):

@@ -44,6 +44,7 @@ setup(
             "nv-ntp=src.modules.ntp:main",
             "nv-imap=src.modules.imap:main",
             "nv-rpc=src.modules.rpc:main",
+            "nv-snmp=src.modules.snmp:main",
         ],
     },
 )
