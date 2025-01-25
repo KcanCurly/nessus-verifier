@@ -4,23 +4,29 @@ import os
 from pathlib import Path
 import subprocess
 import re
-from ldap3 import Server, Connection, ALL
+import ssl
+from ldap3 import Server, Connection, ALL, Tls
+from ldap3.core.exceptions import LDAPBindError
 from src.utilities import get_hosts_from_file
 
 
 def check(directory_path, config, args, hosts):
     hosts = get_hosts_from_file(hosts)
     vuln = []
+    tls_conf = Tls(validate=ssl.CERT_NONE)
     
-    for host in hosts:
-        ip = host.split(":")[0]
-        port = host.split(":")[1]
-        
+    for host in hosts:        
         try:
             server = Server(f'ldap://{host}')
             conn = Connection(server, user=None, password=None, auto_bind=True)
             vuln.append(host)
-        except Exception as e: print(e, type(e))
+        except LDAPBindError:
+            try:
+                server = Server(f'ldaps://{host}', user=None, password=None, auto_bind=True, tls=tls_conf)
+                conn = Connection(server, user=None, password=None, auto_bind=True)
+                vuln.append(f"{host} (TLS)")
+            except: pass
+        except:pass
     
     if len(vuln) > 0:
         print("LDAP anonymous access were found:")

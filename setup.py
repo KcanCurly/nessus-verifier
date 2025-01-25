@@ -15,6 +15,8 @@ setup(
         "dnspython",
         "ntplib",
         "ldap3",
+        "impacket",
+        
     ],
     classifiers=[
         "Programming Language :: Python :: 3",
@@ -47,6 +49,7 @@ setup(
             "nv-rpc=src.modules.rpc:main",
             "nv-snmp=src.modules.snmp:main",
             "nv-ldap=src.modules.ldap:main",
+            "nv-smb=src.modules.smb:main",
         ],
     },
 )

@@ -83,6 +83,10 @@ nv-ftp ports/ftp [directory path] [filename of the hosts]
 * IRC (FUTURE)
 * LDAP
   * Check anonymous access
+* SMB
+  * Check null and guest access
+  * Check smb signing requirement
+  * Check smb version
 
 ## Implemented Applications
 
