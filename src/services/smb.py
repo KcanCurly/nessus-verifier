@@ -28,18 +28,17 @@ def check(directory_path, config, args, hosts):
                 null_vuln[host].append(s['shi1_netname'][:-1])
             conn.logoff()
             
-        except Exception as e:print(f"{host}:445 - Normal - {e}")
+        except Exception:pass
         try:
             conn = SMBConnection(host, host, timeout=3) 
             conn.login('guest','')
-            print("Guest login:", host)
+            shares = conn.listShares()
             if host not in guess_vuln:
                 guess_vuln[host] = []
-            shares = conn.listShares()
             for s in shares:
                 guess_vuln[host].append(s['shi1_netname'][:-1])
             conn.logoff()
-        except Exception as e:print(f"{host}:445 - Guest - {e}")
+        except Exception:pass
         
         try:
             conn = SMBConnection(host, host, timeout=3, preferredDialect="NT LM 0.12") 
@@ -54,7 +53,7 @@ def check(directory_path, config, args, hosts):
                 print(f"\t{z}:445")
                 
     if len(guess_vuln) > 0:
-        print("Guest session was possible on hosts:")
+        print("Guest session accessible share on hosts:")
         for k,v in guess_vuln.items():
             print(k)
             for z in v:
