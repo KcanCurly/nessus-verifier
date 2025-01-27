@@ -17,7 +17,7 @@ def check(directory_path, config, args, hosts):
     
     for host in hosts:
         try:
-            conn = SMBConnection(host, host)
+            conn = SMBConnection(host, host, timeout=3)
             if not conn._SMBConnection.is_signing_required():
                 sign.append(host)
             if not conn._SMBConnection.doesSupportNTLMv2():
@@ -32,7 +32,7 @@ def check(directory_path, config, args, hosts):
             
         except Exception :pass
         try:
-            conn = SMBConnection(host, host)  
+            conn = SMBConnection(host, host, timeout=3) 
             conn.login('guest','')
             if host not in guess_vuln:
                 guess_vuln[host] = []
