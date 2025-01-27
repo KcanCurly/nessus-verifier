@@ -37,7 +37,8 @@ def check(directory_path, config, args, hosts):
         
                 command = ["rpcclient", "-N", "-U", "-c", cmd, ip]
                 result = subprocess.run(command, text=True, capture_output=True)
-                if "ACCESS_DENIED" not in result:
+                print(f"{ip} - {result.stdout}")
+                if "ACCESS_DENIED" not in result.stdout:
                     if host not in vuln:
                         vuln[host] = []
                     vuln[host].append(name)
