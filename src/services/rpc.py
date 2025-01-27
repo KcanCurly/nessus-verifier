@@ -35,7 +35,7 @@ def check(directory_path, config, args, hosts):
             cmd = pipe.split(":")[1]
             try:
         
-                command = ["rpcclient", "-N", "-U", "-c", cmd, ip]
+                command = ["rpcclient", "-N", "-U", "","-c", cmd, ip]
                 result = subprocess.run(command, text=True, capture_output=True)
                 if len(result.stdout) > 0: print(f"{ip} stdout - {result.stdout}")
                 if len(result.stderr) > 0: print(f"{ip} stderr - {result.stderr}")
