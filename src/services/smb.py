@@ -34,13 +34,14 @@ def check(directory_path, config, args, hosts):
             conn = SMBConnection(host, host, timeout=3) 
             conn.login('guest','')
             shares = conn.listShares()
-
+            for k,v in shares.items():
+                for k,v in s.items():
+                    print(k)
+                    print(v)
             for s in shares:
                 try:
                     print(s['shi1_netname'][:-1])
-                    for k,v in s.items():
-                        print(k)
-                        print(v)
+
                     conn.listPath(s['shi1_netname'][:-1], "/")
                     if host not in guess_vuln:
                         guess_vuln[host] = []
