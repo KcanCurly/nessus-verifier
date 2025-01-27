@@ -87,7 +87,6 @@ nv-ftp ports/ftp [directory path] [filename of the hosts]
   * Check null and guest access print shares if so
   * Check smb signing requirement
   * Check smb version
-  * Check if NTLMv1 is supported
 * Rlogin
   * Simply checks usage and prints out the hosts
 
