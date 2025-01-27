@@ -15,7 +15,7 @@ def check(directory_path, config, args, hosts):
     for host in hosts:
         try:
             conn = SMBConnection(host, host, timeout=3)
-            print("Sign", conn._SMBConnection.is_signing_required())
+
             if not conn._SMBConnection.is_signing_required():
                 sign.append(host)
             conn.login('','')
@@ -36,6 +36,7 @@ def check(directory_path, config, args, hosts):
             if host not in guess_vuln:
                 guess_vuln[host] = []
             for s in shares:
+                conn.listPath(s['shi1_netname'][:-1], "/")
                 guess_vuln[host].append(s['shi1_netname'][:-1])
             conn.logoff()
         except Exception:pass
