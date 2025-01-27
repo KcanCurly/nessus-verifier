@@ -14,14 +14,12 @@ def check(directory_path, config, args, hosts):
     command = ["msfconsole", "-q", "-x", f"color false; use auxiliary/scanner/snmp/snmp_login; set RHOSTS {result}; run; exit"]
     try:
         result = subprocess.run(command, text=True, capture_output=True)
-        if len(result.stdout) > 0: print(result.stdout)
-        if len(result.stderr) > 0: print(result.stderr)
-        pattern = r"\[\+\] (.*) - Login Successful: (.*) (.*);"
+        pattern = r"\[\+\] (.*) - Login Successful: (.*);"
         matches = re.findall(pattern, result.stdout)
         for m in matches:
             if m[0] not in vuln:
                 vuln[m[0]] = []
-            vuln[m[0]].append(f"{m[1]} - {m[2]}")
+            vuln[m[0]].append(f"{m[1]}")
                 
     except Exception:pass
     

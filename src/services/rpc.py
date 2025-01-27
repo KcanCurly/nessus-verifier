@@ -38,7 +38,7 @@ def check(directory_path, config, args, hosts):
                 command = ["rpcclient", "-N", "-U", "","-c", cmd, ip]
                 result = subprocess.run(command, text=True, capture_output=True)
                 
-                if "nt_status" not in result.stderr.lower():
+                if "nt_status" not in result.stderr.lower() and "nt_status" not in result.stdout.lower(): # For some reason, errors are sometimes outted to stdout
                     if host not in vuln:
                         vuln[host] = []
                     vuln[host].append(f"{name} - {result.stdout} - {result.stderr}")
