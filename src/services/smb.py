@@ -30,7 +30,7 @@ def check(directory_path, config, args, hosts):
                 null_vuln[host].append(s['shi1_netname'][:-1])
             conn.logoff()
             
-        except Exception :pass
+        except Exception as e:print(e)
         try:
             conn = SMBConnection(host, host, timeout=3) 
             conn.login('guest','')
@@ -40,7 +40,7 @@ def check(directory_path, config, args, hosts):
             for s in shares:
                 null_vuln[host].append(s['shi1_netname'][:-1])
             conn.logoff()
-        except Exception :pass
+        except Exception as e:print(e)
         
     if len(null_vuln) > 0:
         print("Null session was possible on hosts:")
