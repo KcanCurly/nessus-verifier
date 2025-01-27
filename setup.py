@@ -17,7 +17,6 @@ setup(
         "ldap3",
         "impacket",
         "pyaml",
-        "easysnmp",
         
     ],
     classifiers=[
