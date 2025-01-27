@@ -38,8 +38,8 @@ def check(directory_path, config, args, hosts):
             for s in shares:
                 try:
                     print(s['shi1_netname'][:-1])
-                    conn.connectTree(s['shi1_netname'][:-1])
-                    conn.listPath(s['shi1_netname'][:-1], "/", "")
+                    # conn.connectTree(s['shi1_netname'][:-1])
+                    conn.listPath("anon-share", "/", "")
                     if host not in guess_vuln:
                         guess_vuln[host] = []
                     print("pain")
