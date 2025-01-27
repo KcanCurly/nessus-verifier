@@ -1,0 +1,1032 @@
+- name: IGNORE
+  id: 0
+  plugin-ids: [142960, 10114, 34850, 51192]
+  # 142960 - HSTS Missing From HTTPS Server (RFC 6797)
+  # 10114 - ICMP Timestamp Request Remote Date Disclosure
+  # 34850 - Web Server Uses Basic Authentication Without HTTPS
+  # 51192 - SSL Certificate Cannot Be Trusted
+
+- name: TLS Misconfigurations (Version and Ciphers)
+  id: 1
+  plugin-ids: [20007, 104743, 157288, 31705, 66848, 26928, 94437, 65821, 42873, 83738, 81606, 7282, 132675, 7222, 45411]
+  # 20007 - SSL Version 2 and 3 Protocol Detection
+  # 104743 - TLS Version 1.0 Protocol Detection
+  # 157288 - TLS Version 1.1 Deprecated Protocol
+  # 31705 - SSL Anonymous Cipher Suites Supported
+  # 66848 - SSL Null Cipher Suites Supported
+  # 26928 - SSL Weak Cipher Suites Supported
+  # 94437 - SSL 64-bit Block Size Cipher Suites Supported (SWEET32)
+  # 65821 - SSL RC4 Cipher Suites Supported (Bar Mitzvah)
+  # 42873 - SSL Medium Strength Cipher Suites Supported (SWEET32)
+  # 83738 - SSL/TLS EXPORT_DHE <= 512-bit Export Cipher Suites Supported (Logjam)
+  # 81606 - SSL/TLS EXPORT_RSA <= 512-bit Cipher Suites Supported (FREAK)
+  # 7282 - SSL RC4 Cipher Suites Supported (Bar Mitzvah)
+  # 132675 - SSL/TLS Deprecated Ciphers Unsupported
+  # 7222 - SSL 64-bit Block Size Cipher Suites Supported (SWEET32)
+  # 45411 - SSL Certificate with Wrong Hostname
+  # 35291 - SSL Certificate Signed Using Weak Hashing Algorithm
+  # 69551 - SSL Certificate Chain Contains RSA Keys Less Than 2048 bits
+
+- name: SMTP - Open Relay Test
+  id: 2
+  plugin-ids: [10263, 18017, 10262, 11852]
+  # 10263 - SMTP Server Detection
+  # 18017 - MTA Open Mail Relaying Allowed (internal)
+  # 10262 - MTA Open Mail Relaying Allowed
+  # 11852 - MTA Open Mail Relaying Allowed (thorough test)
+
+- name: SSH Service Misconfigurations
+  id: 3
+  plugin-ids: [90317, 71049, 153953, 153954, 86328, 70658, 153588, 10882, 187315]
+  # 90317 - SSH Weak Algorithms Supported
+  # 71049 - SSH Weak MAC Algorithms Enabled
+  # 153953 - SSH Weak Key Exchange Algorithms Enabled
+  # 153954 - SSH Host Keys < 2048 Bits Considered Weak
+  # 86328 - SSH Diffie-Hellman Modulus <= 1024 Bits (Logjam)
+  # 70658 - SSH Server CBC Mode Ciphers Enabled
+  # 153588 - SSH SHA-1 HMAC Algorithms Enabled
+  # 10882 - SSH Protocol Version 1 Session Key Retrieval
+  # 187315 - SSH Terrapin Prefix Truncation Weakness (CVE-2023-48795)
+
+- name: SSL Certificate Expiry
+  id: 4
+  plugin-ids: [15901]
+  # 15901 - SSL Certificate Expiry
+
+- name: SMB Service Misconfigurations
+  id: 5
+  plugin-ids: [57608, 26920]
+  # 57608 - SMB Signing not required
+  # 26920 - SMB NULL Session Authentication
+
+- name: SNMP Service Misconfigurations
+  id: 6
+  plugin-ids: [10264, 27841, 41028]
+  # 10264 - SNMP Agent Default Community Names
+  # 27841 - SNMP GETBULK Large max-repetitions Remote DoS
+  # 41028 - SNMP Agent Default Community Name (public)
+  # 76474 - SNMP 'GETBULK' Reflection DDoS
+
+- name: Cleartext Protocol Detected
+  id: 7
+  plugin-ids: [87733, 42263, 54582, 98615, 3018, 34324, 15854, 15855]
+  # 87733 - AMQP Cleartext Authentication
+  # 42263 - Unencrypted Telnet Server
+  # 54582 - SMTP Service Cleartext Login Permitted
+  # 98615 - Basic Authentication Without HTTPS
+  # 3018 - HTTP Plaintext Password Authentication
+  # 34324 - FTP Supports Cleartext Authentication
+  # 15854 - POP2 Cleartext Logins Permitted
+  # 15855 - POP3 Cleartext Logins Permitted
+
+- name: Terminal Services Misconfigurations
+  id: 8
+  plugin-ids: [58453, 57690, 30218, 18405]
+  # 58453 - Terminal Services Doesn't Use Network Level Authentication (NLA) Only(58453)
+  # 57690 - Terminal Services Encryption Level is Medium or Low
+  # 30218 - Terminal Services Encryption Level is not FIPS-140 Compliant(30218)
+  # 18405 - Remote Desktop Protocol Server Man-in-the-Middle Weakness
+
+- name: Usage of database without password
+  id: 9
+  plugin-ids: [81777, 100634, 101025]
+  # 81777 - MongoDB Service Without Authentication Detection
+  # 100634 - Redis Server Unprotected by Password Authentication
+  # 101025 - Elasticsearch Unrestricted Access Information Disclosure
+
+- name: Apache Tomcat Version
+  id: 10
+  plugin-ids: [171342, 178943, 126125, 171351, 171349, 17727, 171340, 171346, 50448, 81579, 
+  124058, 121117, 121125, 51958, 197832, 55859, 66427, 197851, 55759, 197818, 132419, 
+  111066, 197822, 197831, 197837, 57541, 72692, 151501, 121119, 154149, 154150, 154151, 151502, 
+  138097, 138851, 150946, 159463, 162500, 197841, 144050, 150937, 166906, 99368, 197838, 102589, 
+  177469, 177470, 176278, 46867, 81650, 197849, 211517, 171657, 171663, 171714, 
+  102587, 111067, 104358, 103698, 103329, 106977, 106711, 121118, 54301, 88937, 121115, 81580, 
+  121124, 124064, 63200, 17728, 72693, 197853, 159462, 197830, 197855, 118035, 118037, 
+  151504, 197840, 197845, 136806, 138574, 157120, 180194, 173252, 162499, 166786, 197848, 126312, 
+  47028, 169459, 169460, 182809, 176289, 186364, 186365, 211518, 46869, 176290, 176291, 
+  171656, 177467, 177468, 47029, 81649, 197854, 201843, 47577, 211504, 103697, 106976, 161159, 
+  51958, 55859, 197832, 121117, 121125, 57541, 121119, 72692, 66427, 197851, 55759, 197818, 
+  111066, 162500, 151502, 151501, 197822, 197831, 197837, 150946, 159463, 154149, 154150, 154151, 
+  138097, 138851, 132419, 144050, 150937, 46867, 166906, 83490, 83526, 192033, 192042, 192043, 197839, 
+  197817, 182812, 182818, 197842, 121122, 46753, 51975, 121114, 17726, 180195, 48255, 83764, 147019, 
+  197846, 47578, 160893, 194472, 197826, 133845, 159464, 74249, 106713, 121123, 57082, 74245, 77475, 
+  62985, 62986, 72691, 197824, 49702, 50526, 121116, 197844, 88935, 121120, 118036, 165511, 132418, 
+  138591, 94578, 197829, 136770, 138098, 157124, 173251, 180192, 180193, 169458, 162498, 83527, 177467, 
+  177468, 46869, 51059, 47029, 176290, 176291, 186365, 81649, 211518, 171656, 197854, 201843, 
+  47577, 211504, 103697, 106976, 161159, 166806, 166807, 106710, 126245, 51987, 52634, 62988, 77476, 
+  66426, 121112, 62987, 53323, 197857, 197852, 197856, 124063, 150938, 157117, 157119, 197821, 
+  197850, 150936, 100681, 197819, 136807, 141446, 111069, 150935, 197825, 154147, 144054, 197817, 201842, 
+  192033, 192042, 192043, 197839, 182812, 182818, 83490, 83526, 197842, 121122, 121114, 17726, 51975, 
+  46753, 83764, 48255, 180195, 147019, 197846, 47578, 160893, 194472, 197826, 133845, 130590, 
+  39446, 701352, 8923, 8925, 8928, 8924, 9715, 8927, 4167, 8926, 700708, 701450, 8931, 701353, 701357, 
+  701354, 701356, 4614, 700707, 1467, 700680, 1463, 700701, 701466, 701355, 701467, 
+  701468, 1466, 4368, 701329, 701350, 3949, 701269, 701465, 701336, 701364, 701366, 701446, 701447, 701470, 
+  701432, 701438, 701440, 701402, 700687, 800624, 701337, 701452, 701453, 701404, 800624, 5787, 
+  700687, 700678, 700688, 701372, 701410, 701413, 701434, 701405, 700694, 701337, 701334, 701424, 701444, 
+  701412, 701433, 701439, 701454, 701331, 701445, 9723, 700677, 700705, 9721, 701335, 701338, 701436, 
+  701333, 701425, 701373, 701365, 701403, 701332, 6007, 6833, 5792, 701351, 701411, 701471, 701437, 
+  701385, 701386, 5788, 700679, 701374, 9906, 700697, 700691, 5793, 701388, 1465, 700668, 8934, 8936, 8141, 
+  5044, 9317, 800601, 700698, 700706, 701330, 9315, 700689, 700674, 700710, 8830, 6657, 8831, 700695, 
+  701387, 5786, 700702, 700699, 8935, 700056, 800615, 700676, 700007, 700681, 700692, 9314, 9313, 
+  700610, 700057, 8832, 700670, 9316, 700709, 700683, 700686, 700704, 700703, 9316, 700709, 700683, 700675, 
+  8921, 700673, 700671, 9909, 700696, 700685, 700669, 800614, 8671, 800607, 5789, 6018, 6332, 
+  5996, 6623, 6832, 6333, 700682, 700672, 5327, 5882, 6624, 5791, 700684, 700690, 700711, 5816, 
+  6644, 5794, 5795, 6334, 5790, 6331, 800623, 800618, 800604, 800598, 800625, 800595, 4621, 800610, 800630, 
+  800596, 800600, 800630, 800599, 800621, 800619, 800627, 800784, 800626, 800611, 800597, 800608, 
+  800622, 800602, 800617, 800609, 800612, 800783, 800620, 800605, 800606]
+  # 171342 - Apache Tomcat SEoL (8.0.x)
+  # 178943 - Apache Tomcat SEoL (8.5.x)
+  # 126125 - Apache Tomcat 8.5.0 < 8.5.41 DoS
+  # 171351 - Apache Tomcat SEoL (7.0.x)
+  # 171349 - Apache Tomcat SEoL (6.0.x)
+  # 17727 - Apache Tomcat 5.0.x <= 5.0.30 / 5.5.x < 5.5.23 Content-Length HTTP Request Smuggling
+  # 171340 - Apache Tomcat SEoL (<= 5.5.x)
+  # 171346 - Apache Tomcat SEoL (10.0.x)
+  # 50448 - Apache Tomcat 3.x < 3.2.2 JSP Error Condition XSS
+  # 81579 - Apache Tomcat 6.0.x < 6.0.42 Handling Request Smuggling DoS
+  # 124058 - Apache Tomcat 9.0.0.M1 < 9.0.18
+  # 121117 - Apache Tomcat 7.0.0 < 7.0.65
+  # 121125 - Apache Tomcat < 9.0.0.M3 Multiple Vulnerabilities
+  # 51958 - Apache Tomcat 7.0.0 < 7.0.4
+  # 197832 - Apache Tomcat 8.0.0-RC1 < 8.0.27
+  # 55859 - Apache Tomcat 7.0.0 < 7.0.20
+  # 66427 - Apache Tomcat 7.0.0 < 7.0.33
+  # 197851 - Apache Tomcat 8.5.0 < 8.5.12
+  # 55759 - Apache Tomcat 7.0.0 < 7.0.19 multiple vulnerabilities
+  # 197818 - Apache Tomcat 7.0.0 < 7.0.72 multiple vulnerabilities
+  # 132419 - Apache Tomcat 9.0.0.M1 < 9.0.30
+  # 111066 - Apache Tomcat 7.0.0 < 7.0.89
+  # 197822 - Apache Tomcat 9.0.0.M1 < 9.0.12
+  # 197831 - Apache Tomcat 7.0.0 < 7.0.78
+  # 197837 - Apache Tomcat 8.0.0.RC1 < 8.0.44
+  # 57541 - Apache Tomcat 7.0.0 < 7.0.23
+  # 72692 - Apache Tomcat 7.0.0 < 7.0.52
+  # 151501 - Apache Tomcat 10.0.0.M1 < 10.0.7
+  # 121119 - Apache Tomcat 7.0.0 < 7.0.70
+  # 154149 - Apache Tomcat 10.1.0.M1 < 10.1.0.M6
+  # 154150 - Apache Tomcat 9.0.40 < 9.0.54
+  # 154151 - Apache Tomcat 10.0.0.M10 < 10.0.12
+  # 151502 - Apache Tomcat 10.0.0.M1 < 10.0.6
+  # 138097 - Apache Tomcat 8.5.0 < 8.5.56
+  # 138851 - Apache Tomcat 7.0.27 < 7.0.105
+  # 150946 - Apache Tomcat 10.0.0.M1 < 10.0.0.M5
+  # 159463 - Apache Tomcat 10.0.0.M1 < 10.0.20 Spring4Shell (CVE-2022-22965) Mitigations
+  # 162500 - Apache Tomcat 10.1.0.M1 < 10.1.0.M17
+  # 197841 - Apache Tomcat 9.0.0.M1 < 9.0.0.M13 multiple vulnerabilities
+  # 144050 - Apache Tomcat 9.0.0.M1 < 9.0.40 multiple vulnerabilities
+  # 150937 - Apache Tomcat 10.0.0.M1 < 10.0.0.M10 multiple vulnerabilities
+  # 166906 - Apache Tomcat 9.0.0.M1 < 9.0.68
+  # 99368 - Apache Tomcat 8.5.0 < 8.5.13 multiple vulnerabilities
+  # 197838 - Apache Tomcat 7.0.0 < 7.0.99 multiple vulnerabilities
+  # 102589 - Apache Tomcat 8.5.0 < 8.5.16 multiple vulnerabilities
+  # 177469 - Apache Tomcat 11.0.0-M1 < 11.0.0-M6
+  # 177470 - Apache Tomcat 8.5.0 < 8.5.89
+  # 176278 - Apache Tomcat 9.0.71 < 9.0.74 DoS
+  # 46867 - Apache Tomcat 4.x < 4.1.39 Multiple Vulnerabilities
+  # 81650 - Apache Tomcat 7.0.x < 7.0.57 Multiple Vulnerabilities (POODLE)
+  # 197849 - Apache Tomcat 9.0.0.M1 < 9.0.29 multiple vulnerabilities
+  # 211517 - Apache Tomcat 10.1.31 < 10.1.33
+  # 171657 - Apache Tomcat 9.0.0.M1 < 9.0.71
+  # 171663 - Apache Tomcat 10.1.0.M1 < 10.1.5
+  # 171714 - Apache Tomcat 11.0.0.M1 < 11.0.0.M3 multiple vulnerabilities
+  # 102587 - Apache Tomcat 7.0.41 < 7.0.79
+  # 111067 - Apache Tomcat 8.0.0.RC1 < 8.0.53 multiple vulnerabilities
+  # 104358 - Apache Tomcat 6.0.x < 6.0.24 Multiple Vulnerabilities
+  # 103698 - Apache Tomcat 8.5.0 < 8.5.23
+  # 103329 - Apache Tomcat 7.0.0 < 7.0.81 multiple vulnerabilities
+  # 106977 - Apache Tomcat 8.5.0 < 8.5.28 multiple vulnerabilities
+  # 106711 - Apache Tomcat 8.0.45 < 8.0.48
+  # 121118 - Apache Tomcat 7.0.5 < 7.0.67
+  # 54301 - Apache Tomcat 7.0.12 < 7.0.14 multiple vulnerabilities
+  # 88937 - Apache Tomcat 8.0.0.RC1 < 8.0.32 multiple vulnerabilities
+  # 121115 - Apache Tomcat 7.0.0 < 7.0.2
+  # 81580 - Apache Tomcat 8.0.0-RC1 < 8.0.9 multiple vulnerabilities
+  # 121124 - Apache Tomcat 8.0.0.RC1 < 8.0.52
+  # 124064 - Apache Tomcat 7.0.0 < 7.0.94 multiple vulnerabilities
+  # 63200 - Apache Tomcat 7.0.0 < 7.0.32
+  # 17728 - Apache Tomcat < 6.0.13 Multiple Vulnerabilities
+  # 72693 - Apache Tomcat 8.0.0-RC1 < 8.0.3
+  # 197853 - Apache Tomcat 9.0.0.M1 < 9.0.0.M8
+  # 159462 - Apache Tomcat 8.x < 8.5.78 Spring4Shell CVE-2021-43980
+  # 197830 - Apache Tomcat 9.0.0.M1 < 9.0.46
+  # 197855 - Apache Tomcat 10.0.0.M1 < 10.0.4
+  # 118035 - Apache Tomcat 7.0.23 < 7.0.91
+  # 118037 - Apache Tomcat 9.0.0.M1 < 9.0.12 Open Redirect Weakness
+  # 151504 - Apache Tomcat 10.0.3 < 10.0.5
+  # 197840 - Apache Tomcat 9.0.0 < 9.0.45
+  # 197845 - Apache Tomcat 8.5.0 < 8.5.65
+  # 136806 - Apache Tomcat 9.0.0 < 9.0.35
+  # 138574 - Apache Tomcat 8.5.0 < 8.5.57 multiple vulnerabilities
+  # 157120 - Apache Tomcat 10.1.0.M1 < 10.1.0.M10 multiple vulnerabilities
+  # 180194 - Apache Tomcat 9.0.0.M1 < 9.0.80
+  # 173252 - Apache Tomcat 10.1.0.M1 < 10.1.6
+  # 162499 - Apache Tomcat 10.0.0.M1 < 10.0.23
+  # 166786 - Apache Tomcat 10.1.0.M1 < 10.1.1
+  # 197848 - Apache Tomcat 7.0.0 < 7.0.73 multiple vulnerabilities
+  # 126312 - Apache Tomcat 9.0.0.M1 < 9.0.16
+  # 47028 - Apache Tomcat 5.x < 5.5.1 Information Disclosure
+  # 169459 - Apache Tomcat 9.0.40 < 9.0.69
+  # 169460 - Apache Tomcat 10.1.0.M1 < 10.1.2
+  # 182809 - Apache Tomcat 9.0.0.M1 < 9.0.81 multiple vulnerabilities
+  # 176289 - Apache Tomcat 11.0.0.M2 < 11.0.0.M5 DoS
+  # 186364 - Apache Tomcat 8.5.0 < 8.5.96
+  # 186365 - Apache Tomcat 9.0.0.M1 < 9.0.83
+  # 211518 - Apache Tomcat 9.0.96 < 9.0.97
+  # 46869 - Apache Tomcat 6.x < 6.0.9 Information Disclosure
+  # 176290 - Apache Tomcat 8.5.85 < 8.5.88 DoS
+  # 176291 - Apache Tomcat 10.1.5 < 10.1.8 DoS
+  # 171656 - Apache Tomcat 8.5.0 < 8.5.85
+  # 177467 - Apache Tomcat 10.1.0 < 10.1.9
+  # 177468 - Apache Tomcat 9.0.0 < 9.0.75
+  # 47029 - Apache Tomcat 4.x < 4.1.32 Multiple Vulnerabilities
+  # 81649 - Apache Tomcat 6.0.x < 6.0.43 Multiple Vulnerabilities (POODLE)
+  # 197854 - Apache Tomcat 9.0.0.M1 < 9.0.0.M15
+  # 201843 - Apache Tomcat 10.1.0.M1 < 10.1.25
+  # 47577 - Apache Tomcat < 6.0.16 Multiple Vulnerabilities
+  # 211504 - Apache Tomcat 10.1.27 < 10.1.31 multiple vulnerabilities
+  # 103697 - Apache Tomcat 8.0.0.RC1 < 8.0.47
+  # 106976 - Apache Tomcat 8.0.0.RC1 < 8.0.50 multiple vulnerabilities
+  # 161159 - Apache Tomcat 9.0.0.M1 < 9.0.21
+  # 51958 - Apache Tomcat 7.0.0 < 7.0.4
+  # 55859 - Apache Tomcat 7.0.0 < 7.0.20
+  # 197832 - Apache Tomcat 8.0.0-RC1 < 8.0.27
+  # 121117 - Apache Tomcat 7.0.0 < 7.0.65
+  # 121125 - Apache Tomcat < 9.0.0.M3 Multiple Vulnerabilities
+  # 57541 - Apache Tomcat 7.0.0 < 7.0.23
+  # 121119 - Apache Tomcat 7.0.0 < 7.0.70
+  # 72692 - Apache Tomcat 7.0.0 < 7.0.52
+  # 66427 - Apache Tomcat 7.0.0 < 7.0.33
+  # 197851 - Apache Tomcat 8.5.0 < 8.5.12
+  # 55759 - Apache Tomcat 7.0.0 < 7.0.19 multiple vulnerabilities
+  # 197818 - Apache Tomcat 7.0.0 < 7.0.72 multiple vulnerabilities
+  # 111066 - Apache Tomcat 7.0.0 < 7.0.89
+  # 162500 - Apache Tomcat 10.1.0.M1 < 10.1.0.M17
+  # 151502 - Apache Tomcat 10.0.0.M1 < 10.0.6
+  # 151501 - Apache Tomcat 10.0.0.M1 < 10.0.7
+  # 197822 - Apache Tomcat 9.0.0.M1 < 9.0.12
+  # 197831 - Apache Tomcat 7.0.0 < 7.0.78
+  # 197837 - Apache Tomcat 8.0.0.RC1 < 8.0.44
+  # 150946 - Apache Tomcat 10.0.0.M1 < 10.0.0.M5
+  # 159463 - Apache Tomcat 10.0.0.M1 < 10.0.20 Spring4Shell (CVE-2022-22965) Mitigations
+  # 154149 - Apache Tomcat 10.1.0.M1 < 10.1.0.M6
+  # 154150 - Apache Tomcat 9.0.40 < 9.0.54
+  # 154151 - Apache Tomcat 10.0.0.M10 < 10.0.12
+  # 138097 - Apache Tomcat 8.5.0 < 8.5.56
+  # 138851 - Apache Tomcat 7.0.27 < 7.0.105
+  # 132419 - Apache Tomcat 9.0.0.M1 < 9.0.30
+  # 144050 - Apache Tomcat 9.0.0.M1 < 9.0.40 multiple vulnerabilities
+  # 150937 - Apache Tomcat 10.0.0.M1 < 10.0.0.M10 multiple vulnerabilities
+  # 46867 - Apache Tomcat 4.x < 4.1.39 Multiple Vulnerabilities
+  # 166906 - Apache Tomcat 9.0.0.M1 < 9.0.68
+  # 83490 - Apache Tomcat 6.0.x < 6.0.44 Multiple Vulnerabilities (FREAK)
+  # 83526 - Apache Tomcat 7.0.x < 7.0.60 Multiple Vulnerabilities (FREAK)
+  # 192033 - Apache Tomcat 10.1.0.M1 < 10.1.19 multiple vulnerabilities
+  # 192042 - Apache Tomcat 9.0.0.M1 < 9.0.86 multiple vulnerabilities
+  # 192043 - Apache Tomcat 8.5.0 < 8.5.99 multiple vulnerabilities
+  # 197839 - Apache Tomcat 8.0.0.RC1 < 8.0.39 multiple vulnerabilities
+  # 197817 - Apache Tomcat 8.5.0 < 8.5.38
+  # 182812 - Apache Tomcat 11.0.0.M1 < 11.0.0.M12 multiple vulnerabilities
+  # 182818 - Apache Tomcat 10.1.0.M1 < 10.1.14 multiple vulnerabilities
+  # 197842 - Apache Tomcat 9.0.0.M1 < 9.0.0.M10 multiple vulnerabilities
+  # 121122 - Apache Tomcat < 8.0.0-RC10 Multiple Vulnerabilities
+  # 46753 - Apache Tomcat < 4.1.40 / 5.5.28 / 6.0.20 Multiple Vulnerabilities
+  # 51975 - Apache Tomcat 6.0.x < 6.0.30 Multiple Vulnerabilities
+  # 121114 - Apache Tomcat < 6.0.6 Cross-Site Scripting
+  # 17726 - Apache Tomcat 4.x < 4.1.36 Multiple Vulnerabilities
+  # 180195 - Apache Tomcat 11.0.0.M1 < 11.0.0.M11 multiple vulnerabilities
+  # 48255 - Apache Tomcat 6.0 < 6.0.28 Multiple Vulnerabilities
+  # 83764 - Apache Tomcat 7.0.0 < 7.0.59
+  # 147019 - Apache Tomcat 8.5.0 < 8.5.63 multiple vulnerabilities
+  # 197846 - Apache Tomcat 8.0.0.RC1 < 8.0.41
+  # 47578 - Apache Tomcat < 6.0.18 Multiple Vulnerabilities
+  # 160893 - Apache Tomcat 10.0.0.M1 < 10.0.21
+  # 194472 - Apache Tomcat 8.5.0 < 8.5.64 multiple vulnerabilities
+  # 197826 - Apache Tomcat 7.0.25 < 7.0.90
+  # 133845 - Apache Tomcat 9.0.0.M1 < 9.0.31 multiple vulnerabilities
+  # 159464 - Apache Tomcat 9.0.0.M1 < 9.0.62 Spring4Shell CVE-2021-43980
+  # 74249 - Apache Tomcat 8.0.0-RC1 < 8.0.8
+  # 106713 - Apache Tomcat 9.0.0.M22 < 9.0.2
+  # 121123 - Apache Tomcat 8.0.0.RC1 < 8.0.30
+  # 57082 - Apache Tomcat 7.0.0 < 7.0.22 multiple vulnerabilities
+  # 74245 - Apache Tomcat 6.0.x < 6.0.40 Multiple Vulnerabilities
+  # 77475 - Apache Tomcat 7.0.0 < 7.0.55 multiple vulnerabilities
+  # 62985 - Apache Tomcat 7.0.0 < 7.0.28 multiple vulnerabilities
+  # 62986 - Apache Tomcat 5.5.x < 5.5.36 DIGEST Authentication Multiple Security Weaknesses
+  # 72691 - Apache Tomcat 7.0.0 < 7.0.50 multiple vulnerabilities
+  # 197824 - Apache Tomcat 8.0.0 < 8.0.0-RC3 multiple vulnerabilities
+  # 49702 - Apache Tomcat 4.x < 4.1.3 Denial of Service
+  # 50526 - Apache Tomcat 3.x < 3.3.2 Multiple Vulnerabilities
+  # 121116 - Apache Tomcat 7.0.0 < 7.0.47 multiple vulnerabilities
+  # 197844 - Apache Tomcat 9.0.0.M1 < 9.0.0.M18
+  # 88935 - Apache Tomcat 6.0.x < 6.0.45 Multiple Vulnerabilities
+  # 121120 - Apache Tomcat 7.0.0 < 7.0.76
+  # 118036 - Apache Tomcat 8.5.0 < 8.5.34
+  # 165511 - Apache Tomcat 10.1.0.M1 < 10.1.0.M14
+  # 132418 - Apache Tomcat 8.5.0 < 8.5.50
+  # 138591 - Apache Tomcat 9.0.0.M1 < 9.0.37 multiple vulnerabilities
+  # 94578 - Apache Tomcat 8.5.0 < 8.5.5 multiple vulnerabilities
+  # 197829 - Apache Tomcat 8.0.0.RC1 < 8.0.36
+  # 136770 - Apache Tomcat 7.0.0 < 7.0.104
+  # 138098 - Apache Tomcat 9.0.0.M1 < 9.0.36
+  # 157124 - Apache Tomcat 10.0.0.M5 < 10.0.16 multiple vulnerabilities
+  # 173251 - Apache Tomcat 9.0.0.M1 < 9.0.72
+  # 180192 - Apache Tomcat 8.5.0 < 8.5.93
+  # 180193 - Apache Tomcat 10.1.0.M1 < 10.1.13
+  # 169458 - Apache Tomcat 8.5.83
+  # 162498 - Apache Tomcat 9.0.30 < 9.0.65
+  # 83527 - Apache Tomcat 8.0.x < 8.0.21 Multiple Vulnerabilities (FREAK)
+  # 177467 - Apache Tomcat 10.1.0 < 10.1.9
+  # 177468 - Apache Tomcat 9.0.0 < 9.0.75
+  # 46869 - Apache Tomcat 6.x < 6.0.9 Information Disclosure
+  # 51059 - Apache Tomcat 5.0.x <= 5.0.30 / 5.5.x < 5.5.25 Multiple Vulnerabilities
+  # 47029 - Apache Tomcat 4.x < 4.1.32 Multiple Vulnerabilities
+  # 176290 - Apache Tomcat 8.5.85 < 8.5.88 DoS
+  # 176291 - Apache Tomcat 10.1.5 < 10.1.8 DoS
+  # 186365 - Apache Tomcat 9.0.0.M1 < 9.0.83
+  # 81649 - Apache Tomcat 6.0.x < 6.0.43 Multiple Vulnerabilities (POODLE)
+  # 211518 - Apache Tomcat 9.0.96 < 9.0.97
+  # 171656 - Apache Tomcat 8.5.0 < 8.5.85
+  # 197854 - Apache Tomcat 9.0.0.M1 < 9.0.0.M15
+  # 201843 - Apache Tomcat 10.1.0.M1 < 10.1.25
+  # 47577 - Apache Tomcat < 6.0.16 Multiple Vulnerabilities
+  # 211504 - Apache Tomcat 10.1.27 < 10.1.31 multiple vulnerabilities
+  # 103697 - Apache Tomcat 8.0.0.RC1 < 8.0.47
+  # 106976 - Apache Tomcat 8.0.0.RC1 < 8.0.50 multiple vulnerabilities
+  # 161159 - Apache Tomcat 9.0.0.M1 < 9.0.21
+  # 166806 - Apache Tomcat 10.0.0.M1 < 10.0.27
+  # 166807 - Apache Tomcat 8.5.0 < 8.5.83
+  # 106710 - Apache Tomcat 7.0.79 < 7.0.84
+  # 126245 - Apache Tomcat 9.0.0.M1 < 9.0.20 DoS
+  # 51987 - Apache Tomcat 7.0.0 < 7.0.8
+  # 52634 - Apache Tomcat 7.0.0 < 7.0.11
+  # 62988 - Apache Tomcat 7.0.0 < 7.0.30 multiple vulnerabilities
+  # 77476 - Apache Tomcat 8.0.x < 8.0.11 Multiple OpenSSL Vulnerabilities
+  # 66426 - Apache Tomcat 6.0.x < 6.0.37 Multiple Vulnerabilities
+  # 121112 - Apache Tomcat < 6.0.10 Directory Traversal
+  # 62987 - Apache Tomcat 6.0.x < 6.0.36 Multiple Vulnerabilities
+  # 53323 - Apache Tomcat 7.0.0 < 7.0.12 multiple vulnerabilities
+  # 197857 - Apache Tomcat 8.0.0.RC1 < 8.0.42
+  # 197852 - Apache Tomcat 8.5.0 < 8.5.31
+  # 197856 - Apache Tomcat 9.0.0.M1 < 9.0.19 multiple vulnerabilities
+  # 124063 - Apache Tomcat 8.5.0 < 8.5.40 multiple vulnerabilities
+  # 150938 - Apache Tomcat 10.0.0.M1 < 10.0.0.M6
+  # 157117 - Apache Tomcat 9.0.35 < 9.0.58 multiple vulnerabilities
+  # 157119 - Apache Tomcat 8.5.55 < 8.5.75 multiple vulnerabilities
+  # 197821 - Apache Tomcat 8.5.0 < 8.5.3
+  # 197850 - Apache Tomcat 8.0.0.RC1 < 8.0.37 multiple vulnerabilities
+  # 150936 - Apache Tomcat 10.0.0.M1 < 10.0.0.M7 multiple vulnerabilities
+  # 100681 - Apache Tomcat 8.5.0 < 8.5.15
+  # 197819 - Apache Tomcat 8.5.0 < 8.5.58
+  # 136807 - Apache Tomcat 8.5.0 < 8.5.55
+  # 141446 - Apache Tomcat 9.0.0.M1 < 9.0.38
+  # 111069 - Apache Tomcat 9.0.0 < 9.0.9
+  # 150935 - Apache Tomcat 10.0.0.M1 < 10.0.0.M8
+  # 197825 - Apache Tomcat 9.0.0.M1 < 9.0.0.M21
+  # 154147 - Apache Tomcat 8.5.60 < 8.5.72
+  # 144054 - Apache Tomcat 8.5.0 < 8.5.60 multiple vulnerabilities
+  # 197817 - Apache Tomcat 8.5.0 < 8.5.38
+  # 201842 - Apache Tomcat 11.0.0.M1 < 11.0.0.M21
+  # 192033 - Apache Tomcat 10.1.0.M1 < 10.1.19 multiple vulnerabilities
+  # 192042 - Apache Tomcat 9.0.0.M1 < 9.0.86 multiple vulnerabilities
+  # 192043 - Apache Tomcat 8.5.0 < 8.5.99 multiple vulnerabilities
+  # 197839 - Apache Tomcat 8.0.0.RC1 < 8.0.39 multiple vulnerabilities
+  # 182812 - Apache Tomcat 11.0.0.M1 < 11.0.0.M12 multiple vulnerabilities
+  # 182818 - Apache Tomcat 10.1.0.M1 < 10.1.14 multiple vulnerabilities
+  # 83490 - Apache Tomcat 6.0.x < 6.0.44 Multiple Vulnerabilities (FREAK)
+  # 83526 - Apache Tomcat 7.0.x < 7.0.60 Multiple Vulnerabilities (FREAK)
+  # 197842 - Apache Tomcat 9.0.0.M1 < 9.0.0.M10 multiple vulnerabilities
+  # 121122 - Apache Tomcat < 8.0.0-RC10 Multiple Vulnerabilities
+  # 121114 - Apache Tomcat < 6.0.6 Cross-Site Scripting
+  # 17726 - Apache Tomcat 4.x < 4.1.36 Multiple Vulnerabilities
+  # 51975 - Apache Tomcat 6.0.x < 6.0.30 Multiple Vulnerabilities
+  # 46753 - Apache Tomcat < 4.1.40 / 5.5.28 / 6.0.20 Multiple Vulnerabilities
+  # 83764 - Apache Tomcat 7.0.0 < 7.0.59
+  # 48255 - Apache Tomcat 6.0 < 6.0.28 Multiple Vulnerabilities
+  # 180195 - Apache Tomcat 11.0.0.M1 < 11.0.0.M11 multiple vulnerabilities
+  # 147019 - Apache Tomcat 8.5.0 < 8.5.63 multiple vulnerabilities
+  # 197846 - Apache Tomcat 8.0.0.RC1 < 8.0.41
+  # 47578 - Apache Tomcat < 6.0.18 Multiple Vulnerabilities
+  # 160893 - Apache Tomcat 10.0.0.M1 < 10.0.21
+  # 194472 - Apache Tomcat 8.5.0 < 8.5.64 multiple vulnerabilities
+  # 197826 - Apache Tomcat 7.0.25 < 7.0.90
+  # 133845 - Apache Tomcat 9.0.0.M1 < 9.0.31 multiple vulnerabilities
+  # 130590 - Apache Tomcat Installed (Windows)
+  # 39446 - Apache Tomcat Detection
+  # 701352 - Apache Tomcat < 10.0.6 Vulnerability
+  # 8923 - Apache Tomcat Version Detection
+  # 8925 - Apache Tomcat Version 4.x Detection
+  # 8928 - Apache Tomcat Version 7.x Detection
+  # 8924 - Apache Tomcat Version 3.x Detection
+  # 9715 - Apache Tomcat Version 9.x Detection
+  # 8927 - Apache Tomcat Version 6.x Detection
+  # 4167 - Apache Tomcat < 5.5.25 / 6.0.x < 6.0.14 Multiple Vulnerabilities
+  # 8926 - Apache Tomcat Version 5.x Detection
+  # 700708 - Apache Tomcat 9.0.x < 9.0.10 Multiple Vulnerabilities
+  # 701450 - Apache Tomcat < 10.1.14 Multiple Vulnerabilities
+  # 8931 - Apache Tomcat Version 8.x Detection
+  # 701353 - Apache Tomcat < 8.5.66 Vulnerability
+  # 701357 - Apache Tomcat < 9.0.46 Vulnerability
+  # 701354 - Apache Tomcat < 9.0.48 Vulnerability
+  # 701356 - Apache Tomcat < 10.0.7 Vulnerability
+  # 4614 - Apache Tomcat 4.1.x < 4.1.39 / 5.5.x < 5.5.27 / 6.0.x < 6.0.18 Multiple Vulnerabilities
+  # 700707 - Apache Tomcat 9.0.x < 9.0.10 Security Misconfiguration
+  # 1467 - Apache Tomcat < 3.3.1a Servlet Engine MS/DOS Device Name DoS
+  # 700680 - Apache Tomcat 7.0.41 < 7.0.90 Security Bypass
+  # 1463 - Apache Tomcat 4.0.x < 4.0.5 / 4.1.x < 4.1.11 JSP Source Code Disclosure
+  # 700701 - Apache Tomcat 9.0.x < 9.0.0.M21 Remote Error Page Manipulation
+  # 701466 - Apache Tomcat < 10.1.19 Multiple Vulnerabilities
+  # 701355 - Apache Tomcat < 8.5.68 Vulnerability
+  # 701467 - Apache Tomcat < 9.0.86 Multiple Vulnerabilities
+  # 701468 - Apache Tomcat < 8.5.99 Multiple Vulnerabilities
+  # 1466 - Apache Tomcat < 3.3.1a Directory Listing and File Disclosure
+  # 4368 - Apache Tomcat 6.0.x < 6.0.16 Information Disclosure
+  # 701329 - Apache Tomcat < 10.0.0-M7 Multiple Vulnerabilities
+  # 701350 - Apache Tomcat < 10.0.2 Multiple Vulnerabilities
+  # 3949 - Apache Tomcat 5.x < 5.5.22 / 6.0.x < 6.0.10 Directory Traversal Arbitrary File Access
+  # 701269 - Apache Tomcat 7.0.x < 7.0.100 / 8.5.x < 8.5.51 / 9.0.x < 9.0.31 Arbitrary File Read Vulnerability
+  # 701465 - Apache Tomcat < 11.0.0-M17 Multiple Vulnerabilities
+  # 701336 - Apache Tomcat < 7.0.67 Vulnerability
+  # 701364 - Apache Tomcat < 10.0.4 Vulnerability
+  # 701366 - Apache Tomcat < 8.5.64 Vulnerability
+  # 701446 - Apache Tomcat < 9.0.80 Vulnerability
+  # 701447 - Apache Tomcat < 8.5.93 Vulnerability
+  # 701470 - Apache Tomcat < 10.1.25 Vulnerability
+  # 701432 - Apache Tomcat < 10.1.2 Vulnerability
+  # 701438 - Apache Tomcat < 9.0.75 Vulnerability
+  # 701440 - Apache Tomcat < 8.5.89 Vulnerability
+  # 701402 - Apache Tomcat < 10.0.21 Vulnerability
+  # 700687 - Apache Tomcat 8.0.x < 8.0.50 Security Constraint Weakness
+  # 800624 - Apache Tomcat <= 6.0.13 / 5.5.24 Multiple Vulnerabilities
+  # 701337 - Apache Tomcat < 7.0.88 Vulnerability
+  # 701452 - Apache Tomcat < 10.1.16 Vulnerability
+  # 701453 - Apache Tomcat < 9.0.83 Vulnerability
+  # 701404 - Apache Tomcat < 8.5.79 Vulnerability
+  # 800624 - Apache Tomcat <= 6.0.13 / 5.5.24 Multiple Vulnerabilities
+  # 5787 - Apache Tomcat 5.5.x < 5.5.32 HTML Manager Interface XSS
+  # 700687 - Apache Tomcat 8.0.x < 8.0.50 Security Constraint Weakness
+  # 700678 - Apache Tomcat 7.0.x < 7.0.88 Denial of Service
+  # 700688 - Apache Tomcat 8.0.x < 8.0.52 Denial of Service
+  # 701372 - Apache Tomcat < 10.0.12 Vulnerability
+  # 701410 - Apache Tomcat < 10.0.23 Vulnerability
+  # 701413 - Apache Tomcat < 9.0.65 Vulnerability
+  # 701434 - Apache Tomcat < 8.5.84 Vulnerability
+  # 701405 - Apache Tomcat < 9.0.63 Vulnerability
+  # 700694 - Apache Tomcat 8.5.x < 8.5.31 Denial of Service
+  # 701337 - Apache Tomcat < 7.0.88 Vulnerability
+  # 701334 - Apache Tomcat < 7.0.91 Vulnerability
+  # 701424 - Apache Tomcat < 9.0.62 Vulnerability
+  # 701444 - Apache Tomcat < 10.1.13 Vulnerability
+  # 701412 - Apache Tomcat < 8.5.82 Vulnerability
+  # 701433 - Apache Tomcat < 9.0.69 Vulnerability
+  # 701439 - Apache Tomcat < 10.1.9 Vulnerability
+  # 701454 - Apache Tomcat < 8.5.96 Vulnerability
+  # 701331 - Apache Tomcat < 10.0.0-M6 Vulnerability
+  # 701445 - Apache Tomcat < 11.0.0-M11 Vulnerability
+  # 9723 - Apache Tomcat 6.0.x < 6.0.47 / 7.0.x < 7.0.72 / 8.0.x < 8.0.37 Multiple Vulnerabilities
+  # 700677 - Apache Tomcat 7.0.x < 7.0.85 Security Constraint Weakness
+  # 700705 - Apache Tomcat 9.0.x < 9.0.5 Insecure CGI Servlet Search Algorithm Description Weakness
+  # 9721 - Apache Tomcat 8.5.x < 8.5.5 / 9.0.0.x < 9.0.0.M10 Multiple Vulnerabilities
+  # 701335 - Apache Tomcat < 7.0.65 Vulnerability
+  # 701338 - Apache Tomcat < 7.0.84 Vulnerability
+  # 701436 - Apache Tomcat < 9.0.18 Vulnerability
+  # 701333 - Apache Tomcat < 7.0.78 Vulnerability
+  # 701425 - Apache Tomcat < 8.5.78 Vulnerability
+  # 701373 - Apache Tomcat < 9.0.54 Vulnerability
+  # 701365 - Apache Tomcat < 9.0.44 Vulnerability
+  # 701403 - Apache Tomcat < 10.1.0-M15 Vulnerability
+  # 701332 - Apache Tomcat < 10.0.0-M8 Vulnerability
+  # 6007 - Apache Tomcat 7.0.x < 7.0.20 'jsvc' Information Disclosure
+  # 6833 - Apache Tomcat 7.0.x < 7.0.40 Multiple Vulnerabilities
+  # 5792 - Apache Tomcat 7.0.x < 7.0.4 SecurityManager Local Security Bypass
+  # 701351 - Apache Tomcat < 10.0.0-M5 Vulnerability
+  # 701411 - Apache Tomcat < 10.1.0-M17 Vulnerability
+  # 701471 - Apache Tomcat < 11.0.0-M21 Vulnerability
+  # 701437 - Apache Tomcat < 11.0.0-M6 Vulnerability
+  # 701385 - Apache Tomcat < 9.0.58 Multiple Vulnerabilities
+  # 701386 - Apache Tomcat < 10.0.16 Multiple Vulnerabilities
+  # 5788 - Apache Tomcat 6.0.x < 6.0.28 Multiple Vulnerabilities
+  # 700679 - Apache Tomcat 7.0.x < 7.0.89 DoS
+  # 701374 - Apache Tomcat < 10.1.0-M6 Vulnerability
+  # 9906 - Apache Tomcat 8.5.x < 8.5.8 / 9.0.0.x < 9.0.0.M13 Multiple Vulnerabilities
+  # 700697 - Apache Tomcat 8.5.x < 8.5.41 DoS Vulnerability
+  # 700691 - Apache Tomcat 8.5.x < 8.5.16 Multiple Vulnerabilities
+  # 5793 - Apache Tomcat 7.0.x < 7.0.5 Multiple XSS
+  # 701388 - Apache Tomcat < 8.5.75 Multiple Vulnerabilities
+  # 1465 - Apache Tomcat < 3.2.1 Nonexistent File Error Message Path Disclosure
+  # 700668 - Apache Tomcat 6.0.x < 6.0.48 / 7.0.x < 7.0.73 / 8.0.x < 8.0.39 Multiple Vulnerabilities
+  # 8934 - Apache Tomcat 6.0.x < 6.0.40 Multiple Vulnerabilities
+  # 8936 - Apache Tomcat 8.0.x < 8.0.4 Multiple Vulnerabilities
+  # 8141 - Apache Tomcat 6.0.x < 6.0.39 Multiple Vulnerabilities
+  # 5044 - Apache Tomcat 4.1.x < 4.1.40 / 5.5.x < 5.5.28 / 6.0.x < 6.0.20 Multiple Vulnerabilities
+  # 9317 - Apache Tomcat 6.0.x < 6.0.45 / 7.0.x < 7.0.65 / 8.0.x < 8.0.27 Directory Traversal
+  # 800601 - Apache Tomcat < 6.0.15 WEBDAV Lock Request Information Disclosure
+  # 700698 - Apache Tomcat 8.0.x < 8.5.40 Remote Code Execution Vulnerability (Windows)
+  # 700706 - Apache Tomcat 9.0.x < 9.0.8 Denial of Service Vulnerability
+  # 701330 - Apache Tomcat < 10.0.0-M10 Multiple Vulnerabilities
+  # 9315 - Apache Tomcat 6.0.x < 6.0.45 / 7.0.x < 7.0.68 / 8.0.x < 8.0.32 Multiple Vulnerabilities
+  # 700689 - Apache Tomcat 8.0.x < 8.0.53 Multiple Vulnerabilities
+  # 700674 - Apache Tomcat 7.0.x < 7.0.81 Multiple Vulnerabilities
+  # 700710 - Apache Tomcat 9.0.x < 9.0.16 DoS
+  # 8830 - Apache Tomcat 6.0.x < 6.0.44 Multiple Vulnerabilities (FREAK)
+  # 6657 - Apache Tomcat 6.0.x < 6.0.36 Multiple Vulnerabilities
+  # 8831 - Apache Tomcat 7.0.x < 7.0.55 / 8.0.x < 8.0.9 Multiple Vulnerabilities
+  # 700695 - Apache Tomcat 8.5.x < 8.5.32 Multiple Vulnerabilities
+  # 701387 - Apache Tomcat < 10.1.0-M10 Multiple Vulnerabilities
+  # 5786 - Apache Tomcat 5.5.x < 5.5.30 Multiple Vulnerabilities
+  # 700702 - Apache Tomcat 9.0.x < 9.0.0.M22 Multiple Vulnerabilities
+  # 700699 - Apache Tomcat 9.0.x < 9.0.0.M3 Multiple Vulnerabilities
+  # 8935 - Apache Tomcat 7.0.x < 7.0.53 Multiple Vulnerabilities
+  # 700056 - Apache Tomcat 7.0.x < 7.0.76 / 8.0.x < 8.0.42 / 8.5.x < 8.5.12 / 9.0.0.x < 9.0.0.M18 Information Disclosure
+  # 800615 - Apache Tomcat 7.0.x < 7.0.20 'jsvc' Information Disclosure
+  # 700676 - Apache Tomcat 7.0.x < 7.0.84 Insecure CGI Servlet Search Algorithm Description Weakness
+  # 700007 - Apache Tomcat 8.5.7 < 8.5.11 / 9.0.0.M11 < 9.0.0.M17 nextRequest Information Disclosure
+  # 700681 - Apache Tomcat 7.0.x < 7.0.91 Open Redirect Weakness
+  # 700692 - Apache Tomcat 8.5.x < 8.5.24 Insecure CGI Servlet Search Algorithm Description Weakness
+  # 9314 - Apache Tomcat 7.0.x < 7.0.67 / 8.0.x < 8.0.32 Session Hijacking
+  # 9313 - Apache Tomcat 7.0.x < 7.0.68 / 8.0.x < 8.0.32 Multiple Vulnerabilities
+  # 700610 - Apache Tomcat 8.0.x < 8.0.47 / 8.5.x < 8.5.23 RCE
+  # 700057 - Apache Tomcat 8.5.x < 8.5.13 / 9.0.0.x < 9.0.0.M19 Multiple Vulnerabilities
+  # 8832 - Apache Tomcat 7.0.x < 7.0.59 / 8.0.x < 8.0.17 Security Manager Bypass
+  # 700670 - Apache Tomcat 6.0.x < 6.0.53 / 7.0.x < 7.0.77 / 8.0.x < 8.0.43 Pipelined Requests Information Disclosure
+  # 9316 - Apache Tomcat 6.0.x < 6.0.45 / 7.0.x < 7.0.68 / 8.0.x < 8.0.30 Directory Traversal
+  # 700709 - Apache Tomcat 9.0.x < 9.0.12 Open Redirect Weakness
+  # 700683 - Apache Tomcat 8.0.x < 8.0.41 NIO HTTP Connector Information Disclosure
+  # 700686 - Apache Tomcat 8.0.45 < 8.0.48 Insecure CGI Servlet Search Algorithm Description Weakness
+  # 700704 - Apache Tomcat 9.0.x < 9.0.2 Insecure CGI Servlet Search Algorithm Description Weakness
+  # 700703 - Apache Tomcat 9.0.x < 9.0.1 RCE
+  # 9316 - Apache Tomcat 6.0.x < 6.0.45 / 7.0.x < 7.0.68 / 8.0.x < 8.0.30 Directory Traversal
+  # 700709 - Apache Tomcat 9.0.x < 9.0.12 Open Redirect Weakness
+  # 700683 - Apache Tomcat 8.0.x < 8.0.41 NIO HTTP Connector Information Disclosure
+  # 700675 - Apache Tomcat 7.0.x < 7.0.82 RCE
+  # 8921 - Apache Tomcat 7.0.x < 7.0.54 / 8.0.x < 8.0.8 XML Parser Information Disclosure
+  # 700673 - Apache Tomcat 7.0.41 < 7.0.79 Cache Poisoning Vulnerability
+  # 700671 - Apache Tomcat 7.0.x < 7.0.75 NIO HTTP Connector Information Disclosure
+  # 9909 - Apache Tomcat 8.5.x < 8.5.9 / 9.x < 9.0.0.M15 NIO HTTP Connector Information Disclosure
+  # 700696 - Apache Tomcat 8.5.x < 8.5.34 Open Redirect Weakness
+  # 700685 - Apache Tomcat 8.0.x < 8.0.45 Cache Poisoning
+  # 700669 - Apache Tomcat 6.0.x < 6.0.50 NIO HTTP Connector Information Disclosure
+  # 800614 - Apache Tomcat 7.0.x < 7.0.5 Cross-Site Scripting Vulnerability
+  # 8671 - Apache Tomcat 6.0.x < 6.0.42 Handling Request Smuggling DoS
+  # 800607 - Apache Tomcat 6.0.x < 6.0.35 Multiple Vulnerabilities
+  # 5789 - Apache Tomcat 6.0.x < 6.0.30 Multiple Vulnerabilities
+  # 6018 - Apache Tomcat 6.0.x < 6.0.33 Multiple Vulnerabilities
+  # 6332 - Apache Tomcat 6.0.x < 6.0.35 Multiple Vulnerabilities
+  # 5996 - Apache Tomcat 7.0.x < 7.0.17 Multiple Vulnerabilities
+  # 6623 - Apache Tomcat 7.0.x < 7.0.28 Multiple DoS
+  # 6832 - Apache Tomcat 6.0.x < 6.0.37 Multiple Vulnerabilities
+  # 6333 - Apache Tomcat 7.0.x < 7.0.22 Multiple Vulnerabilities
+  # 700682 - Apache Tomcat 7.0.x < 7.0.94 Remote Code Execution Vulnerability (Windows)
+  # 700672 - Apache Tomcat 7.0.x < 7.0.78 Remote Error Page Manipulation
+  # 5327 - Apache Tomcat 5.5.x < 5.5.29 / 6.0.x < 6.0.24 WAR Deployment Multiple Vulnerabilities
+  # 5882 - Apache Tomcat 7.0.x < 7.0.12 Multiple Vulnerabilities
+  # 6624 - Apache Tomcat 7.0.x < 7.0.30 Multiple Vulnerabilities
+  # 5791 - Apache Tomcat 7.0.x < 7.0.2 Denial of Service and Information Disclosure
+  # 700684 - Apache Tomcat 8.0.x < 8.0.44 Remote Error Page Manipulation
+  # 700690 - Apache Tomcat 8.5.x < 8.5.15 Remote Error Page Manipulation
+  # 700711 - Apache Tomcat 9.0.x < 9.0.19 Remote Code Execution Vulnerability (Windows)
+  # 5816 - Apache Tomcat 7.0.x < 7.0.11 Security Bypass Vulnerability
+  # 6644 - Apache Tomcat 7.0.x < 7.0.32 CSRF Filter Bypass
+  # 5794 - Apache Tomcat 7.0.x < 7.0.6 Manager Interface XSS
+  # 5795 - Apache Tomcat 7.0.x < 7.0.8 NIO Connector DoS
+  # 6334 - Apache Tomcat 7.0.x < 7.0.23 Hash Collision DoS
+  # 5790 - Apache Tomcat 6.0.x < 6.0.32 NIO Connector DoS
+  # 6331 - Apache Tomcat 5.5.x < 5.5.35 Hash Collision Denial of Service
+  # 800623 - Apache Tomcat < 6.0.16 Information Disclosure
+  # 800618 - Apache Tomcat < 4.1.37/5.5.26/6.0.16 Multiple Vulnerabilities
+  # 800604 - Apache Tomcat < 5.5.23 / 6.0.10 Directory Traversal Arbitrary File Access
+  # 800598 - Apache Tomcat < 4.1.40 / 5.5.28 / 6.0.20 Multiple Vulnerabilities
+  # 800625 - Apache Tomcat 7.0.x < 7.0.12 Multiple Vulnerabilities
+  # 800595 - Apache Tomcat 6.0.x < 6.0.28 Multiple Vulnerabilities
+  # 4621 - Apache Tomcat 4.1.x < 4.1.38 / 5.5.x < 5.5.27 / 6.0.x < 6.0.18 Linking UTF-8 Traversal Arbitrary File Access
+  # 800610 - Apache Tomcat 7.0.x < 7.0.11 Security Bypass Vulnerability
+  # 800630 - Apache Tomcat < 3.3.1a Directory Listing and File Disclosure
+  # 800596 - Apache Tomcat 7.0.x < 7.0.6 Cross-Site Scripting Vulnerability
+  # 800600 - Apache Tomcat 5.5.x < 5.5.32 Cross-site Scripting Vulnerability
+  # 800630 - Apache Tomcat < 3.3.1a Directory Listing and File Disclosure
+  # 800599 - Apache Tomcat 6.0.x < 6.0.32 Denial of Service Vulnerability
+  # 800621 - Apache Tomcat 7.0.x < 7.0.8 Denial of Service Vulnerability
+  # 800619 - Apache Tomcat < 5.5.29 / 6.0.24
+  # 800627 - Apache Tomcat < 3.3.1a Servlet Engine MS/DOS Device Name DoS
+  # 800784 - Apache Tomcat 7.0.x < 7.0.40 Information Disclosure
+  # 800626 - Apache Tomcat 5.5.x < 5.5.35 Hash Collision Denial of Service
+  # 800611 - Apache Tomcat 7.0.x < 7.0.2 Denial of Service Vulnerability
+  # 800597 - Apache Tomcat 7.0.x < 7.0.19 Multiple Vulnerabilities
+  # 800608 - Apache Tomcat 7.0.x < 7.0.4 File Permission Bypass Vulnerability
+  # 800622 - Apache Tomcat 7.0.x < 7.0.32 CSRF Filter Bypass
+  # 800602 - Apache Tomcat 6.0.x < 6.0.33 Multiple Vulnerabilities
+  # 800617 - Apache Tomcat 7.0.x < 7.0.28 Header Parsing Remote Denial of Service
+  # 800609 - Apache Tomcat 6.0.x < 6.0.30 Multiple Vulnerabilities
+  # 800612 - Apache Tomcat 6.0.x < 6.0.36 Multiple Vulnerabilities
+  # 800783 - Apache Tomcat 6.0.x < 6.0.37 Multiple Vulnerabilities
+  # 800620 - Apache Tomcat < 6.0.18 UTF-8 Directory Traversal Arbitrary File Access
+  # 800605 - Apache Tomcat 7.0.x < 7.0.22 Multiple Vulnerabilities
+  # 800606 - Apache Tomcat 7.0.x < 7.0.30 DIGEST Authentication Multiple Security Weaknesses
+
+- name: Apache Server Version
+  id: 11
+  plugin-ids: [48204, 170113, 193422, 193424, 158900, 171347, 161948, 193419, 172186, 192923, 
+  193421, 171339, 171356, 210450, 201198, 193420, 139574, 11210, 135290, 183391, 201532, 14177, 
+  11137, 153952, 156255, 57603, 10938, 11853, 11915, 14803, 11408, 11788, 202577, 193423, 12100, 
+  11607, 48205, 128033, 153583, 57791, 81126, 101787, 69014, 150280, 45004, 11793, 96451, 42052, 
+  14748, 77531, 26023, 73405, 50069, 100995, 103838, 153884, 12280, 161454, 153585, 153584, 61644, 
+  111788, 101788, 11209, 40467, 31408, 50070, 26023, 73405, 50069, 100995, 103838, 153884, 92320, 
+  56216, 76622, 33477, 50070, 122059, 76914, 58795, 44589, 12293, 64912, 54646, 53896, 31407, 11665, 
+  117807, 54646, 53896, 64893, 31407, 11665, 11507, 64893, 11507, 12239, 800577, 96450, 14771, 800574, 
+  800567, 800572, 800573, 800581, 800587, 800556, 800564, 6927, 800586, 2744, 800551, 800118, 800552, 
+  800590, 800584, 800562, 800583, 800578, 800961, 801383, 800558, 800559, 801401, 700509, 1625, 2254, 
+  3112, 2276, 9486, 9908, 2309, 8937, 8165, 9394, 8970, 1443, 4712, 1489, 5111, 2173, 4579, 3360, 5196, 
+  4385, 5356, 3358, 1498, 5615, 8343, 1498, 2175, 1497, 6302, 6550, 6793, 6942, 6062, 800571, 6021, 
+  800582, 6576, 2290, 8587, 800555, 6700, 6701, 800568]
+  # 48204 - Apache HTTP Server Version
+  # 170113 - Apache 2.4.x < 2.4.55 Multiple Vulnerabilities
+  # 193422 - Apache 2.4.x < 2.4.54 HTTP Request Smuggling Vulnerability
+  # 193424 - Apache 2.4.x < 2.4.54 Multiple Vulnerabilities (mod_lua)
+  # 158900 - Apache 2.4.x < 2.4.53 Multiple Vulnerabilities
+  # 171347 - Apache HTTP Server SEoL (<= 1.3.x)
+  # 161948 - Apache 2.4.x < 2.4.54 Multiple Vulnerabilities
+  # 193419 - Apache 2.4.x < 2.4.58 Out-of-Bounds Read (CVE-2023-31122)
+  # 172186 - Apache 2.4.x < 2.4.56 Multiple Vulnerabilities
+  # 192923 - Apache 2.4.x < 2.4.59 Multiple Vulnerabilities
+  # 193421 - Apache 2.4.x < 2.4.54 Authentication Bypass
+  # 171339 - Apache HTTP Server SEoL (1.4.x <= x <= 2.0.x)
+  # 171356 - Apache HTTP Server SEoL (2.1.x <= x <= 2.2.x)
+  # 210450 - Apache 2.4.x < 2.4.62 Multiple Vulnerabilities (Windows)
+  # 201198 - Apache 2.4.x < 2.4.60 Multiple Vulnerabilities
+  # 193420 - Apache 2.4.x < 2.4.54 Out-Of-Bounds Read (CVE-2022-28330)
+  # 139574 - Apache 2.4.x < 2.4.46 Multiple Vulnerabilities
+  # 11210 - Apache < 2.0.44 Illegal Character Default Script Mapping Bypass
+  # 135290 - Apache 2.4.x < 2.4.42 Multiple Vulnerabilities
+  # 183391 - Apache 2.4.x < 2.4.58 Multiple Vulnerabilities
+  # 201532 - Apache 2.4.x < 2.4.61
+  # 14177 - Apache < 1.3.31 mod_access IP Address Netmask Rule Bypass
+  # 11137 - Apache < 1.3.27 Multiple Vulnerabilities (DoS, XSS)
+  # 153952 - Apache 2.4.49 < 2.4.51 Path Traversal Vulnerability
+  # 156255 - Apache 2.4.x >= 2.4.7 / < 2.4.52 Forward Proxy DoS / SSRF
+  # 57603 - Apache 2.2.x < 2.2.13 APR apr_palloc Heap Overflow
+  # 10938 - Apache on Windows < 1.3.24 / 2.0.x < 2.0.34 DOS Batch File Arbitrary Command Execution
+  # 11853 - Apache 2.0.x < 2.0.48 Multiple Vulnerabilities (OF, Info Disc.)
+  # 11915 - Apache < 1.3.29 Multiple Modules Local Overflow
+  # 14803 - Apache <= 2.0.51 Satisfy Directive Access Control Bypass
+  # 11408 - Apache 2.0.x < 2.0.43 Multiple Vulnerabilities (Log Injection, Source Disc.)
+  # 11788 - Apache 2.0.x < 2.0.47 Multiple Vulnerabilities (DoS, Encryption)
+  # 202577 - Apache 2.4.60 < 2.4.62 Multiple Vulnerabilities
+  # 193423 - Apache 2.4.x < 2.4.54 Multiple Vulnerabilities
+  # 12100 - Apache 2.0.x < 2.0.49 mod_ssl Plain HTTP Request DoS
+  # 11607 - Apache 2.0.x < 2.0.46 on OS/2 filestat.c Device Name Request DoS
+  # 48205 - Apache 2.2.x < 2.2.16 Multiple Vulnerabilities
+  # 128033 - Apache 2.4.x < 2.4.41 Multiple Vulnerabilities
+  # 153583 - Apache < 2.4.49 Multiple Vulnerabilities
+  # 57791 - Apache 2.2.x < 2.2.22 Multiple Vulnerabilities
+  # 81126 - Apache 2.4.x < 2.4.12 Multiple Vulnerabilities
+  # 101787 - Apache 2.2.x < 2.2.34 Multiple Vulnerabilities
+  # 69014 - Apache 2.4.x < 2.4.5 Multiple Vulnerabilities
+  # 150280 - Apache 2.4.x < 2.4.47 Multiple Vulnerabilities
+  # 45004 - Apache 2.2.x < 2.2.15 Multiple Vulnerabilities
+  # 11793 - Apache < 1.3.28 Multiple Vulnerabilities (DoS, ID)
+  # 96451 - Apache 2.4.x < 2.4.25 Multiple Vulnerabilities (httpoxy)
+  # 42052 - Apache 2.2.x < 2.2.14 Multiple Vulnerabilities
+  # 14748 - Apache 2.0.x < 2.0.51 Multiple Vulnerabilities (OF, DoS)
+  # 77531 - Apache 2.2.x < 2.2.28 Multiple Vulnerabilities
+  # 26023 - Apache 2.2.x < 2.2.6 Multiple Vulnerabilities (DoS, XSS, Info Disc)
+  # 73405 - Apache 2.2.x < 2.2.27 Multiple Vulnerabilities
+  # 50069 - Apache 2.0.x < 2.0.64 Multiple Vulnerabilities
+  # 100995 - Apache 2.2.x < 2.2.33-dev / 2.4.x < 2.4.26 Multiple Vulnerabilities
+  # 103838 - Apache 2.4.x < 2.4.28 HTTP Vulnerability (OptionsBleed)
+  # 153884 - Apache 2.4.49 < 2.4.50 Multiple Vulnerabilities
+  # 12280 - Apache < 1.3.31 / 2.0.49 Socket Connection Blocking Race Condition DoS
+  # 161454 - Apache 2.4.x < 2.4.52 mod_lua Buffer Overflow
+  # 153585 - Apache >= 2.4.17 < 2.4.49 mod_http2
+  # 153584 - Apache < 2.4.49 Multiple Vulnerabilities
+  # 61644 - Apache 2.4.x < 2.4.3 Multiple Vulnerabilities
+  # 111788 - Apache 2.4.x < 2.4.34 Multiple Vulnerabilities
+  # 101788 - Apache 2.4.x < 2.4.27 Multiple Vulnerabilities
+  # 11209 - Apache < 2.0.44 DOS Device Name Multiple Remote Vulnerabilities (Code Exec, DoS)
+  # 40467 - Apache 2.2.x < 2.2.12 Multiple Vulnerabilities
+  # 31408 - Apache 1.3.x < 1.3.41 Multiple Vulnerabilities (DoS, XSS)
+  # 50070 - Apache 2.2.x < 2.2.17 Multiple Vulnerabilities
+  # 26023 - Apache 2.2.x < 2.2.6 Multiple Vulnerabilities (DoS, XSS, Info Disc)
+  # 73405 - Apache 2.2.x < 2.2.27 Multiple Vulnerabilities
+  # 50069 - Apache 2.0.x < 2.0.64 Multiple Vulnerabilities
+  # 100995 - Apache 2.2.x < 2.2.33-dev / 2.4.x < 2.4.26 Multiple Vulnerabilities
+  # 103838 - Apache 2.4.x < 2.4.28 HTTP Vulnerability (OptionsBleed)
+  # 153884 - Apache 2.4.49 < 2.4.50 Multiple Vulnerabilities
+  # 92320 - Apache 2.4.18 / 2.4.20 X.509 Certificate Authentication Bypass
+  # 56216 - Apache 2.2.x < 2.2.21 mod_proxy_ajp DoS
+  # 76622 - Apache 2.4.x < 2.4.10 Multiple Vulnerabilities
+  # 33477 - Apache 2.2.x < 2.2.9 Multiple Vulnerabilities (DoS, XSS)
+  # 50070 - Apache 2.2.x < 2.2.17 Multiple Vulnerabilities
+  # 122059 - Apache 2.4.17 / 2.4.18 DoS
+  # 76914 - Apache 2.4.6 Remote DoS
+  # 58795 - Apache 2.4.x < 2.4.2 'LD_LIBRARY_PATH' Insecure Library Loading
+  # 44589 - Apache 1.3.x < 1.3.42 mod_proxy Integer Overflow
+  # 12293 - Apache 2.x < 2.0.50 Multiple Remote DoS
+  # 64912 - Apache 2.2.x < 2.2.24 Multiple XSS Vulnerabilities
+  # 54646 - Apache 2.2.x < 2.2.18 APR apr_fnmatch DoS
+  # 53896 - Apache 2.2.x < 2.2.18 APR apr_fnmatch DoS
+  # 31407 - Apache < 2.0.63 Multiple XSS Vulnerabilities
+  # 11665 - Apache 2.0.x < 2.0.46 Multiple DoS
+  # 117807 - Apache 2.4.x < 2.4.35 DoS
+  # 54646 - Apache 2.2.x < 2.2.18 APR apr_fnmatch DoS
+  # 53896 - Apache 2.2.x < 2.2.18 APR apr_fnmatch DoS
+  # 64893 - Apache 2.4.x < 2.4.4 Multiple XSS Vulnerabilities
+  # 31407 - Apache < 2.0.63 Multiple XSS Vulnerabilities
+  # 11665 - Apache 2.0.x < 2.0.46 Multiple DoS
+  # 11507 - Apache 2.0.x < 2.0.45 Multiple Vulnerabilities (DoS, File Write)
+  # 64893 - Apache 2.4.x < 2.4.4 Multiple XSS Vulnerabilities
+  # 11507 - Apache 2.0.x < 2.0.45 Multiple Vulnerabilities (DoS, File Write)
+  # 12239 - Apache < 1.3.31 / 2.0.49 Log Entry Terminal Escape Sequence Injection
+  # 800577 - Apache 2.2 < 2.2.17 Multiple Vulnerabilities
+  # 96450 - Apache 2.2.x < 2.2.32 Multiple Vulnerabilities (httpoxy)
+  # 14771 - Apache <= 1.3.33 htpasswd Local Overflow
+  # 800574 - Apache < 2.2.14 Multiple Vulnerabilities
+  # 800567 - Apache < 2.2.12 Multiple Vulnerabilities
+  # 800572 - Apache < 2.0.46 on OS/2 filestat.c Device Name Request DoS
+  # 800573 - Apache 2.2 < 2.2.16 Multiple Vulnerabilities
+  # 800581 - Apache < 2.2.8 Multiple Vulnerabilities
+  # 800587 - Apache < 2.0.51 mod_ssl Rewrite Rules DoS
+  # 800556 - Apache < 2.0.55 HTTP Smuggling Vulnerability
+  # 800564 - Apache < 2.0.51 Multiple Vulnerabilities
+  # 6927 - Apache 2.2.x < 2.2.25 Remote Denial of Service Vulnerability
+  # 800586 - Apache < 2.0.52-dev 'Satisfy' Directive Access Control Bypass
+  # 2744 - Apache < 2.0.50 Input Header Folding and mod_ssl DoS
+  # 800551 - Apache HTTP Server < 2.0.49 mod_ssl Plain HTTP Request DoS
+  # 800118 - Apache 2.2 < 2.2.24 Multiple Cross-Site Scripting Vulnerabilities
+  # 800552 - Apache 2.2 < 2.2.22 Multiple Vulnerabilities
+  # 800590 - Apache < 2.0.40 Win32 Directory Traversal File Access
+  # 800584 - Apache 2.2 < 2.2.20 Multiple Vulnerabilities
+  # 800562 - Apache < 2.0.51 ${ENVVAR} Local Overflow
+  # 800583 - Apache < 2.0.48 Multiple Vulnerabilities
+  # 800578 - Apache < 2.0.50 Input Header Folding and mod_ssl DoS
+  # 800961 - Apache 2.4 < 2.4.4 Multiple Cross-Site Scripting Vulnerabilities
+  # 801383 - Apache 2.2.x < 2.2.25 Remote Denial of Service Vulnerability
+  # 800558 - Apache < 2.2.9 Multiple Vulnerabilities
+  # 800559 - Apache 2.2 < 2.2.21 mod_proxy_ajp DoS
+  # 801401 - Apache 2.4 < 2.4.5 Multiple Vulnerabilities
+  # 700509 - Apache HTTP Server < 2.4.39 Multiple Vulnerabilities
+  # 1625 - Apache < 1.3.14 Multiple Forward Slash Directory Listing
+  # 2254 - Apache < 2.0.51 Multiple Vulnerabilities
+  # 3112 - Apache < 2.0.55 HTTP Smuggling Vulnerability
+  # 2276 - Apache < 2.0.51 mod_ssl Rewrite Rules DoS
+  # 9486 - Apache HTTP Server 2.2.x < 2.2.32 Multiple Vulnerabilities
+  # 9908 - Apache HTTP Server 2.4.x < 2.4.25 Multiple Vulnerabilities
+  # 2309 - Apache < 2.0.52-dev 'Satisfy' Directive Access Control Bypass
+  # 8937 - Apache HTTP Server 2.4 < 2.4.12 DoS
+  # 8165 - Apache HTTP Server < 2.4.8 Multiple Vulnerabilities
+  # 9394 - Apache HTTP Server 2.4.x < 2.4.23 Multiple Vulnerabilities
+  # 8970 - Apache HTTP Server 2.4.x < 2.4.16 Multiple Vulnerabilities
+  # 1443 - Apache < 2.0.46 Multiple Vulnerabilities
+  # 4712 - Apache < 2.2.10 Multiple Vulnerabilities
+  # 1489 - Apache < 2.0.43 HTTP POST Request Source Disclosure
+  # 5111 - Apache < 2.2.12 Multiple Vulnerabilities
+  # 2173 - Apache < 1.3.28 Multiple Vulnerabilities
+  # 4579 - Apache < 2.2.9 Multiple Vulnerabilities
+  # 3360 - Apache < 1.6.1 auth_ldap Module Remote Format String
+  # 5196 - Apache < 2.2.14 Multiple Vulnerabilities
+  # 4385 - Apache < 2.2.8 Multiple Vulnerabilities
+  # 5356 - Apache < 2.2.15 Multiple Vulnerabilities
+  # 3358 - Apache < 2.0.3 mod_auth_pgsql Module Server Log Format String
+  # 1498 - Apache < 2.0.40 Win32 Directory Traversal File Access
+  # 5615 - Apache 2.2 < 2.2.16 Multiple Vulnerabilities
+  # 8343 - Apache HTTP Server 2.4.1 to 2.4.4, 2.4.6, 2.4.7, 2.4.9 Multiple Vulnerabilities
+  # 1498 - Apache < 2.0.40 Win32 Directory Traversal File Access
+  # 2175 - Apache < 2.0.48 Multiple Vulnerabilities
+  # 1497 - Apache < 2.0.44 MS-DOS Device Name DoS / Code Execution
+  # 6302 - Apache 2.2 < 2.2.22 Multiple Vulnerabilities
+  # 6550 - Apache 2.4.1, 2.4.2 Multiple Vulnerabilities
+  # 6793 - Apache 2.2 < 2.2.17 Multiple Vulnerabilities
+  # 6942 - Apache 2.4.1 to 2.4.4 Multiple Vulnerabilities
+  # 6062 - Apache 2.2 < 2.2.21 mod_proxy_ajp DoS
+  # 800571 - Apache < 2.0.46 Multiple Vulnerabilities
+  # 6021 - Apache 2.2 < 2.2.20 Multiple Vulnerabilities
+  # 800582 - Apache < 1.3.28 Multiple Vulnerabilities
+  # 6576 - Apache 2.2 < 2.2.23 Multiple Vulnerabilities
+  # 2290 - Apache < 2.0.51 ${ENVVAR} Local Overflow
+  # 8587 - Apache HTTP Server 2.3.x / 2.4.x < 2.4.12 Authorization Bypass
+  # 800555 - Apache < 2.2.10 Multiple Vulnerabilities
+  # 6700 - Apache 2.4.1 to 2.4.3 Multiple Cross-Site Scripting Vulnerabilites
+  # 6701 - Apache 2.2 < 2.2.24 Multiple Cross-Site Scripting Vulnerabilites
+  # 800568 - Apache < 1.3.31 / 2.0.49 Error Log Escape Sequence Injection
+
+- name: Nginx Version
+  id: 12
+  plugin-ids: [71117, 118150, 107263, 77246, 161697, 58414, 107265, 107264, 190683, 58750, 107262, 150154, 134220, 41608, 132775, 118956, 58413, 107261, 127907, 106375, 86884, 105359, 73894, 73519, 122612, 78386, 166545, 198223, 106374, 136340, 191141, 5173, 6456, 6457, 6795, 5562, 701146, 6529, 6458]
+  # 71117 - nginx < 1.4.4 / 1.5.7 ngx_parse_http Security Bypass
+  # 118150 - nginx < 1.10.1 / 1.11.x < 1.11.1 Denial-of-Service Vulnerability
+  # 107263 - nginx < 0.7.66 / 0.8.x < 0.8.40 Information Disclosure
+  # 77246 - nginx < 1.6.1 / 1.7.4 SMTP STARTTLS Command Injection
+  # 161697 - nginx R8 < R18-P1 Multiple Vulnerabilities
+  # 58414 - nginx < 1.0.14 / 1.1.17 HTTP Header Response Memory Disclosure
+  # 107265 - nginx < 1.8.1 / 1.9.x < 1.9.10 Multiple Vulnerabilities
+  # 107264 - nginx < 0.7.67 / 0.8.x < 0.8.41 DoS
+  # 190683 - nginx 1.25.x < 1.25.4 DoS
+  # 58750 - nginx 1.0.7 - 1.0.14 / 1.1.3 - 1.1.18 ngx_http_mp4_module Buffer Overflow
+  # 107262 - nginx < 0.7.64 / 0.8.x < 0.8.23 Multiple Vulnerabilities
+  # 150154 - nginx 0.6.x < 1.20.1 1-Byte Memory Overwrite RCE
+  # 134220 - nginx < 1.17.7 Information Disclosure
+  # 41608 - nginx HTTP Request Multiple Vulnerabilities
+  # 132775 - nginx 0.8.x < 0.8.33 / 0.7.x < 0.7.65 Windows Filename Pseudonyms (CORE-2010-0121)
+  # 118956 - nginx 1.x < 1.14.1 / 1.15.x < 1.15.6 Multiple Vulnerabilities
+  # 58413 - nginx < 1.0.10 ngx_resolver_copy Function DNS Response Parsing Buffer Overflow
+  # 107261 - nginx < 0.7.63 / 0.8.x < 0.8.17 Directory Traversal
+  # 127907 - nginx 1.9.5 < 1.16.1 / 1.17.x < 1.17.3 Multiple Vulnerabilities
+  # 106375 - nginx HTTP Server Detection
+  # 86884 - nginx 1.9.x < 1.9.6 HTTPv2 PRI Double-Free DoS
+  # 105359 - nginx < 1.13.3 Integer Overflow Vulnerability
+  # 73894 - nginx 1.5.10 SPDY Memory Corruption
+  # 73519 - nginx < 1.4.7 / 1.5.12 SPDY Heap Buffer Overflow
+  # 122612 - nginx <= 1.3.13 Insecure Log Permissions
+  # 78386 - nginx < 1.6.2 / 1.7.5 SSL Session Reuse
+  # 166545 - nginx 1.1.x < 1.23.2 / 1.0.x < 1.22.1 Memory Disclosure
+  # 198223 - nginx 1.1.x < 1.1.19 / 1.0.x < 1.0.15 A Buffer Overflow Vulnerability
+  # 106374 - Default nginx HTTP Server Settings
+  # 136340 - nginx Installed (Linux/UNIX)
+  # 191141 - Parse Nginx Config (Linux)
+  # 5173 - nginx Webserver Detection
+  # 6456 - nginx < 1.0.10 DNS Resolver Remote Heap Buffer Overflow
+  # 6457 - nginx < 1.0.14 / 1.1.x < 1.1.17 Information-Disclosure
+  # 6795 - nginx < 1.4.1 / 1.5.0 Multiple Vulnerabilities
+  # 5562 - nginx 8.3 Filename Alias Request Access Rules / Authentication Bypass
+  # 701146 - nginx < 1.16.1 (stable) / 1.17.3 (mainline) Multiple DoS
+  # 6529 - nginx < 1.2.x / 1.3.x < 1.2.1 / 1.3.1 Vulnerabilities with Windows directory aliases
+  # 6458 - nginx < 1.0.15 / 1.1.x < 1.1.19 Buffer-Overflow Vulnerability
+
+- name: VMWare Product Versions
+  id: 13
+  plugin-ids: [9597, 9596, 113243, 91322, 153545, 166101, 90710, 153547, 92870, 103377, 140040, 104654, 149902, 153546, 207464, 83186, 183957, 111760, 
+  65223, 146826, 201124, 95468, 135411, 77728, 70612, 105784, 65209, 66274, 99475, 66812, 177742, 153544, 200746, 129503, 150982, 183958, 76457, 155790, 
+  159306, 163100, 81146, 91713, 168746, 153889, 106950, 164351, 105514, 76495, 79863, 78508, 102084, 99474, 67141, 113241, 113244, 89740, 191711, 111759, 
+  105782, 134878, 123518, 103376, 105614, 118885, 169513, 134877, 105486, 99131, 72006, 192568, 158494, 118466, 87889, 40378, 87940, 99130, 86946, 70881, 
+  87940, 86946, 99130, 70881, 89116, 87942, 89037, 89671, 70888, 103375, 87679, 70887, 134876, 87675, 146827, 89661, 73917, 92949, 89678, 87943, 138475, 
+  78108, 71774, 89662, 70879, 89669, 89039, 89663, 89674, 81084, 102698, 74470, 70880, 70886, 89113, 86945, 145090, 89681, 89675, 88906, 129493, 70448, 
+  70880, 74470, 87678, 176249, 89666, 89677, 80037, 87676, 89036, 70883, 87941, 70885, 89105, 79862, 89664, 87673, 89106, 70877, 70884, 70878, 87681, 89038, 
+  89117, 81083, 83781, 124300, 192466, 168828, 76203, 140039, 89668, 86947, 81085, 89675, 145090, 70886, 86945, 89035, 99129, 89681, 88906, 124300, 129497, 
+  125218, 128035, 201123, 165337, 56997]
+  # 9597 - VMware vCenter Server Detection via TLS
+  # 9596 - VMware vCenter Server Detection
+  # 113243 - VMware vCenter Server 6.5 < 6.5 U3n / 6.7 < 6.7 U3l / 7.0 < 7.0 U1c Remote Code Execution
+  # 91322 - VMware vCenter Server 5.0.x < 5.0u3e / 5.1.x < 5.1u3b / 5.5.x < 5.5u3 (Linux) / 5.5.x < 5.5u3b (Windows) / 6.0.x < 6.0.0b JMX Deserialization RCE (VMSA-2016-0005)
+  # 153545 - VMware vCenter Server < 7.0 U2c Multiple Vulnerabilities (VMSA-2021-0020)
+  # 166101 - VMware vCenter Server 6.5 < 6.5 U3u RCE (VMSA-2022-0025)
+  # 90710 - VMware vCenter Server 5.5.x < 5.5u3d / 6.0.x < 6.0u2 Client Integration Plugin Session Hijacking (VMSA-2016-0004)
+  # 153547 - VMware vCenter Server < 6.5 U3q Multiple Vulnerabilities (VMSA-2021-0020)
+  # 92870 - VMware vCenter Server 6.0.x < 6.0u2 Unspecified HTTP Header Injection (VMSA-2016-0010)
+  # 103377 - VMware vCenter Server 6.5.x < 6.5u1 H5 Client Stored XSS (VMSA-2017-0015)
+  # 140040 - VMware vCenter Server 6.5 / 6.7 / 7.0 DoS (VMSA-2020-0018)
+  # 104654 - VMware vCenter Server 5.5.x < 5.5u3f / 6.0.x < 6.0u3c / 6.5.x < 6.5u1 Multiple Vulnerabilities (VMSA-2017-0017)
+  # 149902 - VMware vCenter Server 6.5 / 6.7 / 7.0 Multiple Vulnerabilities (VMSA-2021-0010)
+  # 153546 - VMware vCenter Server < 7.0 U2d Multiple Vulnerabilities (VMSA-2021-0020)
+  # 207464 - VMware vCenter Server 7.x < 7.0 U3t / 8.x < 8.0.3 U3d Multiple Vulnerabilities (VMSA-2024-0019)
+  # 83186 - VMware vCenter Server Multiple Java Vulnerabilities (VMSA-2015-0003) (POODLE)
+  # 183957 - VMware vCenter Server 6.5 < 6.5U3v / 6.7 < 6.7U3t / 7.0 < 7.0U3o / 8.0 < 8.0U1d Out-of-bounds Write (VMSA-2023-0023)
+  # 111760 - VMware vCenter Server 5.5.x / 6.0.x / 6.5.x / 6.7.x Speculative Execution Side Channel Vulnerability (Foreshadow) (VMSA-2018-0020)
+  # 65223 - VMware vCenter Server NFC Protocol Code Execution (VMSA-2013-0003)
+  # 146826 - VMware vCenter Server 6.5 / 6.7 / 7.0 Multiple Vulnerabilities (VMSA-2021-0002)
+  # 201124 - VMware vCenter Server 7.0 < 7.0U3q / 8.0 < 8.0U3 DoS (CVE-2024-37087)
+  # 95468 - VMware vCenter Server 5.5.x < 5.5u3e / 6.0.x < 6.0u2a Multiple XXE Vulnerabilities (VMSA-2016-0022)
+  # 135411 - VMware vCenter Server 6.7 Sensitive Information Disclosure Vulnerability (VMSA-2020-0006)
+  # 77728 - VMware Security Updates for vCenter Server (VMSA-2014-0008)
+  # 70612 - VMware Security Updates for vCenter Server (VMSA-2013-0012)
+  # 105784 - VMware vCenter Server 5.5.x < 5.5U3g / 6.0.x < 6.0U3d / 6.5.x < 6.5U1e Hypervisor-Assisted Guest Remediation (VMSA-2018-0004) (Spectre)
+  # 65209 - VMware vCenter Server Denial of Service (VMSA-2012-0018)
+  # 66274 - VMware Security Updates for vCenter Server (VMSA-2013-0006)
+  # 99475 - VMware vCenter Server 6.0.x < 6.0u3b / 6.5.x < 6.5c BlazeDS AMF3 RCE (VMSA-2017-0007)
+  # 66812 - VMware vCenter Server Multiple Vulnerabilities (VMSA-2012-0005)
+  # 177742 - VMware vCenter Server 7.0 < 7.0 U3m / 8.0 < 8.0 U1b Multiple Vulnerabilities (VMSA-2023-0014)
+  # 153544 - VMware vCenter Server < 6.7 Multiple Vulnerabilities (VMSA-2021-0020)
+  # 200746 - VMware vCenter Server 7.0 < 7.0U3r / 8.0 < 8.0U2d Multiple Vulnerabilities (VMSA-2024-0012)
+  # 129503 - VMware vCenter Server 6.0 / 6.5 / 6.7 Multiple Vulnerabilities (VMSA-2019-0013)
+  # 150982 - VMware vCenter Server 6.5 / 6.7 Session Hijack (VMSA-2020-0023)
+  # 183958 - VMware vCenter Server 7.0 < 7.0U3o / 8.0 < 8.0U2 Partial Information Disclosure (VMSA-2023-0023)
+  # 76457 - VMware Security Updates for vCenter Server (VMSA-2014-0006)
+  # 155790 - VMware vCenter Server 6.5 / 6.7 Multiple Vulnerabilities (VMSA-2021-0027)
+  # 159306 - VMware vCenter Server 6.5 / 6.7 / 7.0 Information Disclosure (VMSA-2022-0009)
+  # 163100 - VMware vCenter Server 6.5 / 6.7 / 7.0 SSRF (VMSA-2022-0018)
+  # 81146 - VMware Security Updates for vCenter Server (VMSA-2015-0001) (POODLE)
+  # 91713 - VMware vCenter Server 5.0.x < 5.0u3g / 5.1.x < 5.1u3d / 5.5.x < 5.5u2d Reflected XSS (VMSA-2016-0009)
+  # 168746 - VMware vCenter Server 6.5 < 6.5 U3u / 6.7 < 6.7.0 U3s / 7.0 < 7.0 U3i  Multiple Vulnerabilities (VMSA-2022-0030)
+  # 153889 - VMware vCenter Server Arbitrary File Upload (VMSA-2021-0020)
+  # 106950 - VMware vCenter Server 6.5.x < 6.5u1f Multiple Vulnerabilities (VMSA-2018-0007) (Spectre-1) (Meltdown)
+  # 164351 - VMware vCenter Server SSRF (CVE-2021-21973) (Direct Check)
+  # 105514 - VMware vCenter Server Appliance 6.5 < 6.5 U1d Local Privilege Escalation (VMSA-2017-0021)
+  # 76495 - VMware vCenter Server Appliance Multiple Vulnerabilities (VMSA-2014-0006)
+  # 79863 - VMware vCenter Server Appliance Unspecified XSS (VMSA-2014-0012)
+  # 78508 - VMware vCenter Server Appliance Bash Remote Code Execution (VMSA-2014-0010) (Shellshock)
+  # 102084 - VMware vCenter Server Appliance 6.5 < 6.5 U1 Multiple Vulnerabilities (VMSA-2017-0013)
+  # 99474 - VMware vCenter Server Appliance BlazeDS AMF3 RCE (VMSA-2017-0007)
+  # 67141 - VMware vCenter Server Appliance Multiple Vulnerabilities (VMSA-2013-0006)
+  # 113241 - VMWare vCenter Server 7.0 < 7.0 U1c / 6.7 < 6.7 U3l / 6.5 < 6.5 U3n Server Side Request Forgery
+  # 113244 - VMWare vCenter Server 6.5 < 6.5 U3p / 6.7 < 6.7 U3n / 7.0 < 7.0 U2b Remote Code Execution
+  # 89740 - VMware ESX / ESXi Third-Party Libraries and Components (VMSA-2010-0009) (remote check)
+  # 191711 - VMware ESXi 7.0 / 8.0 Multiple Vulnerabilities (VMSA-2024-0006)
+  # 111759 - ESXi 5.5 / 6.0 / 6.5 / 6.7 Speculative Execution Side Channel Vulnerability (Foreshadow) (VMSA-2018-0020) (remote check)
+  # 105782 - ESXi 5.5 / 6.0 / 6.5 / Hypervisor-Assisted Guest Remediation for Speculative Execution (VMSA-2018-0004) (Spectre) (remote check)
+  # 134878 - VMware ESXi 5.5 / 6.0 / 6.5 / 6.7 DoS (VMSA-2018-0018) (remote check)
+  # 123518 - ESXi 6.0 / 6.5 / 6.7 Multiple Vulnerabilities (VMSA-2019-0005) (Remote Check)
+  # 103376 - ESXi 6.5 < Build 5969300 Multiple Vulnerabilities (VMSA-2017-0015) (remote check)
+  # 105614 - ESXi 6.5 < Build 6765664 Heap Buffer Overflow (VMSA-2017-0021) (remote check)
+  # 118885 - ESXi 6.0 / 6.5 / 6.7 Multiple Vulnerabilities (VMSA-2018-0027) (Remote Check)
+  # 169513 - VMware ESXi 7.0 / 8.0 Heap Out-of-bounds Write (VMSA-2022-0033)
+  # 134877 - VMware ESXi 5.5 / 6.0 / 6.5 / 6.7 Information Disclosure (VMSA-2018-0012) (Spectre) (remote check)
+  # 105486 - ESXi 5.5 / 6.0 / 6.5 / Multiple Vulnerabilities (VMSA-2017-0021) (VMSA-2018-0002) (Spectre) (remote check)
+  # 99131 - ESXi 6.5 < Build 5224529 Multiple Vulnerabilities (VMSA-2017-0006) (remote check)
+  # 72006 - VMSA-2014-0001 : VMware Workstation, Player, Fusion, ESXi, ESX and vCloud Director address several security issues
+  # 192568 - VMware ESXi 6.7 / 7.0 Multiple Vulnerabilities (VMSA-2022-0016)
+  # 158494 - ESXi 6.5 / 6.7 / 7.0 Multiple Vulnerabilities (VMSA-2022-0004)
+  # 118466 - ESXi 6.0 / 6.5 / 6.7 Out-of-Bounds Read Vulnerability (VMSA-2018-0026) (Remote Check)
+  # 87889 - VMSA-2016-0001 : VMware ESXi, Workstation, Player, and Fusion updates address important guest privilege escalation vulnerability
+  # 40378 - VMSA-2008-0009 : Updates to VMware Workstation, VMware Player, VMware ACE, VMware Fusion, VMware Server, VMware VIX API, VMware ESX, VMware ESXi resolve critical security issues
+  # 87940 - ESXi 5.0 < Build 3086167 Shared Folders (HGFS) Guest Privilege Escalation (VMSA-2016-0001) (remote check)
+  # 99130 - ESXi 6.0 U1 < Build 5251621 / 6.0 U2 < Build 5251623 / 6.0 U3 < Build 5224934 Multiple Vulnerabilities (VMSA-2017-0006) (remote check)
+  # 86946 - VMware ESXi 5.1 < Build 3021178 OpenSLP RCE (VMSA-2015-0007)
+  # 70881 - ESXi 5.0 < Build 608089 Multiple Vulnerabilities (remote check)
+  # 87940 - ESXi 5.0 < Build 3086167 Shared Folders (HGFS) Guest Privilege Escalation (VMSA-2016-0001) (remote check)
+  # 86946 - VMware ESXi 5.1 < Build 3021178 OpenSLP RCE (VMSA-2015-0007)
+  # 99130 - ESXi 6.0 U1 < Build 5251621 / 6.0 U2 < Build 5251623 / 6.0 U3 < Build 5224934 Multiple Vulnerabilities (VMSA-2017-0006) (remote check)
+  # 70881 - ESXi 5.0 < Build 608089 Multiple Vulnerabilities (remote check)
+  # 89116 - VMware ESX / ESXi Multiple Vulnerabilities (VMSA-2009-0014) (remote check)
+  # 87942 - ESXi 5.5 < Build 3248547 Shared Folders (HGFS) Guest Privilege Escalation (VMSA-2016-0001) (remote check)
+  # 89037 - VMware ESX / ESXi libxml2 Multiple Vulnerabilities (VMSA-2012-0012) (remote check)
+  # 89671 - VMware ESX / ESXi Arbitrary File Modification (VMSA-2013-0016) (remote check)
+  # 70888 - ESXi 5.1 < Build 911593 Multiple Vulnerabilities (remote check)
+  # 103375 - ESXi 5.5 < Build 6480267 RPC NULL Pointer Dereference Vulnerability (VMSA-2017-0015) (remote check)
+  # 87679 - VMware ESXi Multiple DoS (VMSA-2014-0008)
+  # 70887 - ESXi 5.1 < Build 1142907 NFC Traffic Denial of Service (remote check)
+  # 134876 - VMware ESXi 5.5 / 6.0 XSS (VMSA-2016-0023) (remote check)
+  # 87675 - VMware ESX / ESXi vSphere Client RCE (VMSA-2014-0003)
+  # 146827 - ESXi 6.5 / 6.7 / 7.0 RCE (VMSA-2021-0002)
+  # 89661 - VMware ESX / ESXi Authentication Service and Third-Party Libraries Multiple Vulnerabilities (VMSA-2013-0001) (remote check)
+  # 73917 - ESXi 5.5 < Build 1746974 / 5.5 Update 1 < Build 1746018 OpenSSL Library Multiple Vulnerabilities (remote check) (Heartbleed)
+  # 92949 - ESXi 5.0 / 5.1 / 5.5 / 6.0 Multiple Vulnerabilities (VMSA-2016-0010) (remote check)
+  # 89678 - VMware ESX / ESXi Multiple Vulnerabilities (VMSA-2011-0009) (remote check)
+  # 87943 - ESXi 6.0 < Build 3380124 Shared Folders (HGFS) Guest Privilege Escalation (VMSA-2016-0001) (remote check)
+  # 138475 - ESXi 6.5 / 6.7 XSS (VMSA-2020-0008)
+  # 78108 - ESXi 5.5 < Build 1980513 glibc Library Multiple Vulnerabilities (remote check)
+  # 71774 - ESXi 5.5 < Build 1474526 File Descriptors Privilege Escalation (remote check)
+  # 89662 - VMware ESX / ESXi VMCI Privilege Escalation (VMSA-2013-0002) (remote check)
+  # 70879 - ESXi 5.0 < Build 1311175 Multiple Vulnerabilities (remote check)
+  # 89669 - VMware ESX / ESXi Guest OS Local Privilege Escalation (VMSA-2013-0014) (remote check)
+  # 89039 - VMware ESX / ESXi Multiple Vulnerabilities (VMSA-2012-0016) (remote check)
+  # 89663 - VMware ESX / ESXi NFC and Third-Party Libraries Multiple Vulnerabilities (VMSA-2013-0003) (remote check)
+  # 89674 - VMware ESX / ESXi Third-Party Libraries Multiple Vulnerabilities (VMSA-2011-0003) (remote check)
+  # 81084 - ESXi 5.1 < Build 1743201 Multiple Vulnerabilities (remote check)
+  # 102698 - ESXi 6.0 < Build 5485776 Multiple Vulnerabilities (VMSA-2017-0015) (remote check)
+  # 74470 - ESXi 5.5 < Build 1881737 OpenSSL Library Multiple Vulnerabilities (remote check)
+  # 70880 - ESXi 5.0 < Build 515841 Multiple Vulnerabilities (remote check)
+  # 70886 - ESXi 5.1 < Build 1063671 Multiple Vulnerabilities (remote check)
+  # 89113 - VMware ESX / ESXi Descheduled Time Accounting DoS (VMSA-2009-0007) (remote check)
+  # 86945 - VMware ESXi 5.0 < Build 3021432 OpenSLP RCE (VMSA-2015-0007)
+  # 145090 - ESXi 7.0 DoS (VMSA-2020-0029)
+  # 89681 - VMware ESX / ESXi Third-Party Libraries Multiple Vulnerabilities (VMSA-2011-0013) (remote check)
+  # 89675 - VMware ESX / ESXi Third-Party Libraries Multiple Vulnerabilities (VMSA-2011-0004) (remote check)
+  # 88906 - ESXi 5.5 < Build 3568722 / 6.0 < Build 3568940 glibc DNS Resolver RCE (VMSA-2016-0002) (remote check)
+  # 129493 - ESXi 6.0 / 6.5 / 6.7 Multiple Vulnerabilities (VMSA-2019-0013)
+  # 70448 - VMware ESX/ESXi CIM Services Multiple Vulnerabilities
+  # 70880 - ESXi 5.0 < Build 515841 Multiple Vulnerabilities (remote check)
+  # 74470 - ESXi 5.5 < Build 1881737 OpenSSL Library Multiple Vulnerabilities (remote check)
+  # 87678 - VMware ESXi Multiple OpenSSL Vulnerabilities (VMSA-2014-0006)
+  # 176249 - ESXi < 7.0 Reflected Denial of Service
+  # 89666 - VMware ESX / ESXi Third-Party Libraries Multiple Vulnerabilities (VMSA-2013-0009) (remote check)
+  # 89677 - VMware ESX / ESXi Multiple Vulnerabilities (VMSA-2011-0008) (remote check)
+  # 80037 - ESXi 5.1 < Build 2323231 glibc Library Multiple Vulnerabilities (remote check)
+  # 87676 - VMware ESXi Multiple OpenSSL Vulnerabilities (VMSA-2014-0004) (Heartbleed)
+  # 89036 - VMware ESX / ESXi Multiple Vulnerabilities (VMSA-2012-0011) (remote check)
+  # 70883 - ESXi 5.0 < Build 721882 Multiple Vulnerabilities (remote check)
+  # 87941 - ESXi 5.1 < Build 3070626 Shared Folders (HGFS) Guest Privilege Escalation (VMSA-2016-0001) (remote check)
+  # 70885 - ESXi 5.0 < Build 912577 Multiple Vulnerabilities (remote check)
+  # 89105 - VMware ESX / ESXi Service Console and Third-Party Libraries Multiple Vulnerabilities (VMSA-2012-0001) (remote check)
+  # 79862 - ESXi 5.1 < Build 2323236 Third-Party Libraries Multiple Vulnerabilities (remote check) (BEAST)
+  # 89664 - VMware ESX / ESXi libxml2 RCE (VMSA-2013-0004) (remote check)
+  # 87673 - VMware ESX / ESXi Multiple DoS (VMSA-2014-0001)
+  # 89106 - VMware ESX / ESXi Multiple Vulnerabilities (VMSA-2012-0005) (BEAST) (remote check)
+  # 70877 - ESXi 5.0 < Build 1022489 Multiple Vulnerabilities (remote check)
+  # 70884 - ESXi 5.0 < Build 764879 Multiple Vulnerabilities (remote check)
+  # 70878 - ESXi 5.0 < Build 1197855 NFC Traffic Denial of Service (remote check)
+  # 87681 - VMware ESXi Multiple Vulnerabilities (VMSA-2014-0012)
+  # 89038 - VMware ESX / ESXi Third-Party Libraries Multiple Vulnerabilities (VMSA-2012-0013) (remote check)
+  # 89117 - VMware ESX / ESXi Multiple Vulnerabilities (VMSA-2009-0016) (remote check)
+  # 81083 - ESXi 5.0 < Build 1749766 Multiple Vulnerabilities (remote check)
+  # 83781 - ESXi 5.5 < Build 1623387 Multiple Vulnerabilities (remote check)
+  # 124300 - ESXi 6.5 / 6.7 Multiple Vulnerabilities (VMSA-2019-0006) (Remote Check)
+  # 192466 - VMware ESXi 6.5 / 6.7 / 7.0 Multiple Vulnerabilities (VMSA-2022-0020)
+  # 168828 - ESXi 6.5 / 6.7 / 7.0 Multiple Vulnerabilities (VMSA-2022-0030)
+  # 76203 - ESXi 5.1 < Build 1900470 OpenSSL Library Multiple Vulnerabilities (remote check)
+  # 140039 - ESXi 6.5 / 6.7 / 7.0 DoS (VMSA-2020-0018)
+  # 89668 - VMware ESX / ESXi Multiple Vulnerabilities (VMSA-2013-0012) (remote check)
+  # 86947 - VMware ESXi 5.5 < Build 3029944 OpenSLP RCE (VMSA-2015-0007)
+  # 81085 - ESXi 5.5 < Build 2352327 Multiple Vulnerabilities (remote check) (POODLE)
+  # 89675 - VMware ESX / ESXi Third-Party Libraries Multiple Vulnerabilities (VMSA-2011-0004) (remote check)
+  # 145090 - ESXi 7.0 DoS (VMSA-2020-0029)
+  # 70886 - ESXi 5.1 < Build 1063671 Multiple Vulnerabilities (remote check)
+  # 86945 - VMware ESXi 5.0 < Build 3021432 OpenSLP RCE (VMSA-2015-0007)
+  # 89035 - VMware ESX / ESXi Multiple Vulnerabilities (VMSA-2012-0009) (remote check)
+  # 99129 - ESXi 5.5 < Build 5230635 Multiple Vulnerabilities (VMSA-2017-0006) (remote check)
+  # 89681 - VMware ESX / ESXi Third-Party Libraries Multiple Vulnerabilities (VMSA-2011-0013) (remote check)
+  # 88906 - ESXi 5.5 < Build 3568722 / 6.0 < Build 3568940 glibc DNS Resolver RCE (VMSA-2016-0002) (remote check)
+  # 124300 - ESXi 6.5 / 6.7 Multiple Vulnerabilities (VMSA-2019-0006) (Remote Check)
+  # 129497 - ESXi 6.0 / 6.5 / 6.7 Use-After-Free (VMSA-2019-0014)
+  # 125218 - ESXi 6.0 / 6.5 / 6.7 Multiple Vulnerabilities (VMSA-2019-0008)(MDSUM/RIDL) (MFBDS/RIDL/ZombieLoad) (MLPDS/RIDL) (MSBDS/Fallout)(Remote Check)
+  # 128035 - ESXi 6.5 / 6.7 Multiple Vulnerabilities (VMSA-2019-0012)
+  # 201123 - VMware ESXi 7.0 / 8.0 Authenticaton Bypass (CVE-2024-37085)
+  # 165337 - ESXi 6.5 / 6.7 / 7.0 Heap Overflow RCE (VMSA-2022-0001)
+  # 56997 - VMware ESX / ESXi Unsupported Version Detection

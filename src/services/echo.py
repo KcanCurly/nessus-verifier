@@ -1,7 +1,7 @@
 import argparse
 import os
 
-def check(directory_path, hosts = "hosts.txt"):
+def check(directory_path, hosts):
     if os.path.exists(os.path.join(directory_path, hosts)):
         print("Echo: (CVE-1999-0103, CVE-1999-0635)")
         with open(os.path.join(directory_path, hosts), "r") as file:

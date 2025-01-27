@@ -11,16 +11,15 @@ def check(directory_path, config, args, hosts):
     hosts = get_hosts_from_file(hosts, False)
     result = ", ".join(hosts)
     vuln = {}
-    
     command = ["msfconsole", "-q", "-x", f"color false; use auxiliary/scanner/snmp/snmp_login; set RHOSTS {result}; run; exit"]
     try:
         result = subprocess.run(command, text=True, capture_output=True)
-        pattern = r"\[\+\] (.*) - Login Successful: (.*);"
+        pattern = r"\[\+\] (.*) - Login Successful: (.*) (.*);"
         matches = re.findall(pattern, result.stdout)
         for m in matches:
             if m[0] not in vuln:
                 vuln[m[0]] = []
-            vuln[m[0]].append(m[1])
+            vuln[m[0]].append(f"{m[1]} - {m[2]}")
                 
     except Exception:pass
     

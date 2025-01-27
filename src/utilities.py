@@ -1,6 +1,8 @@
 import os
 import subprocess
 import re
+import ssl
+import socket
 
 def savetofile(path, message, mode = "a+"):
     with open(path, mode) as f:
@@ -36,6 +38,7 @@ def control_TLS(hosts, extra_command = "", white_results_are_good = False):
     weak_versions = {}
     weak_ciphers = {}
     weak_bits = {}
+    wrong_hosts = []
     for host in hosts:
         ip = host
         port = "21"
@@ -97,6 +100,16 @@ def control_TLS(hosts, extra_command = "", white_results_are_good = False):
                         weak_bits[host] = []
                     weak_bits[host].append(re.sub(r'^\x1b\[[0-9;]*m', '', bit) + "->" + re.sub(r'^\x1b\[[0-9;]*m', '', cipher))
                     
+        
+        try:
+            context = ssl.create_default_context()
+            with socket.create_connection((ip, int(port)), timeout=3) as sock:
+                with context.wrap_socket(sock, server_hostname=ip) as ssock:
+                    pass
+        except ssl.CertificateError as e:
+            if "Hostname mismatch" in e:
+                wrong_hosts.append(host)
+                    
       
     if len(weak_ciphers) > 0:       
         print("Vulnerable TLS Ciphers on Hosts:")                
@@ -116,3 +129,8 @@ def control_TLS(hosts, extra_command = "", white_results_are_good = False):
         for key, value in weak_versions.items():
             print(f"\t{key} - {", ".join(value)}")
     
+    if len(wrong_hosts) > 0:
+        print()
+        print("Wrong hostnames on certficate on hosts:")
+        for v in wrong_hosts:
+            print(f"\t{v}")

@@ -84,9 +84,12 @@ nv-ftp ports/ftp [directory path] [filename of the hosts]
 * LDAP
   * Check anonymous access
 * SMB
-  * Check null and guest access
+  * Check null and guest access print shares if so
   * Check smb signing requirement
   * Check smb version
+  * Check if NTLMv1 is supported
+* Rlogin
+  * Simply checks usage and prints out the hosts
 
 ## Implemented Applications
 
