@@ -8,8 +8,8 @@ import socket
 from src.utilities import get_hosts_from_file
 
 pipes = [
-    "LSARPC:lsaenumsid",
-    "SAMR:enumdomains",
+    "LSARPC:lsaquerysecobj",
+    "SAMR:querydominfo",
     "SPOOLSS:getjob",
     "SRVSVC:srvinfo",
     "DFS:dfsversion",
