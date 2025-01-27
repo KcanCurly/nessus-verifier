@@ -15,16 +15,15 @@ def check(directory_path, config, args, hosts):
     vuln = []
     tls_conf = Tls(validate=ssl.CERT_NONE)
     
-    for host in hosts:        
+    for host in hosts:
         try:
             ip = host.split(":")[0]
             port = host.split(":")[1]
-            s = Server(ip, get_info=ALL)
-            c = Connection(s, "", "")
-            if c.bind():
+            
+            command = ["ldapsearch", "-x", "-H", f"ldap://{host}", "-b", "", "(objectClass=*)"]
+            result = subprocess.run(command, text=True, capture_output=True)
+            if "ldaperr" not in result.stdout.lower():
                 vuln.append(host)
-                continue
-            print("Error in bind", c.result)
         except Exception as e:print(e)
     
     if len(vuln) > 0:
