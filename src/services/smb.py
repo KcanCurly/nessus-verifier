@@ -33,10 +33,13 @@ def check(directory_path, config, args, hosts):
             conn = SMBConnection(host, host, timeout=3) 
             conn.login('guest','')
             shares = conn.listShares()
-            if host not in guess_vuln:
-                guess_vuln[host] = []
+
             for s in shares:
                 conn.listPath(s['shi1_netname'][:-1], "")
+                if host not in guess_vuln:
+                    guess_vuln[host] = []
+                print("pain")
+                print(s['shi1_netname'])
                 guess_vuln[host].append(s['shi1_netname'][:-1])
             conn.logoff()
         except Exception as e: print(e)
