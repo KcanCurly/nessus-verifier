@@ -2,9 +2,6 @@ import argparse
 import configparser
 import os
 from pathlib import Path
-import subprocess
-import re
-from impacket.smb import SMB
 from impacket.smbconnection import SMBConnection
 from src.utilities import get_hosts_from_file
 
@@ -14,7 +11,7 @@ def check(directory_path, config, args, hosts):
     guess_vuln = {}
     sign = []
     ntlmv1 = []
-    
+    smbv1 = []
     for host in hosts:
         try:
             conn = SMBConnection(host, host, timeout=3)
@@ -23,10 +20,10 @@ def check(directory_path, config, args, hosts):
             if not conn._SMBConnection.doesSupportNTLMv2():
                 ntlmv1.append(host)
             conn.login('','')
-            print("Null login:", host)
+            shares = conn.listShares()
+
             if host not in null_vuln:
                 null_vuln[host] = []
-            shares = conn.listShares()
             for s in shares:
                 null_vuln[host].append(s['shi1_netname'][:-1])
             conn.logoff()
@@ -46,11 +43,11 @@ def check(directory_path, config, args, hosts):
         
         try:
             conn = SMBConnection(host, host, timeout=3, preferredDialect="NT LM 0.12") 
-            print("SMBv1 connect")
-        except Exception as e:print(f"{host}:445 - SMBv1 - {e}")
+            smbv1.append(host)
+        except Exception:pass
         
     if len(null_vuln) > 0:
-        print("Null session was possible on hosts:")
+        print("Null session accessible share on hosts:")
         for k,v in null_vuln.items():
             print(k)
             for z in v:
@@ -66,6 +63,11 @@ def check(directory_path, config, args, hosts):
     if len(sign) > 0:
         print("SMB signing NOT enabled on hosts:")
         for v in sign:
+            print(f"\t{v}:445")
+            
+    if len(smbv1) > 0:
+        print("SMBv1 enabled on hosts:")
+        for v in smbv1:
             print(f"\t{v}:445")
             
     if len(ntlmv1) > 0:
