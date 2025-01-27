@@ -24,7 +24,7 @@ def check(directory_path, config, args, hosts):
     except Exception:pass
     
     if len(vuln) > 0:
-        print("SNMP default credentials were found:")
+        print("SNMP community strings were found:")
         for k,v in vuln.items():
             print(k)
             for a in v:
