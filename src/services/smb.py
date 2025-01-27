@@ -24,6 +24,7 @@ def check(directory_path, config, args, hosts):
             if host not in null_vuln:
                 null_vuln[host] = []
             for s in shares:
+                conn.connectTree(s['shi1_netname'])
                 conn.listPath(s['shi1_netname'], "/")
                 null_vuln[host].append(s['shi1_netname'][:-1])
             conn.logoff()
@@ -37,7 +38,7 @@ def check(directory_path, config, args, hosts):
             for s in shares:
                 try:
                     print(s['shi1_netname'][:-1])
-                    conn.listPath(s['shi1_netname'], "/")
+                    conn.listPath(s['shi1_netname'][:-1], "/")
                     if host not in guess_vuln:
                         guess_vuln[host] = []
                     print("pain")
