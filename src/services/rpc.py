@@ -41,7 +41,7 @@ def check(directory_path, config, args, hosts):
                 if "nt_status" not in result.stderr.lower():
                     if host not in vuln:
                         vuln[host] = []
-                    vuln[host].append(name)
+                    vuln[host].append(f"{name} - {result.stdout} - {result.stderr}")
             except:pass
                 
     
