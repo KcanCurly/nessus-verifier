@@ -25,7 +25,7 @@ def check(directory_path, config, args, hosts):
                 null_vuln[host] = []
             for s in shares:
                 conn.connectTree(s['shi1_netname'])
-                conn.listPath(s['shi1_netname'], "/")
+                conn.listPath(s['shi1_netname'], "/", "")
                 null_vuln[host].append(s['shi1_netname'][:-1])
             conn.logoff()
             
