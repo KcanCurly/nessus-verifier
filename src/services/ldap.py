@@ -17,16 +17,15 @@ def check(directory_path, config, args, hosts):
     
     for host in hosts:        
         try:
-            server = Server(f'ldap://{host}')
-            conn = Connection(server, user=None, password=None, auto_bind=True)
-            vuln.append(host)
-        except LDAPBindError:
-            try:
-                server = Server(f'ldaps://{host}', user=None, password=None, auto_bind=True, tls=tls_conf)
-                conn = Connection(server, user=None, password=None, auto_bind=True)
-                vuln.append(f"{host} (TLS)")
-            except: pass
-        except:pass
+            ip = host.split(":")[0]
+            port = host.split(":")[1]
+            s = Server(ip, get_info=ALL)
+            c = Connection(s, "", "")
+            if c.bind():
+                vuln.append(host)
+                continue
+            print("Error in bind", c.result)
+        except Exception as e:print(e)
     
     if len(vuln) > 0:
         print("LDAP anonymous access were found:")
