@@ -23,6 +23,7 @@ def check(directory_path, config, args, hosts):
             if not conn._SMBConnection.doesSupportNTLMv2():
                 ntlmv1.append(host)
             conn.login('','')
+            print("Null login:", host)
             if host not in null_vuln:
                 null_vuln[host] = []
             shares = conn.listShares()
@@ -34,13 +35,19 @@ def check(directory_path, config, args, hosts):
         try:
             conn = SMBConnection(host, host, timeout=3) 
             conn.login('guest','')
+            print("Guest login:", host)
             if host not in guess_vuln:
                 guess_vuln[host] = []
             shares = conn.listShares()
             for s in shares:
-                null_vuln[host].append(s['shi1_netname'][:-1])
+                guess_vuln[host].append(s['shi1_netname'][:-1])
             conn.logoff()
         except Exception as e:print(f"{host}:445 - Guest - {e}")
+        
+        try:
+            conn = SMBConnection(host, host, timeout=3, preferredDialect="NT LM 0.12") 
+            print("SMBv1 connect")
+        except Exception as e:print(f"{host}:445 - SMBv1 - {e}")
         
     if len(null_vuln) > 0:
         print("Null session was possible on hosts:")
