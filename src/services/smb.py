@@ -30,7 +30,7 @@ def check(directory_path, config, args, hosts):
                 null_vuln[host].append(s['shi1_netname'][:-1])
             conn.logoff()
             
-        except Exception as e:print(e)
+        except Exception as e:print(f"{host}:445 - Normal - {e}")
         try:
             conn = SMBConnection(host, host, timeout=3) 
             conn.login('guest','')
@@ -40,31 +40,31 @@ def check(directory_path, config, args, hosts):
             for s in shares:
                 null_vuln[host].append(s['shi1_netname'][:-1])
             conn.logoff()
-        except Exception as e:print(e)
+        except Exception as e:print(f"{host}:445 - Guest - {e}")
         
     if len(null_vuln) > 0:
         print("Null session was possible on hosts:")
         for k,v in null_vuln.items():
             print(k)
             for z in v:
-                print(f"\t{z}")
+                print(f"\t{z}:445")
                 
     if len(guess_vuln) > 0:
         print("Guest session was possible on hosts:")
         for k,v in guess_vuln.items():
             print(k)
             for z in v:
-                print(f"\t{z}")
+                print(f"\t{z}:445")
     
     if len(sign) > 0:
         print("SMB signing NOT enabled on hosts:")
         for v in sign:
-            print(f"\t{v}")
+            print(f"\t{v}:445")
             
     if len(ntlmv1) > 0:
         print("NTLMv1 supported on hosts:")
         for v in ntlmv1:
-            print(f"\t{v}")
+            print(f"\t{v}:445")
 
 def main():
     parser = argparse.ArgumentParser(description="SMB module of nessus-verifier.")
