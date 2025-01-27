@@ -14,7 +14,6 @@ setup(
         "requests",
         "dnspython",
         "ntplib",
-        "ldap3",
         "impacket",
         "pyaml",
         

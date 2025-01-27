@@ -1030,3 +1030,117 @@
   # 201123 - VMware ESXi 7.0 / 8.0 Authenticaton Bypass (CVE-2024-37085)
   # 165337 - ESXi 6.5 / 6.7 / 7.0 Heap Overflow RCE (VMSA-2022-0001)
   # 56997 - VMware ESX / ESXi Unsupported Version Detection
+
+- name: OpenSSH Versions
+  id: 14
+  plugin-ids: [17700, 17839, 44074, 70895, 10802, 11031, 19592, 90924, 99359, 44067, 
+  44075, 44065, 159490, 187201, 85382, 51920, 17699, 67140, 93194, 90023, 44077, 10883,
+   73079, 106608, 11837, 17744, 44070, 44069, 44071, 10771, 10823, 90022, 96151, 22466, 
+   85690, 10439, 44068, 44078, 11712, 11848, 44081, 44072, 103781, 159491, 84638, 44079, 
+   44076, 201194, 17702, 17703, 130455, 173384, 178910, 1987, 17701, 154174, 147662, 701168, 
+   181418, 701157, 701171, 9309, 4209, 1997, 9310, 701165, 701162, 6300, 701161, 701169, 9312,
+    701164, 701159, 9055, 701160, 4598, 701167, 1986, 701166, 9308, 701156, 3751, 701163, 1994, 
+    1990, 1988, 4459, 1991, 3205, 9311, 701158, 3787, 700019, 9507, 9855, 1989, 1992, 8050, 
+    8051, 1985, 8169]
+  # 17700 - OpenSSH < 2.1.0 /dev/random Check Failure
+  # 17839 - OpenSSH < 2.1.1p3 Format String Privilege Escalation
+  # 44074 - Portable OpenSSH < 3.8p1 Multiple Vulnerabilities
+  # 70895 - OpenSSH 6.2 and 6.3 AES-GCM Cipher Memory Corruption
+  # 10802 - OpenSSH < 3.0.1 Multiple Flaws
+  # 11031 - OpenSSH < 3.4 Multiple Remote Overflows
+  # 19592 - OpenSSH < 4.2 Multiple Vulnerabilities
+  # 90924 - OpenSSH 6.8p1 - 7.x < 7.1p2 ssh_packet_read_poll2() Packet Handling DoS
+  # 99359 - OpenSSH < 7.5
+  # 44067 - OpenSSH < 1.2.3 xauth Session Highjacking
+  # 44075 - OpenSSH < 4.0 known_hosts Plaintext Host Information Disclosure
+  # 44065 - OpenSSH < 5.2 CBC Plaintext Disclosure
+  # 159490 - OpenSSH < 7.8
+  # 187201 - OpenSSH < 9.6 Multiple Vulnerabilities
+  # 85382 - OpenSSH < 7.0 Multiple Vulnerabilities
+  # 51920 - OpenSSH Legacy Certificate Signing Information Disclosure
+  # 17699 - OpenSSH < 1.2.2 sshd Local TCP Redirection Connection Masking Weakness
+  # 67140 - OpenSSH LoginGraceTime / MaxStartups DoS
+  # 93194 - OpenSSH < 7.3 Multiple Vulnerabilities
+  # 90023 - OpenSSH < 7.2p2 X11Forwarding xauth Command Injection
+  # 44077 - OpenSSH < 4.5 Multiple Vulnerabilities
+  # 10883 - OpenSSH < 3.1 Channel Code Off by One Remote Privilege Escalation
+  # 73079 - OpenSSH < 6.6 Multiple Vulnerabilities
+  # 106608 - OpenSSH 5.4 < 7.1p2 Multiple Vulnerabilities
+  # 11837 - OpenSSH < 3.7.1 Multiple Vulnerabilities
+  # 17744 - OpenSSH >= 2.3.0 AllowTcpForwarding Port Bouncing
+  # 44070 - OpenSSH < 2.9.9p2 echo simulation Information Disclosure
+  # 44069 - OpenSSH < 2.9.9p1 Resource Limit Bypass
+  # 44071 - OpenSSH < 2.9.9 / 2.9p2 Symbolic Link 'cookies' File Removal
+  # 10771 - OpenSSH 2.5.x - 2.9 Multiple Vulnerabilities
+  # 10823 - OpenSSH < 3.0.2 Multiple Vulnerabilities
+  # 90022 - OpenSSH < 7.2 Untrusted X11 Forwarding Fallback Security Bypass
+  # 96151 - OpenSSH < 7.4 Multiple Vulnerabilities
+  # 22466 - OpenSSH < 4.4 Multiple Vulnerabilities
+  # 85690 - OpenSSH 7.x < 7.1 PermitRootLogin Security Bypass
+  # 10439 - OpenSSH < 2.1.1 UseLogin Local Privilege Escalation
+  # 44068 - OpenSSH < 2.5.2 / 2.5.2p2 Multiple Information Disclosure Vulnerabilities
+  # 44078 - OpenSSH < 4.7 Trusted X11 Cookie Connection Policy Bypass
+  # 11712 - OpenSSH < 3.6.2 Reverse DNS Lookup Bypass
+  # 11848 - OpenSSH < 3.7.1p2 Multiple Remote Vulnerabilities
+  # 44081 - OpenSSH < 5.7 Multiple Vulnerabilities
+  # 44072 - OpenSSH < 3.2.3 YP Netgroups Authentication Bypass
+  # 103781 - OpenSSH < 7.6
+  # 159491 - OpenSSH < 8.0
+  # 84638 - OpenSSH < 6.9 Multiple Vulnerabilities
+  # 44079 - OpenSSH < 4.9 'ForceCommand' Directive Bypass
+  # 44076 - OpenSSH  < 4.3 scp Command Line Filename Processing Command Injection
+  # 201194 - OpenSSH < 9.8 RCE
+  # 17702 - OpenSSH < 3.6.1p2 Multiple Vulnerabilities
+  # 17703 - OpenSSH < 5.9 Multiple DoS
+  # 130455 - OpenSSH 7.7 < 8.1
+  # 173384 - OpenSSH < 9.3 Multiple Vulnerabilities
+  # 178910 - OpenSSH < 9.3p2 Vulnerability
+  # 1987 - OpenSSH < 3.4 Multiple Remote Overflows
+  # 17701 - OpenSSH < 3.4p1 scp Traversal Arbitrary File Overwrite
+  # 154174 - OpenSSH 6.2 < 8.8
+  # 147662 - OpenSSH 8.2 < 8.5
+  # 701168 - OpenSSH < 3.7.1 Multiple Vulnerabilities
+  # 181418 - OpenSSH Detection
+  # 701157 - OpenSSH < 7.9 Access Validation Error
+  # 701171 - OpenSSH < 3.6.2 Reverse DNS Lookup Bypass
+  # 9309 - OpenSSH < 7.0 Multiple Vulnerabilities
+  # 4209 - OpenSSH < 4.7 Trusted X11 Cookie Connection Policy Bypass
+  # 1997 - OpenSSH Detection
+  # 9310 - OpenSSH < 7.1 PermitRootLogin Bypass Vulnerability
+  # 701165 - OpenSSH < 4.5 Multiple Vulnerabilities
+  # 701162 - OpenSSH < 5.9 Multiple DoS
+  # 6300 - OpenSSH < 5.7 Multiple Vulnerabilities
+  # 701161 - OpenSSH < 6.7 Security Bypass
+  # 701169 - OpenSSH < 3.8p1 Multiple Vulnerabilities
+  # 9312 - OpenSSH < 7.2p2 X11Forwarding xauth Command Injection
+  # 701164 - OpenSSH < 6.2 DoS
+  # 701159 - OpenSSH < 7.6 Security Bypass
+  # 9055 - OpenSSH < 7.1p2 Multiple Vulnerabilities
+  # 701160 - OpenSSH < 7.2 Input Validation Error
+  # 4598 - OpenSSH X11 < 5.1 Session Hijacking
+  # 701167 - OpenSSH < 4.0 Information Disclosure
+  # 1986 - OpenSSH < 3.0.1 Multiple Vulnerabilities
+  # 701166 - OpenSSH < 4.2 Multiple Vulnerabilities
+  # 9308 - OpenSSH < 6.9 Multiple Vulnerabilities
+  # 701156 - OpenSSH < 8.0 Multiple Vulnerbilities
+  # 3751 - OpenSSH < 4.4 Multiple Vulnerabilities
+  # 701163 - OpenSSH < 5.8p2 Information Disclosure Vulnerability
+  # 1994 - OpenSSH < 3.7 buffer_append_space Function Overflow
+  # 1990 - OpenSSH < 3.1 Channel Code Off by One Privilege Escalation
+  # 1988 - OpenSSH < 2.9.9 Multiple Key Type ACL Bypass
+  # 4459 - OpenSSH < 5.0 X11 Forwarding Local Session Hijacking
+  # 1991 - OpenSSH < 2.1.1 UseLogin Local Privilege Escalation
+  # 3205 - OpenSSH < 4.2p1 GSSAPI Authentication Credential Escalation
+  # 9311 - OpenSSH < 7.2 X11Forwarding Fallback Bypass Vulnerability
+  # 701158 - OpenSSH < 7.8 Access User Enumeration Vulnerability
+  # 3787 - OpenSSH < 4.1.0p2 / 4.2 Timing Attack
+  # 700019 - OpenSSH 7.x < 7.5 Directory Traversal
+  # 9507 - OpenSSH 7.x < 7.3 Multiple Vulnerabilities
+  # 9855 - OpenSSH 7.x < 7.4 Multiple Vulnerabilities
+  # 1989 - OpenSSH < 3.2.1 AFS/Kerberos Ticket/Token Passing Overflow
+  # 1992 - OpenSSH < 3.0.2 UseLogin Environment Variable Local Command Execution
+  # 8050 - OpenSSH 6.2 / 6.3 Remote Memory Corruption Vulnerability
+  # 8051 - OpenSSH v6.2 / v6.3 Remote Memory Corruption Vulnerability
+  # 1985 - OpenSSH < 2.3.2 SSHv2 Public Key Authentication Bypass
+  # 8169 - OpenSSH < 6.6 Multiple Remote Restriction Bypass Vulnerability
+  

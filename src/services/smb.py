@@ -15,6 +15,8 @@ def check(directory_path, config, args, hosts):
     for host in hosts:
         try:
             conn = SMBConnection(host, host, timeout=3)
+            print("Sign", conn._SMBConnection.is_signing_required())
+            print("ntlmv1", conn._SMBConnection.doesSupportNTLMv2())
             if not conn._SMBConnection.is_signing_required():
                 sign.append(host)
             if not conn._SMBConnection.doesSupportNTLMv2():

@@ -3,17 +3,12 @@ import configparser
 import os
 from pathlib import Path
 import subprocess
-import re
-import ssl
-from ldap3 import Server, Connection, ALL, Tls
-from ldap3.core.exceptions import LDAPBindError
 from src.utilities import get_hosts_from_file
 
 
 def check(directory_path, config, args, hosts):
     hosts = get_hosts_from_file(hosts)
     vuln = []
-    tls_conf = Tls(validate=ssl.CERT_NONE)
     
     for host in hosts:
         try:
