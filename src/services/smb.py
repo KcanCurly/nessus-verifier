@@ -35,13 +35,14 @@ def check(directory_path, config, args, hosts):
             shares = conn.listShares()
 
             for s in shares:
-                print(s)
-                conn.listPath(s['shi1_netname'][:-1], "/")
-                if host not in guess_vuln:
-                    guess_vuln[host] = []
-                print("pain")
-                print(s['shi1_netname'])
-                guess_vuln[host].append(s['shi1_netname'][:-1])
+                try:
+                    conn.listPath(s['shi1_netname'][:-1], "/")
+                    if host not in guess_vuln:
+                        guess_vuln[host] = []
+                    print("pain")
+                    print(s['shi1_netname'])
+                    guess_vuln[host].append(s['shi1_netname'][:-1])
+                except Exception as e: print(e)
             conn.logoff()
         except Exception as e: print(e)
         
