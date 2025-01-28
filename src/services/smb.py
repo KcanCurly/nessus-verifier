@@ -16,8 +16,8 @@ def check1(directory_path, config, args, hosts):
         # Get NetBIOS of the remote computer
         command = ["nmblookup", "-A", host]
         result = subprocess.run(command, text=True, capture_output=True)
-        print(result.stdout)
         netbios_re = r"\s+(.*)\s+<20>"
+        
         s = re.search(netbios_re, result.stdout)
         if s:
             nbname = s.group()
@@ -33,7 +33,7 @@ def check1(directory_path, config, args, hosts):
                 conn.listPath("anon-share")
                 print("listPath")
                 
-            except Exception as e: print("Anonymous Error: ", e)
+            except Exception as e: print("Anonymous Error:", e)
             try:
                 conn = pysmbconn.SMBConnection('guest', '', '', nbname, is_direct_tcp=True)
                 print("conn")
@@ -42,12 +42,16 @@ def check1(directory_path, config, args, hosts):
                 print("connect")
                 shares = conn.listShares(timeout=3)
                 for share in shares:
-                    print(share.name)
-                    files = conn.listPath(share.name, "/")
-                    for file in files:
-                        print(file.filename)
+                    try:
+                        print(share.name)
+                        files = conn.listPath(share.name, "/")
+                        try:
+                            for file in files:
+                                print(file.filename)
+                        except Exception as e: print("File Error:", e)
+                    except Exception as e: print("Share Error:", e)
                 
-            except Exception as e: print("Guest Error: ", e)
+            except Exception as e: print("Guest Error:", e)
 
 def check(directory_path, config, args, hosts):
     hosts = get_hosts_from_file(hosts, False)
