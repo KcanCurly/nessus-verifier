@@ -72,7 +72,7 @@ def check1(directory_path, config, args, hosts):
             for z in v:
                 print(f"\t{z}")
                 for zz in null_vuln_files[z]:
-                    print(f"\t{zz}")
+                    print(f"\t\t{zz}")
                 
     if len(guest_vuln) > 0:
         print("Guest session accessible share on hosts:")
@@ -81,7 +81,7 @@ def check1(directory_path, config, args, hosts):
             for z in v:
                 print(f"\t{z}")
                 for zz in guest_vuln_files[z]:
-                    print(f"\t{zz}")
+                    print(f"\t\t{zz}")
 
 def check(directory_path, config, args, hosts):
     hosts = get_hosts_from_file(hosts, False)
