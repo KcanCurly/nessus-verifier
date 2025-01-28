@@ -9,7 +9,7 @@ To install:
 ```
 pipx install git+https://github.com/KcanCurly/nessus-verifier
 pipx install git+https://github.com/KcanCurly/ssh-whirl
-sudo apt install -y sslscan sshpass ssh-audit dig dnsrecon metasploit-framework ident-user-enum smbclient
+sudo apt install -y sslscan sshpass ssh-audit dig dnsrecon metasploit-framework ident-user-enum smbclient samba
 ```
 
 ## Usage

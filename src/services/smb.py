@@ -3,6 +3,8 @@ import configparser
 import os
 from pathlib import Path
 from socket import timeout
+import subprocess
+import re
 import time
 from impacket.smbconnection import SMBConnection
 from src.utilities import get_hosts_from_file
@@ -11,30 +13,38 @@ from smb import SMBConnection as pysmbconn
 def check1(directory_path, config, args, hosts):
     hosts = get_hosts_from_file(hosts, False)
     for host in hosts:
-        try:
-            conn = pysmbconn.SMBConnection('', '', '', 'WIN-7VROJP0QOE4', is_direct_tcp=True)
-            print("conn")
-            a = conn.connect(host, 445, timeout=3)
-            print(a)
-            print("connect")
-            conn.listShares(timeout=3)
-            print("listShares")
-            conn.listPath("anon-share")
-            print("listPath")
-            
-        except Exception as e: print("Anonymous Error: ", e)
-        try:
-            conn = pysmbconn.SMBConnection('guest', '', '', 'WIN-7VROJP0QOE4', is_direct_tcp=True)
-            print("conn")
-            a = conn.connect(host, 445, timeout=3)
-            print(a)
-            print("connect")
-            conn.listShares(timeout=3)
-            print("listShares")
-            conn.listPath("anon-share")
-            print("listPath")
-            
-        except Exception as e: print("Guest Error: ", e)
+        # Get NetBIOS of the remote computer
+        command = ["nmblookup", "-A", host]
+        result = subprocess.run(command, text=True, capture_output=True)
+        netbios_re = r"/s+(.*) <20>"
+        s = re.search(netbios_re, result.stdout)
+        if s:
+            nbname = s.group()
+        
+            try:
+                conn = pysmbconn.SMBConnection('', '', '', nbname, is_direct_tcp=True)
+                print("conn")
+                a = conn.connect(host, 445, timeout=3)
+                print(a)
+                print("connect")
+                conn.listShares(timeout=3)
+                print("listShares")
+                conn.listPath("anon-share")
+                print("listPath")
+                
+            except Exception as e: print("Anonymous Error: ", e)
+            try:
+                conn = pysmbconn.SMBConnection('guest', '', '', nbname, is_direct_tcp=True)
+                print("conn")
+                a = conn.connect(host, 445, timeout=3)
+                print(a)
+                print("connect")
+                conn.listShares(timeout=3)
+                print("listShares")
+                conn.listPath("anon-share", "/")
+                print("listPath")
+                
+            except Exception as e: print("Guest Error: ", e)
 
 def check(directory_path, config, args, hosts):
     hosts = get_hosts_from_file(hosts, False)
