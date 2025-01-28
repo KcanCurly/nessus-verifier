@@ -12,9 +12,9 @@ def check1(directory_path, config, args, hosts):
     hosts = get_hosts_from_file(hosts, False)
     for host in hosts:
         try:
-            conn = pysmbconn.SMBConnection('', '', '', '')
+            conn = pysmbconn.SMBConnection('', '', '', '', is_direct_tcp=True)
             print("conn")
-            a = conn.connect(host, timeout=3)
+            a = conn.connect(host, 445, timeout=3)
             print(a)
             print("connect")
             conn.listShares(timeout=3)
