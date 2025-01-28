@@ -28,7 +28,7 @@ def check1(directory_path, config, args, hosts):
                 a = conn.connect(host, 445, timeout=3)
                 print(a)
                 print("connect")
-                conn.listShares(timeout=3)
+                shares = conn.listShares(timeout=3)
                 print("listShares")
                 conn.listPath("anon-share")
                 print("listPath")
@@ -40,10 +40,12 @@ def check1(directory_path, config, args, hosts):
                 a = conn.connect(host, 445, timeout=3)
                 print(a)
                 print("connect")
-                conn.listShares(timeout=3)
-                print("listShares")
-                conn.listPath("anon-share", "/")
-                print("listPath")
+                shares = conn.listShares(timeout=3)
+                for share in shares:
+                    print(share.name)
+                    files = conn.listPath(share.name, "/")
+                    for file in files:
+                        print(file.filename)
                 
             except Exception as e: print("Guest Error: ", e)
 
