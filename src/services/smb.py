@@ -14,7 +14,9 @@ def check1(directory_path, config, args, hosts):
     hosts = get_hosts_from_file(hosts, False)
     
     null_vuln: dict = {}
-    guess_vuln: dict = {}
+    null_vuln_files: dict = {}
+    guest_vuln: dict = {}
+    guest_vuln_files: dict = {}
     
     for host in hosts:
         # Get NetBIOS of the remote computer
@@ -28,32 +30,36 @@ def check1(directory_path, config, args, hosts):
         
             try:
                 conn = pysmbconn.SMBConnection('', '', '', nbname, is_direct_tcp=True)
-                a = conn.connect(host, 445, timeout=3)
+                if not conn.connect(host, 445, timeout=3): continue
                 shares = conn.listShares(timeout=3)
                 for share in shares:
                     try:
                         files = conn.listPath(share.name, "/")
                         null_vuln[host] = []
+                        null_vuln[host].append(share.name)
+                        null_vuln_files[share.name] = []
                         try:
                             for file in files:
                                 if file.filename == "." or file.filename == "..": continue
-                                null_vuln[host].append(file.filename)
+                                null_vuln_files[share.name].append(file.filename)
                         except Exception as e: pass
                     except Exception as e: pass
                 
             except Exception as e: pass
             try:
                 conn = pysmbconn.SMBConnection('guest', '', '', nbname, is_direct_tcp=True)
-                a = conn.connect(host, 445, timeout=3)
+                if not conn.connect(host, 445, timeout=3): continue
                 shares = conn.listShares(timeout=3)
                 for share in shares:
                     try:
                         files = conn.listPath(share.name, "/")
-                        guess_vuln[host] = []
+                        guest_vuln[host] = []
+                        guest_vuln[host].append(share.name)
+                        guest_vuln_files[share.name] = []
                         try:
                             for file in files:
                                 if file.filename == "." or file.filename == "..": continue
-                                guess_vuln[host].append(file.filename)
+                                guest_vuln_files[share.name].append(file.filename)
                         except Exception as e: pass
                     except Exception as e: pass
                 
@@ -65,13 +71,17 @@ def check1(directory_path, config, args, hosts):
             print(f"{k}:445")
             for z in v:
                 print(f"\t{z}")
+                for zz in null_vuln_files[z]:
+                    print(f"\t{zz}")
                 
-    if len(guess_vuln) > 0:
+    if len(guest_vuln) > 0:
         print("Guest session accessible share on hosts:")
-        for k,v in guess_vuln.items():
+        for k,v in guest_vuln.items():
             print(f"{k}:445")
             for z in v:
                 print(f"\t{z}")
+                for zz in guest_vuln_files[z]:
+                    print(f"\t{zz}")
 
 def check(directory_path, config, args, hosts):
     hosts = get_hosts_from_file(hosts, False)
@@ -121,5 +131,5 @@ def main():
     config = configparser.ConfigParser()
     config.read(args.config)
         
-    
+    check(args.directory or os.curdir, config, args, args.filename or "hosts.txt")
     check1(args.directory or os.curdir, config, args, args.filename or "hosts.txt")
