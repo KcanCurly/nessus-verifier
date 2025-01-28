@@ -22,7 +22,19 @@ def check1(directory_path, config, args, hosts):
             conn.listPath("anon-share")
             print("listPath")
             
-        except Exception as e: print(e)
+        except Exception as e: print("Anonymous Error: ", e)
+        try:
+            conn = pysmbconn.SMBConnection('guest', '', '', '', is_direct_tcp=True)
+            print("conn")
+            a = conn.connect(host, 445, timeout=3)
+            print(a)
+            print("connect")
+            conn.listShares(timeout=3)
+            print("listShares")
+            conn.listPath("anon-share")
+            print("listPath")
+            
+        except Exception as e: print("Guest Error: ", e)
 
 def check(directory_path, config, args, hosts):
     hosts = get_hosts_from_file(hosts, False)
