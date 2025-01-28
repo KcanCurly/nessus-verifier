@@ -12,7 +12,7 @@ def check1(directory_path, config, args, hosts):
     hosts = get_hosts_from_file(hosts, False)
     for host in hosts:
         try:
-            conn = pysmbconn.SMBConnection('', '', '', '', is_direct_tcp=True)
+            conn = pysmbconn.SMBConnection('', '', '', 'WIN-7VROJP0QOE4', is_direct_tcp=True)
             print("conn")
             a = conn.connect(host, 445, timeout=3)
             print(a)
@@ -24,7 +24,7 @@ def check1(directory_path, config, args, hosts):
             
         except Exception as e: print("Anonymous Error: ", e)
         try:
-            conn = pysmbconn.SMBConnection('guest', '', '', '', is_direct_tcp=True)
+            conn = pysmbconn.SMBConnection('guest', '', '', 'WIN-7VROJP0QOE4', is_direct_tcp=True)
             print("conn")
             a = conn.connect(host, 445, timeout=3)
             print(a)
