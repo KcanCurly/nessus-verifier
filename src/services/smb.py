@@ -12,7 +12,7 @@ def check1(directory_path, config, args, hosts):
     hosts = get_hosts_from_file(hosts, False)
     for host in hosts:
         try:
-            conn = pysmbconn.SMBConnection('', '')
+            conn = pysmbconn.SMBConnection('', '', '', '')
             print("conn")
             conn.connect(host, timeout=3)
             print("connect")
