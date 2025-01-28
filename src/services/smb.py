@@ -2,6 +2,8 @@ import argparse
 import configparser
 import os
 from pathlib import Path
+from socket import timeout
+import time
 from impacket.smbconnection import SMBConnection
 from src.utilities import get_hosts_from_file
 from smb import SMBConnection as pysmbconn
@@ -10,7 +12,14 @@ def check1(directory_path, config, args, hosts):
     hosts = get_hosts_from_file(hosts, False)
     for host in hosts:
         try:
-            conn = pysmbconn.SMBConnection('', '', '', host)
+            conn = pysmbconn.SMBConnection('', '')
+            print("conn")
+            conn.connect(host, timeout=3)
+            print("connect")
+            conn.listShares(timeout=3)
+            print("listShares")
+            conn.listPath("anon-share")
+            print("listPath")
             
         except Exception as e: print(e)
 
