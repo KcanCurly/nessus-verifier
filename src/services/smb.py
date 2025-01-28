@@ -29,11 +29,18 @@ def check1(directory_path, config, args, hosts):
                 print(a)
                 print("connect")
                 shares = conn.listShares(timeout=3)
-                print("listShares")
-                conn.listPath("anon-share")
-                print("listPath")
+                for share in shares:
+                    try:
+                        print(share.name)
+                        files = conn.listPath(share.name, "/")
+                        try:
+                            for file in files:
+                                if file.filename == "." or file.filename == "..": continue
+                                print(file.filename)
+                        except Exception as e: pass
+                    except Exception as e: pass
                 
-            except Exception as e: print("Anonymous Error:", e)
+            except Exception as e: pass
             try:
                 conn = pysmbconn.SMBConnection('guest', '', '', nbname, is_direct_tcp=True)
                 print("conn")
@@ -47,11 +54,12 @@ def check1(directory_path, config, args, hosts):
                         files = conn.listPath(share.name, "/")
                         try:
                             for file in files:
+                                if file.filename == "." or file.filename == "..": continue
                                 print(file.filename)
-                        except Exception as e: print("File Error:", e)
-                    except Exception as e: print("Share Error:", e)
+                        except Exception as e: pass
+                    except Exception as e: pass
                 
-            except Exception as e: print("Guest Error:", e)
+            except Exception as e: pass
 
 def check(directory_path, config, args, hosts):
     hosts = get_hosts_from_file(hosts, False)
