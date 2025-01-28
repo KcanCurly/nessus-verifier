@@ -4,6 +4,15 @@ import os
 from pathlib import Path
 from impacket.smbconnection import SMBConnection
 from src.utilities import get_hosts_from_file
+from smb import SMBConnection as pysmbconn
+
+def check1(directory_path, config, args, hosts):
+    hosts = get_hosts_from_file(hosts, False)
+    for host in hosts:
+        try:
+            conn = pysmbconn.SMBConnection('', '', '', host)
+            
+        except Exception as e: print(e)
 
 def check(directory_path, config, args, hosts):
     hosts = get_hosts_from_file(hosts, False)
@@ -11,7 +20,6 @@ def check(directory_path, config, args, hosts):
     guess_vuln = {}
     sign = []
     smbv1 = []
-    
     for host in hosts:
         try:
             conn = SMBConnection(host, host, timeout=3)
@@ -34,10 +42,7 @@ def check(directory_path, config, args, hosts):
             conn = SMBConnection(host, host, timeout=3) 
             conn.login('guest','')
             shares = conn.listShares()
-            for k,v in shares.items():
-                for k,v in s.items():
-                    print(k)
-                    print(v)
+
             for s in shares:
                 try:
                     print(s['shi1_netname'][:-1])
@@ -99,4 +104,4 @@ def main():
     config.read(args.config)
         
     
-    check(args.directory or os.curdir, config, args, args.filename or "hosts.txt")
+    check1(args.directory or os.curdir, config, args, args.filename or "hosts.txt")

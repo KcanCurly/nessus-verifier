@@ -16,7 +16,7 @@ setup(
         "ntplib",
         "impacket",
         "pyaml",
-        
+        "pysmb",
     ],
     classifiers=[
         "Programming Language :: Python :: 3",
