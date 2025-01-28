@@ -14,7 +14,8 @@ def check1(directory_path, config, args, hosts):
         try:
             conn = pysmbconn.SMBConnection('', '', '', '')
             print("conn")
-            conn.connect(host, timeout=3)
+            a = conn.connect(host, timeout=3)
+            print(a)
             print("connect")
             conn.listShares(timeout=3)
             print("listShares")
