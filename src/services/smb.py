@@ -17,7 +17,7 @@ def check1(directory_path, config, args, hosts):
         command = ["nmblookup", "-A", host]
         result = subprocess.run(command, text=True, capture_output=True)
         print(result.stdout)
-        netbios_re = r"/s+(.*)/s+<20>"
+        netbios_re = r"\s+(.*)\s+<20>"
         s = re.search(netbios_re, result.stdout)
         if s:
             nbname = s.group()
