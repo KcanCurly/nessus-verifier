@@ -92,7 +92,7 @@ def solve(hosts, white_results_are_good = False):
                 with context.wrap_socket(sock, server_hostname=ip) as ssock:
                     pass
         except ssl.CertificateError as e:
-            if "Hostname mismatch" in e:
+            if "Hostname mismatch" in e.strerror:
                 wrong_hosts.append(host)
                     
       
