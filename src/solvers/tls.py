@@ -38,7 +38,7 @@ def solve(hosts, white_results_are_good = False):
 
             expired_match = re.search(expired_cert_re, result.stdout)
             if expired_match:
-                expired_cert_hosts.append(f"{host} - {expired_match.group(0)}")
+                expired_cert_hosts.append(f"{host} - {expired_match.group(1)}")
 
             lines = result.stdout.splitlines()
             protocol_line = False
