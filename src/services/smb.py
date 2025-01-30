@@ -2,10 +2,8 @@ import argparse
 import configparser
 import os
 from pathlib import Path
-from socket import timeout
 import subprocess
 import re
-import time
 from impacket.smbconnection import SMBConnection
 from src.utilities import get_hosts_from_file
 from smb import SMBConnection as pysmbconn

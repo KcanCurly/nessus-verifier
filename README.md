@@ -21,8 +21,8 @@ nv-parse file.nessus
 This will create ports directory with service directories inside, after that you can use smaller modules to target the service directory
 
 ```
-nv-ssh ports/ssh [directory path] [filename of the hosts]
-nv-ftp ports/ftp [directory path] [filename of the hosts]
+nv-ssh [directory path] [filename of the hosts]
+nv-ftp [directory path] [filename of the hosts]
 ```
 
 ## Implemented Applications
@@ -61,7 +61,6 @@ nv-ftp ports/ftp [directory path] [filename of the hosts]
 * DNS
   * Check if recursion is enabled
   * Check if zone transfer(AXFR) is possible
-  * Check if DNSSEC is configured
   * Check if we can add a record to the dns server
   * Check if server can resolve malicious domain
   * Check if server supports DNS over TLS, if so do usual TLS enumeration

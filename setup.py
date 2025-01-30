@@ -17,6 +17,7 @@ setup(
         "impacket",
         "pyaml",
         "pysmb",
+        "multipledispatch",
     ],
     classifiers=[
         "Programming Language :: Python :: 3",
@@ -51,6 +52,7 @@ setup(
             "nv-ldap=src.services.ldap:main",
             "nv-smb=src.services.smb:main",
             "nv-rlogin=src.services.rlogin:main",
+            "nv-solver=src.solvers.solver:main"
         ],
     },
 )

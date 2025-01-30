@@ -1,14 +1,18 @@
 - name: IGNORE
   id: 0
-  plugin-ids: [142960, 10114, 34850, 51192]
+  plugin-ids: [142960, 10114, 34850, 51192, 12085, 11213, 98048, 136929]
   # 142960 - HSTS Missing From HTTPS Server (RFC 6797)
   # 10114 - ICMP Timestamp Request Remote Date Disclosure
   # 34850 - Web Server Uses Basic Authentication Without HTTPS
   # 51192 - SSL Certificate Cannot Be Trusted
+  # 12085 - Apache Tomcat Default Files
+  # 11213 - HTTP TRACE / TRACK Methods Allowed
+  # 98048 - HTTP TRACE Allowed
+  # 136929 - JQuery 1.2 < 3.5.0 Multiple XSS
 
 - name: TLS Misconfigurations (Version and Ciphers)
   id: 1
-  plugin-ids: [20007, 104743, 157288, 31705, 66848, 26928, 94437, 65821, 42873, 83738, 81606, 7282, 132675, 7222, 45411]
+  plugin-ids: [20007, 104743, 157288, 31705, 66848, 26928, 94437, 65821, 42873, 83738, 81606, 7282, 132675, 7222, 45411, 15901]
   # 20007 - SSL Version 2 and 3 Protocol Detection
   # 104743 - TLS Version 1.0 Protocol Detection
   # 157288 - TLS Version 1.1 Deprecated Protocol
@@ -26,6 +30,7 @@
   # 45411 - SSL Certificate with Wrong Hostname
   # 35291 - SSL Certificate Signed Using Weak Hashing Algorithm
   # 69551 - SSL Certificate Chain Contains RSA Keys Less Than 2048 bits
+  # 15901 - SSL Certificate Expiry
 
 - name: SMTP - Open Relay Test
   id: 2
@@ -1144,3 +1149,482 @@
   # 1985 - OpenSSH < 2.3.2 SSHv2 Public Key Authentication Bypass
   # 8169 - OpenSSH < 6.6 Multiple Remote Restriction Bypass Vulnerability
   
+- name: NFS
+  id: 15
+  plugin-ids: [42256, 10437, 11356, 15984]
+  # 42256 - NFS Shares World Readable
+  # 10437 - NFS Share Export List
+  # 11356 - NFS Exported Share Information Disclosure
+  # 15984 - NFS Share User Mountable
+
+- name: MSSQL
+  id: 16
+  plugin-ids: [73756]
+  # 73756 - Microsoft SQL Server Unsupported Version Detection (remote check)
+
+- name: mDNS
+  id: 17
+  plugin-ids: [12218]
+  # 12218 - mDNS Detection (Remote Network)
+
+- name: Obsolete Protocols
+  id: 18
+  plugin-ids: [10061, 10198, 11367, 10052, 10043, 1904, 1905]
+  # 10061 - Echo Service Detection
+  # 10198 - Quote of the Day (QOTD) Service Detection
+  # 11367 - Discard Service Detection
+  # 10052 - Daytime Service Detection
+  # 10043 - Chargen UDP Service Remote DoS
+  # 1904 - Chargen Server Detection
+  # 1905 - Chargen Server Detection (UDP)
+
+- name: Dell iDRAC
+  id: 19
+  plugin-ids: [161798, 213382, 213383, 51185, 136341, 162428, 189899, 159643, 193888, 182918, 
+  205387, 148955, 167509, 144756, 501906, 90265, 177843, 161799, 119833, 167508, 202259, 
+  174982, 131730, 161800, 148956, 111604, 109208, 501895, 501923, 501894, 161797, 80442, 
+  135187, 501929, 501926, 501914, 122887, 94515, 87013, 501904, 139206, 68905, 70411, 501924, 
+  501900, 501921, 501917, 501898, 501899, 501901, 501922, 501919, 501925, 501907, 501915, 
+  501928, 501911, 501910, 501930, 501897, 501902, 501892, 501927]
+  # 161798 - Dell EMC iDRAC8 < 2.80.80.80 / Dell EMC iDRAC9 < 4.40.40.00 (DSA-2021-177)
+  # 213382 - Dell iDRAC Detected
+  # 213383 - Dell iDRAC Device Detection
+  # 51185 - Dell Integrated Remote Access Controller (iDRAC) Detection
+  # 136341 - Dell EMC Data Protection Central Installed (Linux)
+  # 162428 - Dell EMC iDRAC8 < 2.83.83.83 / Dell EMC iDRAC9 < 5.10.30.00 (DSA-2022-154)
+  # 189899 - Dell iDRAC Service Module < 5.3.0.0 Privilege Escalation
+  # 159643 - Dell EMC iDRAC8 < 2.83.83.83 (DSA-2022-069)
+  # 193888 - Dell EMC iDRAC8 < 2.85.85.85 (DSA-2024-089)
+  # 182918 - Dell EMC iDRAC9 4.40.00.00 < 4.40.10.00 (DSA-2021-082)
+  # 205387 - Dell iDRAC Service Module < 5.3.1.0 Multiple Vulnerabilities
+  # 148955 - Dell iDRAC XSS (DSA-2021-073)
+  # 167509 - Dell EMC iDRAC9 < 6.00.30.00 (DSA-2022-265)
+  # 144756 - Dell iDRAC XSS (DSA-2020-268)
+  # 501906 - Dell iDRAC7 Command Injection (CVE-2018-1244)
+  # 90265 - Dell iDRAC6 / iDRAC7 / iDRAC8 Path Traversal Authentication Bypass
+  # 177843 - Dell EMC NetWorker Command Injection (DSA-2023-060)
+  # 161799 - Dell EMC iDRAC9 4.40.x < 4.40.29.00 (DSA-2021-177)
+  # 119833 - Dell iDRAC Products Multiple Vulnerabilities (December 2018)
+  # 167508 - Dell EMC iDRAC8 < 2.84.84.84 (DSA-2022-265)
+  # 202259 - Dell EMC iDRAC9 < 7.00.00.172 / 7.10.00.00 < 7.10.50.00 (DSA-2024-099)
+  # 174982 - Dell EMC NetWorker Version Disclosure (DSA-2023-058)
+  # 131730 - Dell iDRAC Improper Authorization (DSA-2019-137)
+  # 161800 - Dell EMC iDRAC9 < 5.00.00.00 (DSA-2021-177)
+  # 148956 - Dell iDRAC Multiple Vulnerabilities (DSA-2021-073)
+  # 111604 - Dell iDRAC Products Multiple Vulnerabilities (June 2018)
+  # 109208 - Dell iDRAC Products Multiple Vulnerabilities (Mar 2018)
+  # 501895 - Dell iDRAC7 Incorrect Authorization (CVE-2018-15774)
+  # 501923 - Dell iDRAC9 Authentication Bypass (CVE-2019-3706)
+  # 501894 - Dell iDRAC7 Improper Authorization (CVE-2019-3764)
+  # 161797 - Dell EMC iDRAC9 < 5.00.10.00 (DSA-2021-177)
+  # 80442 - Dell iDRAC Products IPMI Arbitrary Command Injection Vulnerability
+  # 135187 - Dell iDRAC Buffer Overflow Vulnerability (CVE-2020-5344)
+  # 501929 - Dell iDRAC9 Time-of-check Time-of-use Race Condition (CVE-2021-21539)
+  # 501926 - Dell iDRAC9 SSL/TLS Protection Not Enforced (CVE-2018-1249)
+  # 501914 - Dell EMC Injection (CVE-2021-21580)
+  # 122887 - Scientific Linux Security Update : kernel on SL7.x x86_64 (20190314)
+  # 94515 - EMC vApp Manager Detection
+  # 87013 - Dell eDellRoot / DSDTestProvider Root CA Certificates Installed
+  # 501904 - Dell EMC Out-of-bounds Write (CVE-2021-36301)
+  # 139206 - Dell iDRAC9 Directory Traversal (DSA-2020-128)
+  # 68905 - Dell iDRAC6 Multiple Vulnerabilities
+  # 70411 - Dell iDRAC6 / iDRAC7 Login Page 'ErrorMsg' Parameter XSS
+  # 501924 - Dell iDRAC Improper Error Handling (CVE-2018-15776)
+  # 501900 - Dell iDRAC Improper Session ID Handling (CVE-2014-8272)
+  # 501921 - Dell iDRAC9 Path Traversal (CVE-2020-5366)
+  # 501917 - Dell iDRAC7 Out-of-bounds Write (CVE-2020-5344)
+  # 501898 - Dell iDRAC9 Cross-site Scripting (CVE-2021-21541)
+  # 501899 - Dell iDRAC9 Cross-site Scripting (CVE-2020-26198)
+  # 501901 - Dell iDRAC9 Improper Authentication (CVE-2021-21538)
+  # 501922 - Dell iDRAC9 Cross-site Scripting (CVE-2021-21542)
+  # 501919 - Dell iDRAC6 Improperly Implemented Security Check for Standard (CVE-2018-1243)
+  # 501925 - Dell iDRAC9 Authentication Bypass (CVE-2019-3707)
+  # 501907 - Dell iDRAC9 Improper Authentication (CVE-2021-21544)
+  # 501915 - Dell iDRAC6 Out-of-bounds Write (CVE-2019-3705)
+  # 501928 - Dell iDRAC6 CLP Interface Modification (CVE-2013-4785)
+  # 501911 - Dell iDRAC7 Injection (CVE-2016-5685)
+  # 501910 - Dell iDRAC8 Injection (CVE-2021-21510)
+  # 501930 - Dell iDRAC8 Improper Input Validation (CVE-2022-34436)
+  # 501897 - Dell iDRAC6 Cross-site Scripting (CVE-2013-3589)
+  # 501902 - Dell iDRAC9 Improper Authentication (CVE-2022-24422)
+  # 501892 - Dell iDRAC6 Improper Authentication (CVE-2013-4783)
+  # 501927 - Dell iDRAC9 Improper Input Validation (CVE-2022-34435)
+
+- name: IPMI
+  id: 20
+  plugin-ids: [80101]
+  # IPMI v2.0 Password Hash Disclosure
+
+- name: PHP
+  id: 21
+  plugin-ids: [211669, 211671, 211670, 207821, 51139, 144947, 134162, 130276, 48244, 
+  48245, 141355, 133400, 146311, 58988, 149348, 18033, 25159, 88679, 138593, 51140, 44921, 
+  143449, 132769, 41014, 43351, 77285, 136744, 13650, 24907, 35750, 84363, 142904, 15973, 
+  122539, 122543, 109576, 109579, 101526, 122537, 171436, 111217, 83034, 85885, 90362, 
+  200170, 77285, 59088, 11850, 24906, 25971, 28181, 17797, 25368, 122590, 69402, 84672, 
+  42862, 59056, 59057, 60085, 90009, 90008, 140532, 140533, 88694, 91441, 71927, 111216, 
+  96800, 91897, 94956, 96799, 101527, 95875, 122750, 105771, 78547, 134949, 121510, 121602, 
+  193191, 193201, 90920, 83519, 179317, 179906, 200162, 29833, 17711, 17712, 169631, 
+  177509, 100804, 59056, 59057, 22268, 60085, 90009, 90008, 140532, 140533, 88694, 91441, 
+  71927, 111216, 96800, 91897, 94956, 96799, 101527, 95875, 122750, 105771, 78547, 134949, 
+  121510, 121602, 193191, 193201, 90920, 83519, 179317, 179906, 200162, 29833, 17711, 17712, 
+  84672, 17709, 60086, 91442, 177511, 84362, 94107, 97354, 73411, 104632, 83033, 78082, 91898,
+  91899, 122544, 93078, 78545, 122591, 96801, 72881, 124763, 125640, 104631, 105774, 86301,
+  123829, 193283, 171465, 132770, 90922, 83518, 119765, 119766, 85886, 85887, 90361, 177511, 
+  60086, 91442, 97354, 84362, 94107, 73411, 93656, 104632, 91898, 91899, 78082, 83033, 122542, 
+  124764, 125639, 83035, 86300, 121475, 105773, 100420, 100421, 90921, 158154, 200161, 207822, 
+  90361, 169631, 92555, 84673, 84671, 92554, 92556, 155590, 154296, 129557, 165545, 127132, 
+  169630, 169976, 154650, 154663, 136741, 166901, 168500, 135926, 111231, 57557, 126637, 
+  161971, 161975, 139569, 139571, 162844, 155625, 171466, 154349, 155730, 127131, 166677, 
+  131732, 33849, 139570, 154656, 128531, 135969, 155589, 161991, 165551, 165622, 166703, 127130, 
+  107216, 58967, 117497, 117498, 117500, 69348, 69401, 111230, 117499, 66584, 66585, 31649, 
+  17710, 17713, 107217, 107218, 107219, 35067, 71427, 71426, 80330, 20111, 58681, 57537, 17796, 
+  57825, 58966, 85298, 33272, 59529, 58681, 52717, 11050, 64993, 59530, 82025, 81511, 78556, 
+  64993, 10701, 66843, 66842, 72511, 73862, 80332, 55925, 32123, 59530, 81082, 76281, 81510, 
+  78556, 81511, 82025, 63622, 85300, 11807, 67259, 74291, 74292, 79247, 82026, 82027, 35043, 
+  81080, 81081, 52717, 63622, 10628, 72882, 73863, 76772, 80331, 77402, 77403, 55969, 85299, 
+  76282, 81512, 63621, 58039, 58039, 15708]
+  # 211669 - PHP 8.1.x < 8.1.31 Multiple Vulnerabilities
+  # 211671 - PHP 8.2.x < 8.2.26 Multiple Vulnerabilities
+  # 211670 - PHP 8.3.x < 8.3.14 Multiple Vulnerabilities
+  # 207821 - PHP 8.3.x < 8.3.12 Multiple Vulnerabilities
+  # 51139 - PHP 5.2 < 5.2.15 Multiple Vulnerabilities
+  # 144947 - PHP 7.3.x < 7.3.26 / 7.4.x < 7.4.14 / 8.x < 8.0.1 Input Validation Error
+  # 134162 - PHP 7.2.x < 7.2.28 / PHP 7.3.x < 7.3.15 / 7.4.x < 7.4.3 Multiple Vulnerabilities
+  # 130276 - PHP < 7.1.33 / 7.2.x < 7.2.24 / 7.3.x < 7.3.11 Remote Code Execution Vulnerability.
+  # 48244 - PHP 5.2 < 5.2.14 Multiple Vulnerabilities
+  # 48245 - PHP 5.3 < 5.3.3 Multiple Vulnerabilities
+  # 141355 - PHP 7.2 < 7.2.34 / 7.3.x < 7.3.23 / 7.4.x < 7.4.11 Mulitiple Vulnerabilities
+  # 133400 - PHP 7.2.x < 7.2.27 / PHP 7.3.x < 7.3.14 / 7.4.x < 7.4.2 Multiple Vulnerabilities
+  # 146311 - PHP 7.3.x < 7.3.27 / 7.4.x < 7.4.15 / 8.x < 8.0.2 DoS
+  # 58988 - PHP < 5.3.12 / 5.4.2 CGI Query String Code Execution
+  # 149348 - PHP 7.4.x < 7.4.18 / 8.x < 8.0.5 Integer Overflow
+  # 18033 - PHP < 4.3.11 / 5.0.3 Multiple Unspecified Vulnerabilities
+  # 25159 - PHP < 4.4.7 / 5.2.2 Multiple Vulnerabilities
+  # 88679 - PHP prior to 5.5.x < 5.5.31 / 5.6.x < 5.6.17 Multiple Vulnerabilities
+  # 138593 - PHP 7.2.x < 7.2.32 / 7.3.x < 7.3.20 / 7.4.x < 7.4.8 Information Disclosure
+  # 51140 - PHP 5.3 < 5.3.4 Multiple Vulnerabilities
+  # 44921 - PHP < 5.3.2 / 5.2.13 Multiple Vulnerabilities
+  # 143449 - PHP 7.3.x < 7.3.25 / 7.4.x < 7.4.13 Multiple Vulnerabilities
+  # 132769 - PHP 7.3.x < 7.3.13 / 7.4.x < 7.4.1 Multiple Vulnerabilities
+  # 41014 - PHP < 5.2.11 Multiple Vulnerabilities
+  # 43351 - PHP < 5.2.12 Multiple Vulnerabilities
+  # 77285 - PHP 5.3.x < 5.3.29 Multiple Vulnerabilities
+  # 136744 - PHP Remote Code Execution Vulnerability (CVE-2019-11043).
+  # 13650 - PHP < 4.3.8 Multiple Vulnerabilities
+  # 24907 - PHP < 5.2.1 Multiple Vulnerabilities
+  # 35750 - PHP < 5.2.9 Multiple Vulnerabilities
+  # 84363 - PHP 5.5.x < 5.5.26 Multiple Vulnerabilities
+  # 142904 - PHP 7.4.x < 7.4.12 DoS
+  # 15973 - PHP < 4.3.10 / 5.0.3 Multiple Vulnerabilities
+  # 122539 - PHP 7.0.x < 7.0.23 Heap-based Buffer Overflow Vulnerability
+  # 122543 - PHP 7.1.x < 7.1.9 Heap-based Buffer Overflow Vulnerability
+  # 109576 - PHP 5.6.x < 5.6.36 Multiple Vulnerabilities
+  # 109579 - PHP 7.2.x < 7.2.5 Stack Buffer Overflow
+  # 101526 - PHP 7.0.x < 7.0.21 Multiple Vulnerabilities
+  # 122537 - PHP 7.0.x < 7.0.17 Denial of Service Vulnerability
+  # 171436 - PHP 8.0.x < 8.0.28
+  # 111217 - PHP 7.3.0 [alpha|beta] < 7.3.0 Multiple vulnerabilities
+  # 83034 - PHP 5.5.x < 5.5.24 Multiple Vulnerabilities
+  # 85885 - PHP 5.4.x < 5.4.45 Multiple Vulnerabilities
+  # 90362 - PHP 7.0.x < 7.0.5 Multiple Vulnerabilities
+  # 200170 - PHP 8.1.x < 8.1.29 Multiple Vulnerabilities
+  # 77285 - PHP 5.3.x < 5.3.29 Multiple Vulnerabilities
+  # 59088 - PHP PHP-CGI Query String Parameter Injection Arbitrary Code Execution
+  # 11850 - PHP < 4.3.3 Multiple Vulnerabilities
+  # 24906 - PHP < 4.4.5 Multiple Vulnerabilities
+  # 25971 - PHP < 5.2.4 Multiple Vulnerabilities
+  # 28181 - PHP < 5.2.5 Multiple Vulnerabilities
+  # 17797 - PHP 5.x < 5.2.2 Multiple vulnerabilities
+  # 25368 - PHP < 5.2.3 Multiple Vulnerabilities
+  # 122590 - PHP 5.4.x < 5.4.0 Multiple Vulnerabilities
+  # 69402 - PHP 5.5.x < 5.5.3 Multiple Vulnerabilities
+  # 84672 - PHP 5.5.x < 5.5.27 Multiple Vulnerabilities (BACKRONYM)
+  # 42862 - PHP 5.3 < 5.3.1 Multiple Vulnerabilities
+  # 59056 - PHP 5.3.x < 5.3.13 CGI Query String Code Execution
+  # 59057 - PHP 5.4.x < 5.4.3 Multiple Vulnerabilities
+  # 60085 - PHP 5.3.x < 5.3.15 Multiple Vulnerabilities
+  # 90009 - PHP 7.0.x < 7.0.4 Multiple Vulnerabilities
+  # 90008 - PHP 5.6.x < 5.6.19 Multiple Vulnerabilities
+  # 140532 - PHP 7.2.x / 7.3.x < 7.3.22 Memory Leak Vulnerability
+  # 140533 - PHP 7.4.x < 7.4.10 Memory Leak Vulnerability
+  # 88694 - PHP 5.6.x < 5.6.18 Multiple Vulnerabilities
+  # 91441 - PHP 5.5.x < 5.5.36 Multiple Vulnerabilities
+  # 71927 - PHP 5.4.x < 5.4.24 Multiple Vulnerabilities
+  # 111216 - PHP 7.2.x < 7.2.8 Use After Free Arbitrary Code Execution in EXIF
+  # 96800 - PHP 7.0.x < 7.0.15 Multiple Vulnerabilities
+  # 91897 - PHP 5.5.x < 5.5.37 Multiple Vulnerabilities
+  # 94956 - PHP 7.0.x < 7.0.13 Multiple Vulnerabilities
+  # 96799 - PHP 5.6.x < 5.6.30 Multiple DoS
+  # 101527 - PHP 7.1.x < 7.1.7 Multiple Vulnerabilities
+  # 95875 - PHP 7.0.x < 7.0.14 Multiple Vulnerabilities
+  # 122750 - PHP 7.3.x < 7.3.2 Information Disclosure.
+  # 105771 - PHP 5.6.x < 5.6.33 Multiple Vulnerabilities
+  # 78547 - PHP 5.6.x < 5.6.2 Multiple Vulnerabilities
+  # 134949 - PHP 7.2.x < 7.2.29 Multiple Vulnerabilities
+  # 121510 - PHP 7.1.x < 7.1.26 Multiple vulnerabilities.
+  # 121602 - PHP 5.6.x < 5.6.40 Multiple vulnerabilities.
+  # 193191 - PHP 8.2.x < 8.2.18 Multiple Vulnerabilities
+  # 193201 - PHP 8.3.x < 8.3.6 Multiple Vulnerabilities
+  # 90920 - PHP 5.5.x < 5.5.35 Multiple Vulnerabilities
+  # 83519 - PHP 5.6.x < 5.6.9 Multiple Vulnerabilities
+  # 179317 - PHP 8.1.x < 8.1.22 Multiple Vulnerabilities
+  # 179906 - PHP 8.2.x < 8.2.9 Multiple Vulnerabilities
+  # 200162 - PHP 8.2.x < 8.2.20 Multiple Vulnerabilities
+  # 29833 - PHP < 4.4.8 Multiple Vulnerabilities
+  # 17711 - PHP 5.x < 5.1.0 Multiple Vulnerabilities
+  # 17712 - PHP 5.1.x < 5.1.2 Multiple Vulnerabilities
+  # 169631 - PHP 8.1.x < 8.1.14
+  # 177509 - PHP 8.0.x < 8.0.29
+  # 100804 - PHP 7.0.x < 7.0.20 Multiple Vulnerabilities
+  # 59056 - PHP 5.3.x < 5.3.13 CGI Query String Code Execution
+  # 59057 - PHP 5.4.x < 5.4.3 Multiple Vulnerabilities
+  # 22268 - PHP < 4.4.3 / 5.1.4 Multiple Vulnerabilities
+  # 60085 - PHP 5.3.x < 5.3.15 Multiple Vulnerabilities
+  # 90009 - PHP 7.0.x < 7.0.4 Multiple Vulnerabilities
+  # 90008 - PHP 5.6.x < 5.6.19 Multiple Vulnerabilities
+  # 140532 - PHP 7.2.x / 7.3.x < 7.3.22 Memory Leak Vulnerability
+  # 140533 - PHP 7.4.x < 7.4.10 Memory Leak Vulnerability
+  # 88694 - PHP 5.6.x < 5.6.18 Multiple Vulnerabilities
+  # 91441 - PHP 5.5.x < 5.5.36 Multiple Vulnerabilities
+  # 71927 - PHP 5.4.x < 5.4.24 Multiple Vulnerabilities
+  # 111216 - PHP 7.2.x < 7.2.8 Use After Free Arbitrary Code Execution in EXIF
+  # 96800 - PHP 7.0.x < 7.0.15 Multiple Vulnerabilities
+  # 91897 - PHP 5.5.x < 5.5.37 Multiple Vulnerabilities
+  # 94956 - PHP 7.0.x < 7.0.13 Multiple Vulnerabilities
+  # 96799 - PHP 5.6.x < 5.6.30 Multiple DoS
+  # 101527 - PHP 7.1.x < 7.1.7 Multiple Vulnerabilities
+  # 95875 - PHP 7.0.x < 7.0.14 Multiple Vulnerabilities
+  # 122750 - PHP 7.3.x < 7.3.2 Information Disclosure.
+  # 105771 - PHP 5.6.x < 5.6.33 Multiple Vulnerabilities
+  # 78547 - PHP 5.6.x < 5.6.2 Multiple Vulnerabilities
+  # 134949 - PHP 7.2.x < 7.2.29 Multiple Vulnerabilities
+  # 121510 - PHP 7.1.x < 7.1.26 Multiple vulnerabilities.
+  # 121602 - PHP 5.6.x < 5.6.40 Multiple vulnerabilities.
+  # 193191 - PHP 8.2.x < 8.2.18 Multiple Vulnerabilities
+  # 193201 - PHP 8.3.x < 8.3.6 Multiple Vulnerabilities
+  # 90920 - PHP 5.5.x < 5.5.35 Multiple Vulnerabilities
+  # 83519 - PHP 5.6.x < 5.6.9 Multiple Vulnerabilities
+  # 179317 - PHP 8.1.x < 8.1.22 Multiple Vulnerabilities
+  # 179906 - PHP 8.2.x < 8.2.9 Multiple Vulnerabilities
+  # 200162 - PHP 8.2.x < 8.2.20 Multiple Vulnerabilities
+  # 29833 - PHP < 4.4.8 Multiple Vulnerabilities
+  # 17711 - PHP 5.x < 5.1.0 Multiple Vulnerabilities
+  # 17712 - PHP 5.1.x < 5.1.2 Multiple Vulnerabilities
+  # 84672 - PHP 5.5.x < 5.5.27 Multiple Vulnerabilities (BACKRONYM)
+  # 17709 - PHP < 4.4.2 Multiple XSS Vulnerabilities
+  # 60086 - PHP 5.4.x < 5.4.5 _php_stream_scandir Overflow
+  # 91442 - PHP 5.6.x < 5.6.22 Multiple Vulnerabilities
+  # 177511 - PHP 8.2.x < 8.2.7
+  # 84362 - PHP 5.4.x < 5.4.42 Multiple Vulnerabilities
+  # 94107 - PHP 7.0.x < 7.0.12 Multiple Vulnerabilities
+  # 97354 - PHP 7.1.x < 7.1.2 Multiple Vulnerabilities
+  # 73411 - PHP 5.5.x < 5.5.11 awk Magic Parsing BEGIN DoS
+  # 104632 - PHP 7.0.x < 7.0.25 Multiple Vulnerabilities
+  # 83033 - PHP 5.4.x < 5.4.40 Multiple Vulnerabilities
+  # 78082 - PHP 5.6.x < 5.6.1 'add_post_var' Code Execution
+  # 91898 - PHP 5.6.x < 5.6.23 Multiple Vulnerabilities
+  # 91899 - PHP 7.0.x < 7.0.8 Multiple Vulnerabilities
+  # 122544 - PHP 7.2.x < 7.2.0 Heap-based Buffer Overflow Vulnerability
+  # 93078 - PHP 7.0.x < 7.0.10 Multiple Vulnerabilities
+  # 78545 - PHP 5.4.x < 5.4.34 Multiple Vulnerabilities
+  # 122591 - PHP 5.6.x < 5.6.35 Security Bypass Vulnerability
+  # 96801 - PHP 7.1.x < 7.1.1 Multiple Vulnerabilities
+  # 72881 - PHP 5.4.x < 5.4.26 Multiple Vulnerabilities
+  # 124763 - PHP 7.2.x < 7.2.18 Heap-based Buffer Overflow Vulnerability.
+  # 125640 - PHP 7.1.x < 7.1.30 Multiple Vulnerabilities.
+  # 104631 - PHP 5.6.x < 5.6.32 Multiple Vulnerabilities
+  # 105774 - PHP 7.2.x < 7.2.1 Multiple Vulnerabilities
+  # 86301 - PHP 5.6.x < 5.6.14 Multiple Vulnerabilities
+  # 123829 - PHP 7.3.x < 7.3.3 Multiple vulnerabilities.
+  # 193283 - PHP 8.1.x < 8.1.28 Multiple Vulnerabilities
+  # 171465 - PHP 8.1.x < 8.1.16
+  # 132770 - PHP 7.2.x < 7.2.26 Multiple Vulnerabilities
+  # 90922 - PHP 7.0.x < 7.0.6 Multiple Vulnerabilities
+  # 83518 - PHP 5.5.x < 5.5.25 Multiple Vulnerabilities
+  # 119765 - PHP 7.1.x < 7.1.25 Multiple vulnerabilities
+  # 119766 - PHP 7.2.x < 7.2.13 Multiple vulnerabilities
+  # 85886 - PHP 5.5.x < 5.5.29 Multiple Vulnerabilities
+  # 85887 - PHP 5.6.x < 5.6.13 Multiple Vulnerabilities
+  # 90361 - PHP 5.6.x < 5.6.20 Multiple Vulnerabilities
+  # 177511 - PHP 8.2.x < 8.2.7
+  # 60086 - PHP 5.4.x < 5.4.5 _php_stream_scandir Overflow
+  # 91442 - PHP 5.6.x < 5.6.22 Multiple Vulnerabilities
+  # 97354 - PHP 7.1.x < 7.1.2 Multiple Vulnerabilities
+  # 84362 - PHP 5.4.x < 5.4.42 Multiple Vulnerabilities
+  # 94107 - PHP 7.0.x < 7.0.12 Multiple Vulnerabilities
+  # 73411 - PHP 5.5.x < 5.5.11 awk Magic Parsing BEGIN DoS
+  # 93656 - PHP 5.6.x < 5.6.26 Multiple Vulnerabilities
+  # 104632 - PHP 7.0.x < 7.0.25 Multiple Vulnerabilities
+  # 91898 - PHP 5.6.x < 5.6.23 Multiple Vulnerabilities
+  # 91899 - PHP 7.0.x < 7.0.8 Multiple Vulnerabilities
+  # 78082 - PHP 5.6.x < 5.6.1 'add_post_var' Code Execution
+  # 83033 - PHP 5.4.x < 5.4.40 Multiple Vulnerabilities
+  # 122542 - PHP 7.1.x < 7.1.8 Denial of Service Vulnerability
+  # 124764 - PHP 7.3.x < 7.3.5 Heap-based Buffer Overflow Vulnerability.
+  # 125639 - PHP 7.2.x < 7.2.19 Multiple Vulnerabilities.
+  # 83035 - PHP 5.6.x < 5.6.8 Multiple Vulnerabilities
+  # 86300 - PHP 5.5.x < 5.5.30 Multiple Vulnerabilities
+  # 121475 - PHP 7.3.x < 7.3.1 Multiple vulnerabilities.
+  # 105773 - PHP 7.1.x < 7.1.13 Multiple Vulnerabilities
+  # 100420 - PHP 7.0.x < 7.0.19 Multiple Vulnerabilities
+  # 100421 - PHP 7.1.x < 7.1.5 Multiple Vulnerabilities
+  # 90921 - PHP 5.6.x < 5.6.21 Multiple Vulnerabilities
+  # 158154 - PHP 8.1.x < 8.1.3
+  # 200161 - PHP 8.3.x < 8.3.8 Multiple Vulnerabilities
+  # 207822 - PHP 8.2.x < 8.2.24 Multiple Vulnerabilities
+  # 90361 - PHP 5.6.x < 5.6.20 Multiple Vulnerabilities
+  # 169631 - PHP 8.1.x < 8.1.14
+  # 92555 - PHP 5.6.x < 5.6.24 Multiple Vulnerabilities (httpoxy)
+  # 84673 - PHP 5.6.x < 5.6.11 Multiple Vulnerabilities (BACKRONYM)
+  # 84671 - PHP 5.4.x < 5.4.43 Multiple Vulnerabilities (BACKRONYM)
+  # 92554 - PHP 5.5.x < 5.5.38 Multiple Vulnerabilities (httpoxy)
+  # 92556 - PHP 7.0.x < 7.0.9 Multiple Vulnerabilities (httpoxy)
+  # 155590 - PHP 7.3.x < 7.3.33
+  # 154296 - PHP 8.0.x < 8.0.12
+  # 129557 - PHP 7.3.x < 7.3.10 Heap-Based Buffer Overflow Vulnerability.
+  # 165545 - PHP 7.4.x < 7.4.32 Multiple Vulnerabilities
+  # 127132 - PHP 7.3.x < 7.3.8 Multiple Vulnerabilities.
+  # 169630 - PHP 8.0.x < 8.0.27
+  # 169976 - PHP 8.2.x < 8.2.1
+  # 154650 - PHP 7.3.x < 7.3.31 Arbitrary File Write
+  # 154663 - PHP 7.3.x < 7.3.32
+  # 136741 - PHP 7.2.x < 7.2.31 / 7.3.x < 7.3.18, 7.4.x < 7.4.6 Denial of Service (DoS)
+  # 166901 - PHP 7.4.x < 7.4.33 Multiple Vulnerabilities
+  # 168500 - PHP 8.2.x < 8.2.0 Multiple Vulnerabilities
+  # 135926 - PHP 7.2.x < 7.2.30 Multiple Vulnerabilities
+  # 111231 - PHP 7.1.x < 7.1.20 exif_thumbnail_extract() DoS
+  # 57557 - PHP Version 5 Hash Collision Form Parameter Parsing Remote DoS
+  # 126637 - PHP 7.3.x < 7.3.7 Multiple Vulnerabilities.
+  # 161971 - PHP 7.4.x < 7.4.30 Multiple Vulnerabilities
+  # 161975 - PHP 8.1.x < 8.1.7 Multiple Vulnerabilities
+  # 139569 - PHP 7.3.x < 7.3.21 Use-After-Free Vulnerability
+  # 139571 - PHP 7.2.x < 7.2.33 Use-After-Free Vulnerability
+  # 162844 - PHP 8.1.x < 8.1.8
+  # 155625 - PHP 8.0.x < 8.0.13
+  # 171466 - PHP 8.2.x < 8.2.3 Multiple Vulnerabilities
+  # 154349 - PHP 7.4.x < 7.4.25
+  # 155730 - PHP 8.1.x < 8.1.0 Multiple Vulnerabilities
+  # 127131 - PHP 7.2.x < 7.2.21 Multiple Vulnerabilities.
+  # 166677 - PHP 8.0.x < 8.0.25 Multiple Vulnerabilities
+  # 131732 - PHP 7.4.x < 7.4.0 Multiple Vulnerabilities.
+  # 33849 - PHP < 4.4.9 Multiple Vulnerabilities
+  # 139570 - PHP 7.4.x < 7.4.9 Use-After-Free Vulnerability
+  # 154656 - PHP 7.4.x < 7.4.24 Arbitrary File Write
+  # 128531 - PHP 7.3.x < 7.3.9 Multiple Vulnerabilities.
+  # 135969 - PHP 7.4.x < 7.4.5 urldecode OOB Read
+  # 155589 - PHP 7.4.x < 7.4.26
+  # 161991 - PHP 8.0.x < 8.0.20 Multiple Vulnerabilities
+  # 165551 - PHP 8.1.x < 8.1.11 Multiple Vulnerabilities
+  # 165622 - PHP 8.0.x < 8.0.24 Multiple Vulnerabilities
+  # 166703 - PHP 8.1.x < 8.1.12 Multiple Vulnerabilities
+  # 127130 - PHP 7.1.x < 7.1.31 Multiple Vulnerabilities.
+  # 107216 - PHP 5.6.x < 5.6.34 Stack Buffer Overflow
+  # 58967 - PHP 5.4.x < 5.4.1 Multiple Vulnerabilities
+  # 117497 - PHP 5.6.x < 5.6.38 Transfer-Encoding Parameter XSS Vulnerability
+  # 117498 - PHP 7.0.x < 7.0.32 Transfer-Encoding Parameter XSS Vulnerability
+  # 117500 - PHP 7.2.x < 7.2.10 Transfer-Encoding Parameter XSS Vulnerability
+  # 69348 - PHP 5.5.x < 5.5.1 xml.c Buffer Overflow
+  # 69401 - PHP 5.4.x < 5.4.19 Multiple Vulnerabilities
+  # 111230 - PHP 5.6.x < 5.6.37 exif_thumbnail_extract() DoS
+  # 117499 - PHP 7.1.x < 7.1.22 Transfer-Encoding Parameter XSS Vulnerability
+  # 66584 - PHP 5.3.x < 5.3.23 Multiple Vulnerabilities
+  # 66585 - PHP 5.4.x < 5.4.13 Information Disclosure
+  # 31649 - PHP 5.x < 5.2 Multiple Vulnerabilities
+  # 17710 - PHP < 4.4.4 Multiple Vulnerabilities
+  # 17713 - PHP 5.1.x < 5.1.5 Multiple Vulnerabilities
+  # 107217 - PHP 7.0.x < 7.0.28 Stack Buffer Overflow
+  # 107218 - PHP 7.1.x < 7.1.15 Stack Buffer Overflow
+  # 107219 - PHP 7.2.x < 7.2.3 Stack Buffer Overflow
+  # 35067 - PHP < 5.2.8 Multiple Vulnerabilities
+  # 71427 - PHP 5.4.x < 5.4.23 OpenSSL openssl_x509_parse() Memory Corruption
+  # 71426 - PHP 5.3.x < 5.3.28 Multiple OpenSSL Vulnerabilities
+  # 80330 - PHP 5.4.x < 5.4.36 'process_nested_data' RCE
+  # 20111 - PHP < 4.4.1 / 5.0.6 Multiple Vulnerabilities
+  # 58681 - PHP 5.2.x filter_globals Subsequence Request Parsing Remote Code Execution
+  # 57537 - PHP < 5.3.9 Multiple Vulnerabilities
+  # 17796 - PHP 4.x < 4.3.0 ZendEngine Integer Overflow
+  # 57825 - PHP 5.3.9 'php_register_variable_ex()' Code Execution (banner check)
+  # 58966 - PHP < 5.3.11 Multiple Vulnerabilities
+  # 85298 - PHP 5.4.x < 5.4.44 Multiple Vulnerabilities
+  # 33272 - nBill component for Joomla! 'cid' Parameter SQLi
+  # 59529 - PHP 5.3.x < 5.3.14 Multiple Vulnerabilities
+  # 58681 - PHP 5.2.x filter_globals Subsequence Request Parsing Remote Code Execution
+  # 52717 - PHP 5.3 < 5.3.6 Multiple Vulnerabilities
+  # 11050 - PHP < 4.2.x mail Function CRLF Injection
+  # 64993 - PHP 5.4.x < 5.4.12 Information Disclosure
+  # 59530 - PHP 5.4.x < 5.4.4 Multiple Vulnerabilities
+  # 82025 - PHP 5.4.x < 5.4.39 Multiple Vulnerabilities
+  # 81511 - PHP 5.5.x < 5.5.22 Multiple Vulnerabilities (GHOST)
+  # 78556 - PHP 5.6.0 Multiple Vulnerabilities
+  # 64993 - PHP 5.4.x < 5.4.12 Information Disclosure
+  # 10701 - PHP Safe Mode mail Function 5th Parameter Arbitrary Command Execution
+  # 66843 - PHP 5.4.x < 5.4.16 Multiple Vulnerabilities
+  # 66842 - PHP 5.3.x < 5.3.26 Multiple Vulnerabilities
+  # 72511 - PHP 5.5.x < 5.5.9 GD Extension Multiple Vulnerabilities
+  # 73862 - PHP 5.4.x < 5.4.28 FPM Unix Socket Insecure Permission Escalation
+  # 80332 - PHP 5.6.x < 5.6.4 'process_nested_data' RCE
+  # 55925 - PHP 5.3 < 5.3.7 Multiple Vulnerabilities
+  # 32123 - PHP < 5.2.6 Multiple Vulnerabilities
+  # 59530 - PHP 5.4.x < 5.4.4 Multiple Vulnerabilities
+  # 81082 - PHP 5.6.x < 5.6.5 Multiple Vulnerabilities
+  # 76281 - PHP 5.4.x < 5.4.30 Multiple Vulnerabilities
+  # 81510 - PHP 5.4.x < 5.4.38 Multiple Vulnerabilities (GHOST)
+  # 78556 - PHP 5.6.0 Multiple Vulnerabilities
+  # 81511 - PHP 5.5.x < 5.5.22 Multiple Vulnerabilities (GHOST)
+  # 82025 - PHP 5.4.x < 5.4.39 Multiple Vulnerabilities
+  # 63622 - PHP 5.4.x < 5.4.11 cURL X.509 Certificate Domain Name Matching MiTM Weakness
+  # 85300 - PHP 5.6.x < 5.6.12 Multiple Vulnerabilities
+  # 11807 - PHP < 4.3.3 php_check_safe_mode_include_dir Function Safemode Bypass
+  # 67259 - PHP 5.3.x < 5.3.27 Multiple Vulnerabilities
+  # 74291 - PHP 5.4.x < 5.4.29 'src/cdf.c' Multiple Vulnerabilities
+  # 74292 - PHP 5.5.x < 5.5.13 'src/cdf.c' Multiple Vulnerabilities
+  # 79247 - PHP 5.5.x < 5.5.19 'donote' DoS
+  # 82026 - PHP 5.5.x < 5.5.23 Multiple Vulnerabilities
+  # 82027 - PHP 5.6.x < 5.6.7 Multiple Vulnerabilities
+  # 35043 - PHP 5 < 5.2.7 Multiple Vulnerabilities
+  # 81080 - PHP 5.4.x < 5.4.37 Multiple Vulnerabilities
+  # 81081 - PHP 5.5.x < 5.5.21 Multiple Vulnerabilities
+  # 52717 - PHP 5.3 < 5.3.6 Multiple Vulnerabilities
+  # 63622 - PHP 5.4.x < 5.4.11 cURL X.509 Certificate Domain Name Matching MiTM Weakness
+  # 10628 - PHP < 4.0.4 IMAP Module imap_open() Function Overflow
+  # 72882 - PHP 5.5.x < 5.5.10 Multiple Vulnerabilities
+  # 73863 - PHP 5.5.x < 5.5.12 FPM Unix Socket Insecure Permission Escalation
+  # 76772 - PHP 5.5.x < 5.5.15 Multiple Vulnerabilities
+  # 80331 - PHP 5.5.x < 5.5.20 'process_nested_data' RCE
+  # 77402 - PHP 5.4.x < 5.4.32 Multiple Vulnerabilities
+  # 77403 - PHP 5.5.x < 5.5.16 Multiple Vulnerabilities
+  # 55969 - PHP 5.3.7 crypt() MD5 Incorrect Return Value
+  # 85299 - PHP 5.5.x < 5.5.28 Multiple Vulnerabilities
+  # 76282 - PHP 5.5.x < 5.5.14 Multiple Vulnerabilities
+  # 81512 - PHP 5.6.x < 5.6.6 Multiple Vulnerabilities (GHOST)
+  # 63621 - PHP 5.3.x < 5.3.21 cURL X.509 Certificate Domain Name Matching MiTM Weakness
+  # 58039 - PHP 5.3.9 'php_register_variable_ex()' Code Execution (intrusive check)
+  # 58039 - PHP 5.3.9 'php_register_variable_ex()' Code Execution (intrusive check)
+  # 15708 - PHP < 3.0 mylog.html/mlog.html Arbitrary File Access
+
+- name: Grafana
+  id: 22
+  plugin-ids: [186028, 184129, 184357, 190601, 181464, 208027, 183776, 211633, 211576, 9765, 192023, 181419, 193176]
+  # 186028 - Grafana Enterprise Datasource Network Restrictions Bypass (CVE-2023-4399)
+  # 184129 - Grafana Labs Security Bypass (CVE-2023-4822)
+  # 184357 - Grafana Labs Stored XSS (CVE-2022-31097)
+  # 190601 - Grafana Labs Incorrect Authorization (CVE-2023-6152)
+  # 181464 - Grafana Labs WebUI Default Credentials
+  # 208027 - Grafana Labs Incorrect Permission (cve-2024-8118)
+  # 183776 - Grafana Labs Directory Traversal (CVE-2021-43798)
+  # 211633 - Grafana Labs Privilege Escalation (CVE-2024-9476)
+  # 211576 - Grafana Labs SQL expressions allowing for RCE (CVE-2024-9264)
+  # 9765 - Grafana Detection
+  # 192023 - Grafana Labs 10.0.x < 10.0.12 / 10.1.x < 10.1.8 / 10.2.x < 10.2.5 / 10.3.x < 10.3.4 / 8.5.x < 9.5.7 (CVE-2024-1442)
+  # 181419 - Grafana Labs Web Detection
+  # 193176 - Grafana Labs 9.5 < 9.5.18, 10.0 < 10.0.13, 10.1 < 10.1.9, 10.2 < 10.2.6, 10.3 < 10.3.5 (CVE-2024-1313)
+
+- name: Python Unsupported Version
+  id: 23
+  plugin-ids: []
+  # 148367 - Python Unsupported Version Detection
+
+
+
+

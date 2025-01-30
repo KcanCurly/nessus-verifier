@@ -2,12 +2,19 @@ import xml.etree.ElementTree as ET
 import os
 import argparse
 import yaml
+from dataclasses import dataclass
+import json
 
+@dataclass
 class GroupNessusScanOutput:
-    hosts = []
-    sub_hosts = {}
+    id: int
+    name: str
+    plugin_ids: list[int]
+    hosts: list[str]
+    sub_hosts: dict[str, list[str]]
     
-    def __init__(self, plugin_ids, name):
+    def __init__(self, id, plugin_ids, name):
+        self.id = id
         self.name = name
         self.plugin_ids = plugin_ids
         self.hosts = []
@@ -18,8 +25,8 @@ class GroupNessusScanOutput:
         if id in self.plugin_ids:
             self.hosts.append(host)
             if name not in self.sub_hosts:
-                self.sub_hosts[name] = []
-            self.sub_hosts[name].append(host)
+                self.sub_hosts[id] = []
+            self.sub_hosts[id].append(host)
             return True
         return False
 
@@ -73,10 +80,13 @@ def group_up(l: list[NessusScanOutput]):
     with open(rules_file_path, encoding='utf-8') as f:
         rule_data = yaml.safe_load(f)
         
+    available_id = 0
     for rule in rule_data:
-        new_rule = GroupNessusScanOutput(rule['plugin-ids'], rule['name'])
+        new_rule = GroupNessusScanOutput(rule['id'], rule['plugin-ids'], rule['name'])
         rules.append(new_rule)
+        available_id = available_id + 1
 
+    available_id = available_id +1
     for n in l:
         found = False
         for rule in rules:
@@ -86,9 +96,10 @@ def group_up(l: list[NessusScanOutput]):
         
         # No rule in rules.yaml so we make its own rule if its not on info severity
         if not found and n.severity != "0":
-            new_rule = GroupNessusScanOutput([n.plugin_id], n.name)
+            new_rule = GroupNessusScanOutput(available_id, [n.plugin_id], n.name)
             new_rule.add_host(n.name, n.plugin_id, n.host_port)
             rules.append(new_rule)
+            available_id = available_id + 1
         
     return rules
 
@@ -107,14 +118,17 @@ def validate(l: list[GroupNessusScanOutput]):
                     print(f"\t\t{z}", file=f)
 
 
+def main2(filename: str):
+    nessus_file_content = read_nessus_file(filename)
+    output = parse_nessus_output(nessus_file_content)
+    rules = group_up(output)
+    validate(rules)
+
 def main():
     parser = argparse.ArgumentParser(description='Process Nessus file and output results to file.')
     parser.add_argument('-f', '--file', type=str, required=True, help='Path to a Nessus file')
     args = parser.parse_args()
-    nessus_file_content = read_nessus_file(args.file)
-    output = parse_nessus_output(nessus_file_content)
-    rules = group_up(output)
-    validate(rules)
+    main2(args.file)
         
 if __name__ == '__main__':
     main()

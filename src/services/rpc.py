@@ -44,7 +44,6 @@ def check(directory_path, config, args, hosts):
                     vuln[host].append(f"{name} - {result.stdout} - {result.stderr}")
             except:pass
                 
-    
     if len(vuln) > 0:
         print("Anonymous RPC pipes detected:")
         for k,v in vuln.items():

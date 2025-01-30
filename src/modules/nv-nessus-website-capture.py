@@ -11,7 +11,7 @@ args = parser.parse_args()
 l = []
 
 for page in range(1, args.pages+1):
-    url = f'https://www.tenable.com/plugins/search?q=OpenSSH&sort=&page={page}'
+    url = f'https://www.tenable.com/plugins/search?q=grafana&sort=&page={page}'
     response = requests.get(url)
     # Check if the request was successful
     if response.status_code == 200:
