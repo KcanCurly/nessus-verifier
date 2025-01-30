@@ -23,7 +23,7 @@ def solve(hosts, white_results_are_good = False):
     wrong_hosts = []
     expired_cert_hosts = []
     
-    expired_cert_re = r"Not valid after:\s+\^\[\[31m\((.*)\)\^\[\[0m"
+    expired_cert_re = r"Not valid after:\s+\^\[\[31m(.*)\^\[\[0m"
     
     hosts = get_hosts_from_file(hosts)
     for host in hosts:
@@ -34,7 +34,7 @@ def solve(hosts, white_results_are_good = False):
         result = subprocess.run(command, text=True, capture_output=True)
         if "Connection refused" in result.stderr or "enabled" not in result.stdout:
             continue
-        print(result.stdout)
+
         expired_match = re.search(expired_cert_re, result.stdout)
         if expired_match:
             expired_cert_hosts.append(f"{host} - {expired_match.group(0)}")
