@@ -27,73 +27,75 @@ def solve(hosts, white_results_are_good = False):
     
     hosts = get_hosts_from_file(hosts)
     for host in hosts:
-        ip = host.split(":")[0]
-        port  = host.split(":")[1]
-            
-        command = ["sslscan", "--no-fallback", "--no-renegotiation", "--no-group", "--no-heartbleed", "--iana-names", "--connect-timeout=3", host]
-        result = subprocess.run(command, text=True, capture_output=True)
-        if "Connection refused" in result.stderr or "enabled" not in result.stdout:
-            continue
-
-        expired_match = re.search(expired_cert_re, result.stdout)
-        if expired_match:
-            expired_cert_hosts.append(f"{host} - {expired_match.group(0)}")
-
-        lines = result.stdout.splitlines()
-        protocol_line = False
-        cipher_line = False
-        for line in lines:
-            if "SSL/TLS Protocols" in line:
-                protocol_line = True
-                continue
-            if "Supported Server Cipher(s)" in line:
-                protocol_line = False
-                cipher_line = True
-                continue
-            if "Server Key Exchange Group(s)" in line:
-                cipher_line = False
-                continue
-            if protocol_line:
-                if "enabled" in line:
-                    if "SSLv2" in line:
-                        if host not in weak_versions:
-                            weak_versions[host] = []
-                        weak_versions[host].append("SSLv2")
-                    elif "SSLv3" in line:
-                        if host not in weak_versions:
-                            weak_versions[host] = []
-                        weak_versions[host].append("SSLv3")
-                    elif "TLSv1.0" in line:
-                        if host not in weak_versions:
-                            weak_versions[host] = []
-                        weak_versions[host].append("TLSv1.0")
-                    elif "TLSv1.1" in line:
-                        if host not in weak_versions:
-                            weak_versions[host] = []
-                        weak_versions[host].append("TLSv1.1")
-            
-            if cipher_line and line:
-                cipher = line.split()[4]
-                if "[32m" not in cipher: # If it is not green output
-                    if host not in weak_ciphers:
-                        weak_ciphers[host] = []
-                    weak_ciphers[host].append(re.sub(r'^\x1b\[[0-9;]*m', '', cipher))
-                    continue
-                bit = line.split()[2] # If it is a green output and bit is low
-                if "[33m]" in bit:
-                    if host not in weak_bits:
-                        weak_bits[host] = []
-                    weak_bits[host].append(re.sub(r'^\x1b\[[0-9;]*m', '', bit) + "->" + re.sub(r'^\x1b\[[0-9;]*m', '', cipher))
-                    
-        
         try:
-            context = ssl.create_default_context()
-            with socket.create_connection((ip, int(port)), timeout=3) as sock:
-                with context.wrap_socket(sock, server_hostname=ip) as ssock:
-                    pass
-        except ssl.CertificateError as e:
-            if "Hostname mismatch" in e.strerror:
-                wrong_hosts.append(host)
+            ip = host.split(":")[0]
+            port  = host.split(":")[1]
+                
+            command = ["sslscan", "--no-fallback", "--no-renegotiation", "--no-group", "--no-heartbleed", "--iana-names", "--connect-timeout=3", host]
+            result = subprocess.run(command, text=True, capture_output=True)
+            if "Connection refused" in result.stderr or "enabled" not in result.stdout:
+                continue
+
+            expired_match = re.search(expired_cert_re, result.stdout)
+            if expired_match:
+                expired_cert_hosts.append(f"{host} - {expired_match.group(0)}")
+
+            lines = result.stdout.splitlines()
+            protocol_line = False
+            cipher_line = False
+            for line in lines:
+                if "SSL/TLS Protocols" in line:
+                    protocol_line = True
+                    continue
+                if "Supported Server Cipher(s)" in line:
+                    protocol_line = False
+                    cipher_line = True
+                    continue
+                if "Server Key Exchange Group(s)" in line:
+                    cipher_line = False
+                    continue
+                if protocol_line:
+                    if "enabled" in line:
+                        if "SSLv2" in line:
+                            if host not in weak_versions:
+                                weak_versions[host] = []
+                            weak_versions[host].append("SSLv2")
+                        elif "SSLv3" in line:
+                            if host not in weak_versions:
+                                weak_versions[host] = []
+                            weak_versions[host].append("SSLv3")
+                        elif "TLSv1.0" in line:
+                            if host not in weak_versions:
+                                weak_versions[host] = []
+                            weak_versions[host].append("TLSv1.0")
+                        elif "TLSv1.1" in line:
+                            if host not in weak_versions:
+                                weak_versions[host] = []
+                            weak_versions[host].append("TLSv1.1")
+                
+                if cipher_line and line:
+                    cipher = line.split()[4]
+                    if "[32m" not in cipher: # If it is not green output
+                        if host not in weak_ciphers:
+                            weak_ciphers[host] = []
+                        weak_ciphers[host].append(re.sub(r'^\x1b\[[0-9;]*m', '', cipher))
+                        continue
+                    bit = line.split()[2] # If it is a green output and bit is low
+                    if "[33m]" in bit:
+                        if host not in weak_bits:
+                            weak_bits[host] = []
+                        weak_bits[host].append(re.sub(r'^\x1b\[[0-9;]*m', '', bit) + "->" + re.sub(r'^\x1b\[[0-9;]*m', '', cipher))
+                        
+            
+            try:
+                context = ssl.create_default_context()
+                with socket.create_connection((ip, int(port)), timeout=3) as sock:
+                    with context.wrap_socket(sock, server_hostname=ip) as ssock:
+                        pass
+            except ssl.CertificateError as e:
+                if "Hostname mismatch" in e.strerror:
+                    wrong_hosts.append(host)
+        except Exception as e: print(f"Error for {host}:", e)
                     
       
     if len(weak_ciphers) > 0:       
