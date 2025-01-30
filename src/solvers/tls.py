@@ -30,7 +30,7 @@ def solve(hosts, white_results_are_good = False):
         ip = host.split(":")[0]
         port  = host.split(":")[1]
             
-        command = ["sslscan", "-no-fallback", "--no-renegotiation", "--no-group", "--no-check-certificate", "--no-heartbleed", "--iana-names", "--connect-timeout=3", host]
+        command = ["sslscan", "-no-fallback", "--no-renegotiation", "--no-group", "--no-heartbleed", "--iana-names", "--connect-timeout=3", host]
         result = subprocess.run(command, text=True, capture_output=True)
         if "Connection refused" in result.stderr or "enabled" not in result.stdout:
             continue
