@@ -23,7 +23,7 @@ def solve(hosts, white_results_are_good = False):
     wrong_hosts = []
     expired_cert_hosts = []
     
-    expired_cert_re = r"Not valid after:\s+\^\[\[31m(.*)\^\[\[0m"
+    expired_cert_re = r"Not valid after:\s+\\x1b\[31m(.*)\\x1b\[0m"
     
     hosts = get_hosts_from_file(hosts)
     for host in hosts:
