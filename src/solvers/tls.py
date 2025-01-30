@@ -30,11 +30,11 @@ def solve(hosts, white_results_are_good = False):
         ip = host.split(":")[0]
         port  = host.split(":")[1]
             
-        command = ["sslscan", "-no-fallback", "--no-renegotiation", "--no-group", "--no-heartbleed", "--iana-names", "--connect-timeout=3", host]
+        command = ["sslscan", "--no-fallback", "--no-renegotiation", "--no-group", "--no-heartbleed", "--iana-names", "--connect-timeout=3", host]
         result = subprocess.run(command, text=True, capture_output=True)
         if "Connection refused" in result.stderr or "enabled" not in result.stdout:
             continue
-        
+        print(result.stdout)
         expired_match = re.search(expired_cert_re, result.stdout)
         if expired_match:
             expired_cert_hosts.append(f"{host} - {expired_match.group(0)}")
