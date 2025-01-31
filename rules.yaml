@@ -1729,3 +1729,8 @@
   # 72334 - MongoDB < 2.3.2 BSON Object Length Handling Memory Disclosure
   # 88931 - MongoDB 2.4.x < 2.4.13 / 2.6.x < 2.6.8 / 3.0.x < 3.0.0-rc9 mongod BSON DoSncies (fd2e0ca8-e3ae-11e9-8af7-08002720423d)
   # 9972 - MongoDB 3.0.x < 3.0.7 / 3.1.x < 3.1.9 Authentication Bypass
+
+- name: Oracle Database
+  id: 27
+  plugin-ids: [55786]
+  # 55786 - Oracle Database Unsupported Version Detection
