@@ -29,6 +29,10 @@ class GroupNessusScanOutput:
             self.sub_hosts[id].append(host)
             return True
         return False
+    
+    @staticmethod
+    def from_json(json_data):
+        return GroupNessusScanOutput(**json_data)
 
 class NessusScanOutput:
     def __init__(self, plugin_id, name, description, severity, host_port, output, cve):

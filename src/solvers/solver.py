@@ -1,5 +1,17 @@
 import argparse
+import json
 from src.solvers import tls, kibana, elastic, mongo, oracle, smb, ssh
+from src.modules.vuln_parse import GroupNessusScanOutput
+
+solver_dict ={
+    "1": (tls.entry_solver)
+}
+
+def all_solver(args):
+    with open(args.file, "r") as f:
+        for line in f:
+            print(GroupNessusScanOutput.from_json(json.loads(line)))
+    
 
 def main():
     # Create the main parser
@@ -7,6 +19,11 @@ def main():
     parser.add_argument("-v", "--verbose", action="count", default=0, help="Increase verbosity level (-v, -vv, -vvv, -vvvv, -vvvvvv)")
     parser.add_argument("--debug", action="store_true", help="Enable debug mode")
     subparsers = parser.add_subparsers(dest="command", help="Available subcommands")
+    
+    # 0 - All
+    parser_task1 = subparsers.add_parser("all", help="Runs all solvers from json file")
+    parser_task1.add_argument("-f", "--file", type=str, required=True, help="json file name")
+    parser_task1.set_defaults(func=all_solver)
 
     # 1 - TLS Misconfigurations
     parser_task1 = subparsers.add_parser("1", help="TLS Misconfigurations (Version and Ciphers)")

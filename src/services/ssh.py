@@ -211,62 +211,7 @@ def version_check(hosts: list[str]):
         for v in value:
             print(f"\t{v}")
     
-    
-
-def check(directory_path, args, hosts):
-    hosts_path = os.path.join(directory_path, hosts)
-    hosts = get_hosts_from_file(hosts)
-        
-    # Define regular expression patterns
-    protocol_pattern = r"Remote protocol version (.*),"
-    software_pattern = r"remote software version (.*)\s+"
-    
-    # Iterate over each host and run the command
-    for host in hosts:
-        ip = host
-        port = "22"
-        if ":" in host:
-            ip = host.split(":")[0]
-            port  = host.split(":")[1]
-        command = ["ssh", "-vvv", "-p", port, "-o", "StrictHostKeyChecking=no", "-o", "BatchMode=yes", ip]
-        try:
-            # Execute the command and capture the output
-            result = subprocess.run(command, text=True, capture_output=True)
-            
-            # Find matches using the patterns
-            protocol_match = re.search(protocol_pattern, result.stderr)
-            software_match = re.search(software_pattern, result.stderr)
-            
-            if protocol_match:
-                protocol_version = protocol_match.group(1)
-                if protocol_version != "2.0":
-                    protocol1.append(ip + ":" + port)
-            else: print(f"Could not found protocol version for {ip + ":" + port}")
-            
-            if software_match:
-                software_version = software_match.group(1)
-                if software_version not in versions:
-                    versions[software_version] = []
-                versions[software_version].append(ip + ":" + port)
-            else: print(f"Could not found software version for {ip + ":" + port}")
-                
-
-        except Exception as e:
-            # Handle errors (e.g., if the host is unreachable)
-            continue
-    
-    if len(protocol1) > 0:
-        print("Protocol Version 1:")
-        for p in protocol1:
-            print(f"\t{p}")
-    
-    for index, (key, value) in enumerate(versions.items()):
-        print(key + ":")
-        for v in value:
-            print(f"\t{v}")
-        
-    ######################################
-    print("Running ssh audit")
+def ssh_audit_check(hosts: list[str]):
     for host in hosts:
         command = ["ssh-audit", "--skip-rate-test", host]
         try:
@@ -323,41 +268,21 @@ def check(directory_path, args, hosts):
         print("Vulnerable hosts found:")
         for k in vuln_hosts:
             print(f"\t{k}")
-            
-            
-    if not confirm_prompt("Do you wish to continue for brute force?"): return        
-    ######################################
 
-    creds = main_creds
-    if args.creds:
-        with open(args.creds, "r") as file:
-            c1 = [line.strip() for line in file if line.strip()] 
-        
-        creds = [*main_creds, *c1]
-    elif args.overwrite_creds:
-        with open(args.overwrite_creds, "r") as file:
-            c2 = [line.strip() for line in file if line.strip()] 
-        creds = c2
 
-    with open(os.path.join(directory_path, "creds.txt"), "w") as file:
-        for item in creds:
-            file.write(f"{item}\n")
-    try:
-        print("Running sshwhirl, this might take a while")
-        command = ["sshwhirl.py", hosts_path, os.path.join(directory_path, "creds.txt"), os.path.join(directory_path, "result.txt")]
-        result = subprocess.Popen(command, text=True, stdout=subprocess.PIPE)
-        for line in result.stdout:
-            print(line.strip())  # Print each line without additional newlines
-        result.wait()
-    except Exception as e: print(e)
+
+def check(directory_path, args, hosts):
+    hosts_path = os.path.join(directory_path, hosts)
+    hosts = get_hosts_from_file(hosts)
+    
+    version_check(hosts)
+    ssh_audit_check(hosts)
         
 
 def main():
     parser = argparse.ArgumentParser(description="SSH module of nessus-verifier.")
     parser.add_argument("-d", "--directory", type=str, required=False, help="Directory to process (Default = current directory).")
     parser.add_argument("-f", "--filename", type=str, required=False, help="File that has host:port information.")
-    parser.add_argument("--creds", type=str, required=False, help="Additional cred file to try.")
-    parser.add_argument("--overwrite-creds", type=str, required=False, help="Overwrite default cred file with this file.")
     args = parser.parse_args()
     
     check(args.directory or os.curdir, args, args.filename or "hosts.txt")
