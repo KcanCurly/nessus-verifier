@@ -166,6 +166,52 @@ main_creds = [
 "rwa:rwa",
 ]
 
+def version_check(hosts: list[str]):
+    protocol_pattern = r"Remote protocol version (.*),"
+    software_pattern = r"remote software version (OpenSSH|dropbear)_.*\s?"
+    
+    for host in hosts:
+        ip = host.split(":")[0]
+        port  = host.split(":")[1]
+
+        command = ["ssh", "-vvv", "-p", port, "-o", "StrictHostKeyChecking=no", "-o", "BatchMode=yes", ip]
+        try:
+            # Execute the command and capture the output
+            result = subprocess.run(command, text=True, capture_output=True)
+            
+            # Find matches using the patterns
+            protocol_match = re.search(protocol_pattern, result.stderr)
+            software_match = re.search(software_pattern, result.stderr)
+            
+            if protocol_match:
+                protocol_version = protocol_match.group(1)
+                if protocol_version != "2.0":
+                    protocol1.append(ip + ":" + port)
+            # else: print(f"Could not found protocol version for {ip + ":" + port}")
+            
+            if software_match:
+                software_version = software_match.group(1)
+                if software_version not in versions:
+                    versions[software_version] = []
+                versions[software_version].append(ip + ":" + port)
+            # else: print(f"Could not found software version for {ip + ":" + port}")
+                
+
+        except Exception as e:
+            # Handle errors (e.g., if the host is unreachable)
+            continue
+    
+    if len(protocol1) > 0:
+        print("Protocol Version 1:")
+        for p in protocol1:
+            print(f"\t{p}")
+    
+    for index, (key, value) in enumerate(versions.items()):
+        print(key + ":")
+        for v in value:
+            print(f"\t{v}")
+    
+    
 
 def check(directory_path, args, hosts):
     hosts_path = os.path.join(directory_path, hosts)
@@ -175,7 +221,6 @@ def check(directory_path, args, hosts):
     protocol_pattern = r"Remote protocol version (.*),"
     software_pattern = r"remote software version (.*)\s+"
     
-    print("Running ssh version capturer")
     # Iterate over each host and run the command
     for host in hosts:
         ip = host
