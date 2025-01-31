@@ -38,7 +38,7 @@ def solve(hosts, white_results_are_good = False):
             
             m = re.search(version_regex, resp.text)
             if m:
-                version = m.group(0)
+                version = m.group(1)
                 if version not in versions:
                     versions[version] = set()
                 versions[version].add(host)
@@ -52,6 +52,7 @@ def solve(hosts, white_results_are_good = False):
         for key, value in versions.items():
             print(f"{key}:")
             for v in value:
+                pass
                 print(f"\t{v}")
     
     
