@@ -52,7 +52,8 @@ setup(
             "nv-ldap=src.services.ldap:main",
             "nv-smb=src.services.smb:main",
             "nv-rlogin=src.services.rlogin:main",
-            "nv-solver=src.solvers.solver:main"
+            "nv-solver=src.solvers.solver:main",
+            "nv-vuln-parse=src.modules.vuln_parse:main"
         ],
     },
 )
