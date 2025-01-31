@@ -53,10 +53,10 @@
   # 10882 - SSH Protocol Version 1 Session Key Retrieval
   # 187315 - SSH Terrapin Prefix Truncation Weakness (CVE-2023-48795)
 
-- name: SSL Certificate Expiry
+- name: NTP Mode 6
   id: 4
-  plugin-ids: [15901]
-  # 15901 - SSL Certificate Expiry
+  plugin-ids: [97861]
+  # 97861 - Network Time Protocol (NTP) Mode 6 Scanner
 
 - name: SMB Service Misconfigurations
   id: 5
@@ -74,7 +74,7 @@
 
 - name: Cleartext Protocol Detected
   id: 7
-  plugin-ids: [87733, 42263, 54582, 98615, 3018, 34324, 15854, 15855]
+  plugin-ids: [87733, 42263, 54582, 98615, 3018, 34324, 15854, 15855, 10891]
   # 87733 - AMQP Cleartext Authentication
   # 42263 - Unencrypted Telnet Server
   # 54582 - SMTP Service Cleartext Login Permitted
@@ -83,6 +83,7 @@
   # 34324 - FTP Supports Cleartext Authentication
   # 15854 - POP2 Cleartext Logins Permitted
   # 15855 - POP3 Cleartext Logins Permitted
+  # 10891 - X Display Manager Control Protocol (XDMCP) Detection
 
 - name: Terminal Services Misconfigurations
   id: 8
@@ -1734,3 +1735,8 @@
   id: 27
   plugin-ids: [55786]
   # 55786 - Oracle Database Unsupported Version Detection
+
+- name: QueueJumper
+  id: 28
+  plugin-ids: [175373]
+  # 175373 - Microsoft Message Queuing RCE (CVE-2023-21554, QueueJumper)

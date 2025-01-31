@@ -8,3 +8,5 @@ s.txt
 *-workspace
 .gitignore
 src/modules/nv-nessus-website-capture.py
+output.txt
+output.json

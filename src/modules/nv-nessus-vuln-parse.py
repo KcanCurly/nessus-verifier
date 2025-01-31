@@ -103,8 +103,8 @@ def group_up(l: list[NessusScanOutput]):
         
     return rules
 
-def validate(l: list[GroupNessusScanOutput]):
-    with open("output.txt", "w") as f:
+def validate(l: list[GroupNessusScanOutput], args):
+    with open(args.output_file, "w") as f:
         for a in l[1:]: # We skip first one since its on ignore list
             print(a.name, file=f)
             for z in a.hosts:
@@ -116,19 +116,26 @@ def validate(l: list[GroupNessusScanOutput]):
                 print(f"\t{k}", file=f)
                 for z in v:
                     print(f"\t\t{z}", file=f)
+                    
+    with open(args.output_json_file, "w") as file:
+        for v in l:
+            json.dump(v.__dict__, file)
+            file.write("\n")
 
 
-def main2(filename: str):
-    nessus_file_content = read_nessus_file(filename)
+def main2(args):
+    nessus_file_content = read_nessus_file(args.file)
     output = parse_nessus_output(nessus_file_content)
     rules = group_up(output)
-    validate(rules)
+    validate(rules, args)
 
 def main():
     parser = argparse.ArgumentParser(description='Process Nessus file and output results to file.')
     parser.add_argument('-f', '--file', type=str, required=True, help='Path to a Nessus file')
+    parser.add_argument('-o', '--output-file', type=str, required=False, default="output.txt", help='Path to a Nessus file')
+    parser.add_argument('-oj', '--output-json-file', type=str, required=False, default="output.json", help='Path to a Nessus file')
     args = parser.parse_args()
-    main2(args.file)
+    main2(args)
         
 if __name__ == '__main__':
     main()
