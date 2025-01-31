@@ -79,7 +79,7 @@ def group_up(l: list[NessusScanOutput]):
     rules: list[GroupNessusScanOutput] = []
     
     current_script_path = os.path.abspath(__file__)
-    two_dirs_up = os.path.abspath(os.path.join(current_script_path, "../../../"))
+    two_dirs_up = os.path.abspath(os.path.join(current_script_path, "../../"))
     rules_file_path = os.path.join(two_dirs_up, "rules.yaml")
     with open(rules_file_path, encoding='utf-8') as f:
         rule_data = yaml.safe_load(f)

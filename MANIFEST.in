@@ -1,2 +1,2 @@
 include src/nvconfig.config
-include rules.yaml
+include src/rules.yaml
