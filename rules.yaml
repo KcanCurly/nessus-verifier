@@ -1683,3 +1683,29 @@
   # 113516 - Kibana 7.7.0 < 7.17.1 Insufficient Authorization
   # 113521 - Kibana 7.10.2 < 7.14.1 Code Execution
 
+- name: Elasticsearch
+  id: 25
+  plugin-ids: [112040, 117665, 192892, 214589, 112043, 112045, 112038, 121249, 112046, 
+  112041, 101025, 200480, 112044, 112037, 118799, 112042, 119499, 112039, 122973, 109941, 9778]
+  # 112040 - Elasticsearch ESA-2017-10
+  # 117665 - Elasticsearch ESA-2018-15
+  # 192892 - Elasticsearch 8.4.0 < 8.11.1 DoS (ESA-2024-05)
+  # 214589 - Elasticsearch 8.0.x < 8.13.3 / 7.17.21 (ESA-2024-25)
+  # 112043 - Elasticsearch ESA-2017-19
+  # 112045 - Elasticsearch ESA-2018-10
+  # 112038 - Elasticsearch ESA-2017-06
+  # 121249 - Elasticsearch ESA-2018-19
+  # 112046 - Elasticsearch ESA-2018-11
+  # 112041 - Elasticsearch ESA-2017-15
+  # 101025 - Elasticsearch Unrestricted Access Information Disclosure
+  # 200480 - Elasticsearch 8.13.1 <= 8.13.4 DoS (ESA-2024-14)
+  # 112044 - Elasticsearch ESA-2018-07
+  # 112037 - Elasticsearch ESA-2017-03
+  # 118799 - Elasticsearch ESA-2018-16
+  # 112042 - Elasticsearch ESA-2017-18
+  # 119499 - Elasticsearch ESA-2015-06
+  # 112039 - Elasticsearch ESA-2017-09
+  # 122973 - Elasticsearch ESA-2019-04
+  # 109941 - Elasticsearch Detection
+  # 9778 - Elasticsearch Detection
+

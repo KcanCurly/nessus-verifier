@@ -22,7 +22,6 @@ def entry_cmd():
 
 def solve(hosts, white_results_are_good = False):
     versions: dict[str, str] = {}
-    version_regex = r'data="{&quot;version&quot;:&quot;(.*)&quot;,&quot;buildNumber'
     hosts = get_hosts_from_file(hosts)
     for host in hosts:
         try:
@@ -33,19 +32,17 @@ def solve(hosts, white_results_are_good = False):
                     resp = requests.get(f"http://{host}", allow_redirects=True, verify=False)
                 except: continue
             
-            m = re.search(version_regex, resp.text)
-            if m:
-                version = m.group(1)
-                if version not in versions:
-                    versions[version] = set()
-                versions[version].add(host)
+            version = resp.json()['version']['number']
+            if version not in versions:
+                versions[version] = set()
+            versions[version].add(host)
                 
             
         except Exception as e: print(f"Error for {host}:", e)
                     
       
     if len(versions) > 0:       
-        print("Kibana versions detected:")                
+        print("Elastic versions detected:")                
         for key, value in versions.items():
             print(f"{key}:")
             for v in value:
