@@ -1,5 +1,5 @@
 import argparse
-from src.solvers import tls
+from src.solvers import tls, kibana
 
 def main():
     # Create the main parser
@@ -14,9 +14,9 @@ def main():
 
         
     # 24 - Kibana
-    parser_task1 = subparsers.add_parser("1", help="Kibana")
+    parser_task1 = subparsers.add_parser("24", help="Kibana")
     parser_task1.add_argument("-f", "--file", type=str, required=True, help="Host file name")
-    parser_task1.set_defaults(func=tls.entry_solver)
+    parser_task1.set_defaults(func=kibana.entry_solver)
     
     
     
