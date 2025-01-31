@@ -96,7 +96,7 @@ def sign_check(hosts: list[str], verbose = False, debug = False):
         port = host.split(":")[1]
         
         try:
-            conn = SMBConnection(ip, ip, sess_port=int(port), timeout=3)
+            conn = SMBConnection(ip, ip, timeout=3)
             if not conn._SMBConnection.is_signing_required():
                 sign.append(host)
         except Exception:pass
