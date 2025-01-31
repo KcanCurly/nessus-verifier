@@ -1,7 +1,3 @@
-import subprocess
-import re
-import ssl
-import socket
 import argparse
 import requests
 import urllib3
@@ -27,7 +23,7 @@ def solve(hosts, white_results_are_good = False):
         try:
             try:
                 resp = requests.get(f"https://{host}", allow_redirects=True, verify=False)
-            except ssl.SSLError:
+            except requests.exceptions.SSLError:
                 try:
                     resp = requests.get(f"http://{host}", allow_redirects=True, verify=False)
                 except: continue
