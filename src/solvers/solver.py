@@ -1,5 +1,5 @@
 import argparse
-from src.solvers import tls, kibana, elastic, mongo
+from src.solvers import tls, kibana, elastic, mongo, oracle
 
 def main():
     # Create the main parser
@@ -28,6 +28,10 @@ def main():
     parser_task1.add_argument("-f", "--file", type=str, required=True, help="Host file name")
     parser_task1.set_defaults(func=mongo.entry_solver)
     
+    # 27 - Oracle Database 
+    parser_task1 = subparsers.add_parser("27", help="Oracle Database")
+    parser_task1.add_argument("-f", "--file", type=str, required=True, help="Host file name")
+    parser_task1.set_defaults(func=oracle.entry_solver)
     
     
     args = parser.parse_args()
