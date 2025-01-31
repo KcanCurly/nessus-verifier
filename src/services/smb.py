@@ -9,7 +9,7 @@ from impacket.smbconnection import SMBConnection
 from src.utilities import get_hosts_from_file
 from smb import SMBConnection as pysmbconn
 
-def null_guest_access_check(hosts: List[str]):
+def null_guest_access_check(hosts: list[str], verbose):
     null_vuln: dict = {}
     null_vuln_files: dict = {}
     guest_vuln: dict = {}
@@ -73,7 +73,7 @@ def null_guest_access_check(hosts: List[str]):
     if len(null_vuln) > 0:
         print("Null session accessible share on hosts:")
         for k,v in null_vuln.items():
-            print(f"{k}:445")
+            print(f"{k}")
             for z in v:
                 print(f"\t{z}")
                 for zz in null_vuln_files[z]:
@@ -82,13 +82,13 @@ def null_guest_access_check(hosts: List[str]):
     if len(guest_vuln) > 0:
         print("Guest session accessible share on hosts:")
         for k,v in guest_vuln.items():
-            print(f"{k}:445")
+            print(f"{k}")
             for z in v:
                 print(f"\t{z}")
                 for zz in guest_vuln_files[z]:
                     print(f"\t\t{zz}")
 
-def sign_check(hosts: List[str], extra_args: dict):
+def sign_check(hosts: list[str], verbose):
     sign = []
     
     for host in hosts:
@@ -104,11 +104,11 @@ def sign_check(hosts: List[str], extra_args: dict):
     if len(sign) > 0:
         print("SMB signing NOT enabled on hosts:")
         for v in sign:
-            print(f"\t{v}:445")
+            print(f"\t{host}")
             
 
         
-def smbv1_check(hosts: List[str]):
+def smbv1_check(hosts: list[str], verbose):
     smbv1 = []
     
     for host in hosts:
@@ -122,7 +122,7 @@ def smbv1_check(hosts: List[str]):
     if len(smbv1) > 0:
         print("SMBv1 enabled on hosts:")
         for v in smbv1:
-            print(f"\t{v}:445")
+            print(f"\t{host}")
 
 def check(directory_path, config, args, hosts):
     hosts = get_hosts_from_file(hosts)
