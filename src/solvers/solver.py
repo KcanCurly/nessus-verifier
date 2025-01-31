@@ -1,5 +1,5 @@
 import argparse
-from src.solvers import tls, kibana, elastic
+from src.solvers import tls, kibana, elastic, mongo
 
 def main():
     # Create the main parser
@@ -18,11 +18,15 @@ def main():
     parser_task1.add_argument("-f", "--file", type=str, required=True, help="Host file name")
     parser_task1.set_defaults(func=kibana.entry_solver)
     
-        # 24 - Kibana
+    # 25 - Elastic
     parser_task1 = subparsers.add_parser("25", help="Elastic")
     parser_task1.add_argument("-f", "--file", type=str, required=True, help="Host file name")
     parser_task1.set_defaults(func=elastic.entry_solver)
     
+    # 26 - MongoDB
+    parser_task1 = subparsers.add_parser("26", help="MongoDB")
+    parser_task1.add_argument("-f", "--file", type=str, required=True, help="Host file name")
+    parser_task1.set_defaults(func=mongo.entry_solver)
     
     
     

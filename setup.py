@@ -17,7 +17,7 @@ setup(
         "impacket",
         "pyaml",
         "pysmb",
-        "multipledispatch",
+        "pymongo",
     ],
     classifiers=[
         "Programming Language :: Python :: 3",
