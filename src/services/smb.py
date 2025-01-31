@@ -9,7 +9,7 @@ from impacket.smbconnection import SMBConnection
 from src.utilities import get_hosts_from_file
 from smb import SMBConnection as pysmbconn
 
-def null_guest_access_check(hosts: list[str], verbose):
+def null_guest_access_check(hosts: list[str], verbose = False, debug = False):
     null_vuln: dict = {}
     null_vuln_files: dict = {}
     guest_vuln: dict = {}
@@ -88,7 +88,7 @@ def null_guest_access_check(hosts: list[str], verbose):
                 for zz in guest_vuln_files[z]:
                     print(f"\t\t{zz}")
 
-def sign_check(hosts: list[str], verbose):
+def sign_check(hosts: list[str], verbose = False, debug = False):
     sign = []
     
     for host in hosts:
@@ -108,7 +108,7 @@ def sign_check(hosts: list[str], verbose):
             
 
         
-def smbv1_check(hosts: list[str], verbose):
+def smbv1_check(hosts: list[str], verbose = False, debug = False):
     smbv1 = []
     
     for host in hosts:
