@@ -24,7 +24,7 @@ def solve(hosts, white_results_are_good = False):
     versions: dict[str, str] = {}
 
     example = 'data="{&quot;version&quot;:&quot;6.7.1&quot;'
-    version_regex = r'data="{&quot;version&quot;:&quot;(.*)&quot;'
+    version_regex = r'data="{&quot;version&quot;:&quot;(.*)&quot;,&quot;buildNumber'
     
     hosts = get_hosts_from_file(hosts)
     for host in hosts:
@@ -52,7 +52,6 @@ def solve(hosts, white_results_are_good = False):
         for key, value in versions.items():
             print(f"{key}:")
             for v in value:
-                pass
                 print(f"\t{v}")
     
     
