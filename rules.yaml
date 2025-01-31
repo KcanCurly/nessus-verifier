@@ -10,7 +10,7 @@
   # 98048 - HTTP TRACE Allowed
   # 136929 - JQuery 1.2 < 3.5.0 Multiple XSS
 
-- name: TLS Misconfigurations (Version and Ciphers)
+- name: TLS Misconfigurations
   id: 1
   plugin-ids: [20007, 104743, 157288, 31705, 66848, 26928, 94437, 65821, 42873, 83738, 81606, 7282, 132675, 7222, 45411, 15901]
   # 20007 - SSL Version 2 and 3 Protocol Detection
@@ -1625,6 +1625,61 @@
   plugin-ids: []
   # 148367 - Python Unsupported Version Detection
 
-
-
+- name: Kibana
+  id: 24
+  plugin-ids: [207060, 174002, 125082, 109942, 121166, 118798, 122589, 187123, 117666, 
+  121358, 121165, 175414, 186424, 207061, 200799, 205597, 200798, 190362, 119422, 121357, 
+  9779, 701234, 9780, 113527, 113529, 113532, 113531, 113530, 98982, 113533, 113517, 
+  113526, 113520, 113535, 98976, 113523, 113525, 98979, 98977, 98980, 113518, 113524, 
+  113522, 113519, 113534, 113536, 98978, 113528, 113516, 113521]
+  # 207060 - Kibana 8.10.x < 8.15.1 (ESA-2024-28)
+  # 174002 - Kibana ESA-2023-02
+  # 125082 - Photon OS 2.0: Kibana PHSA-2019-2.0-0155
+  # 109942 - Kibana Detection
+  # 121166 - Kibana ESA-2018-03
+  # 118798 - Kibana ESA-2018-18
+  # 122589 - Kibana ESA-2019-01, ESA-2019-02, ESA-2019-03
+  # 187123 - Elastic Kibana 7.13.0 < 7.17.16, 8.0 < 8.11.2 Information Disclosure (ESA-2023-27)
+  # 117666 - Kibana ESA-2018-14
+  # 121358 - Kibana ESA-2018-06
+  # 121165 - Kibana ESA-2018-05
+  # 175414 - Elastic Kibana < 8.7.1 Arbitrary Code Execution
+  # 186424 - Elastic Kibana 8.x < 8.11.1 Information Disclosure (ESA-2023-25)
+  # 207061 - Kibana < 8.15.1 (ESA-2024-27)
+  # 200799 - Kibana 8.6.3 < 8.14 (ESA-2024-15)
+  # 205597 - Kibana 7.7.x < 7.17.23 / 8.0.x < 8.14.2 (ESA-2024-22)
+  # 200798 - Kibana < 7.17.22 / 8.0.x < 8.14 (ESA-2024-11)
+  # 190362 - Kibana 8.0.x < 8.12.1 (ESA-2024-01)
+  # 119422 - Kibana ESA-2018-17
+  # 121357 - Kibana ESA-2018-08
+  # 9779 - Kibana Detection
+  # 701234 - Kibana 5.x < 5.6.15 / 6.x < 6.6.1 Multiple Vulnerabilities
+  # 9780 - Kibana Version Detection
+  # 113527 - Kibana 5.0.0 < 5.6.1 Cross-Site Scripting
+  # 113529 - Kibana 7.2.1 < 7.17.3 Sensitive Information Exposure
+  # 113532 - Kibana 7.8.0 < 7.15.2 Multiple Vulnerabilities
+  # 113531 - Kibana 7.5.1 < 7.17.0 Cross-Site Scripting
+  # 113530 - Kibana 8.0.0 < 8.1.3 Sensitive Information Exposure
+  # 98982 - Kibana 6.x < 6.6.1 Multiple Vulnerabilities
+  # 113533 - Kibana < 7.12.1 Denial Of Service
+  # 113517 - Kibana 8.0.0 Insufficient Authorization
+  # 113526 - Kibana 7.11.0 < 7.12.1 Denial Of Service
+  # 113520 - Kibana 7.14.0 HTML Injection
+  # 113535 - Kibana < 7.7.1 Cross-Site Scripting
+  # 98976 - Kibana < 6.8.6 Cross-Site Scripting
+  # 113523 - Kibana < 6.8.16 Open Redirect
+  # 113525 - Kibana < 7.12.0 Timeout Bypass
+  # 98979 - Kibana < 6.8.2 Multiple Vulnerabilities
+  # 98977 - Kibana 7.x < 7.5.1 Cross-Site Scripting
+  # 98980 - Kibana 7.x < 7.2.1 Multiple Vulnerabilities
+  # 113518 - Kibana 7.0.0 < 7.17.5 Cross-Site Scripting
+  # 113524 - Kibana 7.x < 7.13.0 Open Redirect
+  # 113522 - Kibana 7.9.0 < 7.14.1 Path Traversal
+  # 113519 - Kibana 7.15.0 < 7.17.1 Multiple Vulnerabilities
+  # 113534 - Kibana < 7.8.1 Multiples Vulnerabilities
+  # 113536 - Kibana 6.7.0 < 7.7.0 Prototype Pollution
+  # 98978 - Kibana 7.3.x < 7.4.0 Local File Disclosure
+  # 113528 - Kibana 8.0.0 < 8.3.0 Cross-Site Scripting
+  # 113516 - Kibana 7.7.0 < 7.17.1 Insufficient Authorization
+  # 113521 - Kibana 7.10.2 < 7.14.1 Code Execution
 

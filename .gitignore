@@ -6,3 +6,5 @@ solutions
 nessus_*
 s.txt
 *-workspace
+.gitignore
+src/modules/nv-nessus-website-capture.py

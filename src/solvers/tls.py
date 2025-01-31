@@ -9,7 +9,7 @@ def entry_solver(args):
     solve(args.file)
 
 def entry_cmd():
-    parser = argparse.ArgumentParser(description="TLS Misconfigurations (Version and Ciphers)")
+    parser = argparse.ArgumentParser(description="TLS Misconfigurations")
     parser.add_argument("-f", "--file", type=str, required=True, help="Host file name")
     
     args = parser.parse_args()
