@@ -13,13 +13,12 @@ class GroupNessusScanOutput:
     hosts: list[str]
     sub_hosts: dict[str, list[str]]
     
-    def __init__(self, id, plugin_ids, name):
+    def __init__(self, id, plugin_ids, name, hosts = [], sub_hosts = {}):
         self.id = id
         self.name = name
         self.plugin_ids = plugin_ids
-        self.hosts = []
-        self.sub_hosts = {}
-        pass
+        self.hosts = hosts
+        self.sub_hosts = sub_hosts
     
     def add_host(self, name, id, host) -> bool:
         if id in self.plugin_ids:
