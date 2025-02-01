@@ -11,12 +11,12 @@ DEFAULT_LEVELS = {
 }
 
 # Custom logging levels
-V0 = 5
-V1 = 15
-V2 = 25
-V3 = 35
-V4 = 45
-V5 = 55
+V0 = 55
+V1 = 45
+V2 = 35
+V3 = 25
+V4 = 15
+V5 = 5
 
 CUSTOM_LEVELS = {
     0: V0,
@@ -86,15 +86,6 @@ class LevelBasedFormatter(logging.Formatter):
         formatter = logging.Formatter(log_fmt)
         return formatter.format(record)
 
-class LevelFilter(logging.Filter):
-    """Filters logs based on verbosity level (always allows CRITICAL)."""
-    def __init__(self, min_level):
-        super().__init__()
-        self.min_level = min_level
-
-    def filter(self, record):
-        return record.levelno >= self.min_level
-
 def setup_logging(verbosity=0, standard_level=None):
     """
     Configure logging with both custom and standard logging levels.
@@ -115,6 +106,5 @@ def setup_logging(verbosity=0, standard_level=None):
     logger.setLevel(log_level)
     handler = logging.StreamHandler()
     handler.setFormatter(LevelBasedFormatter())
-    handler.addFilter(LevelFilter(log_level))
     logger.addHandler(handler)
     return logger  # Return the configured logger instance
