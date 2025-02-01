@@ -102,12 +102,11 @@ def setup_logging(verbosity=0, standard_level=None):
     else:
         log_level = CUSTOM_LEVELS.get(verbosity, logging.DEBUG)  # Default to DEBUG
 
-    logging.basicConfig(
-        level=log_level,
-        format=LevelBasedFormatter(),
-        handlers=[logging.StreamHandler(sys.stdout)],
-    )
-
-
-    
+    # Set custom logger class
+    logging.setLoggerClass(CustomLogger)
+    logger = logging.getLogger("nv_logger")
+    logger.setLevel(log_level)
+    handler = logging.StreamHandler()
+    handler.setFormatter(LevelBasedFormatter())
+    logger.addHandler(handler)
     return logger  # Return the configured logger instance
