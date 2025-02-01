@@ -1,13 +1,7 @@
 import argparse
 import json
-import logging
 from src.solvers import tls, kibana, elastic, mongo, oracle, smb, ssh
 from src.modules.vuln_parse import GroupNessusScanOutput
-from src.utilities import logger
-
-solver_dict ={
-    "1": (tls.entry_solver)
-}
 
 def all_solver(args):
     with open(args.file, "r") as f:
