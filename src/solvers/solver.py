@@ -1,7 +1,9 @@
 import argparse
 import json
+import logging
 from src.solvers import tls, kibana, elastic, mongo, oracle, smb, ssh
 from src.modules.vuln_parse import GroupNessusScanOutput
+from src.utilities import logger
 
 solver_dict ={
     "1": (tls.entry_solver)
@@ -10,8 +12,10 @@ solver_dict ={
 def all_solver(args):
     with open(args.file, "r") as f:
         for line in f:
-            print(GroupNessusScanOutput.from_json(json.loads(line)))
+            json_output.append(GroupNessusScanOutput.from_json(json.loads(line)))
     
+
+json_output: list[GroupNessusScanOutput] = []
 
 def main():
     # Create the main parser
@@ -23,12 +27,14 @@ def main():
     # 0 - All
     parser_task1 = subparsers.add_parser("all", help="Runs all solvers from json file")
     parser_task1.add_argument("-f", "--file", type=str, required=True, help="json file name")
+    
     parser_task1.set_defaults(func=all_solver)
 
     # 1 - TLS Misconfigurations
     parser_task1 = subparsers.add_parser("1", help="TLS Misconfigurations (Version and Ciphers)")
-    parser_task1.add_argument("-f", "--file", type=str, required=True, help="Host file name")
-    parser_task1.set_defaults(func=tls.entry_solver)
+    parser_task1.add_argument("-f", "--file", type=str, required=True, help="json file name")
+    parser_task1.add_argument("--allow-white-ciphers", action="store_true", required=False, help="White named ciphers are fine from sslscan output")
+    parser_task1.set_defaults(func=tls.solve)
 
     # 3 - SSH Service Misconfigurations
     parser_task1 = subparsers.add_parser("3", help="SSH Service Misconfigurations")

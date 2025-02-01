@@ -2,21 +2,18 @@ import subprocess
 import re
 import ssl
 import socket
-import argparse
-from src.utilities import get_hosts_from_file
+from src.utilities import get_hosts_from_file, find_scan
+from src.modules.vuln_parse import GroupNessusScanOutput
+from src.utilities import logger
 
-def entry_solver(args):
-    solve(args.file)
-
-def entry_cmd():
-    parser = argparse.ArgumentParser(description="TLS Misconfigurations")
-    parser.add_argument("-f", "--file", type=str, required=True, help="Host file name")
+def solve(args):
+    l= logger.setup_logging(args.verbose)
+    l.v1("s")
+    scan: GroupNessusScanOutput = find_scan(args.file, 1)
+    if not scan: print("No id found in json file")
     
-    args = parser.parse_args()
+    hosts = scan.hosts
     
-    entry_solver(args)
-
-def solve(hosts, white_results_are_good = False):
     weak_versions = {}
     weak_ciphers = {}
     weak_bits = {}
@@ -75,16 +72,27 @@ def solve(hosts, white_results_are_good = False):
                 
                 if cipher_line and line:
                     cipher = line.split()[4]
-                    if "[32m" not in cipher: # If it is not green output
-                        if host not in weak_ciphers:
-                            weak_ciphers[host] = []
-                        weak_ciphers[host].append(re.sub(r'^\x1b\[[0-9;]*m', '', cipher))
-                        continue
-                    bit = line.split()[2] # If it is a green output and bit is low
-                    if "[33m]" in bit:
-                        if host not in weak_bits:
-                            weak_bits[host] = []
-                        weak_bits[host].append(re.sub(r'^\x1b\[[0-9;]*m', '', bit) + "->" + re.sub(r'^\x1b\[[0-9;]*m', '', cipher))
+                    if "[32m" not in cipher: # Non-green
+                        if args.allow_white_ciphers: # We allow white ciphers
+                            if "[" in cipher: # Non-white
+                                if host not in weak_ciphers:
+                                    weak_ciphers[host] = []
+                                weak_ciphers[host].append(re.sub(r'^\x1b\[[0-9;]*m', '', cipher))
+                                bit = line.split()[2]
+                                if "[33m]" in bit: # If it is a green or white output and bit is low
+                                    if host not in weak_bits:
+                                        weak_bits[host] = []
+                                    weak_bits[host].append(re.sub(r'^\x1b\[[0-9;]*m', '', bit) + "->" + re.sub(r'^\x1b\[[0-9;]*m', '', cipher))
+                        else:
+                            if host not in weak_ciphers:
+                                weak_ciphers[host] = []
+                            weak_ciphers[host].append(re.sub(r'^\x1b\[[0-9;]*m', '', cipher))
+                        
+                            bit = line.split()[2] # If it is a green output and bit is low
+                            if "[33m]" in bit:
+                                if host not in weak_bits:
+                                    weak_bits[host] = []
+                                weak_bits[host].append(re.sub(r'^\x1b\[[0-9;]*m', '', bit) + "->" + re.sub(r'^\x1b\[[0-9;]*m', '', cipher))
                         
             
             try:
@@ -95,6 +103,7 @@ def solve(hosts, white_results_are_good = False):
             except ssl.CertificateError as e:
                 if "Hostname mismatch" in e.strerror:
                     wrong_hosts.append(host)
+                else: continue
         except Exception as e: print(f"Error for {host}:", e)
                     
       
@@ -128,5 +137,3 @@ def solve(hosts, white_results_are_good = False):
         for v in expired_cert_hosts:
             print(f"\t{v}")
             
-if __name__ == "__main__":
-    entry_cmd()

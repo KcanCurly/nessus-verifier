@@ -1,8 +1,10 @@
-import os
+import json
 import subprocess
 import re
 import ssl
 import socket
+from src.modules.vuln_parse import GroupNessusScanOutput
+
 
 def savetofile(path, message, mode = "a+"):
     with open(path, mode) as f:
@@ -134,3 +136,11 @@ def control_TLS(hosts, extra_command = "", white_results_are_good = False):
         print("Wrong hostnames on certficate on hosts:")
         for v in wrong_hosts:
             print(f"\t{v}")
+            
+            
+def find_scan(file_path: str, target_id: int):
+    with open(file_path, "r") as file:
+        for line in file:
+            g = GroupNessusScanOutput.from_json(json.loads(line))
+            if g.id == target_id: return g
+    return None  # If not found
