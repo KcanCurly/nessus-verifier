@@ -67,16 +67,17 @@ class LevelBasedFormatter(logging.Formatter):
     """Custom formatter that changes log format based on the logging level."""
     
     FORMATS = {
-        V1:    "[V1] | %(message)s",
-        V2:      "[V2] | %(message)s",
-        V3:   "[V3] | %(message)s",
-        V4:     "[V4] | %(message)s",
-        V5:     "[V5] | %(message)s",
-        logging.DEBUG:    "[DEBUG] |  %(message)s",
-        logging.INFO:     "[INFO] |  %(message)s",
-        logging.WARNING:  "[WARNING] |  %(message)s",
-        logging.ERROR:    "[ERROR] |  %(message)s",
-        logging.CRITICAL: "[CRITICAL] |  %(message)s",
+        V0:    "[V0] %(message)s",
+        V1:    "[V1] %(message)s",
+        V2:      "[V2] %(message)s",
+        V3:   "[V3] %(message)s",
+        V4:     "[V4] %(message)s",
+        V5:     "[V5] %(message)s",
+        logging.DEBUG:    "[DEBUG]  %(message)s",
+        logging.INFO:     "[INFO]  %(message)s",
+        logging.WARNING:  "[WARNING]  %(message)s",
+        logging.ERROR:    "[ERROR]  %(message)s",
+        logging.CRITICAL: "[CRITICAL]  %(message)s",
     }
 
     def format(self, record):
@@ -94,7 +95,7 @@ def setup_logging(verbosity=0, standard_level=None):
     """
     Configure logging with both custom and standard logging levels.
     
-    :param verbosity: int, Number of `-v` flags for custom logging (0-4)
+    :param verbosity: int, Number of `-v` flags for custom logging (0-5)
     :param standard_level: str, Standard logging level ("INFO", "WARNING", etc.)
     """
     if standard_level and standard_level.upper() in DEFAULT_LEVELS:
