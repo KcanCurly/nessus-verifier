@@ -5,7 +5,7 @@ from pathlib import Path
 import subprocess
 import re
 import socket
-from src.utilities import get_hosts_from_file
+from src.utilities.utilities import get_hosts_from_file
 
 pipes = [
     "LSARPC:lsaquerysecobj",

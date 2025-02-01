@@ -5,7 +5,7 @@ import os
 from pathlib import Path
 import re
 import subprocess
-from src.utilities import confirm_prompt, control_TLS
+from src.utilities.utilities import confirm_prompt, control_TLS
 
 
 def userenum(directory_path, config, hosts = "hosts.txt"):

@@ -5,7 +5,7 @@ import struct
 import time
 from pathlib import Path
 import os
-from src.utilities import get_hosts_from_file
+from src.utilities.utilities import get_hosts_from_file
 
 
 def check(directory_path, config, verbose, hosts = "hosts.txt"):

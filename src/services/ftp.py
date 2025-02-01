@@ -7,7 +7,7 @@ import os
 import subprocess
 import re
 from concurrent.futures import ThreadPoolExecutor
-from src.utilities import confirm_prompt, control_TLS, get_hosts_from_file
+from src.utilities.utilities import confirm_prompt, control_TLS, get_hosts_from_file
 
 creds = [
 "anonymous:anonymous",

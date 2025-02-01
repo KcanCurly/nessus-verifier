@@ -4,7 +4,7 @@ import os
 from pathlib import Path
 import requests
 from requests.packages import urllib3  
-from src.utilities import get_hosts_from_file
+from src.utilities.utilities import get_hosts_from_file
 
 # Suppress only the InsecureRequestWarning
 urllib3.disable_warnings(category=urllib3.exceptions.InsecureRequestWarning)

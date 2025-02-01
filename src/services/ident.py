@@ -4,7 +4,7 @@ import os
 from pathlib import Path
 import subprocess
 import re
-from src.utilities import get_hosts_from_file
+from src.utilities.utilities import get_hosts_from_file
 
 ports = [
     "22",

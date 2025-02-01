@@ -6,7 +6,7 @@ from pathlib import Path
 import subprocess
 import re
 from impacket.smbconnection import SMBConnection
-from src.utilities import get_hosts_from_file
+from src.utilities.utilities import get_hosts_from_file
 from smb import SMBConnection as pysmbconn
 
 def null_guest_access_check(hosts: list[str], verbose = False, debug = False):

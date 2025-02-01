@@ -7,7 +7,7 @@ import re
 import imaplib
 import socket
 import ssl
-from src.utilities import get_hosts_from_file
+from src.utilities.utilities import get_hosts_from_file
 
 def check(directory_path, config, args, hosts):
     hosts = get_hosts_from_file(hosts)

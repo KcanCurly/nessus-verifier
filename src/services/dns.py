@@ -11,7 +11,7 @@ import dns.reversename
 import dns.update
 import dns.zone
 import re
-from src.utilities import get_hosts_from_file
+from src.utilities.utilities import get_hosts_from_file
 
 def find_domain_name(ip):
     domain_name_pattern = r"PTR\s(.*?)\s+"
