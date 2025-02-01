@@ -3,7 +3,7 @@ import re
 import ssl
 import socket
 import argparse
-from src.utilities import get_hosts_from_file
+from src.utilities.utilities import get_hosts_from_file
 from src.services import ssh
 from src.modules import vuln_parse
 

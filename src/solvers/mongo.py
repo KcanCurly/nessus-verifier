@@ -1,6 +1,6 @@
 import argparse
 import pymongo
-from src.utilities import get_hosts_from_file
+from src.utilities.utilities import get_hosts_from_file
 from pymongo import MongoClient
 from pymongo.errors import ConnectionFailure, OperationFailure
 
