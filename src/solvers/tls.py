@@ -2,7 +2,7 @@ import subprocess
 import re
 import ssl
 import socket
-from src.utilities import get_hosts_from_file, find_scan
+from src.utilities.utilities import find_scan
 from src.modules.vuln_parse import GroupNessusScanOutput
 from src.utilities import logger
 
@@ -21,8 +21,7 @@ def solve(args):
     expired_cert_hosts = []
     
     expired_cert_re = r"Not valid after:\s+\x1b\[31m(.*)\x1b\[0m"
-    
-    hosts = get_hosts_from_file(hosts)
+
     for host in hosts:
         try:
             ip = host.split(":")[0]
