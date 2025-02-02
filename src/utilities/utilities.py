@@ -151,16 +151,15 @@ def find_scan(file_path: str, target_id: int):
 def get_header_from_url(host, header, verbose=0) -> str | None:
     l= logger.setup_logging(verbose)
     try:
-        resp = requests.get(f"https://{host}", allow_redirects=True, verify=False, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:134.0) Gecko/20100101 Firefox/134.0", "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8", "Accept-Encoding": "gzip, deflate"})
+        resp = requests.get(f"https://{host}", allow_redirects=True, verify=False)
     except Exception:
         try:
-            resp = requests.get(f"http://{host}", allow_redirects=True, verify=False, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:134.0) Gecko/20100101 Firefox/134.0", "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8", "Accept-Encoding": "gzip, deflate"})
+            resp = requests.get(f"http://{host}", allow_redirects=True, verify=False)
         except Exception as e: 
             l.v3(f"Failed to get header {header} from {host}: {e}")
             return None
     except Exception as e: 
         l.v3(f"Failed to get header {header} from {host}: {e}")
         return None
-    for a in resp.headers:
-        print(a)
+
     return resp.headers.get(header)
