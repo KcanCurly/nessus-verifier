@@ -23,6 +23,7 @@ def solve(args):
                 if version not in versions:
                     versions[version] = set()
                 versions[version].add(host)
+            else: print("Version no get")
             
         except Exception as e: print(e)
 
