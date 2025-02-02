@@ -168,7 +168,7 @@ main_creds = [
 
 def version_check(hosts: list[str]):
     protocol_pattern = r"Remote protocol version (.*),"
-    software_pattern = r"remote software version (OpenSSH|dropbear)_.*\s?"
+    software_pattern = r"remote software version (.*)"
     
     for host in hosts:
         ip = host.split(":")[0]
@@ -191,6 +191,8 @@ def version_check(hosts: list[str]):
             
             if software_match:
                 software_version = software_match.group(1)
+                if " " in software_version:
+                    software_version = software_version.split("")[0]
                 if software_version not in versions:
                     versions[software_version] = []
                 versions[software_version].append(ip + ":" + port)
@@ -272,7 +274,6 @@ def ssh_audit_check(hosts: list[str]):
 
 
 def check(directory_path, args, hosts):
-    hosts_path = os.path.join(directory_path, hosts)
     hosts = get_hosts_from_file(hosts)
     
     version_check(hosts)

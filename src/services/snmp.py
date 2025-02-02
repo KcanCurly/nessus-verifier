@@ -4,11 +4,9 @@ import os
 from pathlib import Path
 import subprocess
 import re
-from src.utilities.utilities import get_hosts_from_file
 
 
-def check(directory_path, config, args, hosts):
-    hosts = get_hosts_from_file(hosts, False)
+def check(hosts):
     result = ", ".join(hosts)
     vuln = {}
     command = ["msfconsole", "-q", "-x", f"color false; use auxiliary/scanner/snmp/snmp_login; set RHOSTS {result}; run; exit"]
@@ -48,4 +46,4 @@ def main():
     config.read(args.config)
         
     
-    check(args.directory or os.curdir, config, args, args.filename or "hosts.txt")
+    check(args.filename or "hosts.txt")

@@ -18,6 +18,7 @@ setup(
         "pyaml",
         "pysmb",
         "pymongo",
+        "pyrdp-mitm",
     ],
     classifiers=[
         "Programming Language :: Python :: 3",

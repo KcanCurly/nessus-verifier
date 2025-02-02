@@ -96,25 +96,21 @@ def tls_check(directory_path, config, hosts):
         for t in tls:
             print(f"\t{t}")
             
-def open_relay(directory_path, config, confirm, hosts):
+def open_relay(hosts, confirm, subject, message, client1, client2, in_fake, out_fake, out_real, temp, timeout = 3):
     vuln = {}
-    with open(os.path.join(directory_path, hosts), "r") as file:
-        hosts = [line.strip() for line in file if line.strip()] 
         
     def sendmail(sender, receiver, tag):
-        subject = eval(config["smtp"]["Subject"])
-        message = eval(config["smtp"]["Message"])
-        message = f'Subject: {subject}\n\n{message}'
+        m = f'Subject: {subject}\n\n{message}'
         try:
-            smtp = smtplib.SMTP(ip, port, timeout=5)
-            smtp.sendmail(sender,receiver,message)
+            smtp = smtplib.SMTP(ip, port, timeout=timeout)
+            smtp.sendmail(sender,receiver,m)
             if f"{ip}:{port}" not in vuln:
                 vuln[f"{ip}:{port}"] = []
             vuln[f"{ip}:{port}"].append(tag)
         except smtplib.SMTPServerDisconnected as t: # It could be that server requires TLS/SSL so we need to connect again with TLS
             try:
-                smtp = smtplib.SMTP_SSL(ip, port, timeout=5)
-                smtp.sendmail(sender,receiver,message)
+                smtp = smtplib.SMTP_SSL(ip, port, timeout=timeout)
+                smtp.sendmail(sender,receiver,m)
                 if f"{ip}:{port}" not in vuln:
                     vuln[f"{ip}:{port}"] = []
                 vuln[f"{ip}:{port}"].append(tag)
@@ -125,9 +121,9 @@ def open_relay(directory_path, config, confirm, hosts):
         except smtplib.SMTPSenderRefused as ref: # It could be that server requires starttls
             if "STARTTLS" in ref.smtp_error.decode():
                 try:
-                    smtp = smtplib.SMTP(ip, port, timeout=5)
+                    smtp = smtplib.SMTP(ip, port, timeout=timeout)
                     smtp.starttls()
-                    smtp.sendmail(sender,receiver,message)
+                    smtp.sendmail(sender,receiver,m)
                     if f"{ip}:{port}" not in vuln:
                         vuln[f"{ip}:{port}"] = []
                     vuln[f"{ip}:{port}"].append(tag)
@@ -136,19 +132,12 @@ def open_relay(directory_path, config, confirm, hosts):
         except: pass
     
     
-    client1 = config["smtp"]["Client1"]
-    client2 = config["smtp"]["Client2"]
-    fake_in = config["smtp"]["Fake_in"]
-    real_out = config["smtp"]["Real_out"]
-    fake_out = config["smtp"]["Fake_out"]
-    temp = config["smtp"]["Temp"]
-    
     if not confirm:
         print(f"Client1 is {client1}")
         print(f"Client2 is {client2}")
-        print(f"Fake in is {fake_in}")
-        print(f"Real out is {real_out}")
-        print(f"Fake out is {fake_out}")
+        print(f"In fake is {in_fake}")
+        print(f"Fake out is {out_fake}")
+        print(f"Real out is {out_real}")
         print(f"Temp is {temp}")
         print("Note: You can bypass this prompt by adding --confirm")
         if not confirm_prompt("Do you want to continue with those emails?"):
@@ -157,21 +146,18 @@ def open_relay(directory_path, config, confirm, hosts):
     
     
     for host in hosts:
-        ip = host
-        port = 25
-        if ":" in host:
-            ip = host.split(":")[0]
-            port = host.split(":")[1]
+        ip = host.split(":")[0]
+        port = host.split(":")[1]
             
         
         sendmail(client1, client1, "Client 1 -> Client 1")
         sendmail(client2, client1, "Client 2 -> Client 1")
-        sendmail(fake_in, client1, "Fake In -> Client 1")
-        sendmail(real_out, client1, "Real Out -> Client 1")
-        sendmail(client1, real_out, "Client 1 -> Real Out")
-        sendmail(fake_in, real_out, "Fake In -> Real Out")
-        sendmail(fake_out, client1, "Fake Out -> Client 1")
-        sendmail(fake_out, temp, "Fake Out -> Temporary Mail")
+        sendmail(in_fake, client1, "Fake In -> Client 1")
+        sendmail(out_real, client1, "Out Real -> Client 1")
+        sendmail(client1, out_real, "Client 1 -> Out Real")
+        sendmail(in_fake, out_real, "In Fake -> Out Real")
+        sendmail(out_fake, client1, "Out Fake -> Client 1")
+        sendmail(out_fake, temp, "Out Fake -> Temporary Mail")
     
     if len(vuln) > 0:
         print()
@@ -180,7 +166,7 @@ def open_relay(directory_path, config, confirm, hosts):
             print(f"\t{key}: {", ".join(value)}")
     
             
-def check(directory_path, config, confirm, verbose, hosts = "hosts.txt"):
+def check(directory_path, config, confirm, verbose, hosts):
     if verbose: print("Starting TLS Check")
     tls_check(directory_path, config, hosts)
     if verbose: print("\nStarting TLS Version/Cipher/Bit Check")

@@ -1,7 +1,9 @@
 import argparse
 import json
-from src.solvers import tls, kibana, elastic, mongo, oracle, smb, ssh
+from src.solvers import tls, kibana, elastic, mongo, oracle, smb, ssh, snmp
 from src.modules.vuln_parse import GroupNessusScanOutput
+
+
 
 def all_solver(args):
     with open(args.file, "r") as f:
@@ -26,20 +28,26 @@ def main():
 
     # 1 - TLS Misconfigurations
     parser_task1 = subparsers.add_parser("1", help="TLS Misconfigurations (Version and Ciphers)")
-    parser_task1.add_argument("-f", "--file", type=str, required=True, help="json file name")
+    parser_task1.add_argument("-f", "--file", type=str, required=True, help="JSON file name")
     parser_task1.add_argument("--allow-white-ciphers", action="store_true", required=False, help="White named ciphers are fine from sslscan output")
     parser_task1.set_defaults(func=tls.solve)
 
     # 3 - SSH Service Misconfigurations
     parser_task1 = subparsers.add_parser("3", help="SSH Service Misconfigurations")
-    parser_task1.add_argument("-f", "--file", type=str, required=True, help="Host file name")
-    parser_task1.set_defaults(func=ssh.entry_solver)
+    parser_task1.add_argument("-f", "--file", type=str, required=True, help="JSON file name")
+    parser_task1.set_defaults(func=ssh.solve)
     
     # 5 - SMB Service Misconfigurations
     parser_task1 = subparsers.add_parser("5", help="SMB Service Misconfigurations")
-    parser_task1.add_argument("-f", "--file", type=str, required=True, help="Host file name")
-    parser_task1.set_defaults(func=smb.entry_solver)
+    parser_task1.add_argument("-f", "--file", type=str, required=True, help="JSON file name")
+    parser_task1.set_defaults(func=smb.solve)
         
+    # 6 - SNMP Service Misconfigurations
+    parser_task1 = subparsers.add_parser("5", help="SNMP Service Misconfigurations")
+    parser_task1.add_argument("-f", "--file", type=str, required=True, help="JSON file name")
+    parser_task1.set_defaults(func=smb.solve)    
+    
+    
     # 24 - Kibana
     parser_task1 = subparsers.add_parser("24", help="Kibana")
     parser_task1.add_argument("-f", "--file", type=str, required=True, help="Host file name")

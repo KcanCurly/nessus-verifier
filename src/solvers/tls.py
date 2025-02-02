@@ -8,13 +8,10 @@ from src.utilities import logger
 
 def solve(args):
     l= logger.setup_logging(args.verbose)
-    l.v1("a")
-    l.v2("b")
-    l.v3("c")
-    l.v4("d")
-    l.v5("e")
     scan: GroupNessusScanOutput = find_scan(args.file, 1)
-    if not scan: print("No id found in json file")
+    if not scan: 
+        print("No id found in json file")
+        return
     
     hosts = scan.hosts
     

@@ -3,6 +3,7 @@ import subprocess
 import re
 import ssl
 import socket
+import requests
 from src.modules.vuln_parse import GroupNessusScanOutput
 
 
@@ -144,3 +145,11 @@ def find_scan(file_path: str, target_id: int):
             g = GroupNessusScanOutput.from_json(json.loads(line))
             if g.id == target_id: return g
     return None  # If not found
+
+
+def get_header_from_url(url, header) -> str:
+
+    # Make a GET request to a URL
+    response = requests.get(url, verify=False)
+
+    return response.headers.get(header)
