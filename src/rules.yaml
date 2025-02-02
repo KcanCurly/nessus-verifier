@@ -1623,7 +1623,7 @@
 
 - name: Python Unsupported Version
   id: 23
-  plugin-ids: []
+  plugin-ids: [148367]
   # 148367 - Python Unsupported Version Detection
 
 - name: Kibana
