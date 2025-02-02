@@ -5,7 +5,7 @@ from src.modules.vuln_parse import GroupNessusScanOutput
 
 solver_dict = {
     1: tls,
-    2: smtp_relay,
+    # 2: smtp_relay,
     3: ssh,
     # 4: ntp
     5: smb,
