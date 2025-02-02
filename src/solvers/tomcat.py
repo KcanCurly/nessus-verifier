@@ -27,7 +27,8 @@ def solve(args):
             
             m = re.search(r, resp.text)
             if m:
-                version = m.group(0)
+                version = m.group(1)
+                version = "Apache Tomcat/" + version
                 if version not in versions:
                     versions[version] = set()
                 versions[version].add(host)
