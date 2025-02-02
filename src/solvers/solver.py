@@ -1,6 +1,6 @@
 import argparse
 import json
-from src.solvers import tls, kibana, elastic, mongo, oracle, smb, ssh, snmp, tomcat, apache, nginx, vmware, openssh, smtp_relay
+from src.solvers import tls, kibana, elastic, mongo, oracle, smb, ssh, snmp, tomcat, apache, nginx, vmware, openssh, smtp_relay, mssql
 from src.modules.vuln_parse import GroupNessusScanOutput
 
 solver_dict = {
@@ -18,6 +18,8 @@ solver_dict = {
     12: nginx,
     13: vmware,
     14: openssh,
+    # 15: NFS
+    16: mssql,
 }
 
 def all_solver(args):
