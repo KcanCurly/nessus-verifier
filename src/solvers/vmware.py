@@ -24,8 +24,8 @@ def solve(args):
         matches = re.findall(r, result.stdout)
         for m in matches:
             if m[0] not in versions:
-                versions[m[0]] = []
-            versions[m[0]].append(f"{m[1]}")
+                versions[m[1]] = []
+            versions[m[1]].append(f"{m[0]}")
                 
     except Exception:pass
 
