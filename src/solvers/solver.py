@@ -1,6 +1,6 @@
 import argparse
 import json
-from src.solvers import tls, kibana, elastic, mongo, oracle, smb, ssh, snmp, tomcat, apache, nginx, vmware, openssh, smtp_relay, mssql, idrac
+from src.solvers import php, tls, kibana, elastic, mongo, oracle, smb, ssh, snmp, tomcat, apache, nginx, vmware, openssh, smtp_relay, mssql, idrac, ipmi
 from src.modules.vuln_parse import GroupNessusScanOutput
 
 solver_dict = {
@@ -23,6 +23,8 @@ solver_dict = {
     # 17: mDNS,
     # 18: Obsolete Protocols,
     19: idrac,
+    20: ipmi,
+    21: php,
 }
 
 def all_solver(args):
