@@ -34,7 +34,7 @@ def main():
     parser_task1.set_defaults(func=all_solver)
 
     for k,v in solver_dict.items():
-        k.helper_parse(subparsers)
+        v.helper_parse(subparsers)
 
     # 1 - TLS Misconfigurations
     # parser_task1 = subparsers.add_parser("1", help="TLS Misconfigurations (Version and Ciphers)")
