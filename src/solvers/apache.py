@@ -3,6 +3,11 @@ from src.modules.vuln_parse import GroupNessusScanOutput
 from src.utilities import logger
 import re
 
+def helper_parse(subparser):
+    parser_task1 = subparser.add_parser("11", help="Apache Version")
+    parser_task1.add_argument("-f", "--file", type=str, required=True, help="JSON file name")
+    parser_task1.set_defaults(func=solve) 
+
 def solve(args):
     versions = {}
     

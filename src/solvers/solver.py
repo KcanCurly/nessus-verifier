@@ -1,11 +1,23 @@
 import argparse
 import json
-from src.solvers import tls, kibana, elastic, mongo, oracle, smb, ssh, snmp, tomcat, apache, nginx, vmware, openssh
+from src.solvers import tls, kibana, elastic, mongo, oracle, smb, ssh, snmp, tomcat, apache, nginx, vmware, openssh, smtp_relay
 from src.modules.vuln_parse import GroupNessusScanOutput
 
 solver_dict = {
-    1: tls
-    
+    1: tls,
+    2: smtp_relay,
+    3: ssh,
+    # 4: ntp
+    5: smb,
+    6: snmp,
+    # 7: Cleartext Protocol Detected,
+    # 8: Terminal Services Misconfigurations
+    # 9: Usage of database without password
+    10: tomcat,
+    11: apache,
+    12: nginx,
+    13: vmware,
+    14: openssh,
 }
 
 def all_solver(args):
@@ -36,51 +48,6 @@ def main():
     for k,v in solver_dict.items():
         v.helper_parse(subparsers)
 
-    # 1 - TLS Misconfigurations
-    # parser_task1 = subparsers.add_parser("1", help="TLS Misconfigurations (Version and Ciphers)")
-    # parser_task1.add_argument("-f", "--file", type=str, required=True, help="JSON file name")
-    # parser_task1.add_argument("--allow-white-ciphers", action="store_true", required=False, help="White named ciphers are fine from sslscan output")
-    # parser_task1.set_defaults(func=tls.solve)
-
-    # 3 - SSH Service Misconfigurations
-    parser_task1 = subparsers.add_parser("3", help="SSH Service Misconfigurations")
-    parser_task1.add_argument("-f", "--file", type=str, required=True, help="JSON file name")
-    parser_task1.set_defaults(func=ssh.solve)
-    
-    # 5 - SMB Service Misconfigurations
-    parser_task1 = subparsers.add_parser("5", help="SMB Service Misconfigurations")
-    parser_task1.add_argument("-f", "--file", type=str, required=True, help="JSON file name")
-    parser_task1.set_defaults(func=smb.solve)
-        
-    # 6 - SNMP Service Misconfigurations
-    parser_task1 = subparsers.add_parser("6", help="SNMP Service Misconfigurations")
-    parser_task1.add_argument("-f", "--file", type=str, required=True, help="JSON file name")
-    parser_task1.set_defaults(func=snmp.solve)    
-    
-    # 10 - Apache Tomcat Version
-    parser_task1 = subparsers.add_parser("10", help="Apache Tomcat Version")
-    parser_task1.add_argument("-f", "--file", type=str, required=True, help="JSON file name")
-    parser_task1.set_defaults(func=tomcat.solve) 
-    
-    # 11 - Apache Version
-    parser_task1 = subparsers.add_parser("11", help="Apache Version")
-    parser_task1.add_argument("-f", "--file", type=str, required=True, help="JSON file name")
-    parser_task1.set_defaults(func=apache.solve) 
-    
-    # 12 - Nginx Version
-    parser_task1 = subparsers.add_parser("12", help="Nginx Version")
-    parser_task1.add_argument("-f", "--file", type=str, required=True, help="JSON file name")
-    parser_task1.set_defaults(func=nginx.solve) 
-    
-    # 13 - VMWare Product Versions
-    parser_task1 = subparsers.add_parser("13", help="VMWare Product Versions")
-    parser_task1.add_argument("-f", "--file", type=str, required=True, help="JSON file name")
-    parser_task1.set_defaults(func=vmware.solve)
-    
-    # 14 - OpenSSH Versions
-    parser_task1 = subparsers.add_parser("14", help="OpenSSH Versions")
-    parser_task1.add_argument("-f", "--file", type=str, required=True, help="JSON file name")
-    parser_task1.set_defaults(func=openssh.solve)
     
     # 24 - Kibana
     parser_task1 = subparsers.add_parser("24", help="Kibana")
