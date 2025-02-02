@@ -25,7 +25,7 @@ def solve(args):
         try:
             try:
                 resp = requests.get(f"https://{host}", allow_redirects=True, verify=False)
-            except requests.exceptions.SSLError:
+            except Exception:
                 try:
                     resp = requests.get(f"http://{host}", allow_redirects=True, verify=False)
                 except: continue

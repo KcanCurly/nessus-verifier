@@ -2,9 +2,10 @@ from src.utilities.utilities import find_scan
 from src.modules.vuln_parse import GroupNessusScanOutput
 from src.utilities import logger
 import requests
+import re
 
 def helper_parse(subparser):
-    parser_task1 = subparser.add_parser("19", help="iDRAC")
+    parser_task1 = subparser.add_parser("22", help="Apache Tomcat Version")
     parser_task1.add_argument("-f", "--file", type=str, required=True, help="JSON file name")
     parser_task1.set_defaults(func=solve) 
 
@@ -12,32 +13,35 @@ def solve(args):
     versions = {}
     
     l= logger.setup_logging(args.verbose)
-    scan: GroupNessusScanOutput = find_scan(args.file, 19)
+    scan: GroupNessusScanOutput = find_scan(args.file, 22)
     if not scan: 
         print("No id found in json file")
         return
     
-    for host in scan.hosts:
+    r = r'"version":"(.*)","commit"'
+    
+    hosts = scan.hosts
+    for host in hosts:
         try:
             try:
-                resp = requests.get(f"https://{host}/sysmgmt/2015/bmc/info", allow_redirects=True, verify=False)
+                resp = requests.get(f"https://{host}", allow_redirects=True, verify=False)
             except Exception:
                 try:
-                    resp = requests.get(f"http://{host}/sysmgmt/2015/bmc/info", allow_redirects=True, verify=False)
+                    resp = requests.get(f"http://{host}", allow_redirects=True, verify=False)
                 except: continue
             
-            version = resp.json()["Attributes"]["FwVer"]
-            if version:
+            m = re.search(r, resp.text)
+            if m:
+                version = m.group(1)
+                version = "Grafana " + version
                 if version not in versions:
                     versions[version] = set()
                 versions[version].add(host)
-            
-        except Exception as e: print(e)
-
+        except Exception as e: l.v3(f"Grafana Version check failed for {host}: {e}")
 
     
     if len(versions) > 0:
-        print("Detected iDRAC versions:")
+        print("Detected Grafana Versions:")
         for key, value in versions.items():
             print(f"{key}:")
             for v in value:
