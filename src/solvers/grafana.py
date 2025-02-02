@@ -18,7 +18,7 @@ def solve(args):
         print("No id found in json file")
         return
     
-    r = r'"version":"(.*)","commit"'
+    r = r'Grafana v(.*) \('
     
     hosts = scan.hosts
     for host in hosts:
@@ -32,7 +32,7 @@ def solve(args):
             
             m = re.search(r, resp.text)
             if m:
-                version = m.group(0)
+                version = m.group(1)
                 version = "Grafana " + version
                 if version not in versions:
                     versions[version] = set()
