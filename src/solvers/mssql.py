@@ -56,30 +56,12 @@ def solve(args):
                             if z not in versions:
                                 versions[z] = set()
                             versions[z].add(host)
-                        else:
-                            print("Product or version information not found.")
-                    else:
-                        print("ms-sql-info script did not return any data.")
-                else:
-                    print("Port 1433 is not open or not running MSSQL.")
-            else:
-                print(f"Host {host} is not reachable or did not respond to the scan.")
-        except Exception as e: print(e)
-        header = get_header_from_url(host, "Server")
-        if header:
-            m = re.search(r, header)
-            if m:
-                m = m.group(1)
-                if " " in m:
-                    m = m.split()[0]
-                m = "nginx " + m
-                if m not in versions:
-                    versions[m] = set()
-                versions[m].add(host)
+        except Exception as e: pass #print(e)
+
 
     
     if len(versions) > 0:
-        print("Detected Ngnix Versions:")
+        print("Detected MSSQL Versions:")
         for key, value in versions.items():
             print(f"{key}:")
             for v in value:
