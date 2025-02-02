@@ -143,6 +143,7 @@ def find_scan(file_path: str, target_id: int):
     with open(file_path, "r") as file:
         for line in file:
             g = GroupNessusScanOutput.from_json(json.loads(line))
+            print(g.id)
             if g.id == target_id: return g
     return None  # If not found
 

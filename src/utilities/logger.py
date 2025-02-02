@@ -96,9 +96,7 @@ def setup_logging(verbosity=0, standard_level=None):
     if standard_level and standard_level.upper() in DEFAULT_LEVELS:
         log_level = DEFAULT_LEVELS[standard_level.upper()]
     else:
-        print(verbosity)
         log_level = CUSTOM_LEVELS.get(verbosity, logging.DEBUG)  # Default to DEBUG
-        print(log_level)
 
     # Set custom logger class
     logging.setLoggerClass(CustomLogger)
