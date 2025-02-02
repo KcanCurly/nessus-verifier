@@ -147,9 +147,13 @@ def find_scan(file_path: str, target_id: int):
     return None  # If not found
 
 
-def get_header_from_url(url, header) -> str:
+def get_header_from_url(host, header) -> str | None:
+    try:
+        resp = requests.get(f"https://{host}", allow_redirects=True, verify=False)
+    except requests.exceptions.SSLError:
+        try:
+            resp = requests.get(f"http://{host}", allow_redirects=True, verify=False)
+        except: return None
 
-    # Make a GET request to a URL
-    response = requests.get(url, verify=False)
 
-    return response.headers.get(header)
+    return resp.headers.get(header)

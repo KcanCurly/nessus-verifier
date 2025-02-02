@@ -1,6 +1,6 @@
 import argparse
 import json
-from src.solvers import tls, kibana, elastic, mongo, oracle, smb, ssh, snmp, tomcat
+from src.solvers import tls, kibana, elastic, mongo, oracle, smb, ssh, snmp, tomcat, apache
 from src.modules.vuln_parse import GroupNessusScanOutput
 
 
@@ -51,6 +51,11 @@ def main():
     parser_task1 = subparsers.add_parser("10", help="Apache Tomcat Version")
     parser_task1.add_argument("-f", "--file", type=str, required=True, help="JSON file name")
     parser_task1.set_defaults(func=tomcat.solve) 
+    
+    # 11 - Apache Version
+    parser_task1 = subparsers.add_parser("11", help="Apache Version")
+    parser_task1.add_argument("-f", "--file", type=str, required=True, help="JSON file name")
+    parser_task1.set_defaults(func=apache.solve) 
     
     # 24 - Kibana
     parser_task1 = subparsers.add_parser("24", help="Kibana")
