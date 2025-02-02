@@ -16,7 +16,7 @@ def solve(args):
     r = r"\[\+\] (.*) - Identified (.*)"
     
     hosts = scan.hosts
-    result = ", ".join(hosts)
+    result = ", ".join(h.split(":")[0] for h in hosts)
     command = ["msfconsole", "-q", "-x", f"color false; use auxiliary/scanner/vmware/esx_fingerprint; set RHOSTS {result}; run; exit"]
     try:
         result = subprocess.run(command, text=True, capture_output=True)
