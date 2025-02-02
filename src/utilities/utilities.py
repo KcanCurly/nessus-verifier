@@ -3,6 +3,7 @@ import subprocess
 import re
 import ssl
 import socket
+from wsgiref import headers
 import requests
 from src.modules.vuln_parse import GroupNessusScanOutput
 from src.utilities import logger
@@ -160,4 +161,6 @@ def get_header_from_url(host, header, verbose=0) -> str | None:
     except Exception as e: 
         l.v3(f"Failed to get header {header} from {host}: {e}")
         return None
+    for a in resp.headers:
+        print(a)
     return resp.headers.get(header)
