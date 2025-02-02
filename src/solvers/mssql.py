@@ -5,7 +5,7 @@ import re
 import nmap
 
 def helper_parse(subparser):
-    parser_task1 = subparser.add_parser("16", help="Nginx Version")
+    parser_task1 = subparser.add_parser("16", help="MSSQL Version")
     parser_task1.add_argument("-f", "--file", type=str, required=True, help="JSON file name")
     parser_task1.set_defaults(func=solve) 
 
@@ -29,12 +29,12 @@ def solve(args):
         try:
             ip = host.split(":")[0]
             port = host.split(":")[1]
-            nm.scan(ip, arguments=f'-p {port} --script ms-sql-info')
+            nm.scan(ip, port, arguments=f'--script ms-sql-info')
             
             if ip in nm.all_hosts():
                 nmap_host = nm[ip]
-                if 'tcp' in host and 1433 in host['tcp']:
-                    tcp_info = host['tcp'][1433]
+                if 'tcp' in nmap_host and 1433 in nmap_host['tcp']:
+                    tcp_info = nmap_host['tcp'][1433]
                     if 'script' in tcp_info and 'ms-sql-info' in tcp_info['script']:
                         # Extract the ms-sql-info output
                         ms_sql_info = tcp_info['script']['ms-sql-info']
