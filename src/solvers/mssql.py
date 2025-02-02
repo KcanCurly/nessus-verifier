@@ -45,7 +45,9 @@ def solve(args):
 
                         # Look for product and version in the output
                         for line in ms_sql_info.splitlines():
+                            print(line)
                             if "Product:" in line:
+                                
                                 product_name = line.split(":")[1].strip()
                             if "Version:" in line:
                                 version_number = line.split(":")[1].strip()
