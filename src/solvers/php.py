@@ -18,7 +18,7 @@ def solve(args):
     
     for host in scan.hosts:
         try:
-            version = get_header_from_url(host, "X-Powered-By")
+            version = get_header_from_url(host, "x-powered-by")
             if version:
                 if version not in versions:
                     versions[version] = set()
