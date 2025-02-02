@@ -32,7 +32,7 @@ def solve(args):
                     resp = requests.get(f"http://{host}/sysmgmt/2015/bmc/info", allow_redirects=True, verify=False)
                 except: continue
             
-            version = resp.json["Attributes"]["FwVer"]
+            version = resp.json()["Attributes"]["FwVer"]
             if version:
                 if version not in versions:
                     versions[version] = set()
