@@ -1,9 +1,7 @@
 import argparse
 import json
-from src.solvers import tls, kibana, elastic, mongo, oracle, smb, ssh, snmp, tomcat, apache, nginx
+from src.solvers import tls, kibana, elastic, mongo, oracle, smb, ssh, snmp, tomcat, apache, nginx, vmware
 from src.modules.vuln_parse import GroupNessusScanOutput
-
-
 
 def all_solver(args):
     with open(args.file, "r") as f:
@@ -19,6 +17,7 @@ def main():
     parser.add_argument("-v", "--verbose", action="count", default=0, help="Increase verbosity level (-v, -vv, -vvv, -vvvv, -vvvvvv)")
     parser.add_argument("--debug", action="store_true", help="Enable debug mode")
     subparsers = parser.add_subparsers(dest="command", help="Available subcommands")
+    
     
     # 0 - All
     parser_task1 = subparsers.add_parser("all", help="Runs all solvers from json file")
@@ -61,6 +60,11 @@ def main():
     parser_task1 = subparsers.add_parser("12", help="Nginx Version")
     parser_task1.add_argument("-f", "--file", type=str, required=True, help="JSON file name")
     parser_task1.set_defaults(func=nginx.solve) 
+    
+    # 13 - VMWare Product Versions
+    parser_task1 = subparsers.add_parser("13", help="VMWare Product Versions")
+    parser_task1.add_argument("-f", "--file", type=str, required=True, help="JSON file name")
+    parser_task1.set_defaults(func=vmware.solve) 
     
     # 24 - Kibana
     parser_task1 = subparsers.add_parser("24", help="Kibana")

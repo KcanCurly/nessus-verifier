@@ -1,5 +1,4 @@
 import logging
-import sys
 
 # Standard logging levels
 DEFAULT_LEVELS = {

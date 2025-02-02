@@ -5,7 +5,7 @@ import ssl
 import socket
 import requests
 from src.modules.vuln_parse import GroupNessusScanOutput
-
+from src.utilities import logger
 
 def savetofile(path, message, mode = "a+"):
     with open(path, mode) as f:
@@ -147,13 +147,17 @@ def find_scan(file_path: str, target_id: int):
     return None  # If not found
 
 
-def get_header_from_url(host, header) -> str | None:
+def get_header_from_url(host, header, verbose=0) -> str | None:
+    l= logger.setup_logging(verbose)
     try:
         resp = requests.get(f"https://{host}", allow_redirects=True, verify=False)
     except requests.exceptions.SSLError:
         try:
             resp = requests.get(f"http://{host}", allow_redirects=True, verify=False)
-        except: return None
-
-
+        except Exception as e: 
+            l.v3(f"Failed to get header {header} from {host}: {e}")
+            return None
+    except Exception as e: 
+        l.v3(f"Failed to get header {header} from {host}: {e}")
+        return None
     return resp.headers.get(header)
