@@ -1,30 +1,23 @@
 import re
-import argparse
-import requests
-import urllib3
 import subprocess
-from src.utilities.utilities import get_hosts_from_file
+from src.utilities.utilities import find_scan
+from src.modules.vuln_parse import GroupNessusScanOutput
+from src.utilities import logger
 
-urllib3.disable_warnings(category=urllib3.exceptions.InsecureRequestWarning)
 
-def entry_solver(args):
-    solve(args.file)
+def helper_parse(subparser):
+    parser_task1 = subparser.add_parser("27", help="Oracle Database")
+    parser_task1.add_argument("-f", "--file", type=str, required=True, help="JSON file name")
+    parser_task1.set_defaults(func=solve) 
 
-def entry_cmd():
-    parser = argparse.ArgumentParser(description="Oracle Database")
-    parser.add_argument("-f", "--file", type=str, required=True, help="Host file name")
-    
-    args = parser.parse_args()
-    
-    entry_solver(args)
-
-def solve(hosts, white_results_are_good = False):
+def solve(args):
     versions: dict[str, str] = {}
-    
+    l= logger.setup_logging(args.verbose)
+    scan: GroupNessusScanOutput = find_scan(args.file, 27)
     
     version_regex = r"Version (\d+\.\d+\.\d+\.\d+\.\d+)"
-    hosts = get_hosts_from_file(hosts)
-    for host in hosts:
+
+    for host in scan.hosts:
         ip = host.split(":")[0]
         port = host.split(":")[1]
         try:
@@ -49,7 +42,3 @@ def solve(hosts, white_results_are_good = False):
             for v in value:
                 print(f"\t{v}")
     
-    
-            
-if __name__ == "__main__":
-    entry_cmd()

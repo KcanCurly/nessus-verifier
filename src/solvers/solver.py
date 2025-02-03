@@ -1,5 +1,4 @@
 import argparse
-import json
 from src.solvers import grafana, php, python, tls, kibana, elastic, mongo, oracle, smb, ssh, snmp, tomcat, apache, nginx, vmware, openssh, smtp_relay, mssql, idrac, ipmi
 from src.modules.vuln_parse import GroupNessusScanOutput
 
@@ -27,13 +26,15 @@ solver_dict = {
     21: php,
     22: grafana,
     23: python,
+    24: kibana,
+    25: elastic,
+    26: mongo,
+    27: oracle,
 }
 
 def all_solver(args):
-    ids = []
-    with open(args.file, "r") as f:
-        for line in f:
-            ids.append(GroupNessusScanOutput.from_json(json.loads(line)).id)
+    for k,v in solver_dict.items():
+        v.solve(args)
             
     
     
@@ -57,28 +58,6 @@ def main():
     for k,v in solver_dict.items():
         v.helper_parse(subparsers)
 
-    
-    # 24 - Kibana
-    parser_task1 = subparsers.add_parser("24", help="Kibana")
-    parser_task1.add_argument("-f", "--file", type=str, required=True, help="Host file name")
-    parser_task1.set_defaults(func=kibana.entry_solver)
-    
-    # 25 - Elastic
-    parser_task1 = subparsers.add_parser("25", help="Elastic")
-    parser_task1.add_argument("-f", "--file", type=str, required=True, help="Host file name")
-    parser_task1.set_defaults(func=elastic.entry_solver)
-    
-    # 26 - MongoDB
-    parser_task1 = subparsers.add_parser("26", help="MongoDB")
-    parser_task1.add_argument("-f", "--file", type=str, required=True, help="Host file name")
-    parser_task1.set_defaults(func=mongo.entry_solver)
-    
-    # 27 - Oracle Database 
-    parser_task1 = subparsers.add_parser("27", help="Oracle Database")
-    parser_task1.add_argument("-f", "--file", type=str, required=True, help="Host file name")
-    parser_task1.set_defaults(func=oracle.entry_solver)
-    
-    
     args = parser.parse_args()
     
     if hasattr(args, "func"):

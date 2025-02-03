@@ -1,24 +1,19 @@
-import argparse
-import pymongo
-from src.utilities.utilities import get_hosts_from_file
 from pymongo import MongoClient
-from pymongo.errors import ConnectionFailure, OperationFailure
+from src.utilities.utilities import find_scan
+from src.modules.vuln_parse import GroupNessusScanOutput
+from src.utilities import logger
 
-def entry_solver(args):
-    solve(args.file)
+def helper_parse(subparser):
+    parser_task1 = subparser.add_parser("26", help="MongoDB")
+    parser_task1.add_argument("-f", "--file", type=str, required=True, help="JSON file name")
+    parser_task1.set_defaults(func=solve) 
 
-def entry_cmd():
-    parser = argparse.ArgumentParser(description="MongoDB")
-    parser.add_argument("-f", "--file", type=str, required=True, help="Host file name")
-    
-    args = parser.parse_args()
-    
-    entry_solver(args)
 
-def solve(hosts, white_results_are_good = False):
+def solve(args):
     versions: dict[str, str] = {}
-    hosts = get_hosts_from_file(hosts)
-    for host in hosts:
+    l= logger.setup_logging(args.verbose)
+    scan: GroupNessusScanOutput = find_scan(args.file, 26)
+    for host in scan.hosts:
         try:
             ip = host.split(":")[0]
             port = host.split(":")[1]
@@ -38,6 +33,3 @@ def solve(hosts, white_results_are_good = False):
                 print(f"\t{v}")
     
     
-            
-if __name__ == "__main__":
-    entry_cmd()
