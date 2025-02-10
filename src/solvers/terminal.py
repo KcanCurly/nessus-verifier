@@ -230,15 +230,25 @@ ONLY_RDP_SUPPORTED_MITM = 3
 WEAK_RDP_ENCRYPTION_SUPPORTED = 4
 NULL_RDP_ENCRYPTION_SUPPORTED = 5
 FIPS_SUPPORTED_BUT_NOT_MANDATED = 6
-LU_ISSUES = {
-    NLA_SUPPORTED_BUT_NOT_MANDATED_DOS: 'NLA supported but not mandated DoS',
-    NLA_NOT_SUPPORTED_DOS: 'NLA not supported DoS',
-    SSL_SUPPORTED_BUT_NOT_MANDATED_MITM: 'SSL supported but not mandated MitM',
-    ONLY_RDP_SUPPORTED_MITM: 'Only RDP supported MitM',
-    WEAK_RDP_ENCRYPTION_SUPPORTED: 'Weak RDP encryption supported',
-    NULL_RDP_ENCRYPTION_SUPPORTED: 'Null RDP encryption supported',
-    FIPS_SUPPORTED_BUT_NOT_MANDATED: 'FIPS supported but not mandated',
-}
+# LU_ISSUES = {
+#     NLA_SUPPORTED_BUT_NOT_MANDATED_DOS: 'NLA supported but not mandated DoS',
+#     NLA_NOT_SUPPORTED_DOS: 'NLA not supported DoS',
+#     SSL_SUPPORTED_BUT_NOT_MANDATED_MITM: 'SSL supported but not mandated MitM',
+#     ONLY_RDP_SUPPORTED_MITM: 'Only RDP supported MitM',
+#     WEAK_RDP_ENCRYPTION_SUPPORTED: 'Weak RDP encryption supported',
+#     NULL_RDP_ENCRYPTION_SUPPORTED: 'Null RDP encryption supported',
+#     FIPS_SUPPORTED_BUT_NOT_MANDATED: 'FIPS supported but not mandated',
+# }
+
+LU_ISSUES = [
+    'NLA supported but not mandated',
+    'NLA not supported',
+    'SSL supported but not mandated',
+    'Only RDP supported MitM',
+    'Weak RDP encryption supported',
+    'Null RDP encryption supported',
+    'FIPS supported but not mandated',
+]
 
 #may not only be for x224 connection, maybe rename to RDPSocket
 class RDPSocket:
@@ -712,7 +722,6 @@ def solve(args):
             if rdpc.issues:
                 z = ""
                 for i in rdpc.issues:
-                    print(3)
                     z += f"\t{LU_ISSUES[i]}"
                 vuln[host] = z
         except Exception as e: print(traceback.format_exc())
