@@ -450,29 +450,31 @@ class MCSConnectInitial:
 # Responses:
 class x224ConnectionConfirm:# response to X.224 connection
     """X.224 Connection Confirm PDU"""
-    def __init__(self, resp):
+    def __init__(self, resp: bytes):  # Ensure resp is bytes
         self.resp = resp
-        self.ln = len(resp) # use as check for response type
-        if len(resp) != 11 and len(resp) != 19:
-            raise ResponseError('X.224 connection confirm PDU of unexpected length (%d)' % self.ln)
+        self.ln = len(resp)  # Use as a check for response type
+        
+        if self.ln not in (11, 19):  # Pythonic check
+            raise ResponseError(f'X.224 connection confirm PDU of unexpected length ({self.ln})')
+        
         self.tpktheader = tpktHeader(resp[0:4])
         self.x224ccf = x224Ccf(resp[4:11])
 
-        # see 3.3.5.3.2, rpd_ned_data SHOULD be returned, but not always
-        if len(resp) == 11: #(4)tpktHeader, (7)x224Ccf
+        # RDP_NEG_DATA SHOULD be returned, but not always
+        if self.ln == 11:  # (4)tpktHeader, (7)x224Ccf
             self.rdp_neg_data = None
 
-        if len(resp) == 19: # (4)tpktHeader, (7)x224Ccf, (8)RDP_NEG_RSP/RDP_NEG_FAILURE
-            # check RDP NEG type
-            # rdp_neg_type = struct.unpack('<B', resp[11])[0]
-            rdp_neg_type = resp[11]
+        elif self.ln == 19:  # (4)tpktHeader, (7)x224Ccf, (8)RDP_NEG_RSP/RDP_NEG_FAILURE
+
+            rdp_neg_type = resp[11]  # Directly use integer value
+
             # self.rdp_neg_data may be RDP_NEG_RSP or RDP_NEG_FAILURE object
             if rdp_neg_type == RDP_NEG_TYPE_RSP:
                 self.rdp_neg_data = RDP_NEG_RSP(resp[11:19])
             elif rdp_neg_type == RDP_NEG_TYPE_FAILURE:
                 self.rdp_neg_data = RDP_NEG_FAILURE(resp[11:19])
             else:
-                raise ResponseError('Unknown RDP_NEG_TYPE (%d)' % rdp_neg_type)
+                raise ResponseError(f'Unknown RDP_NEG_TYPE ({rdp_neg_type})')
 
 
 class MCSConnectResponse:#response to MCS connection
