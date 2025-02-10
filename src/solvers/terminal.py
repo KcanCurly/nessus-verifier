@@ -498,7 +498,7 @@ class MCSConnectResponse:#response to MCS connection
         #self.x224data = x224Data(resp[4:7] # not yet implemented
         if self.ln < 8:
            raise ResponseError('MCS response of unexpected length (%d)' % self.ln)
-        self.decoded_resp = decoder.decode(resp[7:])[1]
+        self.decoded_resp = decoder.decode(resp[7:])[0]
         # self.decoded_resp
         try:
             security_data = re.search("\x02\x0c..(.{16})", self.decoded_resp, re.DOTALL).groups()[0]
