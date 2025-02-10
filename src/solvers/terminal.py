@@ -708,9 +708,11 @@ def solve(args):
             
             rdpc = RDPConfig(ip, int(port), 3)
             rdpc.run_tests()
-            
+            print(1)
             if rdpc.issues:
+                print(2)
                 for i in rdpc.issues:
+                    print(3)
                     z += f"\t{LU_ISSUES[i]}"
                 vuln[host] = z
         except Exception as e: print(e)
