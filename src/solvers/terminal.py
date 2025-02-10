@@ -700,8 +700,7 @@ def solve(args):
         return
     
     hosts = scan.hosts
-    
-    
+
     for host in hosts:
         try:
             ip = host.split(":")[0]
@@ -714,7 +713,7 @@ def solve(args):
                 for i in rdpc.issues:
                     z += f"\t{LU_ISSUES[i]}"
                 vuln[host] = z
-        except: pass
+        except Exception as e: print(e)
         
     if len(vuln) > 0:
         print("Terminal Services Misconfiguration detected:")
