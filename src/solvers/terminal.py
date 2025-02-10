@@ -263,8 +263,7 @@ class RDPSocket:
     def send(self, pdu):
         """Send specified PDU"""
         try:
-            # sbytes = self.s.send(pdu)
-            sbytes = self.s.send(pdu.encode())
+            sbytes = self.s.send(pdu)
             if sbytes != len(pdu):
                 raise ConnectionError('Could not send RDP payload')
             return self.s.recv(1024)
@@ -575,7 +574,7 @@ def encryption_support(rdpsocket):
             # check for response length 11
             x224ConnectionConfirm(resp)
             resp = rdpsocket.send(MCSConnectInitial(em).pdu)
-            mcsr = MCSConnectResponse(resp)
+            mcsr = MCSConnectResponse(resp.encode())
             if mcsr.ts_ud_sc_sec1.em not in methods:
                 methods.append(mcsr.ts_ud_sc_sec1.em)
             if mcsr.ts_ud_sc_sec1.el not in levels:
