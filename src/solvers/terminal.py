@@ -121,7 +121,7 @@
 import argparse
 import socket
 import struct
-import time
+import traceback
 import re
 from pyasn1.codec.ber import decoder
 from src.utilities.utilities import find_scan
@@ -598,7 +598,7 @@ class RDPConfig:
         self.issues = []
         # Try to connect
         try:
-            self.rdpsocket = RDPSocket(self.hostname, self.port, )
+            self.rdpsocket = RDPSocket(self.hostname, self.port, self.timeout)
             self.alive = True
         except ConnectionError:
             self.alive = False
@@ -705,7 +705,7 @@ def solve(args):
         try:
             ip = host.split(":")[0]
             port  = host.split(":")[1]
-            
+            print(0)
             rdpc = RDPConfig(ip, int(port), 3)
             rdpc.run_tests()
             print(1)
@@ -715,7 +715,7 @@ def solve(args):
                     print(3)
                     z += f"\t{LU_ISSUES[i]}"
                 vuln[host] = z
-        except Exception as e: print(e)
+        except Exception as e: print(traceback.format_exc())
         
     if len(vuln) > 0:
         print("Terminal Services Misconfiguration detected:")
