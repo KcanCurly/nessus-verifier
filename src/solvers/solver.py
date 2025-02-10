@@ -1,5 +1,5 @@
 import argparse
-from src.solvers import grafana, php, python, tls, kibana, elastic, mongo, oracle, smb, ssh, snmp, tomcat, apache, nginx, vmware, openssh, smtp_relay, mssql, idrac, ipmi
+from src.solvers import grafana, php, python, tls, kibana, elastic, mongo, oracle, smb, ssh, snmp, tomcat, apache, nginx, vmware, openssh, smtp_relay, mssql, idrac, ipmi, terminal
 from src.modules.vuln_parse import GroupNessusScanOutput
 
 solver_dict = {
@@ -10,7 +10,7 @@ solver_dict = {
     5: smb,
     6: snmp,
     # 7: Cleartext Protocol Detected,
-    # 8: Terminal Services Misconfigurations
+    8: terminal,
     # 9: Usage of database without password
     10: tomcat,
     11: apache,

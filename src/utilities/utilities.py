@@ -3,7 +3,6 @@ import subprocess
 import re
 import ssl
 import socket
-from wsgiref import headers
 import requests
 from src.modules.vuln_parse import GroupNessusScanOutput
 from src.utilities import logger
@@ -15,10 +14,8 @@ def savetofile(path, message, mode = "a+"):
 def get_hosts_from_file(name, get_ports = True):
     try:
         with open(name, "r") as file:
-            if get_ports: return [line.strip() for line in file if line.strip()] 
-            else: 
-                h = [line.strip() for line in file if line.strip()] 
-                return [line.split(":")[0] for line in h]
+            if get_ports: return list(set(line.strip() for line in file)) 
+            else: return list(set(line.strip().split(":")[0] for line in file)) 
     except: return None
     
 def confirm_prompt(prompt="Are you sure?", suppress = False):
@@ -44,11 +41,8 @@ def control_TLS(hosts, extra_command = "", white_results_are_good = False):
     weak_bits = {}
     wrong_hosts = []
     for host in hosts:
-        ip = host
-        port = "21"
-        if ":" in host:
-            ip = host.split(":")[0]
-            port  = host.split(":")[1]
+        ip = host.split(":")[0]
+        port  = host.split(":")[1]
             
         if extra_command:
             command = ["sslscan", extra_command, "-no-fallback", "--no-renegotiation", "--no-group", "--no-check-certificate", "--no-heartbleed", "--iana-names", "--connect-timeout=3", host]
@@ -57,7 +51,6 @@ def control_TLS(hosts, extra_command = "", white_results_are_good = False):
         if "Connection refused" in result.stderr or "enabled" not in result.stdout:
             continue
         
-        host = ip + ":" + port
         lines = result.stdout.splitlines()
         protocol_line = False
         cipher_line = False

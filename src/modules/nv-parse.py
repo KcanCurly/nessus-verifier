@@ -1,6 +1,7 @@
 import xml.etree.ElementTree as ET
 import os
 import argparse
+import re
 
 # Function to parse the Nessus file (.nessus format) and extract services and associated hosts
 def parse_nessus_file(file_path):
@@ -9,6 +10,7 @@ def parse_nessus_file(file_path):
 
     # Dictionary to store services and their associated hosts
     services = {}
+    urls = set()
 
     # Iterate through all host elements in the XML
     for host in root.findall(".//Report/ReportHost"):
@@ -18,7 +20,16 @@ def parse_nessus_file(file_path):
         for item in host.findall(".//ReportItem"):
             service_name = item.attrib.get('svc_name', '').lower()
             port = item.attrib.get('port', '')
+            
+            if item.attrib.get("pluginID") == '24260' and item.attrib.get("pluginName") == "HyperText Transfer Protocol (HTTP) Information":
+                # Parse the plugin output to extract SSL information
 
+                ssl_match = re.search(r"SSL\s+:\s+(yes|no)", item.findtext('plugin_output'))
+                if ssl_match:
+                    ssl = ssl_match.group(1)
+                    url = f"http{'s' if ssl == 'yes' else ''}://{host_ip}:{port}"
+                    urls.add(url)
+                    
             # Skip services ending with "?" (uncertain services)
             if service_name == "general":
                 continue
@@ -35,10 +46,10 @@ def parse_nessus_file(file_path):
             # Add host IP to the service's list
             services[service_name].add(f"{host_ip}:{port}")
 
-    return services
+    return (services, urls)
 
 # Function to create directories and save hosts in 'hosts.txt'
-def save_services_and_hosts(services):
+def save_services(services):
     output_dir = 'ports'
 
     # Ensure the output directory exists
@@ -55,12 +66,24 @@ def save_services_and_hosts(services):
         with open(os.path.join(service_dir, 'hosts.txt'), 'w') as f:
             for host in hosts:
                 f.write(f"{host}\n")
-                
+
+def save_urls(urls):
+    output_file = "urls.txt"
+    
+    with open(output_file, 'w') as f:
+        for url in urls:
+            f.write(f"{url}\n")
+    
+    
+
 def main():
     parser = argparse.ArgumentParser(description="nessus-verifier.")
     parser.add_argument("-f", "--file", type=str, required=False, help="Nessus file.")
     args = parser.parse_args()
     nessus_file = args.file
-    services = parse_nessus_file(nessus_file)
-    save_services_and_hosts(services)
-    # handle_services()
+    (services, urls) = parse_nessus_file(nessus_file)
+    save_services(services)
+    save_urls(urls)
+    
+if __name__ == "__main__":
+    main()

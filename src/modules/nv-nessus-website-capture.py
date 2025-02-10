@@ -6,8 +6,6 @@ parser = argparse.ArgumentParser(description="Script to process URL and page arg
 parser.add_argument("-p", "--pages", type=int, required=True, help="The page parameter to process")
 args = parser.parse_args()
 
-
-
 l = []
 
 for page in range(1, args.pages+1):
