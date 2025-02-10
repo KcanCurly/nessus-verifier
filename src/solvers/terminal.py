@@ -493,6 +493,7 @@ class MCSConnectResponse:#response to MCS connection
     def __init__(self, resp):
         self.resp = resp
         self.ln = len(resp) # use as check for response type
+        print(self.ln)
         self.tpktheader = tpktHeader(resp[0:4])
         #self.x224data = x224Data(resp[4:7] # not yet implemented
         if self.ln < 8:
