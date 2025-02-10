@@ -465,7 +465,8 @@ class x224ConnectionConfirm:# response to X.224 connection
 
         if len(resp) == 19: # (4)tpktHeader, (7)x224Ccf, (8)RDP_NEG_RSP/RDP_NEG_FAILURE
             # check RDP NEG type
-            rdp_neg_type = struct.unpack('<B', bytes(resp[11]))[0]
+            # rdp_neg_type = struct.unpack('<B', resp[11])[0]
+            rdp_neg_type = resp[11]
             # self.rdp_neg_data may be RDP_NEG_RSP or RDP_NEG_FAILURE object
             if rdp_neg_type == RDP_NEG_TYPE_RSP:
                 self.rdp_neg_data = RDP_NEG_RSP(resp[11:19])
