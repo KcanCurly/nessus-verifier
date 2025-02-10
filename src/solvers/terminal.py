@@ -707,12 +707,10 @@ def solve(args):
         try:
             ip = host.split(":")[0]
             port  = host.split(":")[1]
-            print(0)
             rdpc = RDPConfig(ip, int(port), 3)
             rdpc.run_tests()
-            print(1)
             if rdpc.issues:
-                print(2)
+                z = ""
                 for i in rdpc.issues:
                     print(3)
                     z += f"\t{LU_ISSUES[i]}"
