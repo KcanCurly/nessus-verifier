@@ -464,6 +464,7 @@ class x224ConnectionConfirm:# response to X.224 connection
     def __init__(self, resp: bytes):  # Ensure resp is bytes
         self.resp = resp
         self.ln = len(resp)  # Use as a check for response type
+        print(len(resp))
         
         if self.ln not in (11, 19):  # Pythonic check
             raise ResponseError(f'X.224 connection confirm PDU of unexpected length ({self.ln})')
@@ -583,6 +584,7 @@ def encryption_support(rdpsocket):
         try:
             rdpsocket.connect()
             resp = rdpsocket.send(x224BasicRequest().pdu)
+            print(resp)
             # check for response length 11
             x224ConnectionConfirm(resp)
             resp = rdpsocket.send(MCSConnectInitial(em).pdu)
