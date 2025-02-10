@@ -274,7 +274,7 @@ class RDPSocket:
             sbytes = self.s.send(pdu)
             if sbytes != len(pdu):
                 raise ConnectionError('Could not send RDP payload')
-            return self.s.recv(1024)
+            return self.s.recv(6000)
             # if no error, can continue to send
         except socket.error as e:
             raise ConnectionError('Bad request or protocol not supported: %s' % e)
@@ -498,7 +498,7 @@ class MCSConnectResponse:#response to MCS connection
         #self.x224data = x224Data(resp[4:7] # not yet implemented
         if self.ln < 8:
            raise ResponseError('MCS response of unexpected length (%d)' % self.ln)
-        self.decoded_resp = decoder.decode(resp[7:])[0]
+        self.decoded_resp = decoder.decode(resp[7:])[1]
         # self.decoded_resp
         try:
             security_data = re.search("\x02\x0c..(.{16})", self.decoded_resp, re.DOTALL).groups()[0]
