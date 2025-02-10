@@ -269,8 +269,7 @@ class RDPSocket:
             return self.s.recv(1024)
             # if no error, can continue to send
         except socket.error as e:
-            if e[0] == 104:
-                raise ConnectionError('Bad request or protocol not supported: %s' % e)
+            print(e)
 
     def disconnect(self, s, pdu=None):
         """Send disconnect request"""
