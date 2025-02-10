@@ -591,7 +591,7 @@ def encryption_support(rdpsocket):
                 methods.append(mcsr.ts_ud_sc_sec1.em)
             if mcsr.ts_ud_sc_sec1.el not in levels:
                 levels.append(mcsr.ts_ud_sc_sec1.el)
-        except Exception: pass
+        # except Exception: pass
         except ConnectionError:
             pass # do nothing, should be an unsupported request
         except ResponseError:
