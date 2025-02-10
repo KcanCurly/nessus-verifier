@@ -586,16 +586,17 @@ def encryption_support(rdpsocket):
             # check for response length 11
             x224ConnectionConfirm(resp)
             resp = rdpsocket.send(MCSConnectInitial(em).pdu)
-            # if not resp: continue
             mcsr = MCSConnectResponse(resp)
             if mcsr.ts_ud_sc_sec1.em not in methods:
                 methods.append(mcsr.ts_ud_sc_sec1.em)
             if mcsr.ts_ud_sc_sec1.el not in levels:
                 levels.append(mcsr.ts_ud_sc_sec1.el)
         
-        except ConnectionError:
+        except ConnectionError as e:
+            print("Connection Error", e)
             pass # do nothing, should be an unsupported request
         except ResponseError:
+            print("Response Error", e)
             raise # something went wrong
         except Exception: pass
     return methods, levels
