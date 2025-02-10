@@ -715,6 +715,13 @@ def solve(args):
                     z += f"\t{LU_ISSUES[i]}"
                 vuln[host] = z
         except: pass
+        
+    if len(vuln) > 0:
+        print("Terminal Services Misconfiguration detected:")
+        for key, value in vuln.items():
+            print(f"{key}:")
+            for v in value:
+                print(v)
 
 issue_descriptions = """
 Title:
