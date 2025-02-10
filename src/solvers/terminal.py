@@ -257,9 +257,7 @@ class RDPSocket:
             print(f"{self.hostname}:{self.port}")
             self.s.connect((self.hostname, self.port))
         except (socket.error, socket.timeout) as e:
-            if e[0] == 111 or e[0] == 'timed out': # 'timed out' is when settimeout is used
-                e = ConnectionError('RDP server not listening: %s:%s' % (self.hostname, self.port))
-            raise ConnectionError('Could not set up connection: %s' % e)
+            print(e)
 
     def send(self, pdu):
         """Send specified PDU"""
@@ -278,10 +276,10 @@ class RDPSocket:
             pdu = x224DisconnectRequest().pdu if not pdu else pdu
             sbytes = s.send(pdu)
             if sbytes != len(pdu):
-                raise ConnectionError('Could not send RDP disconnection payload')
+                print('Could not send RDP disconnection payload')
             s.close()
         except socket.error as e:
-            raise ConnectionError('Error sending disconnect request: %s' % e)
+            print(e)
 
 
 # x224ConnectionRequest, x224ConnectionConfirm, MCSConnectInitial, MCSConnectResponse
