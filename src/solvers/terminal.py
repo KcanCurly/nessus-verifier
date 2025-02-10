@@ -586,6 +586,7 @@ def encryption_support(rdpsocket):
             # check for response length 11
             x224ConnectionConfirm(resp)
             resp = rdpsocket.send(MCSConnectInitial(em).pdu)
+            if not resp: continue
             mcsr = MCSConnectResponse(resp)
             if mcsr.ts_ud_sc_sec1.em not in methods:
                 methods.append(mcsr.ts_ud_sc_sec1.em)
