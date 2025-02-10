@@ -706,7 +706,7 @@ def solve(args):
             ip = host.split(":")[0]
             port  = host.split(":")[1]
             
-            rdpc = RDPConfig(ip, port, 3)
+            rdpc = RDPConfig(ip, int(port), 3)
             rdpc.run_tests()
             
             if rdpc.issues:
