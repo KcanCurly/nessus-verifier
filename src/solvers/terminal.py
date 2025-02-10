@@ -464,7 +464,6 @@ class x224ConnectionConfirm:# response to X.224 connection
     def __init__(self, resp: bytes):  # Ensure resp is bytes
         self.resp = resp
         self.ln = len(resp)  # Use as a check for response type
-        print(len(resp))
         
         if self.ln not in (11, 19):  # Pythonic check
             raise ResponseError(f'X.224 connection confirm PDU of unexpected length ({self.ln})')
