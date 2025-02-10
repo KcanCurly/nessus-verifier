@@ -721,7 +721,7 @@ def solve(args):
             port  = host.split(":")[1]
             rdpc = RDPConfig(ip, int(port), 3)
             rdpc.run_tests()
-            rdpc.results()
+            # rdpc.results()
             if rdpc.issues:
                 vuln[host] = []
                 for i in rdpc.issues:
