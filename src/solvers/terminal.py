@@ -266,7 +266,7 @@ class RDPSocket:
         try:
             self.s.connect((self.hostname, self.port))
         except (socket.error, socket.timeout) as e:
-            print(e)
+            raise ConnectionError('Could not set up connection: %s' % e)
 
     def send(self, pdu):
         """Send specified PDU"""
@@ -277,7 +277,7 @@ class RDPSocket:
             return self.s.recv(1024)
             # if no error, can continue to send
         except socket.error as e:
-            print(e)
+            raise ConnectionError('Bad request or protocol not supported: %s' % e)
 
     def disconnect(self, s, pdu=None):
         """Send disconnect request"""
@@ -285,10 +285,10 @@ class RDPSocket:
             pdu = x224DisconnectRequest().pdu if not pdu else pdu
             sbytes = s.send(pdu)
             if sbytes != len(pdu):
-                print('Could not send RDP disconnection payload')
+                raise ConnectionError('Could not send RDP disconnection payload')
             s.close()
         except socket.error as e:
-            print(e)
+            raise ConnectionError('Error sending disconnect request: %s' % e)
 
 
 # x224ConnectionRequest, x224ConnectionConfirm, MCSConnectInitial, MCSConnectResponse
