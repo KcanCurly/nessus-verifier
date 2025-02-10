@@ -598,7 +598,9 @@ def encryption_support(rdpsocket):
         except ResponseError as z:
             print("Response Error", z)
             raise # something went wrong
-        except Exception as d: print("Other Error", d)
+        except Exception as d: 
+            print("Other Error", d)
+            print(traceback.format_exc())
     return methods, levels
 
 
