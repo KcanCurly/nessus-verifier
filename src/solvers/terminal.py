@@ -652,9 +652,9 @@ class RDPConfig:
             self.issues.append(FIPS_SUPPORTED_BUT_NOT_MANDATED)
 
     def results(self, fmt=None):
-        print ('Target:      %s') % self.hostname
-        print ('Port:        %s') % self.port if not self.port == 3389 else 'Port:        3389 (default)'
-        print ('Host Status: UP') if self.alive else 'Host Status: DOWN'
+        print(f'Target:      {self.hostname}') % self.hostname
+        print(f'Port:        {self.port}')
+        print(f'Host Status: {"UP" if self.alive else 'Host Status: DOWN'}') 
         print
 
         if not self.alive:
@@ -723,7 +723,7 @@ def solve(args):
             port  = host.split(":")[1]
             rdpc = RDPConfig(ip, int(port), 3)
             rdpc.run_tests()
-            # rdpc.results()
+            rdpc.results()
             if rdpc.issues:
                 vuln[host] = []
                 for i in rdpc.issues:
