@@ -264,7 +264,6 @@ class RDPSocket:
         self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)# defaults
         self.s.settimeout(self.timeout)
         try:
-            print(f"{self.hostname}:{self.port}")
             self.s.connect((self.hostname, self.port))
         except (socket.error, socket.timeout) as e:
             print(e)
