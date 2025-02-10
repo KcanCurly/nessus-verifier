@@ -580,14 +580,14 @@ def protocol_support(rdpsocket):
 def encryption_support(rdpsocket):
     methods = []
     levels = []
-    for em in LU_ENCRYPTION_METHOD:
+    for em, _ in LU_ENCRYPTION_METHOD.items():
         try:
             rdpsocket.connect()
             resp = rdpsocket.send(x224BasicRequest().pdu)
-            print(resp)
             # check for response length 11
             x224ConnectionConfirm(resp)
             resp = rdpsocket.send(MCSConnectInitial(em).pdu)
+            print(resp)
             mcsr = MCSConnectResponse(resp)
             if mcsr.ts_ud_sc_sec1.em not in methods:
                 methods.append(mcsr.ts_ud_sc_sec1.em)
