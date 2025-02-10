@@ -652,7 +652,7 @@ class RDPConfig:
             self.issues.append(FIPS_SUPPORTED_BUT_NOT_MANDATED)
 
     def results(self, fmt=None):
-        print(f'Target:      {self.hostname}') % self.hostname
+        print(f'Target:      {self.hostname}')
         print(f'Port:        {self.port}')
         print(f'Host Status: {"UP" if self.alive else 'Host Status: DOWN'}') 
         print
