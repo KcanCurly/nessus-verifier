@@ -722,7 +722,7 @@ def solve(args):
             if rdpc.issues:
                 z = ""
                 for i in rdpc.issues:
-                    z += f"\t{LU_ISSUES[i]}"
+                    z += "\t%s".format(LU_ISSUES[i])
                 vuln[host] = z
         except Exception as e: print(traceback.format_exc())
         
