@@ -595,10 +595,10 @@ def encryption_support(rdpsocket):
         except ConnectionError as e:
             print("Connection Error", e)
             pass # do nothing, should be an unsupported request
-        except ResponseError:
-            print("Response Error", e)
+        except ResponseError as z:
+            print("Response Error", z)
             raise # something went wrong
-        except Exception: pass
+        except Exception as d: print("Other Error", d)
     return methods, levels
 
 
