@@ -58,7 +58,7 @@ def solve(args):
 
         except Exception as e: pass #print(e)
     
-    if vuln > 0:
+    if len(vuln) > 0:
         print("AMQP Plain Authentication Mechanism Detected:")
         for key, value in vuln.items():
             print(f"{key}: {value}")
