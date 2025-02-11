@@ -3,6 +3,7 @@ import re
 from src.utilities.utilities import find_scan
 from src.modules.vuln_parse import GroupNessusScanOutput
 from src.utilities import logger
+import os
 
 code = 8
 
@@ -25,8 +26,9 @@ def solve(args):
             
     for host in scan.hosts:
         try:
-            command = ["perl", "~/rdp-sec-check/rdp-sec-check.pl", host]
-            result = subprocess.run(command, text=True, capture_output=True, shell=True)
+            p = os.path.join(os.path.expanduser("~"), "rdp-sec-check", "rdp-sec-check.pl")
+            command = ["perl", p, host]
+            result = subprocess.run(command, text=True, capture_output=True)
             print(result.stdout)
             print(result.stderr)
             

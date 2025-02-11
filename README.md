@@ -7,9 +7,10 @@ This is a project for penetration testing for nessus service outputs.
 To install:
 
 ```
+cd ~
 pipx install git+https://github.com/KcanCurly/nessus-verifier
 pipx install git+https://github.com/KcanCurly/ssh-whirl
-sudo apt install -y sslscan sshpass ssh-audit dig dnsrecon metasploit-framework ident-user-enum smbclient samba tnscmd10g libnfs-utils cpanminus
+sudo apt install -y sslscan sshpass ssh-audit dig dnsrecon metasploit-framework ident-user-enum smbclient samba tnscmd10g libnfs-utils cpanminus git
 sudo cpanm --notest Encoding::BER
 git clone https://github.com/CiscoCXSecurity/rdp-sec-check
 ```
