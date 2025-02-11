@@ -18,9 +18,7 @@ setup(
         "pyaml",
         "pysmb",
         "pymongo",
-        "pyrdp-mitm",
         "python-nmap",
-        "pyasn1",
     ],
     classifiers=[
         "Programming Language :: Python :: 3",
@@ -56,7 +54,6 @@ setup(
             "nv-smb=src.services.smb:main",
             "nv-rlogin=src.services.rlogin:main",
             "nv-solver=src.solvers.solver:main",
-            "nv-vuln-parse=src.modules.vuln_parse:main"
         ],
     },
 )

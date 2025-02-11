@@ -79,7 +79,6 @@
   # 41028 - SNMP Agent Default Community Name (public)
   # 76474 - SNMP 'GETBULK' Reflection DDoS
   
-
 - name: Cleartext Protocol Detected
   id: 7
   plugin-ids: [87733, 42263, 54582, 98615, 3018, 34324, 15854, 15855, 10891]
