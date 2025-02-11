@@ -31,7 +31,7 @@ def solve(args):
     
     # AMQP
 
-    hosts = scan.hosts["87733"]
+    hosts = scan.sub_hosts.get("87733")
     vuln = {}    
     nm = nmap.PortScanner()
     for host in hosts:
