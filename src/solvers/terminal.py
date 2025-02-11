@@ -22,15 +22,13 @@ def solve(args):
     
     vuln = {}
     
-    issue_re = r"[-] (.*) has issue (.*)"
+    issue_re = r"\[-\] (.*) has issue (.*)"
             
     for host in scan.hosts:
         try:
             p = os.path.join(os.path.expanduser("~"), "rdp-sec-check", "rdp-sec-check.pl")
             command = ["perl", p, host]
             result = subprocess.run(command, text=True, capture_output=True)
-            print(result.stdout)
-            print(result.stderr)
             
             matches = re.findall(issue_re, result.stdout)
             
