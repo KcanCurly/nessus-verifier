@@ -43,7 +43,7 @@ def create_config_file(args):
     allow_white_ciphers = true
     """
     
-    with open(args.output, "wb") as f:
+    with open(args.output, "w") as f:
         f.write(z)
 
 json_output: list[GroupNessusScanOutput] = []
