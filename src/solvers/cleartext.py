@@ -24,7 +24,7 @@ def solve(args):
         return
     
     if args.config:
-        with open(args.config, "r") as f:
+        with open(args.config, "rb") as f:
             data = tomllib.load(f)
     
     hosts = scan.hosts
