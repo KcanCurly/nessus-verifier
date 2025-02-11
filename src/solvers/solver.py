@@ -39,9 +39,9 @@ def all_solver(args):
     
 def create_config_file(args):
     z = """
-    ["1"]
-    allow_white_ciphers = true
-    """
+["1"]
+allow_white_ciphers = true
+"""
     
     with open(args.output, "w") as f:
         f.write(z)
