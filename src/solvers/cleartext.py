@@ -109,6 +109,6 @@ def solve(args):
                     smtp.ehlo()
                     auths = smtp.esmtp_features.get("auth", "")
                     print(f"TLS {auths}")
-                except: pass
-            except: pass
-    except: pass
+                except Exception as e: print(e)
+            except Exception as e: print(e)
+    except Exception as e: print(e)
