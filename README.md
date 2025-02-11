@@ -9,13 +9,17 @@ To install:
 ```
 pipx install git+https://github.com/KcanCurly/nessus-verifier
 pipx install git+https://github.com/KcanCurly/ssh-whirl
-sudo apt install -y sslscan sshpass ssh-audit dig dnsrecon metasploit-framework ident-user-enum smbclient samba tnscmd10g libnfs-utils
+sudo apt install -y sslscan sshpass ssh-audit dig dnsrecon metasploit-framework ident-user-enum smbclient samba tnscmd10g libnfs-utils cpanminus
+sudo cpanm --notest Encoding::BER
+git clone https://github.com/CiscoCXSecurity/rdp-sec-check
 ```
 
 ## Usage
 
 ```
 nv-parse file.nessus
+nv-vuln-parse file.nessus
+nv-solver all
 ```
 
 This will create ports directory with service directories inside, after that you can use smaller modules to target the service directory
@@ -93,3 +97,34 @@ nv-ftp [directory path] [filename of the hosts]
 
 * Microsoft Exchange
   * Check computer name with autodiscover and exchange version with Exchange.asmx
+
+## Implemented Vulnerability Grouping and Solvers
+
+* TLS Misconfigurations
+* SMTP - Open Relay Test (TODO)
+* SSH Service Misconfigurations
+* NTP Mode 6
+* SMB Service Misconfigurations
+* SNMP Service Misconfigurations
+* Cleartext Protocol Detected
+* Terminal Services Misconfigurations
+* Usage of database without password
+* Apache Tomcat
+* Apache Server
+* Nginx
+* VMWare Products
+* OpenSSH
+* NFS (TODO)
+* MSSQL
+* mDNS (TODO)
+* Obsolete Protocols (TODO)
+* iDRAC
+* IPMI
+* PHP
+* Grafana
+* Python Unsupported Version
+* Kibana
+* Elasticsearch
+* MongoDB
+* Oracle Database
+* QueueJumper

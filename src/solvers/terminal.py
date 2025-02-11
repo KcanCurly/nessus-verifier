@@ -493,13 +493,12 @@ class MCSConnectResponse:#response to MCS connection
     def __init__(self, resp):
         self.resp = resp
         self.ln = len(resp) # use as check for response type
-        print(resp)
         self.tpktheader = tpktHeader(resp[0:4])
         #self.x224data = x224Data(resp[4:7] # not yet implemented
         if self.ln < 8:
            raise ResponseError('MCS response of unexpected length (%d)' % self.ln)
-        self.decoded_resp = decoder.decode(resp[8:])[1]
-        # self.decoded_resp
+        self.decoded_resp = decoder.decode(resp[7:])[1]
+
         try:
             security_data = re.search("\x02\x0c..(.{16})", self.decoded_resp, re.DOTALL).groups()[0]
             self.ts_ud_sc_sec1 = TS_UD_SC_SEC1(security_data)
@@ -587,7 +586,6 @@ def encryption_support(rdpsocket):
             # check for response length 11
             x224ConnectionConfirm(resp)
             resp = rdpsocket.send(MCSConnectInitial(em).pdu)
-            print(resp)
             mcsr = MCSConnectResponse(resp)
             if mcsr.ts_ud_sc_sec1.em not in methods:
                 methods.append(mcsr.ts_ud_sc_sec1.em)
@@ -733,7 +731,7 @@ def solve(args):
                 vuln[host] = []
                 for i in rdpc.issues:
                     vuln[host].append(f"\t{LU_ISSUES1[i]}")
-        except Exception as e: print(traceback.format_exc())
+        except Exception as e: pass
         
     if len(vuln) > 0:
         print("Terminal Services Misconfiguration detected:")

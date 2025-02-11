@@ -4,8 +4,7 @@ import os
 import re
 from src.utilities.utilities import confirm_prompt, get_hosts_from_file
 
-protocol1 = []
-versions = {}
+
 
 cve_dict = {
     
@@ -169,7 +168,8 @@ main_creds = [
 def version_check(hosts: list[str]):
     protocol_pattern = r"Remote protocol version (.*),"
     software_pattern = r"remote software version (.*)"
-    
+    protocol1 = []
+    versions = {}
     for host in hosts:
         ip = host.split(":")[0]
         port  = host.split(":")[1]
@@ -186,8 +186,8 @@ def version_check(hosts: list[str]):
             if protocol_match:
                 protocol_version = protocol_match.group(1)
                 if protocol_version != "2.0":
-                    protocol1.append(ip + ":" + port)
-            # else: print(f"Could not found protocol version for {ip + ":" + port}")
+                    protocol1.append(host)
+            # else: print(f"Could not found protocol version for {host}")
             
             if software_match:
                 software_version = software_match.group(1)
@@ -195,8 +195,8 @@ def version_check(hosts: list[str]):
                     software_version = software_version.split("")[0]
                 if software_version not in versions:
                     versions[software_version] = []
-                versions[software_version].append(ip + ":" + port)
-            # else: print(f"Could not found software version for {ip + ":" + port}")
+                versions[software_version].append(host)
+            # else: print(f"Could not found software version for {host")
                 
 
         except Exception as e:

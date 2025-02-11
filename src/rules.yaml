@@ -1,6 +1,6 @@
 - name: IGNORE
   id: 0
-  plugin-ids: [142960, 10114, 34850, 51192, 12085, 11213, 98048, 136929]
+  plugin-ids: [142960, 10114, 34850, 51192, 12085, 11213, 98048, 136929, 57582, 24244, 10759]
   # 142960 - HSTS Missing From HTTPS Server (RFC 6797)
   # 10114 - ICMP Timestamp Request Remote Date Disclosure
   # 34850 - Web Server Uses Basic Authentication Without HTTPS
@@ -9,10 +9,13 @@
   # 11213 - HTTP TRACE / TRACK Methods Allowed
   # 98048 - HTTP TRACE Allowed
   # 136929 - JQuery 1.2 < 3.5.0 Multiple XSS
+  # 57582 - SSL Self-Signed Certificate
+  # 24244 - Microsoft .NET Custom Errors Not Set
+  # 10759 - Web Server HTTP Header Internal IP Disclosure
 
 - name: TLS Misconfigurations
   id: 1
-  plugin-ids: [20007, 104743, 157288, 31705, 66848, 26928, 94437, 65821, 42873, 83738, 81606, 7282, 132675, 7222, 45411, 15901]
+  plugin-ids: [20007, 104743, 157288, 31705, 66848, 26928, 94437, 65821, 42873, 83738, 81606, 7282, 132675, 7222, 45411, 35291, 69551, 15901, 78479, 83875]
   # 20007 - SSL Version 2 and 3 Protocol Detection
   # 104743 - TLS Version 1.0 Protocol Detection
   # 157288 - TLS Version 1.1 Deprecated Protocol
@@ -31,6 +34,8 @@
   # 35291 - SSL Certificate Signed Using Weak Hashing Algorithm
   # 69551 - SSL Certificate Chain Contains RSA Keys Less Than 2048 bits
   # 15901 - SSL Certificate Expiry
+  # 78479 - SSLv3 Padding Oracle On Downgraded Legacy Encryption Vulnerability (POODLE)
+  # 83875 - SSL/TLS Diffie-Hellman Modulus <= 1024 Bits (Logjam)
 
 - name: SMTP - Open Relay Test
   id: 2
@@ -55,22 +60,25 @@
 
 - name: NTP Mode 6
   id: 4
-  plugin-ids: [97861]
+  plugin-ids: [97861, 71783]
   # 97861 - Network Time Protocol (NTP) Mode 6 Scanner
+  # 71783 - Network Time Protocol Daemon (ntpd) monlist Command Enabled DoS
 
 - name: SMB Service Misconfigurations
   id: 5
-  plugin-ids: [57608, 26920]
+  plugin-ids: [57608, 26920, 100464]
   # 57608 - SMB Signing not required
   # 26920 - SMB NULL Session Authentication
+  # 100464 - Microsoft Windows SMBv1 Multiple Vulnerabilities
 
 - name: SNMP Service Misconfigurations
   id: 6
-  plugin-ids: [10264, 27841, 41028]
+  plugin-ids: [10264, 27841, 41028, 76474]
   # 10264 - SNMP Agent Default Community Names
   # 27841 - SNMP GETBULK Large max-repetitions Remote DoS
   # 41028 - SNMP Agent Default Community Name (public)
   # 76474 - SNMP 'GETBULK' Reflection DDoS
+  
 
 - name: Cleartext Protocol Detected
   id: 7
@@ -140,7 +148,7 @@
   5996, 6623, 6832, 6333, 700682, 700672, 5327, 5882, 6624, 5791, 700684, 700690, 700711, 5816, 
   6644, 5794, 5795, 6334, 5790, 6331, 800623, 800618, 800604, 800598, 800625, 800595, 4621, 800610, 800630, 
   800596, 800600, 800630, 800599, 800621, 800619, 800627, 800784, 800626, 800611, 800597, 800608, 
-  800622, 800602, 800617, 800609, 800612, 800783, 800620, 800605, 800606]
+  800622, 800602, 800617, 800609, 800612, 800783, 800620, 800605, 800606, 201848]
   # 171342 - Apache Tomcat SEoL (8.0.x)
   # 178943 - Apache Tomcat SEoL (8.5.x)
   # 126125 - Apache Tomcat 8.5.0 < 8.5.41 DoS
@@ -628,6 +636,7 @@
   # 800620 - Apache Tomcat < 6.0.18 UTF-8 Directory Traversal Arbitrary File Access
   # 800605 - Apache Tomcat 7.0.x < 7.0.22 Multiple Vulnerabilities
   # 800606 - Apache Tomcat 7.0.x < 7.0.30 DIGEST Authentication Multiple Security Weaknesses
+  # 201848 - Apache Tomcat 9.0.0.M1 < 9.0.90
 
 - name: Apache Server Version
   id: 11
@@ -867,7 +876,7 @@
   78108, 71774, 89662, 70879, 89669, 89039, 89663, 89674, 81084, 102698, 74470, 70880, 70886, 89113, 86945, 145090, 89681, 89675, 88906, 129493, 70448, 
   70880, 74470, 87678, 176249, 89666, 89677, 80037, 87676, 89036, 70883, 87941, 70885, 89105, 79862, 89664, 87673, 89106, 70877, 70884, 70878, 87681, 89038, 
   89117, 81083, 83781, 124300, 192466, 168828, 76203, 140039, 89668, 86947, 81085, 89675, 145090, 70886, 86945, 89035, 99129, 89681, 88906, 124300, 129497, 
-  125218, 128035, 201123, 165337, 56997]
+  125218, 128035, 201123, 165337, 56997, 201125]
   # 9597 - VMware vCenter Server Detection via TLS
   # 9596 - VMware vCenter Server Detection
   # 113243 - VMware vCenter Server 6.5 < 6.5 U3n / 6.7 < 6.7 U3l / 7.0 < 7.0 U1c Remote Code Execution
@@ -1036,6 +1045,7 @@
   # 201123 - VMware ESXi 7.0 / 8.0 Authenticaton Bypass (CVE-2024-37085)
   # 165337 - ESXi 6.5 / 6.7 / 7.0 Heap Overflow RCE (VMSA-2022-0001)
   # 56997 - VMware ESX / ESXi Unsupported Version Detection
+  # 201125 - VMware ESXi 7.0 / 8.0 Out-of-Bounds read (CVE-2024-37086)
 
 - name: OpenSSH Versions
   id: 14
