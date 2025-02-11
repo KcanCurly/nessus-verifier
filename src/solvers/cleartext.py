@@ -1,7 +1,7 @@
 import subprocess
 import re
 import ssl
-import socket
+import smtplib
 import tomllib
 from src.utilities.utilities import find_scan
 from src.modules.vuln_parse import GroupNessusScanOutput
@@ -89,3 +89,26 @@ def solve(args):
             for value in vuln:
                 print(f"{value}")
     except Exception as z: print("z", z)
+    
+    
+    # SMTP
+    try:
+        hosts = scan.sub_hosts.get("54582")
+        vuln = {}
+        for host in hosts:
+            ip = host.split(":")[0]
+            port  = host.split(":")[1]
+            try:
+                smtp = smtplib.SMTP(ip, port, timeout=5)
+                smtp.ehlo()
+                auths = smtp.esmtp_features.get("auth", "")
+                print(f"Normal {auths}")
+            except smtplib.SMTPServerDisconnected as t: # It could be that server requires TLS/SSL so we need to connect again with TLS
+                try:
+                    smtp = smtplib.SMTP_SSL(ip, port, timeout=5)
+                    smtp.ehlo()
+                    auths = smtp.esmtp_features.get("auth", "")
+                    print(f"TLS {auths}")
+                except: pass
+            except: pass
+    except: pass
