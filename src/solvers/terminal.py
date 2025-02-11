@@ -26,7 +26,7 @@ def solve(args):
     for host in scan.hosts:
         try:
             command = ["perl", "~/rdp-sec-check/rdp-sec-check.pl", host]
-            result = subprocess.run(command, text=True, capture_output=True)
+            result = subprocess.run(command, text=True, capture_output=True, shell=True)
             print(result.stdout)
             print(result.stderr)
             
