@@ -15,8 +15,8 @@ def helper_parse(subparser):
 def solve(args):
     l= logger.setup_logging(args.verbose)
     scan: GroupNessusScanOutput = find_scan(args.file, code)
-    if not scan and not args.ignore_fail: 
-        print("No id found in json file")
+    if not scan: 
+        if not args.ignore_fail: print("No id found in json file")
         return
     
     vuln = {}
@@ -27,6 +27,8 @@ def solve(args):
         try:
             command = ["perl", "~/rdp-sec-check/rdp-sec-check.pl", host]
             result = subprocess.run(command, text=True, capture_output=True)
+            print(result.stdout)
+            print(result.stderr)
             
             matches = re.findall(issue_re, result.stdout)
             
