@@ -22,11 +22,6 @@ def solve(args):
     vuln = {}
     
     issue_re = r"[-] (.*) has issue (.*)"
-    
-    # We need to create a file for rdp-sec-check.pl
-    with open("temp_hosts.txt", "w") as f:
-        for host in scan.hosts:
-            f.write(host)
             
     for host in scan.hosts:
         try:
@@ -39,7 +34,7 @@ def solve(args):
                 if match[0] not in vuln:
                     vuln[match[0]] = []
                 vuln[match[0]].append(match[1])
-        except: pass
+        except Exception as e: print(e)
             
     if len(vuln) > 0:
         print("Terminal Misconfigurations Detected:")
