@@ -79,15 +79,13 @@ def solve(args):
                 
                 if ip in nm.all_hosts():
                     nmap_host = nm[ip]
-                    for port, details in nm[host]['tcp'].items():
-                        service_name = details['name']
-                        if service_name.lower() == 'telnet':
+                    if  nmap_host['tcp'][int(port)]['name'].lower() == 'telnet':
                             vuln.append(host)
                         
-            except Exception as e: pass #print(e)
+            except Exception as e: print(e)
         
         if len(vuln) > 0:
             print("Unencrypted Telnet Detected:")
             for value in vuln:
                 print(f"{value}")
-    except: pass
+    except Exception as z: print("z", z)
