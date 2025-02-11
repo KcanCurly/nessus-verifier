@@ -82,13 +82,13 @@ def solve(args):
                     if  nmap_host['tcp'][int(port)]['name'].lower() == 'telnet':
                             vuln.append(host)
                         
-            except Exception as e: print(e)
+            except: pass
         
         if len(vuln) > 0:
             print("Unencrypted Telnet Detected:")
             for value in vuln:
                 print(f"{value}")
-    except Exception as z: print("z", z)
+    except: pass
     
     
     # SMTP
@@ -99,13 +99,13 @@ def solve(args):
             ip = host.split(":")[0]
             port  = host.split(":")[1]
             try:
-                smtp = smtplib.SMTP(ip, port, timeout=5)
+                smtp = smtplib.SMTP(ip, int(port), timeout=5)
                 smtp.ehlo()
                 auths = smtp.esmtp_features.get("auth", "")
                 print(f"Normal {auths}")
             except smtplib.SMTPServerDisconnected as t: # It could be that server requires TLS/SSL so we need to connect again with TLS
                 try:
-                    smtp = smtplib.SMTP_SSL(ip, port, timeout=5)
+                    smtp = smtplib.SMTP_SSL(ip, int(port), timeout=5)
                     smtp.ehlo()
                     auths = smtp.esmtp_features.get("auth", "")
                     print(f"TLS {auths}")
