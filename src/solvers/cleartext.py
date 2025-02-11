@@ -8,7 +8,7 @@ from src.modules.vuln_parse import GroupNessusScanOutput
 from src.utilities import logger
 import nmap
 
-code = 1
+code = 7
 
 def helper_parse(subparser):
     parser_task1 = subparser.add_parser(str(code), help="Cleartext Protocol Detected")
