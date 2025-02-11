@@ -24,7 +24,7 @@ def solve(args):
         return
     
     if args.config:
-        with open("config.toml", "rb") as f:
+        with open(args.config, "r") as f:
             data = tomllib.load(f)
             args.allow_white_ciphers = data[str(code)]["allow_white_ciphers"]
     
