@@ -7,6 +7,7 @@ from src.utilities.utilities import find_scan
 from src.modules.vuln_parse import GroupNessusScanOutput
 from src.utilities import logger
 import nmap
+import requests
 
 code = 7
 
@@ -91,7 +92,7 @@ def solve(args):
     except: pass
     
     
-    # SMTP
+    # SMTP (TODO)
     try:
         hosts = scan.sub_hosts.get("54582")
         vuln = {}
@@ -112,3 +113,24 @@ def solve(args):
                 except Exception as e: print(e)
             except Exception as e: print(e)
     except Exception as e: print(e)
+    
+    # Basic Authentication Without HTTPS
+    try:
+        hosts = scan.sub_hosts.get("98615")
+        vuln = []
+        for host in hosts:
+            ip = host.split(":")[0]
+            port  = host.split(":")[1]
+            try:
+                response = requests.get(f"http://{host}", timeout=5)
+                if response.status_code == 401 and "WWW-Authenticate" in response.headers:
+                    vuln.append(host)
+
+            except Exception as e: print(e)
+            
+        if len(vuln) > 0:
+            print("Basic Authentication Without HTTPS Detected:")
+            for value in vuln:
+                print(f"{value}")
+    except Exception as e: print(e)
+    
