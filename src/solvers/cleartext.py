@@ -1,7 +1,7 @@
-import subprocess
-import re
-import ssl
-import smtplib
+from ftplib import FTP
+from ftplib import Error
+from ftplib import error_perm
+from ftplib import FTP_TLS
 import tomllib
 from src.utilities.utilities import find_scan
 from src.modules.vuln_parse import GroupNessusScanOutput
@@ -91,7 +91,7 @@ def solve(args):
                 print(f"{value}")
     except: pass
     
-    
+    """
     # SMTP (TODO)
     try:
         hosts = scan.sub_hosts.get("54582")
@@ -113,7 +113,7 @@ def solve(args):
                 except Exception as e: print(e)
             except Exception as e: print(e)
     except Exception as e: print(e)
-    
+    """
     # Basic Authentication Without HTTPS
     try:
         hosts = scan.sub_hosts.get("98615")
@@ -126,11 +126,36 @@ def solve(args):
                 if response.status_code == 401 and "WWW-Authenticate" in response.headers:
                     vuln.append(host)
 
-            except Exception as e: print(e)
+            except: pass
             
         if len(vuln) > 0:
             print("Basic Authentication Without HTTPS Detected:")
             for value in vuln:
                 print(f"{value}")
-    except Exception as e: print(e)
+    except: pass
     
+    # FTP Supports Cleartext Authentication
+    try:
+        hosts = scan.sub_hosts.get("34324")
+        vuln = []
+        for host in hosts:
+            ip = host.split(":")[0]
+            port  = int(host.split(":")[1])
+
+            ftp = FTP()
+            ftp.connect(ip, port)
+            try:
+                l = ftp.login()
+                if "230" in l:
+                    vuln.append(host)
+
+            except error_perm as e:
+                if "530" in str(e):
+                    vuln.append(host)
+            except Exception: pass
+                
+        if len(vuln) > 0:
+            print("FTP Supports Cleartext Authentication:")
+            for value in vuln:
+                print(f"{value}")
+    except: pass

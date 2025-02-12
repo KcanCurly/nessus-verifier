@@ -4,8 +4,6 @@ from ftplib import error_perm
 from ftplib import FTP_TLS
 import argparse
 import os
-import subprocess
-import re
 from concurrent.futures import ThreadPoolExecutor
 from src.utilities.utilities import confirm_prompt, control_TLS, get_hosts_from_file
 
@@ -122,12 +120,9 @@ def bruteforce(args, host):
 def anon(hosts):
     anon = []
     for host in hosts:
-        ip = host
-        port = 21
-        if ":" in host:
-            ip = host.split(":")[0]
-            port  = int(host.split(":")[1])
-        host = ip + ":" + str(port)
+        ip = host.split(":")[0]
+        port  = int(host.split(":")[1])
+
         ftp = FTP()
         ftp.connect(ip, port)
         try:
