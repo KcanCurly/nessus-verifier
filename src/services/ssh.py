@@ -306,7 +306,7 @@ def audit_single(progress: Progress, task_id: TaskID, console: Console, host, ou
                     vuln_cipher.add(line.split()[1][1:])
             elif "vulnerable to the Terrapin attack" in line:
                 is_vul = True
-                vuln_terrapin.add(line.split()[1][1:])
+                vuln_terrapin.add(host)
     
         if is_vul:
             vuln_hosts.add(host)
@@ -339,12 +339,12 @@ def audit(args):
                 futures = [executor.submit(audit_single, overall_progress, overall_task_id, console, host, args.output, args.timeout, args.verbose)]
             results = [f.result() for f in futures]
     for r in results:
-        vuln_kex = vuln_kex | r[0]
-        vuln_mac = vuln_mac | r[1]
-        vuln_key = vuln_key | r[2]
-        vuln_cipher = vuln_cipher | r[3]
-        vuln_hosts = vuln_hosts | r[4]
-        vuln_terrapin = vuln_terrapin | r[5]
+        vuln_kex = vuln_kex.union(r[0])
+        vuln_mac = vuln_mac.union(r[1])
+        vuln_key = vuln_key.union(r[2])
+        vuln_cipher = vuln_cipher.union(r[3])
+        vuln_hosts = vuln_hosts.union(r[4])
+        vuln_terrapin = vuln_terrapin.union(r[5])
     
     
     if len(vuln_kex) > 0:
