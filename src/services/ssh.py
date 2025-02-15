@@ -214,10 +214,10 @@ def audit_single(progress: Progress, task_id: TaskID, console: Console, host: st
         progress.update(task_id, advance=1)
         return Audit_Vuln_Data(host, False, None, None, None, None, None)
 
-def audit_nv(l: list[str], output: str = None, threads: int = 10, timeout: int = 3, verbose: bool = False):
-    overall_progress = get_classic_progress()
+def audit_nv(l: list[str], overall_progress: Progress = None, console: Console = None, output: str = None, threads: int = 10, timeout: int = 3, verbose: bool = False):
+    if not overall_progress: overall_progress = get_classic_progress()
     overall_task_id = overall_progress.add_task("", start=False)
-    console = get_classic_console(force_terminal=True)
+    if not console: console = get_classic_console(force_terminal=True)
     
     vuln_kex = set()
     vuln_mac = set()
@@ -228,7 +228,7 @@ def audit_nv(l: list[str], output: str = None, threads: int = 10, timeout: int =
     
 
     with Live(overall_progress, console=console):
-        overall_progress.update(overall_task_id, total=len(l))
+        overall_progress.update(overall_task_id, total=len(l), completed=0, modulename="SSH Audit")
         overall_progress.start_task(overall_task_id)
         futures = []
         results: list[Audit_Vuln_Data] = []
@@ -283,11 +283,11 @@ def audit_nv(l: list[str], output: str = None, threads: int = 10, timeout: int =
         for k in vuln_terrapin:
             print(f"    {k}")
 
-def audit_console(args):
-    audit_nv(get_hosts_from_file(args.file), args.output, args.threads, args.timeout, args.verbose)
+def audit_console(args, progress: Progress = None, console: Console = None):
+    audit_nv(get_hosts_from_file(args.file), progress, console, args.output, args.threads, args.timeout, args.verbose, )
 
 
-def version_single(progress: Progress, task_id: TaskID, console: Console, host: str, output: str, timeout: int, verbose: bool) -> Version_Vuln_Data:
+def version_single(progress: Progress, console: Console, task_id: TaskID, host: str, output: str, timeout: int, verbose: bool) -> Version_Vuln_Data:
     ip, port = host.split(":", 1)
     
     protocol_pattern = r"Remote protocol version (.*),"
@@ -322,23 +322,22 @@ def version_single(progress: Progress, task_id: TaskID, console: Console, host: 
         if verbose: console.log(f"Error on {host}: {e}")
         return Version_Vuln_Data(host, version, protocol)
 
-def version_nv(l: list[str], output: str = None, threads: int = 10, timeout: int = 3, verbose: bool = False):
-    overall_progress = get_classic_progress()
+def version_nv(l: list[str], overall_progress: Progress = None, console: Console = None, output: str = None, threads: int = 10, timeout: int = 3, verbose: bool = False):
+    if not overall_progress: overall_progress = get_classic_progress()
     overall_task_id = overall_progress.add_task("", start=False)
-    console = get_classic_console(force_terminal=True)
+    if not console: console = get_classic_console(force_terminal=True)
 
-    
     protocol1 = []
     versions = {}
     
     with Live(overall_progress, console=console):
-        overall_progress.update(overall_task_id, total=len(l))
+        overall_progress.update(overall_task_id, total=len(l), completed= 0, modulename="SSH Version")
         overall_progress.start_task(overall_task_id)
         futures = []
         results: list[Version_Vuln_Data] = []
         with ThreadPoolExecutor(threads) as executor:
             for host in l:
-                future = executor.submit(version_single, overall_progress, overall_task_id, console, host, output, timeout, verbose)
+                future = executor.submit(version_single, overall_progress, console, overall_task_id, host, output, timeout, verbose)
                 futures.append(future)
             for a in as_completed(futures):
                 results.append(a.result())
@@ -365,12 +364,14 @@ def version_nv(l: list[str], output: str = None, threads: int = 10, timeout: int
                 print(f"    {v}")
 
 
-def version_console(args):
-    version_nv(get_hosts_from_file(args.file), args.output, args.threads, args.timeout, args.verbose)
+def version_console(args, progress: Progress = None, console: Console = None):
+    version_nv(get_hosts_from_file(args.file), progress, console, args.output, args.threads, args.timeout, args.verbose)
     
 def all_console(args):
-    audit_console(args)
-    version_console(args)
+    overall_progress = get_classic_progress()
+    console = get_classic_console(force_terminal=True)
+    audit_console(args, overall_progress, console)
+    version_console(args, overall_progress, console)
 
 def main():
     parser = argparse.ArgumentParser(description="SSH module of nessus-verifier.")
