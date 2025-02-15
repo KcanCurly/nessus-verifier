@@ -376,7 +376,7 @@ def main():
     parser = argparse.ArgumentParser(description="SSH module of nessus-verifier.")
     subparsers = parser.add_subparsers(dest="command")
     
-    all_parser = subparsers.add_parser("audit", help="Run all related subcommands")
+    all_parser = subparsers.add_parser("all", help="Run all related subcommands")
     all_parser.add_argument("-f", "--file", type=str, required=False, help="Path to a file containing a list of hosts, each in 'ip:port' format, one per line.")
     all_parser.add_argument("-o", "--output", type=str, required=False, help="Output file.")
     all_parser.add_argument("--timeout", type=int, default=3, help="Timeout (Default = 3).")
