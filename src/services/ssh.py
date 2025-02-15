@@ -5,7 +5,6 @@ from src.utilities.utilities import get_hosts_from_file, get_classic_progress, g
 from rich.live import Live
 from rich.progress import Progress, TaskID
 from rich.console import Console
-from rich.layout import Layout
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 cve_dict = {
@@ -182,7 +181,7 @@ def audit_single(progress: Progress, task_id: TaskID, console: Console, host: st
     vuln_mac = []
     vuln_key = []
     vuln_cipher = []
-    console.print(f"Starting processing {host}")
+    if verbose: console.print(f"Starting processing {host}")
     command = ["ssh-audit", "--skip-rate-test", "-t", str(timeout), host]
     try:
         # Execute the command and capture the output
@@ -206,11 +205,12 @@ def audit_single(progress: Progress, task_id: TaskID, console: Console, host: st
                 is_vul = True
                 is_terrapin = True
 
-        console.print(f"Successfully processed {host}: {"Terrapin," if is_terrapin else ""} {str(len(vuln_kex))} KEX, {str(len(vuln_mac))} MAC, {str(len(vuln_key))} HOST-KEY, {str(len(vuln_cipher))} CIPHER")
+        if verbose: console.print(f"Successfully processed {host}: {"Terrapin," if is_terrapin else ""} {str(len(vuln_kex))} KEX, {str(len(vuln_mac))} MAC, {str(len(vuln_key))} HOST-KEY, {str(len(vuln_cipher))} CIPHER")
+        
         progress.update(task_id, advance=1)
         return Audit_Vuln_Data(host, is_vul, is_terrapin, vuln_kex, vuln_mac, vuln_key, vuln_cipher)
     except Exception as e:
-        console.log(f"Error on {host}: {e}")
+        if verbose: console.log(f"Error on {host}: {e}")
         progress.update(task_id, advance=1)
         return Audit_Vuln_Data(host, False, None, None, None, None, None)
 
@@ -296,7 +296,7 @@ def version_single(progress: Progress, task_id: TaskID, console: Console, host: 
     protocol = ""
     version = ""
     
-    console.print(f"Starting processing {host}")
+    if verbose: console.print(f"Starting processing {host}")
     command = ["ssh", "-vvv", "-p", port, "-o", "StrictHostKeyChecking=no", "-o", "BatchMode=yes", ip]
     try:
         # Execute the command and capture the output
@@ -314,19 +314,18 @@ def version_single(progress: Progress, task_id: TaskID, console: Console, host: 
             if " " in version:
                 version = version.split(" ")[0]
 
-        console.print(f"Successfully processed {host}: {f"Version: {version}," if version else "No version found,"} {f"Protocol: {protocol}" if protocol else "No protocol found"}")
+        if verbose: console.print(f"Successfully processed {host}: {f"Version: {version}," if version else "No version found,"} {f"Protocol: {protocol}" if protocol else "No protocol found"}")
         progress.update(task_id, advance=1)
         return Version_Vuln_Data(host, version, protocol)
     except Exception as e:
         progress.update(task_id, advance=1)
-        console.log(f"Error on {host}: {e}")
+        if verbose: console.log(f"Error on {host}: {e}")
         return Version_Vuln_Data(host, version, protocol)
 
 def version_nv(l: list[str], output: str = None, threads: int = 10, timeout: int = 3, verbose: bool = False):
     overall_progress = get_classic_progress()
     overall_task_id = overall_progress.add_task("", start=False)
     console = get_classic_console(force_terminal=True)
-    console.size.height = 10
 
     
     protocol1 = []
@@ -369,10 +368,21 @@ def version_nv(l: list[str], output: str = None, threads: int = 10, timeout: int
 def version_console(args):
     version_nv(get_hosts_from_file(args.file), args.output, args.threads, args.timeout, args.verbose)
     
+def all_console(args):
+    audit_console(args)
+    version_console(args)
 
 def main():
     parser = argparse.ArgumentParser(description="SSH module of nessus-verifier.")
     subparsers = parser.add_subparsers(dest="command")
+    
+    all_parser = subparsers.add_parser("audit", help="Run all related subcommands")
+    all_parser.add_argument("-f", "--file", type=str, required=False, help="Path to a file containing a list of hosts, each in 'ip:port' format, one per line.")
+    all_parser.add_argument("-o", "--output", type=str, required=False, help="Output file.")
+    all_parser.add_argument("--timeout", type=int, default=3, help="Timeout (Default = 3).")
+    all_parser.add_argument("--threads", type=int, default=10, help="Threads (Default = 10).")
+    all_parser.add_argument("-v", "--verbose", action="store_true", help="Enable verbose output")
+    all_parser.set_defaults(func=all_console)
     
     audit_parser = subparsers.add_parser("audit", help="Run ssh-audit on targets")
     audit_parser.add_argument("-f", "--file", type=str, required=False, help="Path to a file containing a list of hosts, each in 'ip:port' format, one per line.")
