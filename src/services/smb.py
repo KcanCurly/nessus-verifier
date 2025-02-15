@@ -1,5 +1,4 @@
 import argparse
-from ast import List
 import configparser
 import os
 from pathlib import Path
@@ -132,12 +131,10 @@ def check(directory_path, config, args, hosts):
 
 def main():
     parser = argparse.ArgumentParser(description="SMB module of nessus-verifier.")
-    parser.add_argument("-d", "--directory", type=str, required=False, help="Directory to process (Default = current directory).")
     parser.add_argument("-f", "--filename", type=str, required=False, help="File that has host:port information.")
-    parser.add_argument("-c", "--config", type=str, required=False, help="Config file.")
     parser.add_argument("-v", "--verbose", action="store_true", help="Verbose")
     
-    
+    subparsers = parser.add_subparsers(dest="command")  # Create subparsers
     args = parser.parse_args()
     
     if not args.config:

@@ -12,6 +12,7 @@
   # 57582 - SSL Self-Signed Certificate
   # 24244 - Microsoft .NET Custom Errors Not Set
   # 10759 - Web Server HTTP Header Internal IP Disclosure
+  # 12224 - Web Server Load Balancer Detection
 
 - name: TLS Misconfigurations
   id: 1

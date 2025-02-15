@@ -19,6 +19,7 @@ setup(
         "pysmb",
         "pymongo",
         "python-nmap",
+        "rich",
     ],
     classifiers=[
         "Programming Language :: Python :: 3",
