@@ -349,8 +349,8 @@ def audit(args):
                 futures = [executor.submit(audit_single, overall_progress, overall_task_id, console, host, args.output, args.timeout, args.verbose)]
             results = [f.result() for f in futures]
     for r in results:
+        print(r.host)
         if r.is_vuln:
-            print(r.host)
             vuln_hosts.add(r.host)
             vuln_kex.update(r.vuln_kex)
             vuln_mac.update(r.vuln_mac)
