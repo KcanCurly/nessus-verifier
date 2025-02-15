@@ -339,12 +339,12 @@ def audit(args):
                 futures = [executor.submit(audit_single, overall_progress, overall_task_id, console, host, args.output, args.timeout, args.verbose)]
             results = [f.result() for f in futures]
     for r in results:
-        vuln_kex = vuln_kex.union(r[0])
-        vuln_mac = vuln_mac.union(r[1])
-        vuln_key = vuln_key.union(r[2])
-        vuln_cipher = vuln_cipher.union(r[3])
-        vuln_hosts = vuln_hosts.union(r[4])
-        vuln_terrapin = vuln_terrapin.union(r[5])
+        vuln_kex.update(r[0])
+        vuln_mac.update(r[1])
+        vuln_key.update(r[2])
+        vuln_cipher.update(r[3])
+        vuln_hosts.update(r[4])
+        vuln_terrapin.update(r[5])
     
     
     if len(vuln_kex) > 0:
