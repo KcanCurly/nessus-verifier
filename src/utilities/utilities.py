@@ -164,4 +164,4 @@ def get_classic_progress():
     return Progress(TimeElapsedColumn(), TextColumn("{task.fields[modulename]}"), BarColumn(), TextColumn("{task.completed}/{task.total}"))
 
 def get_classic_console(force_terminal = False):
-    return Console(height=10, force_terminal=force_terminal)
+    return Console(force_terminal=force_terminal)
