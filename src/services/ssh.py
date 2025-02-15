@@ -307,13 +307,13 @@ def audit_single(progress: Progress, task_id: TaskID, console: Console, host: st
                 is_vul = True
                 
                 if "kex algorithm to remove" in line:
-                    vuln_kex.add(line.split()[1][1:])
+                    vuln_kex.append(line.split()[1][1:])
                 elif "mac algorithm to remove" in line:
-                    vuln_mac.add(line.split()[1][1:])
+                    vuln_mac.append(line.split()[1][1:])
                 elif "key algorithm to remove" in line:
-                    vuln_key.add(line.split()[1][1:])
+                    vuln_key.append(line.split()[1][1:])
                 elif "enc algorithm to remove" in line:
-                    vuln_cipher.add(line.split()[1][1:])
+                    vuln_cipher.append(line.split()[1][1:])
             elif "vulnerable to the Terrapin attack" in line:
                 is_vul = True
                 is_terrapin = True
