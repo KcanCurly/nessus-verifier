@@ -260,7 +260,7 @@ def audit_single(progress: Progress, task_id: TaskID, console: Console, host: st
 def audit_nv(l: list[str], output: str = None, threads: int = 10, timeout: int = 3, verbose: bool = False):
     overall_progress = get_classic_progress()
     overall_task_id = overall_progress.add_task("", start=False)
-    console = get_classic_console()
+    console = Console(force_terminal=True)
     
     vuln_kex = set()
     vuln_mac = set()
@@ -292,6 +292,7 @@ def audit_nv(l: list[str], output: str = None, threads: int = 10, timeout: int =
         if r.is_terrapin:
             vuln_terrapin.add(r.host)
     
+    print()
     if len(vuln_kex) > 0:
         print("Vulnerable KEX algorithms:")
         for k in vuln_kex:
