@@ -355,6 +355,7 @@ def version_nv(l: list[str], output: str = None, threads: int = 10, timeout: int
         for p in protocol1:
             print(f"    {p}")
     
+    versions = dict(sorted(versions.items()))
     if len(versions) > 0:
         print("SSH Versions:")
         for key, value in versions.items():
