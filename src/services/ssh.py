@@ -294,7 +294,7 @@ def audit_single(progress: Progress, task_id: TaskID, console: Console, host: st
     vuln_mac = []
     vuln_key = []
     vuln_cipher = []
-    
+    console.print(f"Starting processing {host}")
     command = ["ssh-audit", "--skip-rate-test", host]
     try:
         # Execute the command and capture the output
