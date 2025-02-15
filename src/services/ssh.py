@@ -391,7 +391,7 @@ def main():
     audit_parser.add_argument("-f", "--file", type=str, required=False, help="Path to a file containing a list of hosts, each in 'ip:port' format, one per line.")
     audit_parser.add_argument("-o", "--output", type=str, required=False, help="Output file.")
     audit_parser.add_argument("--timeout", type=int, default=3, help="Timeout (Default = 3).")
-    audit_parser.set_defaults(func=ssh_audit_check)
+    audit_parser.set_defaults(func=audit)
 
 
     
