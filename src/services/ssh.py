@@ -350,6 +350,7 @@ def audit(args):
             results = [f.result() for f in futures]
     for r in results:
         if r.is_vuln:
+            print(r.host)
             vuln_hosts.add(r.host)
             vuln_kex.update(r.vuln_kex)
             vuln_mac.update(r.vuln_mac)
