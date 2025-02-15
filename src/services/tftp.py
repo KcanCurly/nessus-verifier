@@ -4,7 +4,6 @@ import re
 from src.utilities.utilities import get_hosts_from_file, get_classic_console
 import nmap
 
-
 def brute_nv(l: list[str], output: str = None, threads: int = 10, verbose: bool = False):
     nmap_file = "/usr/share/nmap/nselib/data/tftplist.txt"
     console = get_classic_console()
