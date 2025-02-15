@@ -71,7 +71,7 @@ def brute_nv(l: list[str], output: str = None, threads: int = 10, verbose: bool 
         
 
 def brute_console(args):
-    brute_nv(get_hosts_from_file(args.file, False), args.output, args.threads, args.timeout, args.verbose)
+    brute_nv(get_hosts_from_file(args.file, False), args.output, args.threads, args.verbose)
     
 
 def main():
