@@ -11,6 +11,7 @@ from collections import deque
 from rich.console import Console
 from concurrent.futures import ThreadPoolExecutor
 import threading
+import concurrent.futures
 
 class Audit_Vuln_Data:
     def __init__(self, host: str, is_vuln: bool, is_terrapin: bool, vuln_kex: list[str], vuln_mac: list[str], vuln_key: list[str], vuln_cipher):
@@ -344,11 +345,14 @@ def audit(args):
     with Live(overall_progress, console=console):
         overall_progress.update(overall_task_id, total=len(hosts))
         overall_progress.start_task(overall_task_id)
+        futures = []
         results = []
         with ThreadPoolExecutor(args.threads) as executor:
             for host in hosts:
                 future = executor.submit(audit_single, overall_progress, overall_task_id, console, host, args.output, args.timeout, args.verbose)
-                results.append(future.result())
+                futures.append(future)
+            for a in concurrent.futures.as_completed(futures):
+                results.append(a.result())
                 
     for r in results:
         print(r.host)
