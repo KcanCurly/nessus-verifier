@@ -3,7 +3,7 @@ import argparse
 import re
 from src.utilities.utilities import get_hosts_from_file, get_classic_progress, get_classic_console
 from rich.live import Live
-from rich.progress import TextColumn, Progress, BarColumn, TimeElapsedColumn, TaskID
+from rich.progress import Progress, TaskID
 from rich.console import Console
 from rich.layout import Layout
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -326,6 +326,8 @@ def version_nv(l: list[str], output: str = None, threads: int = 10, timeout: int
     overall_progress = get_classic_progress()
     overall_task_id = overall_progress.add_task("", start=False)
     console = get_classic_console(force_terminal=True)
+    console.size.height = 10
+
     
     protocol1 = []
     versions = {}
@@ -355,7 +357,7 @@ def version_nv(l: list[str], output: str = None, threads: int = 10, timeout: int
         for p in protocol1:
             print(f"    {p}")
     
-    versions = dict(sorted(versions.items()))
+    versions = dict(sorted(versions.items(), reverse=True))
     if len(versions) > 0:
         print("SSH Versions:")
         for key, value in versions.items():
