@@ -216,7 +216,7 @@ def audit_single(progress: Progress, task_id: TaskID, console: Console, host: st
 
 def audit_nv(l: list[str], overall_progress: Progress = None, console: Console = None, output: str = None, threads: int = 10, timeout: int = 3, verbose: bool = False):
     if not overall_progress: overall_progress = get_classic_progress()
-    overall_task_id = overall_progress.add_task("", start=False)
+    overall_task_id = overall_progress.add_task("", start=False, modulename="SSH Audit")
     if not console: console = get_classic_console(force_terminal=True)
     
     vuln_kex = set()
@@ -228,7 +228,7 @@ def audit_nv(l: list[str], overall_progress: Progress = None, console: Console =
     
 
     with Live(overall_progress, console=console):
-        overall_progress.update(overall_task_id, total=len(l), completed=0, modulename="SSH Audit")
+        overall_progress.update(overall_task_id, total=len(l), completed=0)
         overall_progress.start_task(overall_task_id)
         futures = []
         results: list[Audit_Vuln_Data] = []
@@ -324,14 +324,14 @@ def version_single(progress: Progress, console: Console, task_id: TaskID, host: 
 
 def version_nv(l: list[str], overall_progress: Progress = None, console: Console = None, output: str = None, threads: int = 10, timeout: int = 3, verbose: bool = False):
     if not overall_progress: overall_progress = get_classic_progress()
-    overall_task_id = overall_progress.add_task("", start=False)
+    overall_task_id = overall_progress.add_task("", start=False, modulename="SSH Version")
     if not console: console = get_classic_console(force_terminal=True)
 
     protocol1 = []
     versions = {}
     
     with Live(overall_progress, console=console):
-        overall_progress.update(overall_task_id, total=len(l), completed= 0, modulename="SSH Version")
+        overall_progress.update(overall_task_id, total=len(l), completed= 0)
         overall_progress.start_task(overall_task_id)
         futures = []
         results: list[Version_Vuln_Data] = []
