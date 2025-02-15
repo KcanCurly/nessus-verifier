@@ -5,8 +5,12 @@ from src.utilities.utilities import get_hosts_from_file, get_classic_progress, g
 from rich.live import Live
 from rich.progress import TextColumn, Progress, BarColumn, TimeElapsedColumn, TaskID
 from rich.console import Console
+from rich.layout import Layout
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
+cve_dict = {
+    
+}
 
 class Audit_Vuln_Data:
     def __init__(self, host: str, is_vuln: bool, is_terrapin: bool, vuln_kex: list[str], vuln_mac: list[str], vuln_key: list[str], vuln_cipher):
@@ -18,9 +22,11 @@ class Audit_Vuln_Data:
         self.vuln_key = vuln_key
         self.vuln_cipher = vuln_cipher
 
-cve_dict = {
-    
-}
+class Version_Vuln_Data:
+    def __init__(self, host: str, version: str, protocol: str):
+        self.host = host
+        self.version = version
+        self.protocol = protocol
 
 main_creds = [
 "root:calvin",
@@ -170,56 +176,7 @@ main_creds = [
 "rwa:rwa",
 ]
 
-def version_check(hosts: list[str]):
-    protocol_pattern = r"Remote protocol version (.*),"
-    software_pattern = r"remote software version (.*)"
-    protocol1 = []
-    versions = {}
-    for host in hosts:
-        ip = host.split(":")[0]
-        port  = host.split(":")[1]
-
-        command = ["ssh", "-vvv", "-p", port, "-o", "StrictHostKeyChecking=no", "-o", "BatchMode=yes", ip]
-        try:
-            # Execute the command and capture the output
-            result = subprocess.run(command, text=True, capture_output=True)
-            
-            # Find matches using the patterns
-            protocol_match = re.search(protocol_pattern, result.stderr)
-            software_match = re.search(software_pattern, result.stderr)
-            
-            if protocol_match:
-                protocol_version = protocol_match.group(1)
-                if protocol_version != "2.0":
-                    protocol1.append(host)
-            # else: print(f"Could not found protocol version for {host}")
-            
-            if software_match:
-                software_version = software_match.group(1)
-                if " " in software_version:
-                    software_version = software_version.split("")[0]
-                if software_version not in versions:
-                    versions[software_version] = []
-                versions[software_version].append(host)
-            # else: print(f"Could not found software version for {host")
-                
-
-        except Exception as e:
-            # Handle errors (e.g., if the host is unreachable)
-            continue
-    
-    if len(protocol1) > 0:
-        print("Protocol Version 1:")
-        for p in protocol1:
-            print(f"\t{p}")
-    
-    for index, (key, value) in enumerate(versions.items()):
-        print(key + ":")
-        for v in value:
-            print(f"\t{v}")
-    
         
-
 def audit_single(progress: Progress, task_id: TaskID, console: Console, host: str, output: str, timeout: int, verbose: bool) -> Audit_Vuln_Data:
     vuln_kex = []
     vuln_mac = []
@@ -249,7 +206,7 @@ def audit_single(progress: Progress, task_id: TaskID, console: Console, host: st
                 is_vul = True
                 is_terrapin = True
 
-        console.print(f"Successfully processed {host}")
+        console.print(f"Successfully processed {host}: {"Terrapin," if is_terrapin else ""} {str(len(vuln_kex))} KEX, {str(len(vuln_mac))} MAC, {str(len(vuln_key))} HOST-KEY, {str(len(vuln_cipher))} CIPHER")
         progress.update(task_id, advance=1)
         return Audit_Vuln_Data(host, is_vul, is_terrapin, vuln_kex, vuln_mac, vuln_key, vuln_cipher)
     except Exception as e:
@@ -274,7 +231,7 @@ def audit_nv(l: list[str], output: str = None, threads: int = 10, timeout: int =
         overall_progress.update(overall_task_id, total=len(l))
         overall_progress.start_task(overall_task_id)
         futures = []
-        results = []
+        results: list[Audit_Vuln_Data] = []
         with ThreadPoolExecutor(threads) as executor:
             for host in l:
                 future = executor.submit(audit_single, overall_progress, overall_task_id, console, host, output, timeout, verbose)
@@ -292,46 +249,81 @@ def audit_nv(l: list[str], output: str = None, threads: int = 10, timeout: int =
         if r.is_terrapin:
             vuln_terrapin.add(r.host)
     
-    print()
     if len(vuln_kex) > 0:
         print("Vulnerable KEX algorithms:")
         for k in vuln_kex:
-            print(f"\t{k}")
+            print(f"    {k}")
         print()
         
     if len(vuln_mac) > 0:
         print("Vulnerable MAC algorithms:")
         for k in vuln_mac:
-            print(f"\t{k}")
+            print(f"    {k}")
         print()
             
     if len(vuln_key) > 0:
         print("Vulnerable Host-Key algorithms:")
         for k in vuln_key:
-            print(f"\t{k}")
+            print(f"    {k}")
         print()
     
     if len(vuln_cipher) > 0:
         print("Vulnerable Cipher algorithms:")
         for k in vuln_cipher:
-            print(f"\t{k}")
+            print(f"    {k}")
         print()
             
     if len(vuln_hosts) > 0:
         print("Vulnerable hosts:")
         for k in vuln_hosts:
-            print(f"\t{k}")
+            print(f"    {k}")
             
     if len(vuln_terrapin) > 0:
         print("Vulnerable Terraping hosts:")
         for k in vuln_terrapin:
-            print(f"\t{k}")
+            print(f"    {k}")
 
 def audit_console(args):
     audit_nv(get_hosts_from_file(args.file), args.output, args.threads, args.timeout, args.verbose)
 
 
-def version(args):
+def version_single(progress: Progress, task_id: TaskID, console: Console, host: str, output: str, timeout: int, verbose: bool) -> Version_Vuln_Data:
+    ip, port = host.split(":", 1)
+    
+    protocol_pattern = r"Remote protocol version (.*),"
+    software_pattern = r"remote software version (.*)"
+    
+    protocol = ""
+    version = ""
+    
+    console.print(f"Starting processing {host}")
+    command = ["ssh", "-vvv", "-p", port, "-o", "StrictHostKeyChecking=no", "-o", "BatchMode=yes", ip]
+    try:
+        # Execute the command and capture the output
+        result = subprocess.run(command, text=True, capture_output=True)
+        
+        # Find matches using the patterns
+        protocol_match = re.search(protocol_pattern, result.stderr)
+        software_match = re.search(software_pattern, result.stderr)
+        
+        if protocol_match:
+            protocol_version = protocol_match.group(1)
+            protocol = protocol_version
+        
+        if software_match:
+            software_version = software_match.group(1)
+            if " " in software_version:
+                software_version = software_version.split("")[0]
+                version = software_version
+        console.print(f"Successfully processed {host}: {f"Version: {version}," if version else "No version found,"} {f"Protocol: {protocol}" if protocol else "No protocol found"}")
+        progress.update(task_id, advance=1)
+        return Version_Vuln_Data(host, version, protocol)
+    except Exception as e:
+        progress.update(task_id, advance=1)
+        console.log(f"Error on {host}: {e}")
+        return Version_Vuln_Data(host, version, protocol)
+
+def version_nv(l: list[str], output: str = None, threads: int = 10, timeout: int = 3, verbose: bool = False):
     overall_progress = get_classic_progress()
     overall_task_id = overall_progress.add_task("", start=False)
     console = get_classic_console()
@@ -339,6 +331,41 @@ def version(args):
     protocol1 = []
     versions = {}
     
+    with Live(overall_progress, console=console):
+        overall_progress.update(overall_task_id, total=len(l))
+        overall_progress.start_task(overall_task_id)
+        futures = []
+        results: list[Version_Vuln_Data] = []
+        with ThreadPoolExecutor(threads) as executor:
+            for host in l:
+                future = executor.submit(version_single, overall_progress, overall_task_id, console, host, output, timeout, verbose)
+                futures.append(future)
+            for a in as_completed(futures):
+                results.append(a.result())
+             
+    for r in results:
+        if r.protocol and r.protocol != "2.0":
+            protocol1.append(r.host)
+        if r.version:
+            if r.version not in versions:
+                versions[r.version] = []
+            versions[r.version].append(r.host)
+            
+    if len(protocol1) > 0:
+        print("Protocol Version 1:")
+        for p in protocol1:
+            print(f"    {p}")
+    
+    if len(versions) > 0:
+        print("SSH Versions:")
+        for key, value in versions.items():
+            print(f"{key}:")
+            for v in value:
+                print(f"    {v}")
+
+
+def version_console(args):
+    version_nv(get_hosts_from_file(args.file), args.output, args.threads, args.timeout, args.verbose)
     
 
 def main():
@@ -352,9 +379,15 @@ def main():
     audit_parser.add_argument("--threads", type=int, default=10, help="Threads (Default = 10).")
     audit_parser.add_argument("-v", "--verbose", action="store_true", help="Enable verbose output")
     audit_parser.set_defaults(func=audit_console)
-
-
     
+    version_parser = subparsers.add_parser("version", help="Run SSH version check on targets")
+    version_parser.add_argument("-f", "--file", type=str, required=False, help="Path to a file containing a list of hosts, each in 'ip:port' format, one per line.")
+    version_parser.add_argument("-o", "--output", type=str, required=False, help="Output file.")
+    version_parser.add_argument("--timeout", type=int, default=3, help="Timeout (Default = 3).")
+    version_parser.add_argument("--threads", type=int, default=10, help="Threads (Default = 10).")
+    version_parser.add_argument("-v", "--verbose", action="store_true", help="Enable verbose output")
+    version_parser.set_defaults(func=version_console)
+
     args = parser.parse_args()
     if hasattr(args, "func"):
         args.func(args)
