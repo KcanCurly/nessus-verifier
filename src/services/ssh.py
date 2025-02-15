@@ -217,7 +217,7 @@ def audit_single(progress: Progress, task_id: TaskID, console: Console, host: st
 def audit_nv(l: list[str], output: str = None, threads: int = 10, timeout: int = 3, verbose: bool = False):
     overall_progress = get_classic_progress()
     overall_task_id = overall_progress.add_task("", start=False)
-    console = Console(force_terminal=True)
+    console = get_classic_console(force_terminal=True)
     
     vuln_kex = set()
     vuln_mac = set()
@@ -313,7 +313,7 @@ def version_single(progress: Progress, task_id: TaskID, console: Console, host: 
         if software_match:
             software_version = software_match.group(1)
             if " " in software_version:
-                software_version = software_version.split("")[0]
+                software_version = software_version.split(" ")[0]
                 version = software_version
         console.print(f"Successfully processed {host}: {f"Version: {version}," if version else "No version found,"} {f"Protocol: {protocol}" if protocol else "No protocol found"}")
         progress.update(task_id, advance=1)
@@ -326,7 +326,7 @@ def version_single(progress: Progress, task_id: TaskID, console: Console, host: 
 def version_nv(l: list[str], output: str = None, threads: int = 10, timeout: int = 3, verbose: bool = False):
     overall_progress = get_classic_progress()
     overall_task_id = overall_progress.add_task("", start=False)
-    console = get_classic_console()
+    console = get_classic_console(force_terminal=True)
     
     protocol1 = []
     versions = {}

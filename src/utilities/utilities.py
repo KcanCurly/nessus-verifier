@@ -163,5 +163,5 @@ def get_header_from_url(host, header, verbose=0) -> str | None:
 def get_classic_progress():
     return Progress(TimeElapsedColumn(), BarColumn(), TextColumn("{task.completed}/{task.total}"))
 
-def get_classic_console():
-    return Console(height=10)
+def get_classic_console(force_terminal = False):
+    return Console(height=10, force_terminal=force_terminal)
