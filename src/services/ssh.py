@@ -383,7 +383,7 @@ def audit(args):
 
 def main():
     parser = argparse.ArgumentParser(description="SSH module of nessus-verifier.")
-    audit_parser.add_argument("--threads", type=int, default=10, help="Threads (Default = 10).")
+    parser.add_argument("--threads", type=int, default=10, help="Threads (Default = 10).")
     parser.add_argument("-v", "--verbose", action="store_true", help="Enable verbose output")
     subparsers = parser.add_subparsers(dest="command")
     
