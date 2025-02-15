@@ -12,6 +12,16 @@ from rich.console import Console
 from concurrent.futures import ThreadPoolExecutor
 import threading
 
+class Audit_Vuln_Data:
+    def __init__(self, host: str, is_vuln: bool, is_terrapin: bool, vuln_kex: list[str], vuln_mac: list[str], vuln_key: list[str], vuln_cipher):
+        self.host = host
+        self.is_vuln = is_vuln
+        self.is_terrapin = is_terrapin
+        self.vuln_kex = vuln_kex
+        self.vuln_mac = vuln_mac
+        self.vuln_key = vuln_key
+        self.vuln_cipher = vuln_cipher
+
 cve_dict = {
     
 }
@@ -279,19 +289,19 @@ def check(directory_path, args, hosts):
     ssh_audit_check(hosts)
         
 
-def audit_single(progress: Progress, task_id: TaskID, console: Console, host, output, timeout, verbose):
-    vuln_kex = set()
-    vuln_mac = set()
-    vuln_key = set()
-    vuln_cipher = set()
-    vuln_hosts = set()
-    vuln_terrapin = set()
+def audit_single(progress: Progress, task_id: TaskID, console: Console, host: str, output: str, timeout: int, verbose: bool) -> Audit_Vuln_Data:
+    vuln_kex = []
+    vuln_mac = []
+    vuln_key = []
+    vuln_cipher = []
+    
     command = ["ssh-audit", "--skip-rate-test", host]
     try:
         # Execute the command and capture the output
         result = subprocess.run(command, text=True, capture_output=True)
         lines = result.stdout.splitlines()
         is_vul = False
+        is_terrapin = False
         for line in lines:
             if "(rec)" in line:
                 is_vul = True
@@ -306,15 +316,15 @@ def audit_single(progress: Progress, task_id: TaskID, console: Console, host, ou
                     vuln_cipher.add(line.split()[1][1:])
             elif "vulnerable to the Terrapin attack" in line:
                 is_vul = True
-                vuln_terrapin.add(host)
-    
-        if is_vul:
-            vuln_hosts.add(host)
+                is_terrapin = True
+
         console.print(f"Successfully processed {host}")
+        progress.update(task_id, advance=1)
+        return Audit_Vuln_Data(host, is_vul, is_terrapin, vuln_kex, vuln_mac, vuln_key, vuln_cipher)
     except Exception as e:
         console.log(f"Error on {host}: {e}")
-    progress.update(task_id, advance=1)
-    return (vuln_kex, vuln_mac, vuln_key, vuln_cipher, vuln_hosts, vuln_terrapin)
+        progress.update(task_id, advance=1)
+        return Audit_Vuln_Data(host, False, None, None, None, None, None)
 
 def audit(args):
     overall_progress = Progress(
@@ -339,13 +349,14 @@ def audit(args):
                 futures = [executor.submit(audit_single, overall_progress, overall_task_id, console, host, args.output, args.timeout, args.verbose)]
             results = [f.result() for f in futures]
     for r in results:
-        vuln_kex.update(r[0])
-        vuln_mac.update(r[1])
-        vuln_key.update(r[2])
-        vuln_cipher.update(r[3])
-        vuln_hosts.update(r[4])
-        vuln_terrapin.update(r[5])
-    
+        if r.is_vuln:
+            vuln_hosts.add(r.host)
+            vuln_kex.update(r.vuln_kex)
+            vuln_mac.update(r.vuln_mac)
+            vuln_key.update(r.vuln_kex)
+            vuln_cipher.update(r.vuln_cipher)
+        if r.is_terrapin:
+            vuln_terrapin.add(r.host)
     
     if len(vuln_kex) > 0:
         print("Vulnerable KEX algorithms:")
