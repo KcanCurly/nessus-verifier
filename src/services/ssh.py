@@ -344,10 +344,12 @@ def audit(args):
     with Live(overall_progress, console=console):
         overall_progress.update(overall_task_id, total=len(hosts))
         overall_progress.start_task(overall_task_id)
+        results = []
         with ThreadPoolExecutor(args.threads) as executor:
             for host in hosts:
-                futures = [executor.submit(audit_single, overall_progress, overall_task_id, console, host, args.output, args.timeout, args.verbose)]
-            results = [f.result() for f in futures]
+                future = executor.submit(audit_single, overall_progress, overall_task_id, console, host, args.output, args.timeout, args.verbose)
+                results.append(future.result())
+                
     for r in results:
         print(r.host)
         if r.is_vuln:
