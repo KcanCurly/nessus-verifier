@@ -307,14 +307,13 @@ def version_single(progress: Progress, task_id: TaskID, console: Console, host: 
         software_match = re.search(software_pattern, result.stderr)
         
         if protocol_match:
-            protocol_version = protocol_match.group(1)
-            protocol = protocol_version
+            protocol = protocol_match.group(1)
         
         if software_match:
-            software_version = software_match.group(1)
-            if " " in software_version:
-                software_version = software_version.split(" ")[0]
-                version = software_version
+            version = software_match.group(1)
+            if " " in version:
+                version = version.split(" ")[0]
+
         console.print(f"Successfully processed {host}: {f"Version: {version}," if version else "No version found,"} {f"Protocol: {protocol}" if protocol else "No protocol found"}")
         progress.update(task_id, advance=1)
         return Version_Vuln_Data(host, version, protocol)
