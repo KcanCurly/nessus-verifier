@@ -1,7 +1,5 @@
 from ftplib import FTP
-from ftplib import Error
 from ftplib import error_perm
-from ftplib import FTP_TLS
 import tomllib
 from src.utilities.utilities import find_scan
 from src.modules.vuln_parse import GroupNessusScanOutput

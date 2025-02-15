@@ -214,10 +214,10 @@ def audit_single(progress: Progress, task_id: TaskID, console: Console, host: st
         progress.update(task_id, advance=1)
         return Audit_Vuln_Data(host, False, None, None, None, None, None)
 
-def audit_nv(l: list[str], overall_progress: Progress = None, console: Console = None, output: str = None, threads: int = 10, timeout: int = 3, verbose: bool = False):
-    if not overall_progress: overall_progress = get_classic_progress()
+def audit_nv(l: list[str], output: str = None, threads: int = 10, timeout: int = 3, verbose: bool = False):
+    overall_progress = get_classic_progress()
     overall_task_id = overall_progress.add_task("", start=False, modulename="SSH Audit")
-    if not console: console = get_classic_console(force_terminal=True)
+    console = get_classic_console(force_terminal=True)
     
     vuln_kex = set()
     vuln_mac = set()
@@ -254,38 +254,75 @@ def audit_nv(l: list[str], overall_progress: Progress = None, console: Console =
         for k in vuln_kex:
             print(f"    {k}")
         print()
+        if output:
+            with open(output, "a") as file:
+                print("Vulnerable KEX algorithms:", file=file)
+                for k in vuln_kex:
+                    print(f"    {k}", file=file)
+                print(file=file)
         
     if len(vuln_mac) > 0:
         print("Vulnerable MAC algorithms:")
         for k in vuln_mac:
             print(f"    {k}")
         print()
+        if output:
+            with open(output, "a") as file:
+                print("Vulnerable MAC algorithms:", file=file)
+                for k in vuln_kex:
+                    print(f"    {k}", file=file)
+                print(file=file)
             
     if len(vuln_key) > 0:
         print("Vulnerable Host-Key algorithms:")
         for k in vuln_key:
             print(f"    {k}")
         print()
+        if output:
+            with open(output, "a") as file:
+                print("Vulnerable Host-Key algorithms:", file=file)
+                for k in vuln_kex:
+                    print(f"    {k}", file=file)
+                print(file=file)
     
     if len(vuln_cipher) > 0:
         print("Vulnerable Cipher algorithms:")
         for k in vuln_cipher:
             print(f"    {k}")
         print()
+        if output:
+            with open(output, "a") as file:
+                print("Vulnerable Cipher algorithms:", file=file)
+                for k in vuln_kex:
+                    print(f"    {k}", file=file)
+                print(file=file)
             
     if len(vuln_hosts) > 0:
         print("Vulnerable hosts:")
         for k in vuln_hosts:
             print(f"    {k}")
+        print()
+        if output:
+            with open(output, "a") as file:
+                print("Vulnerable hosts:", file=file)
+                for k in vuln_kex:
+                    print(f"    {k}", file=file)
+                print(file=file)
             
     if len(vuln_terrapin) > 0:
         print("Vulnerable Terraping hosts:")
         for k in vuln_terrapin:
             print(f"    {k}")
+        print()
+        if output:
+            with open(output, "a") as file:
+                print("Vulnerable Terraping hosts:", file=file)
+                for k in vuln_kex:
+                    print(f"    {k}", file=file)
+                print(file=file)
 
-def audit_console(args, progress: Progress = None, console: Console = None):
-    audit_nv(get_hosts_from_file(args.file), progress, console, args.output, args.threads, args.timeout, args.verbose, )
-
+def audit_console(args):
+    audit_nv(get_hosts_from_file(args.file), args.output, args.threads, args.timeout, args.verbose, )
 
 def version_single(progress: Progress, console: Console, task_id: TaskID, host: str, output: str, timeout: int, verbose: bool) -> Version_Vuln_Data:
     ip, port = host.split(":", 1)
@@ -322,10 +359,10 @@ def version_single(progress: Progress, console: Console, task_id: TaskID, host: 
         if verbose: console.log(f"Error on {host}: {e}")
         return Version_Vuln_Data(host, version, protocol)
 
-def version_nv(l: list[str], overall_progress: Progress = None, console: Console = None, output: str = None, threads: int = 10, timeout: int = 3, verbose: bool = False):
-    if not overall_progress: overall_progress = get_classic_progress()
+def version_nv(l: list[str], output: str = None, threads: int = 10, timeout: int = 3, verbose: bool = False):
+    overall_progress = get_classic_progress()
     overall_task_id = overall_progress.add_task("", start=False, modulename="SSH Version")
-    if not console: console = get_classic_console(force_terminal=True)
+    console = get_classic_console(force_terminal=True)
 
     protocol1 = []
     versions = {}
@@ -354,6 +391,11 @@ def version_nv(l: list[str], overall_progress: Progress = None, console: Console
         print("Protocol Version 1:")
         for p in protocol1:
             print(f"    {p}")
+        if output:
+            with open(output, "a") as file:
+                print("Protocol Version 1:", file=file)
+                for p in protocol1:
+                    print(f"    {p}", file=file)
     
     versions = dict(sorted(versions.items(), reverse=True))
     if len(versions) > 0:
@@ -362,16 +404,20 @@ def version_nv(l: list[str], overall_progress: Progress = None, console: Console
             print(f"{key}:")
             for v in value:
                 print(f"    {v}")
+        if output:
+            with open(output, "a") as file:
+                print("SSH Versions:", file=file)
+                for key, value in versions.items():
+                    print(f"{key}:", file=file)
+                    for v in value:
+                        print(f"    {v}", file=file)
 
-
-def version_console(args, progress: Progress = None, console: Console = None):
-    version_nv(get_hosts_from_file(args.file), progress, console, args.output, args.threads, args.timeout, args.verbose)
+def version_console(args):
+    version_nv(get_hosts_from_file(args.file), args.output, args.threads, args.timeout, args.verbose)
     
 def all_console(args):
-    overall_progress = get_classic_progress()
-    console = get_classic_console(force_terminal=True)
-    audit_console(args, overall_progress, console)
-    version_console(args, overall_progress, console)
+    audit_console(args)
+    version_console(args)
 
 def main():
     parser = argparse.ArgumentParser(description="SSH module of nessus-verifier.")
@@ -379,7 +425,7 @@ def main():
     
     all_parser = subparsers.add_parser("all", help="Run all related subcommands")
     all_parser.add_argument("-f", "--file", type=str, required=False, help="Path to a file containing a list of hosts, each in 'ip:port' format, one per line.")
-    all_parser.add_argument("-o", "--output", type=str, required=False, help="Output file.")
+    all_parser.add_argument("-o", "--output", type=str, required=False, help="Output file, append if file exists.")
     all_parser.add_argument("--timeout", type=int, default=3, help="Timeout (Default = 3).")
     all_parser.add_argument("--threads", type=int, default=10, help="Threads (Default = 10).")
     all_parser.add_argument("-v", "--verbose", action="store_true", help="Enable verbose output")
@@ -387,7 +433,7 @@ def main():
     
     audit_parser = subparsers.add_parser("audit", help="Run ssh-audit on targets")
     audit_parser.add_argument("-f", "--file", type=str, required=False, help="Path to a file containing a list of hosts, each in 'ip:port' format, one per line.")
-    audit_parser.add_argument("-o", "--output", type=str, required=False, help="Output file.")
+    audit_parser.add_argument("-o", "--output", type=str, required=False, help="Output file, append if file exists.")
     audit_parser.add_argument("--timeout", type=int, default=3, help="Timeout (Default = 3).")
     audit_parser.add_argument("--threads", type=int, default=10, help="Threads (Default = 10).")
     audit_parser.add_argument("-v", "--verbose", action="store_true", help="Enable verbose output")
@@ -395,7 +441,7 @@ def main():
     
     version_parser = subparsers.add_parser("version", help="Run SSH version check on targets")
     version_parser.add_argument("-f", "--file", type=str, required=False, help="Path to a file containing a list of hosts, each in 'ip:port' format, one per line.")
-    version_parser.add_argument("-o", "--output", type=str, required=False, help="Output file.")
+    version_parser.add_argument("-o", "--output", type=str, required=False, help="Output file, append if file exists.")
     version_parser.add_argument("--timeout", type=int, default=3, help="Timeout (Default = 3).")
     version_parser.add_argument("--threads", type=int, default=10, help="Threads (Default = 10).")
     version_parser.add_argument("-v", "--verbose", action="store_true", help="Enable verbose output")

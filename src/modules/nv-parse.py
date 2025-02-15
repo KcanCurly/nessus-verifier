@@ -216,7 +216,7 @@ def main():
     args = parser.parse_args()
 
     # Parse for services and urls
-    (services, urls) = parse_nessus_file(args.file)
+    services, urls = parse_nessus_file(args.file)
     save_services(services)
     save_urls(urls)
     
