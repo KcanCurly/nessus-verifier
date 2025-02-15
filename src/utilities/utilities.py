@@ -6,6 +6,8 @@ import socket
 import requests
 from src.modules.vuln_parse import GroupNessusScanOutput
 from src.utilities import logger
+from rich.progress import TextColumn, Progress, BarColumn, TimeElapsedColumn
+from rich.console import Console
 
 def savetofile(path, message, mode = "a+"):
     with open(path, mode) as f:
@@ -156,3 +158,10 @@ def get_header_from_url(host, header, verbose=0) -> str | None:
         return None
 
     return resp.headers.get(header)
+
+
+def get_classic_progress():
+    return Progress(TimeElapsedColumn(), BarColumn(), TextColumn("{task.completed}/{task.total}"))
+
+def get_classic_console():
+    return Console(height=10)

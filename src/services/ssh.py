@@ -1,17 +1,12 @@
 import subprocess
 import argparse
 import re
-from src.utilities.utilities import get_hosts_from_file
+from src.utilities.utilities import get_hosts_from_file, get_classic_progress, get_classic_console
 from rich.live import Live
 from rich.progress import TextColumn, Progress, BarColumn, TimeElapsedColumn, TaskID
-from rich.table import Column
-from rich.console import Group
-from rich.panel import Panel
-from collections import deque
 from rich.console import Console
-from concurrent.futures import ThreadPoolExecutor
-import threading
-import concurrent.futures
+from concurrent.futures import ThreadPoolExecutor, as_completed
+
 
 class Audit_Vuln_Data:
     def __init__(self, host: str, is_vuln: bool, is_terrapin: bool, vuln_kex: list[str], vuln_mac: list[str], vuln_key: list[str], vuln_cipher):
@@ -223,71 +218,6 @@ def version_check(hosts: list[str]):
         for v in value:
             print(f"\t{v}")
     
-def ssh_audit_check(hosts: list[str]):
-    for host in hosts:
-        command = ["ssh-audit", "--skip-rate-test", host]
-        try:
-            # Execute the command and capture the output
-            result = subprocess.run(command, text=True, capture_output=True)
-            lines = result.stdout.splitlines()
-            is_vul = False
-            for line in lines:
-                if "0;31m(rec)" in line:
-                    is_vul = True
-                    
-                    if "kex" in line:
-                        vuln_kex.add(line.split()[1][1:])
-                    elif "mac" in line:
-                        vuln_mac.add(line.split()[1][1:])
-                    elif "key" in line:
-                        vuln_key.add(line.split()[1][1:])
-                elif "vulnerable to the Terrapin attack" in line:
-                    is_vul = True
-                    vuln_cipher.add(line.split()[1][1:])
-        
-            if is_vul:
-                vuln_hosts.add(host)
-        
-        except Exception as e:
-            # Handle errors (e.g., if the host is unreachable)
-            continue
-    
-    if len(vuln_kex) > 0:
-        print("Vulnerable KEX algorithms found:")
-        for k in vuln_kex:
-            print(f"\t{k}")
-        print()
-        
-    if len(vuln_mac) > 0:
-        print("Vulnerable MAC algorithms found:")
-        for k in vuln_mac:
-            print(f"\t{k}")
-        print()
-            
-    if len(vuln_key) > 0:
-        print("Vulnerable Host-Key algorithms found:")
-        for k in vuln_key:
-            print(f"\t{k}")
-        print()
-    
-    if len(vuln_cipher) > 0:
-        print("Vulnerable Cipher algorithms found:")
-        for k in vuln_cipher:
-            print(f"\t{k}")
-        print()
-            
-    if len(vuln_hosts) > 0:
-        print("Vulnerable hosts found:")
-        for k in vuln_hosts:
-            print(f"\t{k}")
-
-
-
-def check(directory_path, args, hosts):
-    hosts = get_hosts_from_file(hosts)
-    
-    version_check(hosts)
-    ssh_audit_check(hosts)
         
 
 def audit_single(progress: Progress, task_id: TaskID, console: Console, host: str, output: str, timeout: int, verbose: bool) -> Audit_Vuln_Data:
@@ -296,7 +226,7 @@ def audit_single(progress: Progress, task_id: TaskID, console: Console, host: st
     vuln_key = []
     vuln_cipher = []
     console.print(f"Starting processing {host}")
-    command = ["ssh-audit", "--skip-rate-test", host]
+    command = ["ssh-audit", "--skip-rate-test", "-t", str(timeout), host]
     try:
         # Execute the command and capture the output
         result = subprocess.run(command, text=True, capture_output=True)
@@ -327,12 +257,10 @@ def audit_single(progress: Progress, task_id: TaskID, console: Console, host: st
         progress.update(task_id, advance=1)
         return Audit_Vuln_Data(host, False, None, None, None, None, None)
 
-def audit(args):
-    overall_progress = Progress(
-    TimeElapsedColumn(), BarColumn(), TextColumn("{task.completed}/{task.total}")
-)
+def audit_nv(l: list[str], output: str = None, threads: int = 10, timeout: int = 3, verbose: bool = False):
+    overall_progress = get_classic_progress()
     overall_task_id = overall_progress.add_task("", start=False)
-    console = Console(height=10)
+    console = get_classic_console()
     
     vuln_kex = set()
     vuln_mac = set()
@@ -341,21 +269,20 @@ def audit(args):
     vuln_hosts = set()
     vuln_terrapin = set()
     
-    hosts = get_hosts_from_file(args.file)
+
     with Live(overall_progress, console=console):
-        overall_progress.update(overall_task_id, total=len(hosts))
+        overall_progress.update(overall_task_id, total=len(l))
         overall_progress.start_task(overall_task_id)
         futures = []
         results = []
-        with ThreadPoolExecutor(args.threads) as executor:
-            for host in hosts:
-                future = executor.submit(audit_single, overall_progress, overall_task_id, console, host, args.output, args.timeout, args.verbose)
+        with ThreadPoolExecutor(threads) as executor:
+            for host in l:
+                future = executor.submit(audit_single, overall_progress, overall_task_id, console, host, output, timeout, verbose)
                 futures.append(future)
-            for a in concurrent.futures.as_completed(futures):
+            for a in as_completed(futures):
                 results.append(a.result())
                 
     for r in results:
-        print(r.host)
         if r.is_vuln:
             vuln_hosts.add(r.host)
             vuln_kex.update(r.vuln_kex)
@@ -399,17 +326,31 @@ def audit(args):
         for k in vuln_terrapin:
             print(f"\t{k}")
 
+def audit_console(args):
+    audit_nv(get_hosts_from_file(args.file), args.output, args.threads, args.timeout, args.verbose)
+
+
+def version(args):
+    overall_progress = get_classic_progress()
+    overall_task_id = overall_progress.add_task("", start=False)
+    console = get_classic_console()
+    
+    protocol1 = []
+    versions = {}
+    
+    
+
 def main():
     parser = argparse.ArgumentParser(description="SSH module of nessus-verifier.")
-    parser.add_argument("--threads", type=int, default=10, help="Threads (Default = 10).")
-    parser.add_argument("-v", "--verbose", action="store_true", help="Enable verbose output")
     subparsers = parser.add_subparsers(dest="command")
     
     audit_parser = subparsers.add_parser("audit", help="Run ssh-audit on targets")
     audit_parser.add_argument("-f", "--file", type=str, required=False, help="Path to a file containing a list of hosts, each in 'ip:port' format, one per line.")
     audit_parser.add_argument("-o", "--output", type=str, required=False, help="Output file.")
     audit_parser.add_argument("--timeout", type=int, default=3, help="Timeout (Default = 3).")
-    audit_parser.set_defaults(func=audit)
+    audit_parser.add_argument("--threads", type=int, default=10, help="Threads (Default = 10).")
+    audit_parser.add_argument("-v", "--verbose", action="store_true", help="Enable verbose output")
+    audit_parser.set_defaults(func=audit_console)
 
 
     
