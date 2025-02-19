@@ -128,7 +128,7 @@ def solve_ftp(scan: GroupNessusScanOutput):
                 print(f"{value}")
     except: pass
 
-def solve(args):
+def solve(args, is_all = False):
     l= logger.setup_logging(args.verbose)
     scan: GroupNessusScanOutput = find_scan(args.file, code)
     if not scan and not args.ignore_fail: 

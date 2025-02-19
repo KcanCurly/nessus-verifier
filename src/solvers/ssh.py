@@ -15,7 +15,7 @@ def helper_parse(subparser):
     parser_task1.add_argument("-f", "--file", type=str, required=True, help="JSON file name")
     parser_task1.set_defaults(func=solve)
     
-def solve(args):
+def solve(args, is_all = False):
     l= logger.setup_logging(args.verbose)
     scan: GroupNessusScanOutput = find_scan(args.file, code)
     if not scan: 

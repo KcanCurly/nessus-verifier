@@ -14,7 +14,7 @@ def helper_parse(subparser):
     parser_task1.add_argument("-f", "--file", type=str, required=True, help="JSON file name")
     parser_task1.set_defaults(func=solve) 
 
-def solve(args):
+def solve(args, is_all = False):
     versions = {}
     
     l= logger.setup_logging(args.verbose)

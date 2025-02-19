@@ -34,7 +34,7 @@ solver_dict = {
 
 def all_solver(args):
     for k,v in solver_dict.items():
-        v.solve(args)
+        v.solve(args, is_all=True)
             
     
 def create_config_file(args):

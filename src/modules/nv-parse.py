@@ -53,7 +53,7 @@ def parse_nessus_file(file_path):
 
 # Function to create directories and save hosts in 'hosts.txt'
 def save_services(services):
-    output_dir = 'ports'
+    output_dir = 'nv-services'
 
     # Ensure the output directory exists
     if not os.path.exists(output_dir):

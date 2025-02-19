@@ -16,7 +16,7 @@ def helper_parse(subparser):
     parser_task1.set_defaults(func=solve) 
 
 
-def solve(args):
+def solve(args, is_all = False):
     versions: dict[str, str] = {}
     l= logger.setup_logging(args.verbose)
     scan: GroupNessusScanOutput = find_scan(args.file, code)
