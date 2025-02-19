@@ -161,7 +161,7 @@ def tls_nv(l: list[str], allow_white_ciphers: bool, output: str = None, threads:
         if r.is_wrong_hostname:
             wrong_hosts.append(r.host)
         if r.is_cert_expired:
-            expired_cert_hosts(f"{r.host} - {r.is_cert_expired}")
+            expired_cert_hosts.append(f"{r.host} - {r.is_cert_expired}")
     
     if len(weak_ciphers) > 0:       
         print("Vulnerable TLS Ciphers on Hosts:")                
