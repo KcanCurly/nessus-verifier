@@ -163,6 +163,7 @@ def tls_nv(l: list[str], allow_white_ciphers: bool, output: str = None, threads:
                 overall_progress.update(overall_task_id, advance=1)
                 results.append(a.result())
     for r in results:
+        if not r: continue
         weak_versions.update(r.weak_versions)
         weak_ciphers.update(r.weak_ciphers)
         weak_bits.update(r.weak_bits)

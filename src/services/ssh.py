@@ -324,7 +324,7 @@ def audit_nv(l: list[str], output: str = None, threads: int = 10, timeout: int =
                 print(file=file)
 
 def audit_console(args):
-    audit_nv(get_hosts_from_file(args.file), args.output, args.threads, args.timeout, args.verbose, )
+    audit_nv(get_hosts_from_file(args.file), args.output, args.threads, args.timeout, args.verbose)
 
 def version_single(progress: Progress, console: Console, task_id: TaskID, host: str, output: str, timeout: int, verbose: bool) -> Version_Vuln_Data:
     ip, port = host.split(":", 1)
