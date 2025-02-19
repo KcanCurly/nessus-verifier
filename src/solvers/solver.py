@@ -38,13 +38,16 @@ def all_solver(args):
             
     
 def create_config_file(args):
+    s = ""
+    for k,v in solver_dict.items():
+        s += v.get_default_config()
     z = """
 ["1"]
 allow_white_ciphers = true
 """
     
     with open(args.output, "w") as f:
-        f.write(z)
+        f.write(s)
 
 json_output: list[GroupNessusScanOutput] = []
 

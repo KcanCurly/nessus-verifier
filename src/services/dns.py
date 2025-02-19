@@ -142,7 +142,15 @@ def malware(directory_path, config, args, hosts):
         for v in vuln:
             print(f"\t{v}")
     
+def zone_transfer_single():
+    pass
     
+def zone_transfer_nv():
+    pass    
+    
+def zone_transfer_console(args):
+    pass
+
 
 def dnsrecon(directory_path, config, args, hosts):
     axfr_vuln = []

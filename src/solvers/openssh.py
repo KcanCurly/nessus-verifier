@@ -16,5 +16,5 @@ def solve(args):
         return
     
     hosts = scan.hosts
-    ssh.version_check(hosts)
+    ssh.version_nv(hosts)
             
