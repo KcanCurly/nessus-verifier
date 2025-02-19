@@ -6,7 +6,7 @@ import socket
 import requests
 from src.modules.vuln_parse import GroupNessusScanOutput
 from src.utilities import logger
-from rich.progress import TextColumn, Progress, BarColumn, TimeElapsedColumn
+from rich.progress import TextColumn, Progress, BarColumn, TimeElapsedColumn, SpinnerColumn
 from rich.console import Console
 from rich.table import Column
 
@@ -163,10 +163,11 @@ def get_header_from_url(host, header, verbose=0) -> str | None:
 def get_classic_single_progress():
     text_column1 = TextColumn("{task.fields[host]}", table_column=Column(ratio=1), style= "bold")
     text_column2 = TextColumn("{task.fields[status]}", table_column=Column(ratio=1), style= "dim")
-    return Progress(text_column1, text_column2, refresh_per_second= 1)
+    
+    return Progress(text_column1, SpinnerColumn(), text_column2, refresh_per_second= 1)
 
 def get_classic_overall_progress():
-    return Progress(TimeElapsedColumn(), TextColumn("{task.fields[modulename]}"), BarColumn(), TextColumn("{task.completed}/{task.total}"))
+    return Progress(TimeElapsedColumn(), TextColumn("{task.fields[modulename]}"), BarColumn(), TextColumn("{task.completed}/{task.total}"), refresh_per_second=1)
 
 def get_classic_console(force_terminal = False):
     return Console(force_terminal=force_terminal)
