@@ -59,7 +59,7 @@ def tls_single(progress: Progress, task_id: TaskID, console: Console, host: str,
 
     expired_match = re.search(expired_cert_re, result.stdout)
     if expired_match:
-        is_cert_expired = f"{host} - {expired_match.group(1)}"
+        is_cert_expired = expired_match.group(1)
 
     lines = result.stdout.splitlines()
     protocol_line = False
