@@ -67,8 +67,8 @@ def nullguest_single(single_progress: Progress, single_task_id: TaskID, console:
                             for file in files:
                                 if file.filename == "." or file.filename == "..": continue
                                 null_vuln[share.name].append(file.filename)
-                        except: pass
-                except:pass
+                        except Exception: pass
+                except Exception:pass
                 single_progress.update(single_task_id, status = "[green]Process finished[/green]",advance=1)
         except Exception as e:
                 single_progress.update(single_task_id, status = f"[red]Failed {e}[/red]",advance=1)
