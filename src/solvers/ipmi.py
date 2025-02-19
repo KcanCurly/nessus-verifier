@@ -4,8 +4,15 @@ from src.utilities import logger
 import subprocess
 import re
 
+code = 20
+
+def get_default_config():
+    return """
+["20"]
+"""
+
 def helper_parse(subparser):
-    parser_task1 = subparser.add_parser("20", help="iDRAC")
+    parser_task1 = subparser.add_parser(str(code), help="iDRAC")
     parser_task1.add_argument("-f", "--file", type=str, required=True, help="JSON file name")
     parser_task1.set_defaults(func=solve) 
 
@@ -14,7 +21,7 @@ def solve(args):
     creds = {}
     
     l= logger.setup_logging(args.verbose)
-    scan: GroupNessusScanOutput = find_scan(args.file, 20)
+    scan: GroupNessusScanOutput = find_scan(args.file, code)
     if not scan: 
         print("No id found in json file")
         return

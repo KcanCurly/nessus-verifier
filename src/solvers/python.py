@@ -3,8 +3,15 @@ from src.modules.vuln_parse import GroupNessusScanOutput
 from src.utilities import logger
 import re
 
+code = 23
+
+def get_default_config():
+    return """
+["23"]
+"""
+
 def helper_parse(subparser):
-    parser_task1 = subparser.add_parser("23", help="Python Unsupported Version")
+    parser_task1 = subparser.add_parser(str(code), help="Python Unsupported Version")
     parser_task1.add_argument("-f", "--file", type=str, required=True, help="JSON file name")
     parser_task1.set_defaults(func=solve) 
 
@@ -12,7 +19,7 @@ def solve(args):
     versions = {}
     
     l= logger.setup_logging(args.verbose)
-    scan: GroupNessusScanOutput = find_scan(args.file, 23)
+    scan: GroupNessusScanOutput = find_scan(args.file, code)
     if not scan: 
         print("No id found in json file")
         return

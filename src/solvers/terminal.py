@@ -7,6 +7,11 @@ import os
 
 code = 8
 
+def get_default_config():
+    return """
+["8"]
+"""
+
 def helper_parse(subparser):
     parser_task1 = subparser.add_parser(str(code), help="Terminal Services Misconfigurations")
     parser_task1.add_argument("-f", "--file", type=str, required=True, help="JSON file name")

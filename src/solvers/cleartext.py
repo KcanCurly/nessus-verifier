@@ -9,6 +9,11 @@ import requests
 
 code = 7
 
+def get_default_config():
+    return """
+["7"]
+"""
+
 def helper_parse(subparser):
     parser_task1 = subparser.add_parser(str(code), help="Cleartext Protocol Detected")
     parser_task1.add_argument("-f", "--file", type=str, required=True, help="JSON file name")
