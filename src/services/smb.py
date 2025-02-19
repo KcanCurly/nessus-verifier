@@ -55,18 +55,20 @@ def nullguest_single(single_progress: Progress, single_task_id: TaskID, console:
             if not conn.connect(ip, int(port), timeout=timeout): 
                 single_progress.update(single_task_id, status = "[red]SMB connect failed[/red]",advance=1)
             else:
-                shares = conn.listShares(timeout=timeout)
+                try:
+                    shares = conn.listShares(timeout=timeout)
 
-                for share in shares:
-                    try:
-                        files = conn.listPath(share.name, "/")
-                        
-                        null_vuln[share.name] = []
+                    for share in shares:
+                        try:
+                            files = conn.listPath(share.name, "/")
+                            
+                            null_vuln[share.name] = []
 
-                        for file in files:
-                            if file.filename == "." or file.filename == "..": continue
-                            null_vuln[share.name].append(file.filename)
-                    except: pass
+                            for file in files:
+                                if file.filename == "." or file.filename == "..": continue
+                                null_vuln[share.name].append(file.filename)
+                        except: pass
+                except:pass
                 single_progress.update(single_task_id, status = "[green]Process finished[/green]",advance=1)
         except Exception as e:
                 single_progress.update(single_task_id, status = f"[red]Failed {e}[/red]",advance=1)
@@ -120,9 +122,9 @@ def nullguest_nv(l: list[str], output: str = None, threads: int = 10, timeout: i
     for r in results:
         if not r: continue
         null_vuln[r.host] = {}
-        for share, files in r.null_files:
+        for share, files in r.null_files.items():
             null_vuln[r.host][share] = files
-        for share, files in r.guest_files:
+        for share, files in r.guest_files.items():
             guest_vuln[r.host][share] = files
     
     if len(null_vuln) > 0:
