@@ -126,6 +126,7 @@ def nullguest_nv(l: list[str], output: str = None, threads: int = 10, timeout: i
     for r in results:
         if not r: continue
         null_vuln[r.host] = {}
+        guest_vuln[r.host] = {}
         for share, files in r.null_files.items():
             null_vuln[r.host][share] = files
         for share, files in r.guest_files.items():
