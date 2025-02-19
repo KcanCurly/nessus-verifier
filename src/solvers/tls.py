@@ -4,7 +4,7 @@ import ssl
 import socket
 import time
 import tomllib
-from src.utilities.utilities import find_scan, get_hosts_from_file, get_classic_progress, get_classic_console
+from src.utilities.utilities import find_scan, get_classic_single_progress, get_classic_overall_progress, get_classic_console
 from src.modules.vuln_parse import GroupNessusScanOutput
 from src.utilities import logger
 from rich.live import Live
@@ -37,7 +37,7 @@ def helper_parse(subparser):
     parser_task1.set_defaults(func=solve)
     
 
-def tls_single(progress: Progress, task_id: TaskID, console: Console, host: str, allow_white_ciphers: bool, output: str, timeout: int, verbose: bool):
+def tls_single(single_progress: Progress, single_task_id: TaskID, console: Console, host: str, allow_white_ciphers: bool, output: str, timeout: int, verbose: bool):
     ip = host.split(":")[0]
     port  = host.split(":")[1]
     
@@ -49,12 +49,11 @@ def tls_single(progress: Progress, task_id: TaskID, console: Console, host: str,
     is_wrong_host = False
     is_cert_expired = ""
     
-    if verbose: console.print(f"Starting processing {host}")
+    single_progress.update(single_task_id, status="Starting")
     
     command = ["sslscan", "--no-fallback", "--no-renegotiation", "--no-group", "--no-heartbleed", "--iana-names", f"--connect-timeout={timeout}", host]
     result = subprocess.run(command, text=True, capture_output=True)
     if "Connection refused" in result.stderr or "enabled" not in result.stdout:
-        progress.update(task_id, advance=1)
         return
 
     expired_match = re.search(expired_cert_re, result.stdout)
@@ -128,8 +127,7 @@ def tls_single(progress: Progress, task_id: TaskID, console: Console, host: str,
         if "Hostname mismatch" in e.strerror:
             is_wrong_host = True
     
-    if verbose: console.print(f"Successfully processed {host}")
-    progress.update(task_id, advance=1)
+    single_progress.update(single_task_id, status="[green]Successfully processed[/green]")
     return TLS_Vuln_Data(host, weak_versions, weak_ciphers, weak_bits, is_wrong_host, is_cert_expired)
 
 def tls_nv(l: list[str], allow_white_ciphers: bool, output: str = None, threads: int = 10, timeout: int = 3, verbose: bool = False):
@@ -139,9 +137,11 @@ def tls_nv(l: list[str], allow_white_ciphers: bool, output: str = None, threads:
     wrong_hosts = []
     expired_cert_hosts = []
     
-    overall_progress = get_classic_progress()
+    overall_progress = get_classic_overall_progress()
+    single_progress = get_classic_single_progress()
     overall_task_id = overall_progress.add_task("", start=False, modulename="TLS Misconfigurations")
     console = get_classic_console(force_terminal=True)
+
     
     with Live(overall_progress, console=console):
         overall_progress.update(overall_task_id, total=len(l), completed=0)
@@ -150,9 +150,11 @@ def tls_nv(l: list[str], allow_white_ciphers: bool, output: str = None, threads:
         results: list[TLS_Vuln_Data] = []
         with ThreadPoolExecutor(threads) as executor:
             for host in l:
-                future = executor.submit(tls_single, overall_progress, overall_task_id, console, host, allow_white_ciphers, output, timeout, verbose)
+                single_task_id = single_progress.add_task("single", start=False, host=host, status="status")
+                future = executor.submit(tls_single, single_progress, single_task_id, console, host, allow_white_ciphers, output, timeout, verbose)
                 futures.append(future)
             for a in as_completed(futures):
+                overall_progress.update(overall_task_id, advance=1)
                 results.append(a.result())
     for r in results:
         weak_versions.update(r.weak_versions)

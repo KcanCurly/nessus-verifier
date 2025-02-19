@@ -1,7 +1,7 @@
 import subprocess
 import argparse
 import re
-from src.utilities.utilities import get_hosts_from_file, get_classic_progress, get_classic_console
+from src.utilities.utilities import get_hosts_from_file, get_classic_overall_progress, get_classic_console
 from rich.live import Live
 from rich.progress import Progress, TaskID
 from rich.console import Console
@@ -217,7 +217,7 @@ def audit_single(progress: Progress, task_id: TaskID, console: Console, host: st
         return Audit_Vuln_Data(host, False, None, None, None, None, None)
 
 def audit_nv(l: list[str], output: str = None, threads: int = 10, timeout: int = 3, verbose: bool = False):
-    overall_progress = get_classic_progress()
+    overall_progress = get_classic_overall_progress()
     overall_task_id = overall_progress.add_task("", start=False, modulename="SSH Audit")
     console = get_classic_console(force_terminal=True)
     
@@ -362,7 +362,7 @@ def version_single(progress: Progress, console: Console, task_id: TaskID, host: 
         return Version_Vuln_Data(host, version, protocol)
 
 def version_nv(l: list[str], output: str = None, threads: int = 10, timeout: int = 3, verbose: bool = False):
-    overall_progress = get_classic_progress()
+    overall_progress = get_classic_overall_progress()
     overall_task_id = overall_progress.add_task("", start=False, modulename="SSH Version")
     console = get_classic_console(force_terminal=True)
 

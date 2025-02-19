@@ -1,4 +1,4 @@
-from src.utilities.utilities import get_hosts_from_file, get_classic_progress, get_classic_console
+from src.utilities.utilities import get_hosts_from_file, get_classic_overall_progress, get_classic_console
 import argparse
 
 class Service:
