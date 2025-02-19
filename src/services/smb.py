@@ -109,7 +109,7 @@ def nullguest_nv(l: list[str], output: str = None, threads: int = 10, timeout: i
         with ThreadPoolExecutor(threads) as executor:
             for host in l:
                 single_task_id = single_progress.add_task("single", start=False, host=host, status="status", total=1)
-                future = executor.submit(sign_single, single_progress, single_task_id, console, host, output, timeout, verbose)
+                future = executor.submit(nullguest_single, single_progress, single_task_id, console, host, output, timeout, verbose)
                 futures.append(future)
             for a in as_completed(futures):
                 overall_progress.update(overall_task_id, advance=1)
@@ -203,6 +203,7 @@ def smbv1_single(single_progress: Progress, single_task_id: TaskID, console: Con
     single_progress.update(single_task_id, status = "Running")
     try:
         SMBConnection(ip, ip, sess_port=int(port), timeout=timeout, preferredDialect="NT LM 0.12")
+        single_progress.update(single_task_id, status=f"[red]SMBv1[/red]", advance=1)
         return SMBV1_Vuln_Data(host, True)
     except Exception as e: single_progress.update(single_task_id, status=f"[red]Failed: {e}[/red]", advance=1)
     return SMBV1_Vuln_Data(host, False)
