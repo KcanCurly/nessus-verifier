@@ -55,20 +55,20 @@ def nullguest_single(single_progress: Progress, single_task_id: TaskID, console:
             if not conn.connect(ip, int(port), timeout=timeout): 
                 single_progress.update(single_task_id, status = "[red]SMB connect failed[/red]",advance=1)
             else:
-                try:
-                    shares = conn.listShares(timeout=timeout)
 
-                    for share in shares:
-                        try:
-                            files = conn.listPath(share.name, "/")
-                            
-                            null_vuln[share.name] = []
+                shares = conn.listShares(timeout=timeout)
 
-                            for file in files:
-                                if file.filename == "." or file.filename == "..": continue
-                                null_vuln[share.name].append(file.filename)
-                        except Exception: pass
-                except Exception:pass
+                for share in shares:
+                    try:
+                        files = conn.listPath(share.name, "/")
+                        
+                        null_vuln[share.name] = []
+
+                        for file in files:
+                            if file.filename == "." or file.filename == "..": continue
+                            null_vuln[share.name].append(file.filename)
+                    except Exception: pass
+
                 single_progress.update(single_task_id, status = "[green]Process finished[/green]",advance=1)
         except Exception as e:
                 single_progress.update(single_task_id, status = f"[red]Failed {e}[/red]",advance=1)
@@ -77,15 +77,19 @@ def nullguest_single(single_progress: Progress, single_task_id: TaskID, console:
             if not conn.connect(ip, int(port), timeout=timeout): 
                 single_progress.update(single_task_id, status = "[red]SMB connect failed[/red]",advance=1)
             else:
+                
                 shares = conn.listShares(timeout=timeout)
-                for share in shares:
-                    files = conn.listPath(share.name, "/")
-                    
-                    null_vuln[share.name] = []
 
-                    for file in files:
-                        if file.filename == "." or file.filename == "..": continue
-                        null_vuln[share.name].append(file.filename)
+                for share in shares:
+                    try:
+                        files = conn.listPath(share.name, "/")
+                        
+                        null_vuln[share.name] = []
+
+                        for file in files:
+                            if file.filename == "." or file.filename == "..": continue
+                            guest_vuln[share.name].append(file.filename)
+                    except Exception: pass
                 single_progress.update(single_task_id, status = "[green]Process finished[/green]",advance=1)
                     
         except Exception as e:
@@ -134,7 +138,7 @@ def nullguest_nv(l: list[str], output: str = None, threads: int = 10, timeout: i
             for share, files in info.items():
                 print(f"    {share}:")
                 for file in files:
-                    print(f"        {file}:")
+                    print(f"        {file}")
 
     if len(guest_vuln) > 0:
         print("Guest Accessble Shares Found:")
@@ -143,7 +147,7 @@ def nullguest_nv(l: list[str], output: str = None, threads: int = 10, timeout: i
             for share, files in info.items():
                 print(f"    {share}:")
                 for file in files:
-                    print(f"        {file}:")
+                    print(f"        {file}")
 
 
 def nullguest_console(args):
