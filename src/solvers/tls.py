@@ -56,6 +56,7 @@ def tls_single(single_progress: Progress, single_task_id: TaskID, console: Conso
     command = ["sslscan", "--no-fallback", "--no-renegotiation", "--no-group", "--no-heartbleed", "--iana-names", f"--connect-timeout={timeout}", host]
     result = subprocess.run(command, text=True, capture_output=True)
     if "Connection refused" in result.stderr or "enabled" not in result.stdout:
+        single_progress.update(single_task_id, status=f"[red]Failed: {result.stderr}[/red]", advance=1)
         return
 
     expired_match = re.search(expired_cert_re, result.stdout)
@@ -129,7 +130,7 @@ def tls_single(single_progress: Progress, single_task_id: TaskID, console: Conso
         if "Hostname mismatch" in e.strerror:
             is_wrong_host = True
     
-    single_progress.update(single_task_id, status="[green]Successfully processed[/green]")
+    single_progress.update(single_task_id, status="[green]Successfully processed[/green]", advance=1)
     return TLS_Vuln_Data(host, weak_versions, weak_ciphers, weak_bits, is_wrong_host, is_cert_expired)
 
 def tls_nv(l: list[str], allow_white_ciphers: bool, output: str = None, threads: int = 10, timeout: int = 3, verbose: bool = False):
@@ -155,7 +156,7 @@ def tls_nv(l: list[str], allow_white_ciphers: bool, output: str = None, threads:
         results: list[TLS_Vuln_Data] = []
         with ThreadPoolExecutor(threads) as executor:
             for host in l:
-                single_task_id = single_progress.add_task("single", start=False, host=host, status="status")
+                single_task_id = single_progress.add_task("single", start=False, host=host, status="status", total=1)
                 future = executor.submit(tls_single, single_progress, single_task_id, console, host, allow_white_ciphers, output, timeout, verbose)
                 futures.append(future)
             for a in as_completed(futures):
