@@ -84,7 +84,7 @@ def nullguest_single(single_progress: Progress, single_task_id: TaskID, console:
                     try:
                         files = conn.listPath(share.name, "/")
                         
-                        null_vuln[share.name] = []
+                        guest_vuln[share.name] = []
 
                         for file in files:
                             if file.filename == "." or file.filename == "..": continue
