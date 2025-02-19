@@ -2,6 +2,9 @@ import xml.etree.ElementTree as ET
 import os
 import argparse
 import re
+import yaml
+from dataclasses import dataclass
+import json
 
 # Function to parse the Nessus file (.nessus format) and extract services and associated hosts
 def parse_nessus_file(file_path):
@@ -75,42 +78,23 @@ def save_urls(urls):
             f.write(f"{url}\n")
     
     
-
-import xml.etree.ElementTree as ET
-import os
-import argparse
-import yaml
-from dataclasses import dataclass
-import json
-
-@dataclass
 class GroupNessusScanOutput:
-    id: int
-    name: str
-    plugin_ids: list[int]
-    hosts: list[str]
-    sub_hosts: dict[str, list[str]]
-    
-    def __init__(self, id, plugin_ids, name, hosts = [], sub_hosts = {}):
+    def __init__(self, id, plugin_ids, name):
         self.id = id
         self.name = name
         self.plugin_ids = plugin_ids
-        self.hosts = hosts
-        self.sub_hosts = sub_hosts
+        self.hosts = []
+        self.sub_hosts = {}
     
     def add_host(self, name, id, host) -> bool:
         if id in self.plugin_ids:
             self.hosts.append(host)
-            if name not in self.sub_hosts:
+            if id not in self.sub_hosts:
                 self.sub_hosts[id] = []
             self.sub_hosts[id].append(host)
             return True
         return False
     
-    @staticmethod
-    def from_json(json_data):
-        return GroupNessusScanOutput(**json_data)
-
 class NessusScanOutput:
     def __init__(self, plugin_id, name, description, severity, host_port, output, cve):
         self.plugin_id = plugin_id
@@ -162,17 +146,17 @@ def group_up(l: list[NessusScanOutput]):
         
     available_id = 0
     for rule in rule_data:
-        new_rule = GroupNessusScanOutput(rule['id'], rule['plugin-ids'], rule['name'])
-        rules.append(new_rule)
+        r = GroupNessusScanOutput(rule['id'], rule['plugin-ids'], rule['name'])
+        rules.append(r)
         available_id = available_id + 1
 
-    available_id = available_id +1
     for n in l:
         found = False
+
         for rule in rules:
             if rule.add_host(n.name, n.plugin_id, n.host_port):
                 found = True
-                break
+
         
         # No rule in rules.yaml so we make its own rule if its not on info severity
         if not found and n.severity != "0":
@@ -180,7 +164,7 @@ def group_up(l: list[NessusScanOutput]):
             new_rule.add_host(n.name, n.plugin_id, n.host_port)
             rules.append(new_rule)
             available_id = available_id + 1
-        
+
     return rules
 
 def write_to_file(l: list[GroupNessusScanOutput], args):
@@ -189,16 +173,16 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
         n = l[1:]
     
     with open(args.output_file, "w") as f:
-        for a in n[1:]: # We skip first one since its on ignore list
+        for a in n:
             print(a.name, file=f)
-            for z in a.hosts:
-                print(f"\t{z}", file=f)
+            for h in a.hosts:
+                print(f"\t{h}", file=f)
             print(file=f)
             print(file=f)
             if len(a.sub_hosts.items()) == 1: continue
-            for k,v in a.sub_hosts.items():
-                print(f"\t{k}", file=f)
-                for z in v:
+            for key,value in a.sub_hosts.items():
+                print(f"\t{key}", file=f)
+                for z in value:
                     print(f"\t\t{z}", file=f)
                     
     with open(args.output_json_file, "w") as file:
@@ -212,7 +196,7 @@ def main():
     parser.add_argument("-f", "--file", type=str, required=True, help="Path to a Nessus file.")
     parser.add_argument('--skip-ignored', action="store_true", help='Do not write ignored vulnerabilities to txt output.')
     parser.add_argument('-o', '--output-file', type=str, required=False, default="output.txt", help='Vulnerability Groups output file name txt (Default: output.txt).')
-    parser.add_argument('-oj', '--output-json-file', type=str, required=False, default="output.json", help='Vulnerability Groups output file name json (Default: output.json).')
+    parser.add_argument('-oj', '--output-json-file', type=str, required=False, default="output.ndjson", help='Vulnerability Groups output file name json (Default: output.ndjson).')
     args = parser.parse_args()
 
     # Parse for services and urls

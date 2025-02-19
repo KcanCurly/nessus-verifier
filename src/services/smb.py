@@ -24,7 +24,7 @@ def null_guest_access_check(hosts: list[str], verbose = False, debug = False):
         port = host.split(":")[1]
         
         # Get NetBIOS of the remote computer
-        command = ["nmblookup", "-A", ip]
+        command = ["timeout", "5s", "nmblookup", "-A", ip]
         result = subprocess.run(command, text=True, capture_output=True)
         netbios_re = r"\s+(.*)\s+<20>"
         

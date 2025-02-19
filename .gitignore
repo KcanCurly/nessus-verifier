@@ -9,5 +9,6 @@ s.txt
 .gitignore
 output.txt
 output.json
+output.ndjson
 urls.txt
 *.xlsx

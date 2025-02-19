@@ -51,7 +51,7 @@ def tls_single(progress: Progress, task_id: TaskID, console: Console, host: str,
     
     if verbose: console.print(f"Starting processing {host}")
     
-    command = ["sslscan", "--no-fallback", "--no-renegotiation", "--no-group", "--no-heartbleed", "--iana-names", f"--connect-timeout={str(timeout)}", host]
+    command = ["sslscan", "--no-fallback", "--no-renegotiation", "--no-group", "--no-heartbleed", "--iana-names", f"--connect-timeout={timeout}", host]
     result = subprocess.run(command, text=True, capture_output=True)
     if "Connection refused" in result.stderr or "enabled" not in result.stdout:
         progress.update(task_id, advance=1)
@@ -150,7 +150,7 @@ def tls_nv(l: list[str], allow_white_ciphers: bool, output: str = None, threads:
         results: list[TLS_Vuln_Data] = []
         with ThreadPoolExecutor(threads) as executor:
             for host in l:
-                future = executor.submit(tls_single, overall_progress, overall_task_id, console, host, output, timeout, verbose)
+                future = executor.submit(tls_single, overall_progress, overall_task_id, console, host, allow_white_ciphers, output, timeout, verbose)
                 futures.append(future)
             for a in as_completed(futures):
                 results.append(a.result())
