@@ -51,7 +51,7 @@ def tls_single(single_progress: Progress, single_task_id: TaskID, console: Conso
     is_wrong_host = False
     is_cert_expired = ""
     
-    single_progress.update(single_task_id, status="Starting")
+    single_progress.update(single_task_id, status="Running")
     
     command = ["sslscan", "--no-fallback", "--no-renegotiation", "--no-group", "--no-heartbleed", "--iana-names", f"--connect-timeout={timeout}", host]
     result = subprocess.run(command, text=True, capture_output=True)
