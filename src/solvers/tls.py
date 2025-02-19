@@ -12,6 +12,8 @@ from rich.progress import Progress, TaskID
 from rich.console import Console
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from src.services.service import Vuln_Data
+from rich.console import Group
+from rich.panel import Panel
 
 class TLS_Vuln_Data(Vuln_Data):
     def __init__(self, host: str, weak_versions: list[str], weak_ciphers: list[str], weak_bits: list[str], is_wrong_hostname: bool, is_cert_expired: str):
@@ -141,9 +143,12 @@ def tls_nv(l: list[str], allow_white_ciphers: bool, output: str = None, threads:
     single_progress = get_classic_single_progress()
     overall_task_id = overall_progress.add_task("", start=False, modulename="TLS Misconfigurations")
     console = get_classic_console(force_terminal=True)
-
+    progress_group = Group(
+        Panel(single_progress, title="TLS Misconfigurations", expand=False),
+        overall_progress,
+    )
     
-    with Live(overall_progress, console=console):
+    with Live(progress_group, console=console):
         overall_progress.update(overall_task_id, total=len(l), completed=0)
         overall_progress.start_task(overall_task_id)
         futures = []
