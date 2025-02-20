@@ -94,7 +94,7 @@ def nullguest_single(single_progress: Progress, single_task_id: TaskID, console:
     else: single_progress.update(single_task_id, status = f"[red]Failed {e}[/red]",advance=1)
     return NullGuest_Vuln_Data(host, null_vuln, guest_vuln)
 
-def nullguest_nv(l: list[str], output: str = None, threads: int = 10, timeout: int = 3, verbose: bool = False):
+def nullguest_nv(l: list[str], output: str = None, threads: int = 10, timeout: int = 3, verbose: bool = False, disable_visual_on_complete: bool = False):
     null_vuln: dict[str, dict[str, list[str]]] = {}
     guest_vuln: dict[str, dict[str, list[str]]] = {}
     
@@ -149,7 +149,7 @@ def nullguest_nv(l: list[str], output: str = None, threads: int = 10, timeout: i
 
 
 def nullguest_console(args):
-    nullguest_nv(get_hosts_from_file(args.file), threads=args.threads, timeout=args.timeout, verbose=args.verbose)
+    nullguest_nv(get_hosts_from_file(args.file), threads=args.threads, timeout=args.timeout, verbose=args.verbose, disable_visual_on_complete=args.disable_visual_on_complete)
 
 def sign_single(single_progress: Progress, single_task_id: TaskID, console: Console, host: str, output: str, timeout: int, verbose: bool):
     ip = host.split(":")[0]
@@ -167,7 +167,7 @@ def sign_single(single_progress: Progress, single_task_id: TaskID, console: Cons
         single_progress.update(single_task_id, status=f"[red]Failed: {e}[/red]", advance=1)
     return Sign_Vuln_Data(host, False)
 
-def sign_nv(l: list[str], output: str = None, threads: int = 10, timeout: int = 3, verbose: bool = False):
+def sign_nv(l: list[str], output: str = None, threads: int = 10, timeout: int = 3, verbose: bool = False, disable_visual_on_complete: bool = False):
     vuln = []
     
     overall_progress = get_classic_overall_progress()
@@ -202,7 +202,7 @@ def sign_nv(l: list[str], output: str = None, threads: int = 10, timeout: int = 
             print(f"\t{v}")
 
 def sign_console(args):
-    sign_nv(get_hosts_from_file(args.file), threads=args.threads, timeout=args.timeout, verbose=args.verbose)      
+    sign_nv(get_hosts_from_file(args.file), threads=args.threads, timeout=args.timeout, verbose=args.verbose, disable_visual_on_complete=args.disable_visual_on_complete)      
 
 def smbv1_single(single_progress: Progress, single_task_id: TaskID, console: Console, host: str, output: str, timeout: int, verbose: bool):
     ip = host.split(":")[0]
@@ -215,7 +215,7 @@ def smbv1_single(single_progress: Progress, single_task_id: TaskID, console: Con
     except Exception as e: single_progress.update(single_task_id, status=f"[red]Failed: {e}[/red]", advance=1)
     return SMBV1_Vuln_Data(host, False)
 
-def smbv1_nv(l: list[str], output: str = None, threads: int = 10, timeout: int = 3, verbose: bool = False):
+def smbv1_nv(l: list[str], output: str = None, threads: int = 10, timeout: int = 3, verbose: bool = False, disable_visual_on_complete: bool = False):
     vuln = []
     
     overall_progress = get_classic_overall_progress()
@@ -250,7 +250,7 @@ def smbv1_nv(l: list[str], output: str = None, threads: int = 10, timeout: int =
             print(f"\t{v}")
 
 def smbv1_console(args):
-    smbv1_nv(get_hosts_from_file(args.file), threads=args.threads, timeout=args.timeout, verbose=args.verbose)
+    smbv1_nv(get_hosts_from_file(args.file), threads=args.threads, timeout=args.timeout, verbose=args.verbose, disable_visual_on_complete=args.disable_visual_on_complete)
 
 def all(args):
     smbv1_console(args)
@@ -266,6 +266,7 @@ def main():
     parser_all.add_argument("-f", "--file", type=str, required=True, help="input file name")
     parser_all.add_argument("--threads", default=10, type=int, help="Number of threads (Default = 10)")
     parser_all.add_argument("--timeout", default=5, type=int, help="Timeout in seconds (Default = 5)")
+    parser_all.add_argument("--disable-visual-on-complete", action="store_true", help="Disables the status visual for an individual task when that task is complete, this can help on keeping eye on what is going on at the time")
     parser_all.add_argument("-v", "--verbose", action="store_true", help="Enable verbose")
     parser_all.set_defaults(func=all)
     
@@ -273,6 +274,7 @@ def main():
     parser_smbv1.add_argument("-f", "--file", type=str, required=True, help="input file name")
     parser_smbv1.add_argument("--threads", default=10, type=int, help="Number of threads (Default = 10)")
     parser_smbv1.add_argument("--timeout", default=5, type=int, help="Timeout in seconds (Default = 5)")
+    parser_smbv1.add_argument("--disable-visual-on-complete", action="store_true", help="Disables the status visual for an individual task when that task is complete, this can help on keeping eye on what is going on at the time")
     parser_smbv1.add_argument("-v", "--verbose", action="store_true", help="Enable verbose")
     parser_smbv1.set_defaults(func=smbv1_console)
     
@@ -280,6 +282,7 @@ def main():
     parser_sign.add_argument("-f", "--file", type=str, required=True, help="input file name")
     parser_sign.add_argument("--threads", default=10, type=int, help="Number of threads (Default = 10)")
     parser_sign.add_argument("--timeout", default=5, type=int, help="Timeout in seconds (Default = 5)")
+    parser_sign.add_argument("--disable-visual-on-complete", action="store_true", help="Disables the status visual for an individual task when that task is complete, this can help on keeping eye on what is going on at the time")
     parser_sign.add_argument("-v", "--verbose", action="store_true", help="Enable verbose")
     parser_sign.set_defaults(func=sign_console)
     
@@ -287,6 +290,7 @@ def main():
     parser_nullguest.add_argument("-f", "--file", type=str, required=True, help="input file name")
     parser_nullguest.add_argument("--threads", default=10, type=int, help="Number of threads (Default = 10)")
     parser_nullguest.add_argument("--timeout", default=5, type=int, help="Timeout in seconds (Default = 5)")
+    parser_nullguest.add_argument("--disable-visual-on-complete", action="store_true", help="Disables the status visual for an individual task when that task is complete, this can help on keeping eye on what is going on at the time")
     parser_nullguest.add_argument("-v", "--verbose", action="store_true", help="Enable verbose")
     parser_nullguest.set_defaults(func=nullguest_console)
 
