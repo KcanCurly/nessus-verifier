@@ -1,5 +1,5 @@
 import argparse
-from src.solvers import grafana, php, python, tls, kibana, elastic, mongo, oracle, smb, ssh, snmp, tomcat, apache, nginx, vmware, openssh, smtp_relay, mssql, idrac, ipmi, terminal, cleartext
+from src.solvers import grafana, php, python, tls, kibana, elastic, mongo, oracle, smb, ssh, snmp, tomcat, apache, nginx, vmware, openssh, smtp_relay, mssql, idrac, ipmi, terminal, cleartext, ibmwebsphere
 from src.modules.vuln_parse import GroupNessusScanOutput
 
 solver_dict = {
@@ -30,6 +30,8 @@ solver_dict = {
     25: elastic,
     26: mongo,
     27: oracle,
+    # 28: ipmi,
+    29: ibmwebsphere,
 }
 
 def all_solver(args):

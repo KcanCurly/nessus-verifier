@@ -1,6 +1,6 @@
 - name: IGNORE
   id: 0
-  plugin-ids: [142960, 10114, 34850, 51192, 12085, 11213, 98048, 136929, 57582, 24244, 10759]
+  plugin-ids: [142960, 10114, 34850, 51192, 12085, 11213, 98048, 136929, 57582, 24244, 10759, 12224, 18391]
   # 142960 - HSTS Missing From HTTPS Server (RFC 6797)
   # 10114 - ICMP Timestamp Request Remote Date Disclosure
   # 34850 - Web Server Uses Basic Authentication Without HTTPS
@@ -13,6 +13,7 @@
   # 24244 - Microsoft .NET Custom Errors Not Set
   # 10759 - Web Server HTTP Header Internal IP Disclosure
   # 12224 - Web Server Load Balancer Detection
+  # 18391 - SMTP Server Non-standard Port Detection
 
 - name: TLS Misconfigurations
   id: 1
@@ -148,7 +149,7 @@
   5996, 6623, 6832, 6333, 700682, 700672, 5327, 5882, 6624, 5791, 700684, 700690, 700711, 5816, 
   6644, 5794, 5795, 6334, 5790, 6331, 800623, 800618, 800604, 800598, 800625, 800595, 4621, 800610, 800630, 
   800596, 800600, 800630, 800599, 800621, 800619, 800627, 800784, 800626, 800611, 800597, 800608, 
-  800622, 800602, 800617, 800609, 800612, 800783, 800620, 800605, 800606, 201848]
+  800622, 800602, 800617, 800609, 800612, 800783, 800620, 800605, 800606, 201848, 213078]
   # 171342 - Apache Tomcat SEoL (8.0.x)
   # 178943 - Apache Tomcat SEoL (8.5.x)
   # 126125 - Apache Tomcat 8.5.0 < 8.5.41 DoS
@@ -637,6 +638,7 @@
   # 800605 - Apache Tomcat 7.0.x < 7.0.22 Multiple Vulnerabilities
   # 800606 - Apache Tomcat 7.0.x < 7.0.30 DIGEST Authentication Multiple Security Weaknesses
   # 201848 - Apache Tomcat 9.0.0.M1 < 9.0.90
+  # 213078 - Apache Tomcat 9.0.0.M1 < 9.0.98 multiple vulnerabilities
 
 - name: Apache Server Version
   id: 11
@@ -1294,7 +1296,7 @@
   64993, 10701, 66843, 66842, 72511, 73862, 80332, 55925, 32123, 59530, 81082, 76281, 81510, 
   78556, 81511, 82025, 63622, 85300, 11807, 67259, 74291, 74292, 79247, 82026, 82027, 35043, 
   81080, 81081, 52717, 63622, 10628, 72882, 73863, 76772, 80331, 77402, 77403, 55969, 85299, 
-  76282, 81512, 63621, 58039, 58039, 15708]
+  76282, 81512, 63621, 58039, 58039, 15708, 58987, 142591, 152853]
   # 211669 - PHP 8.1.x < 8.1.31 Multiple Vulnerabilities
   # 211671 - PHP 8.2.x < 8.2.26 Multiple Vulnerabilities
   # 211670 - PHP 8.3.x < 8.3.14 Multiple Vulnerabilities
@@ -1613,6 +1615,9 @@
   # 58039 - PHP 5.3.9 'php_register_variable_ex()' Code Execution (intrusive check)
   # 58039 - PHP 5.3.9 'php_register_variable_ex()' Code Execution (intrusive check)
   # 15708 - PHP < 3.0 mylog.html/mlog.html Arbitrary File Access
+  # 58987 - PHP Unsupported Version Detection
+  # 142591 - PHP < 7.3.24 Multiple Vulnerabilities
+  # 152853 - PHP < 7.3.28 Email Header Injection
 
 - name: Grafana
   id: 22
@@ -1750,3 +1755,14 @@
   id: 28
   plugin-ids: [175373]
   # 175373 - Microsoft Message Queuing RCE (CVE-2023-21554, QueueJumper)
+
+- name: IBM WebSphere Application Server
+  id: 29
+  plugin-ids: [214870, 132076, 210931, 172173, 171344, 205643, 214871]
+  # 214870 - IBM WebSphere Application Server Liberty 20.0.0.6 < 24.0.0.12 DoS (7174997)
+  # 132076 - IBM WebSphere Application Server 7.0.0.x <= 7.0.0.45 / 8.0.0.x <= 8.0.0.15 / 8.5.x < 8.5.5.17 / 9.0.x < 9.0.5.2 / Liberty < 19.0.0.11 Information Disclosure (CVE-2019-4441)
+  # 210931 - IBM WebSphere Application Server 8.5.x < 8.5.5.27 / 9.x < 9.0.5.22 XSS (7175393)
+  # 172173 - IBM WebSphere Application Server 8.5.x < 8.5.5.20 / 9.x < 9.0.5.8 RCE (6891111)
+  # 171344 - IBM WebSphere Application Server SEoL (7.0.x)
+  # 205643 - IBM WebSphere Application Server Liberty 17.0.0.3 < 24.0.0.9 Information Disclosure (7165502)
+  # 214871 - IBM WebSphere Application Server Liberty 21.0.0.2 < 25.0.0.2 DoS (7181925)
