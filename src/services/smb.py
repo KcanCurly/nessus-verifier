@@ -36,6 +36,7 @@ def nullguest_single(single_progress: Progress, single_task_id: TaskID, console:
     ip = host.split(":")[0]
     port = host.split(":")[1]
     
+    single_progress.start_task(single_task_id)
     single_progress.update(single_task_id, status = "Running")
     
     # Get NetBIOS of the remote computer
@@ -46,52 +47,54 @@ def nullguest_single(single_progress: Progress, single_task_id: TaskID, console:
     s = re.search(netbios_re, result.stdout)
     if s:
         nbname = s.group()
-    
         try:
+            single_progress.update(single_task_id, status = "NULL - Got computer name (nmblookup succeeded), trying smb connection")
             conn = pysmbconn.SMBConnection('', '', '', nbname, is_direct_tcp=True)
-            if not conn.connect(ip, int(port), timeout=timeout): 
-                single_progress.update(single_task_id, status = "[red]SMB connect failed[/red]",advance=1)
+            if not conn.connect(ip, 445): 
+                single_progress.update(single_task_id, status = "[red]NULL - SMB connect failed[/red]", advance=1)
             else:
-
-                shares = conn.listShares(timeout=timeout)
-
+                single_progress.update(single_task_id, status = "NULL - SMB Connect succeeded, getting shares")
+                shares = conn.listShares()
+                single_progress.update(single_task_id, status = f"NULL - Got {len(shares)} shares, listing files")
                 for share in shares:
+                    single_progress.update(single_task_id, status = f"NULL - Searching files in {share.name}")
                     try:
                         files = conn.listPath(share.name, "/")
-                        
                         null_vuln[share.name] = []
 
                         for file in files:
                             if file.filename == "." or file.filename == "..": continue
                             null_vuln[share.name].append(file.filename)
+                        single_progress.update(single_task_id, status = f"NULL - Found {len(null_vuln[share.name])} files in {share.name}")
                     except Exception: pass
 
-                single_progress.update(single_task_id, status = "[green]Process finished[/green]",advance=1)
+                single_progress.update(single_task_id, status = "[green]NULL - Process finished[/green]", advance=1)
         except Exception as e:
-                single_progress.update(single_task_id, status = f"[red]Failed {e}[/red]",advance=1)
+                single_progress.update(single_task_id, status = f"[red]NULL - Failed {e}[/red]", advance=1)
         try:
+            single_progress.update(single_task_id, status = "[GUEST] Got computer name (nmblookup succeeded), trying smb connection")
             conn = pysmbconn.SMBConnection('guest', '', '', nbname, is_direct_tcp=True)
-            if not conn.connect(ip, int(port), timeout=timeout): 
-                single_progress.update(single_task_id, status = "[red]SMB connect failed[/red]",advance=1)
+            if not conn.connect(ip, 445): 
+                single_progress.update(single_task_id, status = "[red]GUEST - SMB connect failed[/red]",advance=1)
             else:
-                
-                shares = conn.listShares(timeout=timeout)
-
+                single_progress.update(single_task_id, status = "GUEST - SMB Connect succeeded, getting shares")
+                shares = conn.listShares()
+                single_progress.update(single_task_id, status = f"GUEST - Got {len(shares)} shares, listing files")
                 for share in shares:
+                    single_progress.update(single_task_id, status = f"GUEST - Searching files in {share.name}")
                     try:
                         files = conn.listPath(share.name, "/")
-                        
                         guest_vuln[share.name] = []
-
                         for file in files:
                             if file.filename == "." or file.filename == "..": continue
                             guest_vuln[share.name].append(file.filename)
+                        single_progress.update(single_task_id, status = f"GUEST - Found {len(guest_vuln[share.name])} files in {share.name}")
                     except Exception: pass
-                single_progress.update(single_task_id, status = "[green]Process finished[/green]",advance=1)
+                single_progress.update(single_task_id, status = "[green]GUEST - Process finished[/green]",advance=1)
                     
         except Exception as e:
-                single_progress.update(single_task_id, status = f"[red]Failed {e}[/red]",advance=1)
-    else: single_progress.update(single_task_id, status = f"[red]Failed {e}[/red]",advance=1)
+                single_progress.update(single_task_id, status = f"[red]GUEST - Failed {e}[/red]",advance=1)
+    else: single_progress.update(single_task_id, status = f"[red]Failed to get computer name (nmblookup failed)[/red]",advance=1)
     return NullGuest_Vuln_Data(host, null_vuln, guest_vuln)
 
 def nullguest_nv(l: list[str], output: str = None, threads: int = 10, timeout: int = 3, verbose: bool = False, disable_visual_on_complete: bool = False):
