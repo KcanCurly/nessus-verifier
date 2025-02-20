@@ -30,7 +30,7 @@ setup(
     python_requires=">=3.12",
     entry_points={
         "console_scripts": [
-            "nv-parse=src.main:main",
+            "nv-parse=src.modules.nv_parse:main",
             "nv-ssh=src.services.ssh:main",
             "nv-ftp=src.services.ftp:main",
             "nv-chargen=src.services.chargen:main",
