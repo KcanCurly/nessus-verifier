@@ -176,14 +176,12 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
         for a in n:
             print(a.name, file=f)
             for h in a.hosts:
-                print(f"\t{h}", file=f)
-            print(file=f)
-            print(file=f)
+                print(f"    {h}", file=f)
             if len(a.sub_hosts.items()) == 1: continue
             for key,value in a.sub_hosts.items():
-                print(f"\t{key}", file=f)
+                print(f"    {key}", file=f)
                 for z in value:
-                    print(f"\t\t{z}", file=f)
+                    print(f"        {z}", file=f)
                     
     with open(args.output_json_file, "w") as file:
         for v in l:
