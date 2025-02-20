@@ -1,7 +1,4 @@
 import argparse
-import configparser
-import os
-from pathlib import Path
 import subprocess
 import re
 from impacket.smbconnection import SMBConnection
@@ -43,7 +40,7 @@ def nullguest_single(single_progress: Progress, single_task_id: TaskID, console:
     
     # Get NetBIOS of the remote computer
     command = ["nmblookup", "-A", ip]
-    result = subprocess.run(command, text=True, capture_output=True)
+    result = subprocess.run(command, text=True, capture_output=True, timeout=15)
     netbios_re = r"\s+(.*)\s+<20>"
     
     s = re.search(netbios_re, result.stdout)
@@ -94,7 +91,7 @@ def nullguest_single(single_progress: Progress, single_task_id: TaskID, console:
                     
         except Exception as e:
                 single_progress.update(single_task_id, status = f"[red]Failed {e}[/red]",advance=1)
-            
+    else: single_progress.update(single_task_id, status = f"[red]Failed {e}[/red]",advance=1)
     return NullGuest_Vuln_Data(host, null_vuln, guest_vuln)
 
 def nullguest_nv(l: list[str], output: str = None, threads: int = 10, timeout: int = 3, verbose: bool = False):
@@ -152,7 +149,7 @@ def nullguest_nv(l: list[str], output: str = None, threads: int = 10, timeout: i
 
 
 def nullguest_console(args):
-    nullguest_nv(get_hosts_from_file(args.file))
+    nullguest_nv(get_hosts_from_file(args.file), threads=args.threads, timeout=args.timeout, verbose=args.verbose)
 
 def sign_single(single_progress: Progress, single_task_id: TaskID, console: Console, host: str, output: str, timeout: int, verbose: bool):
     ip = host.split(":")[0]
@@ -205,7 +202,7 @@ def sign_nv(l: list[str], output: str = None, threads: int = 10, timeout: int = 
             print(f"\t{v}")
 
 def sign_console(args):
-    sign_nv(get_hosts_from_file(args.file))      
+    sign_nv(get_hosts_from_file(args.file), threads=args.threads, timeout=args.timeout, verbose=args.verbose)      
 
 def smbv1_single(single_progress: Progress, single_task_id: TaskID, console: Console, host: str, output: str, timeout: int, verbose: bool):
     ip = host.split(":")[0]
@@ -253,7 +250,7 @@ def smbv1_nv(l: list[str], output: str = None, threads: int = 10, timeout: int =
             print(f"\t{v}")
 
 def smbv1_console(args):
-    smbv1_nv(get_hosts_from_file(args.file))
+    smbv1_nv(get_hosts_from_file(args.file), threads=args.threads, timeout=args.timeout, verbose=args.verbose)
 
 def all(args):
     smbv1_console(args)
@@ -262,25 +259,36 @@ def all(args):
 
 def main():
     parser = argparse.ArgumentParser(description="SMB module of nessus-verifier.")
-    parser.add_argument("-v", "--verbose", action="store_true", help="Verbose")
     
     subparsers = parser.add_subparsers(dest="command")  # Create subparsers
     
-    parser_smbv1 = subparsers.add_parser("all", help="Runs all modules")
-    parser_smbv1.add_argument("-f", "--file", type=str, required=True, help="input file name")
-    parser_smbv1.set_defaults(func=all)
+    parser_all = subparsers.add_parser("all", help="Runs all modules")
+    parser_all.add_argument("-f", "--file", type=str, required=True, help="input file name")
+    parser_all.add_argument("--threads", default=10, type=int, help="Number of threads (Default = 10)")
+    parser_all.add_argument("--timeout", default=5, type=int, help="Timeout in seconds (Default = 5)")
+    parser_all.add_argument("-v", "--verbose", action="store_true", help="Enable verbose")
+    parser_all.set_defaults(func=all)
     
     parser_smbv1 = subparsers.add_parser("smbv1", help="Checks SMBv1 usage")
     parser_smbv1.add_argument("-f", "--file", type=str, required=True, help="input file name")
+    parser_smbv1.add_argument("--threads", default=10, type=int, help="Number of threads (Default = 10)")
+    parser_smbv1.add_argument("--timeout", default=5, type=int, help="Timeout in seconds (Default = 5)")
+    parser_smbv1.add_argument("-v", "--verbose", action="store_true", help="Enable verbose")
     parser_smbv1.set_defaults(func=smbv1_console)
     
     parser_sign = subparsers.add_parser("sign", help="Checks SMB Signing")
     parser_sign.add_argument("-f", "--file", type=str, required=True, help="input file name")
+    parser_sign.add_argument("--threads", default=10, type=int, help="Number of threads (Default = 10)")
+    parser_sign.add_argument("--timeout", default=5, type=int, help="Timeout in seconds (Default = 5)")
+    parser_sign.add_argument("-v", "--verbose", action="store_true", help="Enable verbose")
     parser_sign.set_defaults(func=sign_console)
     
-    parser_sign = subparsers.add_parser("nullguest", help="Checks Null/Guest Share Access")
-    parser_sign.add_argument("-f", "--file", type=str, required=True, help="input file name")
-    parser_sign.set_defaults(func=nullguest_console)
+    parser_nullguest = subparsers.add_parser("nullguest", help="Checks Null/Guest Share Access")
+    parser_nullguest.add_argument("-f", "--file", type=str, required=True, help="input file name")
+    parser_nullguest.add_argument("--threads", default=10, type=int, help="Number of threads (Default = 10)")
+    parser_nullguest.add_argument("--timeout", default=5, type=int, help="Timeout in seconds (Default = 5)")
+    parser_nullguest.add_argument("-v", "--verbose", action="store_true", help="Enable verbose")
+    parser_nullguest.set_defaults(func=nullguest_console)
 
     args = parser.parse_args()
     
