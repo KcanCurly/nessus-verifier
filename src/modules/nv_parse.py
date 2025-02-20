@@ -105,13 +105,13 @@ class NessusScanOutput:
         self.output = output
         self.cve = cve
 
-def parse_nessus_output(nessus_xml) -> list[NessusScanOutput]:
+def parse_nessus_output(file_path) -> list[NessusScanOutput]:
     """
     Parses Nessus XML output and returns a list of NessusScanOutput objects.
     """
     nessus_scan_output = []
-
-    root = ET.fromstring(nessus_xml)
+    tree = ET.parse(file_path)
+    root = tree.getroot()
 
     for host in root.iter('ReportHost'):
         host_properties = host.find('HostProperties')
@@ -205,8 +205,7 @@ def main():
     save_urls(urls)
     
     # Parse for vulnerabilities
-    nessus_file_content = read_nessus_file(args.file)
-    output = parse_nessus_output(nessus_file_content)
+    output = parse_nessus_output(args.file)
     rules = group_up(output)
     write_to_file(rules, args)
     
