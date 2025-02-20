@@ -89,9 +89,9 @@ class GroupNessusScanOutput:
     def add_host(self, name, id, host) -> bool:
         if id in self.plugin_ids:
             self.hosts.append(host)
-            if id not in self.sub_hosts:
-                self.sub_hosts[id] = []
-            self.sub_hosts[id].append(host)
+            if name not in self.sub_hosts:
+                self.sub_hosts[name] = []
+            self.sub_hosts[name].append(host)
             return True
         return False
     
