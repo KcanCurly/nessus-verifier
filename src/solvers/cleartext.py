@@ -17,8 +17,8 @@ def get_default_config():
 def helper_parse(subparser):
     parser_task1 = subparser.add_parser(str(code), help="Cleartext Protocol Detected")
     group = parser_task1.add_mutually_exclusive_group(required=True)
-    group.add_argument("-f", "--file", type=str, required=True, help="JSON file")
-    group.add_argument("-lf", "--list-file", type=str, required=True, help="List file")
+    group.add_argument("-f", "--file", type=str, help="JSON file")
+    group.add_argument("-lf", "--list-file", type=str, help="List file")
     parser_task1.set_defaults(func=solve)
    
 def solve_amqp(scan: GroupNessusScanOutput):
