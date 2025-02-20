@@ -22,7 +22,7 @@ def solve(args, is_all = False):
     versions = {}
     
     l= logger.setup_logging(args.verbose)
-    scan: GroupNessusScanOutput = find_scan(args.file, code)
+
     hosts = []
     if args.file:
         scan: GroupNessusScanOutput = find_scan(args.file, code)

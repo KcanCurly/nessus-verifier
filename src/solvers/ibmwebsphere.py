@@ -25,7 +25,7 @@ def get_default_config():
 """
 
 def helper_parse(subparser):
-    parser_task1 = subparser.add_parser(str(code), help="Apache Tomcat Version")
+    parser_task1 = subparser.add_parser(str(code), help="IBM WebSphere Version")
     group = parser_task1.add_mutually_exclusive_group(required=True)
     group.add_argument("-f", "--file", type=str, help="JSON file")
     group.add_argument("-lf", "--list-file", type=str, help="List file")
@@ -33,7 +33,7 @@ def helper_parse(subparser):
     
 def solve(args):
     l= logger.setup_logging(args.verbose)
-    scan: GroupNessusScanOutput = find_scan(args.file, code)
+
     hosts = []
     if args.file:
         scan: GroupNessusScanOutput = find_scan(args.file, code)
