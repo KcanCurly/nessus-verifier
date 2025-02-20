@@ -179,6 +179,7 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
             for h in a.hosts:
                 print(f"    {h}", file=f)
             if len(a.sub_hosts.items()) == 1: continue
+            print(file=f)
             for key,value in a.sub_hosts.items():
                 print(f"    {key}", file=f)
                 for z in value:
