@@ -36,7 +36,7 @@ def solve(args, is_all = False):
     vuln_daytime = []
     vuln_qotd = []
     vuln_chargen = []
-    vuln = []   
+
     nm = nmap.PortScanner()
     for host in hosts:
         try:
@@ -61,25 +61,25 @@ def solve(args, is_all = False):
     
     if len(vuln_echo) > 0:
         print("Echo Protocol Detected:")
-        for value in vuln:
+        for value in vuln_echo:
             print(f"{value}")
             
     if len(vuln_discard) > 0:
         print("Discard Protocol Detected:")
-        for value in vuln:
+        for value in vuln_discard:
             print(f"{value}")
             
     if len(vuln_daytime) > 0:
         print("Daytime Protocol Detected:")
-        for value in vuln:
+        for value in vuln_daytime:
             print(f"{value}")
             
     if len(vuln_qotd) > 0:
         print("QOTD Protocol Detected:")
-        for value in vuln:
+        for value in vuln_qotd:
             print(f"{value}")
             
     if len(vuln_chargen) > 0:
         print("Chargen Protocol Detected:")
-        for value in vuln:
+        for value in vuln_chargen:
             print(f"{value}")
