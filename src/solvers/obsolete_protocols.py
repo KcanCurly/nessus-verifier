@@ -49,16 +49,16 @@ def solve(args, is_all = False):
                 if nmap_host.has_tcp(int(port)) and nmap_host['tcp'][int(port)]['state'] == 'open':
                     if nmap_host['tcp'][int(port)]['name'].lower() == 'echo':
                         vuln_echo.append(host)
-                    if nmap_host['tcp'][int(port)]['name'].lower() == 'discard':
+                    elif nmap_host['tcp'][int(port)]['name'].lower() == 'discard':
                         vuln_discard.append(host)
-                    if nmap_host['tcp'][int(port)]['name'].lower() == 'daytime':
+                    elif nmap_host['tcp'][int(port)]['name'].lower() == 'daytime':
                         vuln_daytime.append(host)
-                    if nmap_host['tcp'][int(port)]['name'].lower() == 'qotd':
+                    elif nmap_host['tcp'][int(port)]['name'].lower() == 'qotd':
                         vuln_qotd.append(host)
-                    if nmap_host['tcp'][int(port)]['name'].lower() == 'chargen':
+                    elif nmap_host['tcp'][int(port)]['name'].lower() == 'chargen':
                         vuln_chargen.append(host)
                                     
-        except: pass
+        except Exception as e: print(e)
     
     if len(vuln_echo) > 0:
         print("Echo Protocol Detected:")
