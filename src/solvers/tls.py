@@ -2,7 +2,6 @@ import subprocess
 import re
 import ssl
 import socket
-import time
 import tomllib
 from src.utilities.utilities import find_scan, get_classic_single_progress, get_classic_overall_progress, get_classic_console
 from src.modules.vuln_parse import GroupNessusScanOutput
@@ -42,87 +41,89 @@ def helper_parse(subparser):
     
 
 def tls_single(single_progress: Progress, single_task_id: TaskID, console: Console, host: str, allow_white_ciphers: bool, output: str, timeout: int, verbose: bool):
-    ip = host.split(":")[0]
-    port  = host.split(":")[1]
-    
-    expired_cert_re = r"Not valid after:\s+\x1b\[31m(.*)\x1b\[0m"
-    
-    weak_versions = {}
-    weak_ciphers = {}
-    weak_bits = {}
-    is_wrong_host = False
-    is_cert_expired = ""
-    
-    single_progress.start_task(single_task_id)
-    single_progress.update(single_task_id, status="Running")
-    
-    command = ["sslscan", "--no-fallback", "--no-renegotiation", "--no-group", "--no-heartbleed", "--iana-names", f"--connect-timeout={timeout}", host]
-    result = subprocess.run(command, text=True, capture_output=True)
-    if "Connection refused" in result.stderr or "enabled" not in result.stdout:
-        single_progress.update(single_task_id, status=f"[red]Failed: {result.stderr}[/red]", advance=1)
-        return
-
-    expired_match = re.search(expired_cert_re, result.stdout)
-    if expired_match:
-        is_cert_expired = expired_match.group(1)
-
-    lines = result.stdout.splitlines()
-    protocol_line = False
-    cipher_line = False
-    for line in lines:
-        if "SSL/TLS Protocols" in line:
-            protocol_line = True
-            continue
-        if "Supported Server Cipher(s)" in line:
-            protocol_line = False
-            cipher_line = True
-            continue
-        if "Server Key Exchange Group(s)" in line:
-            cipher_line = False
-            continue
-        if protocol_line:
-            if "enabled" in line:
-                if "SSLv2" in line:
-                    if host not in weak_versions:
-                        weak_versions[host] = []
-                    weak_versions[host].append("SSLv2")
-                elif "SSLv3" in line:
-                    if host not in weak_versions:
-                        weak_versions[host] = []
-                    weak_versions[host].append("SSLv3")
-                elif "TLSv1.0" in line:
-                    if host not in weak_versions:
-                        weak_versions[host] = []
-                    weak_versions[host].append("TLSv1.0")
-                elif "TLSv1.1" in line:
-                    if host not in weak_versions:
-                        weak_versions[host] = []
-                    weak_versions[host].append("TLSv1.1")
+    try:
+        ip = host.split(":")[0]
+        port  = host.split(":")[1]
         
-        if cipher_line and line:
-            cipher = line.split()[4]
-            if "[32m" not in cipher: # Non-green
-                if allow_white_ciphers: # We allow white ciphers
-                    if "[" in cipher: # Non-white
+        expired_cert_re = r"Not valid after:\s+\x1b\[31m(.*)\x1b\[0m"
+        
+        weak_versions = {}
+        weak_ciphers = {}
+        weak_bits = {}
+        is_wrong_host = False
+        is_cert_expired = ""
+        
+        single_progress.start_task(single_task_id)
+        single_progress.update(single_task_id, status="Running")
+        
+        command = ["sslscan", "--no-fallback", "--no-renegotiation", "--no-group", "--no-heartbleed", "--iana-names", f"--connect-timeout={timeout}", host]
+        result = subprocess.run(command, text=True, capture_output=True)
+        if "Connection refused" in result.stderr or "enabled" not in result.stdout:
+            single_progress.update(single_task_id, status=f"[red]Command Failed: stdout: {result.stdout} stderr: {result.stderr}[/red]", advance=1)
+            return TLS_Vuln_Data(host, weak_versions, weak_ciphers, weak_bits, is_wrong_host, is_cert_expired)
+
+        expired_match = re.search(expired_cert_re, result.stdout)
+        if expired_match:
+            is_cert_expired = expired_match.group(1)
+
+        lines = result.stdout.splitlines()
+        protocol_line = False
+        cipher_line = False
+        for line in lines:
+            if "SSL/TLS Protocols" in line:
+                protocol_line = True
+                continue
+            if "Supported Server Cipher(s)" in line:
+                protocol_line = False
+                cipher_line = True
+                continue
+            if "Server Key Exchange Group(s)" in line:
+                cipher_line = False
+                continue
+            if protocol_line:
+                if "enabled" in line:
+                    if "SSLv2" in line:
+                        if host not in weak_versions:
+                            weak_versions[host] = []
+                        weak_versions[host].append("SSLv2")
+                    elif "SSLv3" in line:
+                        if host not in weak_versions:
+                            weak_versions[host] = []
+                        weak_versions[host].append("SSLv3")
+                    elif "TLSv1.0" in line:
+                        if host not in weak_versions:
+                            weak_versions[host] = []
+                        weak_versions[host].append("TLSv1.0")
+                    elif "TLSv1.1" in line:
+                        if host not in weak_versions:
+                            weak_versions[host] = []
+                        weak_versions[host].append("TLSv1.1")
+            
+            if cipher_line and line:
+                cipher = line.split()[4]
+                if "[32m" not in cipher: # Non-green
+                    if allow_white_ciphers: # We allow white ciphers
+                        if "[" in cipher: # Non-white
+                            if host not in weak_ciphers:
+                                weak_ciphers[host] = []
+                            weak_ciphers[host].append(re.sub(r'^\x1b\[[0-9;]*m', '', cipher))
+                            bit = line.split()[2]
+                            if "[33m]" in bit: # If it is a green or white output and bit is low
+                                if host not in weak_bits:
+                                    weak_bits[host] = []
+                                weak_bits[host].append(re.sub(r'^\x1b\[[0-9;]*m', '', bit) + "->" + re.sub(r'^\x1b\[[0-9;]*m', '', cipher))
+                    else:
                         if host not in weak_ciphers:
                             weak_ciphers[host] = []
                         weak_ciphers[host].append(re.sub(r'^\x1b\[[0-9;]*m', '', cipher))
-                        bit = line.split()[2]
-                        if "[33m]" in bit: # If it is a green or white output and bit is low
+                    
+                        bit = line.split()[2] # If it is a green output and bit is low
+                        if "[33m]" in bit:
                             if host not in weak_bits:
                                 weak_bits[host] = []
                             weak_bits[host].append(re.sub(r'^\x1b\[[0-9;]*m', '', bit) + "->" + re.sub(r'^\x1b\[[0-9;]*m', '', cipher))
-                else:
-                    if host not in weak_ciphers:
-                        weak_ciphers[host] = []
-                    weak_ciphers[host].append(re.sub(r'^\x1b\[[0-9;]*m', '', cipher))
-                
-                    bit = line.split()[2] # If it is a green output and bit is low
-                    if "[33m]" in bit:
-                        if host not in weak_bits:
-                            weak_bits[host] = []
-                        weak_bits[host].append(re.sub(r'^\x1b\[[0-9;]*m', '', bit) + "->" + re.sub(r'^\x1b\[[0-9;]*m', '', cipher))
-                
+    except Exception as e: single_progress.update(single_task_id, status=f"[red]Failed: {e}[/red]", advance=1)
+                   
     
     try:
         context = ssl.create_default_context()
