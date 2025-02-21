@@ -42,21 +42,22 @@ def solve(args, is_all = False):
         try:
             ip = host.split(":")[0]
             port = host.split(":")[1]
-            nm.scan(ip, "7,9,13,17,19", arguments=f'-sV')
+            nm.scan(ip, port, arguments=f'-sV')
             
             if ip in nm.all_hosts():
                 nmap_host = nm[ip]
-                if nmap_host.has_tcp(7) and nmap_host['tcp'][7]['state'] == 'open' and nmap_host['tcp'][7]['name'].lower() == 'echo':
-                    vuln_echo.append(host)
-                if nmap_host.has_tcp(9) and nmap_host['tcp'][9]['state'] == 'open' and nmap_host['tcp'][9]['name'].lower() == 'discard':
-                    vuln_discard.append(host)
-                if nmap_host.has_tcp(13) and nmap_host['tcp'][13]['state'] == 'open' and nmap_host['tcp'][13]['name'].lower() == 'daytime':
-                    vuln_daytime.append(host)
-                if nmap_host.has_tcp(17) and nmap_host['tcp'][17]['state'] == 'open' and nmap_host['tcp'][17]['name'].lower() == 'qotd':
-                    vuln_qotd.append(host)
-                if nmap_host.has_tcp(19) and nmap_host['tcp'][19]['state'] == 'open' and nmap_host['tcp'][19]['name'].lower() == 'chargen':
-                    vuln_chargen.append(host)
-                    
+                if nmap_host.has_tcp(int(port)) and nmap_host['tcp'][int(port)]['state'] == 'open':
+                    if nmap_host['tcp'][int(port)]['name'].lower() == 'echo':
+                        vuln_echo.append(host)
+                    if nmap_host['tcp'][int(port)]['name'].lower() == 'discard':
+                        vuln_discard.append(host)
+                    if nmap_host['tcp'][int(port)]['name'].lower() == 'daytime':
+                        vuln_daytime.append(host)
+                    if nmap_host['tcp'][int(port)]['name'].lower() == 'qotd':
+                        vuln_qotd.append(host)
+                    if nmap_host['tcp'][int(port)]['name'].lower() == 'chargen':
+                        vuln_chargen.append(host)
+                                    
         except: pass
     
     if len(vuln_echo) > 0:
