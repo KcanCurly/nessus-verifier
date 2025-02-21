@@ -46,6 +46,7 @@ def solve(args, is_all = False):
             
             if ip in nm.all_hosts():
                 nmap_host = nm[ip]
+                print(nmap_host)
                 if nmap_host.has_tcp(int(port)) and nmap_host['tcp'][int(port)]['state'] == 'open':
                     if nmap_host['tcp'][int(port)]['name'].lower() == 'echo':
                         vuln_echo.append(host)
@@ -58,7 +59,7 @@ def solve(args, is_all = False):
                     elif nmap_host['tcp'][int(port)]['name'].lower() == 'chargen':
                         vuln_chargen.append(host)
                                     
-        except Exception as e: print(e)
+        except:pass
     
     if len(vuln_echo) > 0:
         print("Echo Protocol Detected:")
