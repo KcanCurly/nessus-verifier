@@ -58,8 +58,13 @@ def tls_single(single_progress: Progress, single_task_id: TaskID, console: Conso
         
         command = ["sslscan", "--no-fallback", "--no-renegotiation", "--no-group", "--no-heartbleed", "--iana-names", f"--connect-timeout={timeout}", host]
         result = subprocess.run(command, text=True, capture_output=True)
-        if "Connection refused" in result.stderr or "enabled" not in result.stdout:
-            single_progress.update(single_task_id, status=f"[red]Command Failed: stdout: {result.stdout} stderr: {result.stderr}[/red]", advance=1)
+        
+        # Fail conditions
+        if "Connection refused" in result.stderr:
+            single_progress.update(single_task_id, status=f"[red]Command Failed: Connection Refused[/red]", advance=1)
+            return TLS_Vuln_Data(host, weak_versions, weak_ciphers, weak_bits, is_wrong_host, is_cert_expired)
+        if "enabled" not in result.stdout:
+            single_progress.update(single_task_id, status=f"[red]Command Failed: No SSL detected[/red]", advance=1)
             return TLS_Vuln_Data(host, weak_versions, weak_ciphers, weak_bits, is_wrong_host, is_cert_expired)
 
         expired_match = re.search(expired_cert_re, result.stdout)
@@ -137,7 +142,7 @@ def tls_single(single_progress: Progress, single_task_id: TaskID, console: Conso
     single_progress.update(single_task_id, status="[green]Successfully processed[/green]", advance=1)
     return TLS_Vuln_Data(host, weak_versions, weak_ciphers, weak_bits, is_wrong_host, is_cert_expired)
 
-def tls_nv(l: list[str], allow_white_ciphers: bool, output: str = None, threads: int = 10, timeout: int = 3, verbose: bool = False):
+def tls_nv(l: list[str], allow_white_ciphers: bool, output: str = None, threads: int = 10, timeout: int = 3, verbose: bool = False, disable_visual_on_complete: bool = False, only_show_progress: bool = False):
     weak_versions = {}
     weak_ciphers = {}
     weak_bits = {}
@@ -148,10 +153,11 @@ def tls_nv(l: list[str], allow_white_ciphers: bool, output: str = None, threads:
     single_progress = get_classic_single_progress()
     overall_task_id = overall_progress.add_task("", start=False, modulename="TLS Misconfigurations")
     console = get_classic_console(force_terminal=True)
+    
     progress_group = Group(
         Panel(single_progress, title="TLS Misconfigurations", expand=False),
         overall_progress,
-    )
+    ) if not only_show_progress else Group(overall_progress)
     
     with Live(progress_group, console=console):
         overall_progress.update(overall_task_id, total=len(l), completed=0)
@@ -179,32 +185,32 @@ def tls_nv(l: list[str], allow_white_ciphers: bool, output: str = None, threads:
     if len(weak_ciphers) > 0:       
         print("Vulnerable TLS Ciphers on Hosts:")                
         for key, value in weak_ciphers.items():
-            print(f"\t{key} - {", ".join(value)}")
+            print(f"    {key} - {", ".join(value)}")
     
     
     if len(weak_versions) > 0: 
         print()             
         print("Vulnerable TLS Versions on Hosts:")                
         for key, value in weak_versions.items():
-            print(f"\t{key} - {", ".join(value)}")
+            print(f"    {key} - {", ".join(value)}")
             
     if len(weak_bits) > 0:
         print()
         print("Low Bits on Good Algorithms on Hosts:")
         for key, value in weak_versions.items():
-            print(f"\t{key} - {", ".join(value)}")
+            print(f"    {key} - {", ".join(value)}")
     
     if len(wrong_hosts) > 0:
         print()
         print("Wrong hostnames on certficate on hosts:")
         for v in wrong_hosts:
-            print(f"\t{v}")
+            print(f"    {v}")
             
     if len(expired_cert_hosts) > 0:
         print()
         print("Expired cert on hosts:")
         for v in expired_cert_hosts:
-            print(f"\t{v}")
+            print(f"    {v}")
     
 
 def solve(args, is_all = False):
@@ -225,7 +231,7 @@ def solve(args, is_all = False):
             data = tomllib.load(f)
             args.allow_white_ciphers = data[str(code)]["allow_white_ciphers"]
         
-    tls_nv(hosts, args.allow_white_ciphers)
+    tls_nv(hosts, args.allow_white_ciphers, disable_visual_on_complete=args.disable_visual_on_complete, only_show_progress=args.only_show_progress)
     return
     
     weak_versions = {}

@@ -59,6 +59,7 @@ def main():
     parser.add_argument("-c", "--config", type=str, default="nv-config.toml", help="Config file (default: nv-config.toml).")
     parser.add_argument("-v", "--verbose", action="count", default=0, help="Increase verbosity level (-v, -vv, -vvv, -vvvv, -vvvvvv)")
     parser.add_argument("--disable-visual-on-complete", action="store_true", help="Disables the status visual for an individual task when that task is complete, this can help on keeping eye on what is going on at the time")
+    parser.add_argument("--only-show-progress", action="store_true", help="Only show overall progress bar")
     parser.add_argument("--debug", action="store_true", help="Enable debug mode")
     subparsers = parser.add_subparsers(dest="command", help="Available subcommands")
     
