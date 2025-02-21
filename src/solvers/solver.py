@@ -1,5 +1,5 @@
 import argparse
-from src.solvers import grafana, php, python, tls, kibana, elastic, mongo, oracle, smb, ssh, snmp, tomcat, apache, nginx, vmware, openssh, smtp_relay, mssql, idrac, ipmi, terminal, cleartext, ibmwebsphere
+from src.solvers import grafana, php, python, tls, kibana, elastic, mongo, oracle, smb, ssh, snmp, tomcat, apache, nginx, vmware, openssh, smtp_relay, mssql, idrac, ipmi, terminal, cleartext, ibmwebsphere, obsolete_protocols
 from src.modules.vuln_parse import GroupNessusScanOutput
 
 solver_dict = {
@@ -20,7 +20,7 @@ solver_dict = {
     # 15: NFS
     16: mssql,
     # 17: mDNS,
-    # 18: Obsolete Protocols,
+    18: obsolete_protocols,
     19: idrac,
     20: ipmi,
     21: php,
@@ -30,7 +30,7 @@ solver_dict = {
     25: elastic,
     26: mongo,
     27: oracle,
-    # 28: ipmi,
+    # 28: queuejumper,
     29: ibmwebsphere,
 }
 

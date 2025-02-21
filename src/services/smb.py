@@ -157,6 +157,7 @@ def nullguest_console(args):
 def sign_single(single_progress: Progress, single_task_id: TaskID, console: Console, host: str, output: str, timeout: int, verbose: bool):
     ip = host.split(":")[0]
     port = host.split(":")[1]
+    single_progress.start_task(single_task_id)
     single_progress.update(single_task_id, status = "Running")
     try:
         conn = SMBConnection(ip, ip, sess_port=int(port), timeout=timeout)
@@ -210,6 +211,7 @@ def sign_console(args):
 def smbv1_single(single_progress: Progress, single_task_id: TaskID, console: Console, host: str, output: str, timeout: int, verbose: bool):
     ip = host.split(":")[0]
     port = host.split(":")[1]
+    single_progress.start_task(single_task_id)
     single_progress.update(single_task_id, status = "Running")
     try:
         SMBConnection(ip, ip, sess_port=int(port), timeout=timeout, preferredDialect="NT LM 0.12")

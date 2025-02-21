@@ -35,8 +35,7 @@ def solve(args, is_all = False):
             hosts = [line.strip() for line in f]
     
     r = r"<title>Apache Tomcat/(.*)</title>"
-    
-    hosts = scan.hosts
+
     for host in hosts:
         try:
             try:

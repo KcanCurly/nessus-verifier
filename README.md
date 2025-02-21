@@ -18,16 +18,8 @@ git clone https://github.com/CiscoCXSecurity/rdp-sec-check
 ## Usage
 
 ```
-nv-parse file.nessus
-nv-vuln-parse file.nessus
-nv-solver all
-```
-
-This will create ports directory with service directories inside, after that you can use smaller modules to target the service directory
-
-```
-nv-ssh [directory path] [filename of the hosts]
-nv-ftp [directory path] [filename of the hosts]
+nv-parse -f file.nessus
+nv-solver all -f output.ndjson
 ```
 
 ## Implemented Applications
