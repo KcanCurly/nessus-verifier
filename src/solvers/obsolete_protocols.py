@@ -46,15 +46,15 @@ def solve(args, is_all = False):
             
             if ip in nm.all_hosts():
                 nmap_host = nm[ip]
-                if nmap_host.has_tcp(7) and nmap_host['tcp'][7]['name'].lower() == 'echo':
+                if nmap_host.has_tcp(7) and nmap_host['tcp'][7]['state'] == 'open' and nmap_host['tcp'][7]['name'].lower() == 'echo':
                     vuln_echo.append(host)
-                if nmap_host.has_tcp(9) and nmap_host['tcp'][9]['name'].lower() == 'discard':
+                if nmap_host.has_tcp(9) and nmap_host['tcp'][9]['state'] == 'open' and nmap_host['tcp'][9]['name'].lower() == 'discard':
                     vuln_discard.append(host)
-                if nmap_host.has_tcp(13) and nmap_host['tcp'][13]['name'].lower() == 'daytime':
+                if nmap_host.has_tcp(13) and nmap_host['tcp'][13]['state'] == 'open' and nmap_host['tcp'][13]['name'].lower() == 'daytime':
                     vuln_daytime.append(host)
-                if nmap_host.has_tcp(17) and nmap_host['tcp'][17]['name'].lower() == 'qotd':
+                if nmap_host.has_tcp(17) and nmap_host['tcp'][17]['state'] == 'open' and nmap_host['tcp'][17]['name'].lower() == 'qotd':
                     vuln_qotd.append(host)
-                if nmap_host.has_tcp(19) and nmap_host['tcp'][19]['name'].lower() == 'chargen':
+                if nmap_host.has_tcp(19) and nmap_host['tcp'][19]['state'] == 'open' and nmap_host['tcp'][19]['name'].lower() == 'chargen':
                     vuln_chargen.append(host)
                     
         except: pass
