@@ -21,7 +21,8 @@ def post_nv(l: list[str], output: str = None, threads: int = 10, timeout: int = 
             dbs = client.list_databases()
             for db in dbs:
                 print(db)
-                cols = client[db["name"]]
+                d = client[db["name"]]
+                cols = d.list_collections()
                 for c in cols:
                     print(c)
 
