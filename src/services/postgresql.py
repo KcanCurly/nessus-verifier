@@ -30,7 +30,7 @@ def unpassworded_nv(l: list[str], output: str = None, threads: int = 10, timeout
             with con.cursor() as cur:
                 cur.execute("SELECT datname FROM pg_database;")
                 for record in cur:
-                    print(cur)
+                    print(record)
 
 def unpassworded_console(args):
     unpassworded_nv(get_hosts_from_file(args.file), threads=args.threads, timeout=args.timeout, verbose=args.verbose, disable_visual_on_complete=args.disable_visual_on_complete)
