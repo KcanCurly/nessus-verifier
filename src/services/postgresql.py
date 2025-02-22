@@ -47,7 +47,7 @@ def unpassworded_nv(l: list[str], output: str = None, threads: int = 10, timeout
                             print("=======================")
                             tables = [record[0] for record in cur]
                             for table in tables:
-                                print(table[0])
+                                print(table)
                             print()
                 except Exception as e: print(e)
             
