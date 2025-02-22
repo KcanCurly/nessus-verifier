@@ -32,22 +32,24 @@ def unpassworded_nv(l: list[str], output: str = None, threads: int = 10, timeout
                     cur.execute("SELECT datname FROM pg_database;")
                     dbs = [record[0] for record in cur]
             for db in dbs:
-                db_params = {
-                    "dbname": db,
-                    "user": "postgres",
-                    "password": "",
-                    "host": ip,
-                    "port": int(port),
-                }
-                with psycopg.connect(**db_params) as con:
-                    with con.cursor() as cur:
-                        cur.execute("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public';")
-                        print(f"DATABASE: {db}")
-                        print("=======================")
-                        tables = [record[0] for record in cur]
-                        for table in tables:
-                            print(table[0])
-                        print()
+                try:
+                    db_params = {
+                        "dbname": db,
+                        "user": "postgres",
+                        "password": "",
+                        "host": ip,
+                        "port": int(port),
+                    }
+                    with psycopg.connect(**db_params) as con:
+                        with con.cursor() as cur:
+                            cur.execute("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public';")
+                            print(f"DATABASE: {db}")
+                            print("=======================")
+                            tables = [record[0] for record in cur]
+                            for table in tables:
+                                print(table[0])
+                            print()
+                except Exception as e: print(e)
             
         except Exception as e: print(e)
 
