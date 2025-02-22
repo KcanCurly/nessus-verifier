@@ -1,4 +1,5 @@
 import argparse
+import pprint
 import subprocess
 import re
 from src.utilities.utilities import get_hosts_from_file
@@ -26,6 +27,12 @@ def post_nv(l: list[str], output: str = None, threads: int = 10, timeout: int = 
                 cols = d.list_collections()
                 for c in cols:
                     print(c["name"])
+                    print("---------------------")
+                    doc = d[c["name"]]
+                    for post in doc.find(filter="", limit=5):
+                        pprint.pprint(post)
+                    print()
+                        
                 print()
 
         except Exception as e: print(f"Error for {host}:", e)
