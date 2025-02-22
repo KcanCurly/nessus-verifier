@@ -49,14 +49,23 @@ def unpassworded_nv(l: list[str], output: str = None, threads: int = 10, timeout
                             for table in tables:
                                 try:
                                     print(table)
+                                    print("#######################")
                                     print("-----------------------")
                                     cur.execute(f"SELECT column_name, data_type FROM information_schema.columns WHERE table_name = '{table}';")
                                     for c in cur:
                                         print(f"{c[0]}: {c[1]}")
                                     print()
+                                    columns = [c[0] for c in cur]
+                                    try:
+                                        cur.execute(f"SELECT {", ".join(columns)} FROM {table} LIMIT 1;")
+                                        for v in cur:
+                                            print(", ".join(v))
+                                    except Exception as e: print(e)
+                                    
+                                    
                                 except Exception as e: print(e)
+                            print()
                                 
-                            
                 except Exception as e: print(e)
             
         except Exception as e: print(e)
