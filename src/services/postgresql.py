@@ -1,9 +1,7 @@
 import argparse
 import subprocess
 import re
-from impacket.smbconnection import SMBConnection
 from src.utilities.utilities import get_hosts_from_file
-from smb import SMBConnection as pysmbconn
 from src.utilities.utilities import get_classic_single_progress, get_classic_overall_progress, get_classic_console, get_hosts_from_file
 from rich.live import Live
 from rich.progress import Progress, TaskID
@@ -13,6 +11,52 @@ from src.services.service import Vuln_Data
 from rich.console import Group
 from rich.panel import Panel
 import psycopg
+
+creds = [
+    "dcmadmin:passw0rd",
+    "postgres:amber",
+    "postgres:postgres",
+    "postgres:password",
+    "postgres:admin",
+    "admin:admin",
+    "admin:password",
+    "postgres:123",
+]
+
+def brute_nv(l: list[str], c: list[str] = [], output: str = None, threads: int = 10, timeout: int = 3, verbose: bool = False, disable_visual_on_complete: bool = False):
+    vuln = {}
+    
+    creds = creds + c
+    
+    for host in l:
+        ip = host.split(":")[0]
+        port = host.split(":")[1]
+        for cred in creds:
+            u = cred.split(":")[0]
+            p = cred.split(":")[1]
+            try:
+                db_params = {
+                    "user": u,
+                    "password": p,
+                    "host": ip,
+                    "port": int(port),
+                }
+                with psycopg.connect(**db_params) as con:
+                    with con.cursor() as cur:
+                        cur.execute("SELECT datname FROM pg_database;")
+                        if host not in vuln:
+                            vuln[host] = []
+                        vuln[host].append(cred)
+
+            except: pass
+        
+    if len(vuln) > 0:
+        print("Valid PostgreSQL credential found:")
+        for key, value in vuln.items():
+            print(f"{key}: {", ".join(value)}")
+
+def brute_console(args):
+    brute_nv(get_hosts_from_file(args.file), get_hosts_from_file(args.credential_file) if args.credential_file else [])
 
 def post_nv(l: list[str], output: str = None, threads: int = 10, timeout: int = 3, verbose: bool = False, disable_visual_on_complete: bool = False):
     for host in l:
@@ -103,14 +147,14 @@ def unpassworded_console(args):
 
 def all(args):
     unpassworded_console(args)
-    post_console(args)
+    brute_console(args)
 
 def main():
     parser = argparse.ArgumentParser(description="PostgreSQL module of nessus-verifier.")
     
     subparsers = parser.add_subparsers(dest="command")  # Create subparsers
     
-    parser_all = subparsers.add_parser("all", help="Runs all modules")
+    parser_all = subparsers.add_parser("all", help="Runs all modules (Except post module")
     parser_all.add_argument("-f", "--file", type=str, required=True, help="input file name")
     parser_all.add_argument("-u", "--username", type=str, default="postgres", help="Username (Default = postgres)")
     parser_all.add_argument("-p", "--password", type=str, default="", help="Username (Default = '')")
@@ -129,6 +173,16 @@ def main():
     parser_default.add_argument("--only-show-progress", action="store_true", help="Only show overall progress bar")
     parser_default.add_argument("-v", "--verbose", action="store_true", help="Enable verbose")
     parser_default.set_defaults(func=unpassworded_console)
+    
+    parser_brute = subparsers.add_parser("brute", help="Bruteforce")
+    parser_brute.add_argument("-f", "--file", type=str, required=True, help="input file name")
+    parser_brute.add_argument("-cf", "--credential-file", type=str, help="Credential file")
+    parser_brute.add_argument("--threads", default=10, type=int, help="Number of threads (Default = 10)")
+    parser_brute.add_argument("--timeout", default=5, type=int, help="Timeout in seconds (Default = 5)")
+    parser_brute.add_argument("--disable-visual-on-complete", action="store_true", help="Disables the status visual for an individual task when that task is complete, this can help on keeping eye on what is going on at the time")
+    parser_brute.add_argument("--only-show-progress", action="store_true", help="Only show overall progress bar")
+    parser_brute.add_argument("-v", "--verbose", action="store_true", help="Enable verbose")
+    parser_brute.set_defaults(func=brute_console)
     
     parser_post = subparsers.add_parser("post", help="Post Exploit")
     parser_post.add_argument("-f", "--file", type=str, required=True, help="input file name")

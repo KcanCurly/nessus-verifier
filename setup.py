@@ -59,6 +59,7 @@ setup(
             "nv-smb=src.services.smb:main",
             "nv-rlogin=src.services.rlogin:main",
             "nv-psql=src.services.postgresql:main",
+            "nv-mongodb=src.services.mongodb:main",
         ],
     },
 )
