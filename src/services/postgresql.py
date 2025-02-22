@@ -20,7 +20,6 @@ def unpassworded_nv(l: list[str], output: str = None, threads: int = 10, timeout
         ip = host.split(":")[0]
         port = host.split(":")[1]
         db_params = {
-            "dbname": "postgres",
             "user": "postgres",
             "password": "",
             "host": ip,
