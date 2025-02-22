@@ -49,7 +49,7 @@ def unpassworded_nv(l: list[str], output: str = None, threads: int = 10, timeout
                             print(table[0])
                         print()
             
-        except: pass
+        except Exception as e: print(e)
 
 def unpassworded_console(args):
     unpassworded_nv(get_hosts_from_file(args.file), threads=args.threads, timeout=args.timeout, verbose=args.verbose, disable_visual_on_complete=args.disable_visual_on_complete)
