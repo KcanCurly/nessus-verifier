@@ -2,6 +2,7 @@ import subprocess
 import re
 from src.utilities.utilities import find_scan
 from src.modules.vuln_parse import GroupNessusScanOutput
+from src.services.postgresql import unpassworded_nv
 from src.utilities import logger
 import psycopg
 import os
@@ -37,5 +38,7 @@ def solve(args, is_all = False):
     
     if args.file:
         hosts = scan.sub_hosts['PostgreSQL Default Unpassworded Account']
+        
+    unpassworded_nv(hosts)
         
     
