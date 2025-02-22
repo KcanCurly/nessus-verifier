@@ -21,6 +21,9 @@ def post_nv(l: list[str], output: str = None, threads: int = 10, timeout: int = 
             dbs = client.list_databases()
             for db in dbs:
                 print(db)
+                cols = client[db["name"]]
+                for c in cols:
+                    print(c)
 
         except Exception as e: print(f"Error for {host}:", e)
         
@@ -39,7 +42,7 @@ def unauth_nv(l: list[str], output: str = None, threads: int = 10, timeout: int 
             dbs = client.list_databases()
             vuln.append(host)
 
-        except Exception as e: print(f"Error for {host}:", e)
+        except:pass
     
     if len(vuln) > 0:
         print("MongoDB Unauthenticated Access:")
