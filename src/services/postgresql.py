@@ -56,12 +56,11 @@ def unpassworded_nv(l: list[str], output: str = None, threads: int = 10, timeout
                                         print(f"{c[0]}: {c[1]}")
                                         columns.append(c[0])
                                     print()
-                                    print(columns)
                                     try:
                                         print("#######################")
                                         cur.execute(f"SELECT {", ".join(columns)} FROM {table} LIMIT 1;")
                                         for v in cur:
-                                            print(", ".join(v))
+                                            print(v)
                                     except Exception as e: print(e)
                                     
                                     
