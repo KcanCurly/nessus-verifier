@@ -1766,3 +1766,8 @@
   # 171344 - IBM WebSphere Application Server SEoL (7.0.x)
   # 205643 - IBM WebSphere Application Server Liberty 17.0.0.3 < 24.0.0.9 Information Disclosure (7165502)
   # 214871 - IBM WebSphere Application Server Liberty 21.0.0.2 < 25.0.0.2 DoS (7181925)
+
+- name: PostgreSQL
+  id: 30
+  plugin-ids: [10483]
+  # 10483 - PostgreSQL Default Unpassworded Account

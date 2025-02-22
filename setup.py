@@ -21,6 +21,8 @@ setup(
         "pymongo",
         "python-nmap",
         "rich",
+        "psycopg",
+        "psycopg_pool",
     ],
     classifiers=[
         "Programming Language :: Python :: 3",
