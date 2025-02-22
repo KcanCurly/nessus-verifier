@@ -20,11 +20,13 @@ def post_nv(l: list[str], output: str = None, threads: int = 10, timeout: int = 
             client = MongoClient(ip, int(port))
             dbs = client.list_databases()
             for db in dbs:
-                print(db)
+                print(f"Database: {db["name"]}")
+                print("=====================")
                 d = client[db["name"]]
                 cols = d.list_collections()
                 for c in cols:
-                    print(c)
+                    print(c["name"])
+                print()
 
         except Exception as e: print(f"Error for {host}:", e)
         
