@@ -17,19 +17,39 @@ import psycopg
 
 def unpassworded_nv(l: list[str], output: str = None, threads: int = 10, timeout: int = 3, verbose: bool = False, disable_visual_on_complete: bool = False):
     for host in l:
-        ip = host.split(":")[0]
-        port = host.split(":")[1]
-        db_params = {
-            "user": "postgres",
-            "password": "",
-            "host": ip,
-            "port": int(port),
-        }
-        with psycopg.connect(**db_params) as con:
-            with con.cursor() as cur:
-                cur.execute("SELECT datname FROM pg_database;")
-                for record in cur:
-                    print(record)
+        try:
+            ip = host.split(":")[0]
+            port = host.split(":")[1]
+            dbs = []
+            db_params = {
+                "user": "postgres",
+                "password": "",
+                "host": ip,
+                "port": int(port),
+            }
+            with psycopg.connect(**db_params) as con:
+                with con.cursor() as cur:
+                    cur.execute("SELECT datname FROM pg_database;")
+                    dbs = [record[0] for record in cur]
+            for db in dbs:
+                db_params = {
+                    "dbname": db,
+                    "user": "postgres",
+                    "password": "",
+                    "host": ip,
+                    "port": int(port),
+                }
+                with psycopg.connect(**db_params) as con:
+                    with con.cursor() as cur:
+                        cur.execute("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public';")
+                        print(f"DATABASE: {db}")
+                        print("=======================")
+                        tables = [record[0] for record in cur]
+                        for table in tables:
+                            print(table[0])
+                        print()
+            
+        except: pass
 
 def unpassworded_console(args):
     unpassworded_nv(get_hosts_from_file(args.file), threads=args.threads, timeout=args.timeout, verbose=args.verbose, disable_visual_on_complete=args.disable_visual_on_complete)
