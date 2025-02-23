@@ -6,7 +6,7 @@ Description = "SSHKeys"
 MatchLocation = "FileName"
 WordListType = "Exact"
 MatchLength = 0
-WordList = ["\\.id_rsa",
+WordList = ["id_rsa",
 "id_dsa",
 "id_ecdsa",
 "id_ed25519"]

@@ -1,4 +1,5 @@
 import argparse
+import pprint
 import paramiko
 import sys
 from src.snaffler.pysnaffler.ruleset import SnafflerRuleSet
@@ -39,6 +40,7 @@ def main():
     args = parser.parse_args()
     
     rule = SnafflerRuleSet.load_default_ruleset()
+    pprint.pprint(rule.allRules)
     
     for host in get_hosts_from_file(args.file):
         ip = host.split(":")[0]
