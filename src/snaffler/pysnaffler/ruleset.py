@@ -1,6 +1,6 @@
-from pysnaffler.rules.constants import EnumerationScope, MatchAction, MatchLoc, MatchListType, Triage
+from src.snaffler.pysnaffler.rules.constants import EnumerationScope, MatchAction, MatchLoc, MatchListType, Triage
 from typing import Dict, List, Tuple
-from pysnaffler.rules.rule import SnaffleRule
+from src.snaffler.pysnaffler.rules.rule import SnaffleRule
 from pathlib import PureWindowsPath
 from glob import glob
 import hashlib
