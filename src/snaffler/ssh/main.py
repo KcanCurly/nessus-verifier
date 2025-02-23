@@ -51,7 +51,7 @@ def main():
             files = list_readable_files(client)
             
             for file in files:
-                if rule.enum_file(file):
+                if rule.enum_file(file)[0]:
                     print(file)
             
             client.close()
