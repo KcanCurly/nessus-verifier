@@ -1,0 +1,1 @@
+# Got from https://github.com/skelsec/pysnaffler
