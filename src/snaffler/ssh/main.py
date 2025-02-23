@@ -40,7 +40,6 @@ def main():
     args = parser.parse_args()
     
     rule = SnafflerRuleSet.load_default_ruleset()
-    pprint.pprint(rule.fileEnumerationRules)
     
     for host in get_hosts_from_file(args.file):
         ip = host.split(":")[0]
@@ -54,8 +53,10 @@ def main():
             
             for file in files:
                 f = file.rsplit("/", 1)
-                if rule.enum_file(file)[0]:
+                z = rule.enum_file(file)
+                if z[0]:
                     print(file)
+                    print(z[1])
             
             client.close()
             
