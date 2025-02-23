@@ -108,7 +108,7 @@ class SnafflerRuleSet:
         script_dir = Path(__file__).parent
         target_dir = script_dir.parent / "rules" / "DefaultRules"
         s = SnafflerRuleSet()
-        s.load_directory(target_dir.__str__)
+        s.load_directory(target_dir.__str__())
         return s
 
     @staticmethod
