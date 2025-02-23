@@ -94,7 +94,8 @@ class SnaffleRule:
 			elif enumerationScope == EnumerationScope.ContentsEnumeration:
 				obj = SnafflerContentsEnumerationRule
 			else:
-				raise NotImplementedError(f'EnumerationScope {enumerationScope} not implemented.')
+				pass
+				# raise NotImplementedError(f'EnumerationScope {enumerationScope} not implemented.')
 
 			results.append(obj(enumerationScope, ruleName, matchAction, relayTargets, description, matchLocation, wordListType, matchLength, wordList, triage))
 		return results
