@@ -8,7 +8,7 @@ def ssh_connect(host, port, username, password):
     try:
         client = paramiko.SSHClient()
         client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        client.connect(host, port, username, password)
+        client.connect(host, int(port), username, password)
         return client
     except Exception as e:
         print(f"[!] SSH Connection failed: {e}")
