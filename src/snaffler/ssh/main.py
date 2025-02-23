@@ -43,7 +43,7 @@ def main():
         for cred in get_hosts_from_file(args.credential_file):
             username = cred.split(":")[0]
             password = cred.split(":")[1]
-            client = ssh_connect(host, port, username, password)
+            client = ssh_connect(ip, port, username, password)
             
             files = list_readable_files(client)
             
