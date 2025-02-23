@@ -34,7 +34,6 @@ def main():
     parser.add_argument("--disable-visual-on-complete", action="store_true", help="Disables the status visual for an individual task when that task is complete, this can help on keeping eye on what is going on at the time")
     parser.add_argument("--only-show-progress", action="store_true", help="Only show overall progress bar")
     parser.add_argument("-v", "--verbose", action="store_true", help="Enable verbose")
-    parser.set_defaults(func=all)
     
     args = parser.parse_args()
     
