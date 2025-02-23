@@ -2,7 +2,7 @@
 from typing import List, Dict, Tuple
 import toml
 import re
-from pysnaffler.rules.constants import EnumerationScope, MatchAction, MatchLoc, MatchListType, Triage
+from src.snaffler.pysnaffler.rules.constants import EnumerationScope, MatchAction, MatchLoc, MatchListType, Triage
 
 class SnaffleRule:
 	def __init__(self, enumerationScope, RuleName, matchAction, relayTargets, description, matchLocation, wordListType, matchLength, wordList, triage) -> None:

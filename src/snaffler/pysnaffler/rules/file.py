@@ -1,8 +1,8 @@
 import copy
 from pathlib import Path
-from pysnaffler.rules.constants import EnumerationScope, MatchAction, MatchLoc, MatchListType, Triage
+from src.snaffler.pysnaffler.rules.constants import EnumerationScope, MatchAction, MatchLoc, MatchListType, Triage
 from typing import List
-from pysnaffler.rules.rule import SnaffleRule
+from src.snaffler.pysnaffler.rules.rule import SnaffleRule
 
 class SnafflerFileRule(SnaffleRule):
 	def __init__(self, enumerationScope:EnumerationScope, ruleName:str, matchAction:MatchAction, relayTargets:List[str], description:str, matchLocation:MatchLoc, wordListType:MatchListType, matchLength:int, wordList:List[str], triage:Triage):
