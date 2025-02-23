@@ -54,8 +54,8 @@ def main():
             
             for file in files:
                 f = file.rsplit("/", 1)
-                if rule.enum_file(f[1])[0]:
-                    print(f[1])
+                if rule.enum_file(file)[0]:
+                    print(file)
             
             client.close()
             

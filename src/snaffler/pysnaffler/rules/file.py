@@ -11,13 +11,10 @@ class SnafflerFileRule(SnaffleRule):
 	def match(self, smbfile):
 		if self.matchLocation == MatchLoc.FileName:
 			for rex in self.wordList:
-				if rex.search(smbfile.name) is not None:
+				if rex.search(smbfile) is not None:
 					return True
 		elif self.matchLocation == MatchLoc.FileExtension:
-			fullpath = copy.deepcopy(smbfile.fullpath)
-			if fullpath.endswith('.bak') is True:
-				fullpath = smbfile.fullpath[:-4]
-			ext = Path(fullpath).suffix
+			ext = Path(smbfile).suffix
 			if ext == '':
 				return False
 			for rex in self.wordList:
@@ -25,9 +22,10 @@ class SnafflerFileRule(SnaffleRule):
 					return True
 		elif self.matchLocation == MatchLoc.FilePath:
 			for rex in self.wordList:
-				if rex.search(smbfile.fullpath) is not None:
+				if rex.search(smbfile) is not None:
 					return True
 		elif self.matchLocation == MatchLoc.FileLength:
+			return False
 			if smbfile.size == self.matchLength:
 				return True
 		return False

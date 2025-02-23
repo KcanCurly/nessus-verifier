@@ -68,9 +68,7 @@ class SnafflerRuleSet:
 
     def load_directory(self, directory):
         """Adds all rules from a directory recursively"""
-        print(directory)
         for rulefilepath in glob(directory + '/**/*.toml', recursive=True):
-            print(rulefilepath)
             self.load_rule_file(rulefilepath)
 
     def to_dict(self):
