@@ -69,9 +69,9 @@ class SnaffleRule:
 
 	@staticmethod
 	def from_dict(datadict:Dict):
-		from pysnaffler.rules.file import SnafflerFileRule
-		from pysnaffler.rules.directory import SnafflerDirectoryRule
-		from pysnaffler.rules.contents import SnafflerContentsEnumerationRule
+		from src.snaffler.pysnaffler.rules.file import SnafflerFileRule
+		from src.snaffler.pysnaffler.rules.directory import SnafflerDirectoryRule
+		from src.snaffler.pysnaffler.rules.contents import SnafflerContentsEnumerationRule
 		
 		results = []
 		if 'ClassifierRules' not in datadict:
