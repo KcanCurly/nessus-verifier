@@ -1,6 +1,7 @@
 import argparse
 import paramiko
 import sys
+from src.snaffler.pysnaffler.ruleset import SnafflerRuleSet
 
 from src.utilities.utilities import get_hosts_from_file
 
@@ -37,6 +38,8 @@ def main():
     
     args = parser.parse_args()
     
+    rule = SnafflerRuleSet.load_default_ruleset()
+    
     for host in get_hosts_from_file(args.file):
         ip = host.split(":")[0]
         port = host.split(":")[1]
@@ -48,7 +51,8 @@ def main():
             files = list_readable_files(client)
             
             for file in files:
-                print(file)
+                if rule.enum_file(file):
+                    print(file)
             
             client.close()
             
