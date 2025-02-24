@@ -1,5 +1,6 @@
 import stomp
 import argparse
+import time
 
 class Listener(stomp.ConnectionListener):
 # Override the methods on_error and on_message provides by the
@@ -17,6 +18,9 @@ def enumerate_nv(l: list[str], output: str = None, threads: int = 10, timeout: i
             conn = stomp.Connection(h)
             conn.set_listener('', Listener())
             conn.connect('admin', 'admin', wait = True)
+            conn.subscribe(destination='/queue/queue-1', id=1, ack='auto')
+            time.sleep(5)
+            conn.disconnect()
         except Exception as e: print(e)
 
 def main():
