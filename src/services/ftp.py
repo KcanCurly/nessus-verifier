@@ -98,16 +98,16 @@ def bruteforce(args, host):
     for cred in creds:
         username = cred.split(":")[0]
         password = cred.split(":")[1]
-        ftp = FTP()
-        ftp.connect(ip, port)
         try:
+            ftp = FTP()
+            ftp.connect(ip, port, timeout=10)
             l = ftp.login(username, password)
             if "230" in l:
                 print(f"[+] {host} => {username}:{password}")
         except Error as e:
             if "must use encryption" in str(e):
                 ftp = FTP_TLS()
-                ftp.connect(ip, port)
+                ftp.connect(ip, port, timeout=10)
                 try:
                     l = ftp.login(username, password)
                     if "230" in l:
@@ -120,28 +120,30 @@ def bruteforce(args, host):
 def anon(hosts):
     anon = []
     for host in hosts:
-        ip = host.split(":")[0]
-        port  = int(host.split(":")[1])
-
-        ftp = FTP()
-        ftp.connect(ip, port)
         try:
-            l = ftp.login()
-            if "230" in l:
-                anon.append(host)
+            ip = host.split(":")[0]
+            port  = int(host.split(":")[1])
 
-        except Error as e:
-            if "must use encryption" in str(e):
-                ftp = FTP_TLS()
-                ftp.connect(ip, port)
-                try:
-                    l = ftp.login()
-                    if "230" in l:
-                        anon.append(host)
-                except error_perm as ee:
-                    continue
-                except Error as eee:
-                    continue
+            ftp = FTP()
+            ftp.connect(ip, port, timeout=10)
+            try:
+                l = ftp.login()
+                if "230" in l:
+                    anon.append(host)
+
+            except Error as e:
+                if "must use encryption" in str(e):
+                    ftp = FTP_TLS()
+                    ftp.connect(ip, port, timeout=10)
+                    try:
+                        l = ftp.login()
+                        if "230" in l:
+                            anon.append(host)
+                    except error_perm as ee:
+                        continue
+                    except Error as eee:
+                        continue
+        except Exception as e: print(e)
                     
                     
     if len(anon) > 0:
@@ -162,33 +164,36 @@ def brute(args, hosts):
 def ssl(hosts):
     dict = {}
     for host in hosts:
-        ip = host
-        port = 21
-        if ":" in host:
-            ip = host.split(":")[0]
-            port  = int(host.split(":")[1])
-        host = ip + ":" + str(port)
-        ftp = FTP()
-        ftp.connect(ip, port)
         try:
-            l = ftp.login()
-            if "230" in l:
-                if host not in dict:
-                    dict[host] = []
-                dict[host].append("Anonymous")
-        except Error as e:
-            pass
+            ip = host
+            port = 21
+            if ":" in host:
+                ip = host.split(":")[0]
+                port  = int(host.split(":")[1])
+            host = ip + ":" + str(port)
+            ftp = FTP()
+            ftp.connect(ip, port)
+            try:
+                l = ftp.login()
+                if "230" in l:
+                    if host not in dict:
+                        dict[host] = []
+                    dict[host].append("Anonymous")
+            except Error as e:
+                pass
+            
+            ftp = FTP()
+            ftp.connect(ip, port)
+            try:
+                l = ftp.login()
+                if "230" in l:
+                    if host not in dict:
+                        dict[host] = []
+                    dict[host].append("Local")
+            except Error as e:
+                pass
+        except Exception as e: print(e)
         
-        ftp = FTP()
-        ftp.connect(ip, port)
-        try:
-            l = ftp.login()
-            if "230" in l:
-                if host not in dict:
-                    dict[host] = []
-                dict[host].append("Local")
-        except Error as e:
-            pass
         
     if len(dict) > 0:
         print("SSL Not Forced:")
