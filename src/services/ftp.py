@@ -216,11 +216,10 @@ def check(directory_path, args, hosts):
 
 def main():
     parser = argparse.ArgumentParser(description="FTP module of nessus-verifier.")
-    parser.add_argument("-d", "--directory", type=str, required=False, help="Directory to process (Default = current directory).")
     parser.add_argument("-f", "--filename", type=str, required=False, help="File that has host:port information.")
     parser.add_argument("--creds", type=str, required=False, help="Additional cred file to try.")
     parser.add_argument("--overwrite-creds", type=str, required=False, help="Overwrite default cred file with this file.")
     
     args = parser.parse_args()
     
-    check(args.directory or os.curdir, args.filename or "hosts.txt")
+    check(args.directory or os.curdir, args, args.filename or "hosts.txt")
