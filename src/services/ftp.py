@@ -78,12 +78,11 @@ creds = [
 
 def bruteforce(args, hosts):
     for host in hosts:
+        print(host)
         try:
             ip = host.split(":")[0]
-            print(ip)
-            print(host.split(":")[1])
             port  = int(host.split(":")[1])
-            print("b")
+
             if args.creds:
                 with open(args.creds, "r") as file:
                     c1 = [line.strip() for line in file if line.strip()] 
