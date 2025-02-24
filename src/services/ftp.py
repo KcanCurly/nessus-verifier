@@ -222,10 +222,10 @@ def check(args, hosts):
 
 def main():
     parser = argparse.ArgumentParser(description="FTP module of nessus-verifier.")
-    parser.add_argument("-f", "--filename", type=str, required=False, help="File that has host:port information.")
+    parser.add_argument("-f", "--filename", type=str, required=True, help="File that has host:port information.")
     parser.add_argument("--creds", type=str, required=False, help="Additional cred file to try.")
     parser.add_argument("--overwrite-creds", type=str, required=False, help="Overwrite default cred file with this file.")
     
     args = parser.parse_args()
     
-    check(args, args.filename or "hosts.txt")
+    check(args, args.filename)
