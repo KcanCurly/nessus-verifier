@@ -114,7 +114,7 @@ def bruteforce(args, hosts):
                             continue
                         except Error as eee:
                             continue
-        except Exception as e: pass
+        except Exception as e: print(e)
         
 def anon(hosts):
     anon = []
