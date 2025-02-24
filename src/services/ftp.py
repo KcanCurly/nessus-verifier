@@ -80,7 +80,8 @@ def bruteforce(args, hosts):
     for host in hosts:
         try:
             ip = host.split(":")[0]
-            print("a")
+            print(ip)
+            port(host.split(":")[1])
             port  = int(host.split(":")[1])
             print("b")
             if args.creds:
