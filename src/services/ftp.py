@@ -81,7 +81,7 @@ def bruteforce(args, hosts):
         try:
             ip = host.split(":")[0]
             print(ip)
-            port(host.split(":")[1])
+            print(host.split(":")[1])
             port  = int(host.split(":")[1])
             print("b")
             if args.creds:
@@ -203,7 +203,7 @@ def ssl(hosts):
         
 
 def check(args, hosts):
-    hosts = get_hosts_from_file(hosts)
+    h = get_hosts_from_file(hosts)
         
         
     # Anon
@@ -217,7 +217,7 @@ def check(args, hosts):
     # bruteforce
 
     if not confirm_prompt("Do you wish to continue for brute force?"): return   
-    brute(args, hosts)
+    brute(args, h)
             
 
 def main():
