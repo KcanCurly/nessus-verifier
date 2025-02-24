@@ -15,8 +15,10 @@ class Listener(stomp.ConnectionListener):
 
 def enumerate_nv(l: list[str], output: str = None, threads: int = 10, timeout: int = 3, verbose: bool = False, disable_visual_on_complete: bool = False):
     for host in l:
+        ip = host.split(":")[0]
+        port = host.split(":")[0]
         try:
-            h = [host]
+            h = [(ip, int(port))]
             conn = stomp.Connection(h)
             conn.set_listener('', Listener())
             conn.connect('admin', 'admin', wait = True)
