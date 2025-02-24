@@ -24,6 +24,7 @@ setup(
         "psycopg",
         "paramiko",
         "toml",
+        "stomp.py",
     ],
     classifiers=[
         "Programming Language :: Python :: 3",
@@ -61,6 +62,7 @@ setup(
             "nv-rlogin=src.services.rlogin:main",
             "nv-psql=src.services.postgresql:main",
             "nv-mongodb=src.services.mongodb:main",
+            "nv-activemq=src.services.activemq:main",
             "nv-snaffler-ssh=src.snaffler.ssh.main:main",
         ],
     },

@@ -37,10 +37,6 @@ class SnafflerRuleSet:
                 return False, [rule]
             else:
                 rules.append(rule)
-
-        # By default, we don't want to download files that don't match any rules
-        if len(rules) == 0:
-            return False, None
         
         return True, rules
                 

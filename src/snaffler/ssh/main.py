@@ -52,6 +52,9 @@ def main():
             files = list_readable_files(client)
             
             for file in files:
+                d = rule.enum_directory(file)
+                if not d[0]: continue
+                f = rule.enum_file(file)
                 f = file.rsplit("/", 1)
                 z = rule.enum_file(file)
                 if z[0]:
