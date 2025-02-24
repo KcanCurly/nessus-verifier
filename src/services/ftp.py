@@ -80,8 +80,9 @@ def bruteforce(args, hosts):
     for host in hosts:
         try:
             ip = host.split(":")[0]
+            print("a")
             port  = int(host.split(":")[1])
-            
+            print("b")
             if args.creds:
                 with open(args.creds, "r") as file:
                     c1 = [line.strip() for line in file if line.strip()] 
@@ -206,7 +207,7 @@ def check(args, hosts):
         
     # Anon
 
-    anon(hosts)
+    # anon(hosts)
 
     # Check TLS
 
