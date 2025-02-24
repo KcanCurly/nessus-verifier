@@ -2,6 +2,8 @@ import stomp
 import argparse
 import time
 
+from src.utilities.utilities import get_hosts_from_file
+
 class Listener(stomp.ConnectionListener):
 # Override the methods on_error and on_message provides by the
 # parent class
@@ -23,6 +25,9 @@ def enumerate_nv(l: list[str], output: str = None, threads: int = 10, timeout: i
             conn.disconnect()
         except Exception as e: print(e)
 
+def enumerate_console(args):
+    enumerate_nv(get_hosts_from_file(args.file))
+
 def main():
     parser = argparse.ArgumentParser(description="ActiveMQ module of nessus-verifier.")
     
@@ -37,4 +42,11 @@ def main():
     parser_all.add_argument("--disable-visual-on-complete", action="store_true", help="Disables the status visual for an individual task when that task is complete, this can help on keeping eye on what is going on at the time")
     parser_all.add_argument("--only-show-progress", action="store_true", help="Only show overall progress bar")
     parser_all.add_argument("-v", "--verbose", action="store_true", help="Enable verbose")
-    parser_all.set_defaults(func=all)
+    parser_all.set_defaults(func=enumerate_console)
+    
+    args = parser.parse_args()
+    
+    if hasattr(args, "func"):
+        args.func(args)
+    else:
+        parser.print_help()
