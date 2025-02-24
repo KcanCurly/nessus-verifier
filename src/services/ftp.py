@@ -143,13 +143,13 @@ def anon(hosts):
                         continue
                     except Error as eee:
                         continue
-        except Exception as e: print(e)
+        except Exception as e: pass
                     
                     
     if len(anon) > 0:
         print("Anonymous Access on Hosts:")               
         for a in anon:
-            print(f"\t{a}")
+            print(f"    {a}")
 
 def tls(hosts):
     control_TLS(hosts, "--starttls-ftp")
@@ -198,7 +198,7 @@ def ssl(hosts):
     if len(dict) > 0:
         print("SSL Not Forced:")
         for key, value in dict.items():
-            print(f"\t{key} - {", ".join(value)}")
+            print(f"    {key} - {", ".join(value)}")
         
 
 def check(args, hosts):
@@ -211,7 +211,7 @@ def check(args, hosts):
 
     # Check TLS
     print()
-    tls(hosts)
+    #tls(hosts)
             
     # bruteforce
     print()
