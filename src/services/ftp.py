@@ -196,7 +196,7 @@ def ssl(hosts):
             print(f"\t{key} - {", ".join(value)}")
         
 
-def check(directory_path, args, hosts):
+def check(args, hosts):
     hosts = get_hosts_from_file(hosts)
         
         
@@ -222,4 +222,4 @@ def main():
     
     args = parser.parse_args()
     
-    check(args.directory or os.curdir, args, args.filename or "hosts.txt")
+    check(args, args.filename or "hosts.txt")
