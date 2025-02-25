@@ -8,7 +8,7 @@ def enum_nv(l: list[str], output: str = None, verbose: bool = False):
 
 
     result = ", ".join(l)
-    vuln = {}
+
     try:
         command = ["msfconsole", "-q", "-x", f"color false; use auxiliary/gather/zookeeper_info_disclosure; set RHOSTS {result}; run; exit"]
         result = subprocess.run(command, text=True, capture_output=True)
@@ -27,9 +27,9 @@ def enum_nv(l: list[str], output: str = None, verbose: bool = False):
                 matches = re.search(zookeeper_version, line)
                 if matches:
                     ver = matches.group(1).split("-")[0]
-                    if ver not in vuln:
-                        vuln[ver] = set()
-                    vuln[ver].add(host)
+                    if ver not in versions:
+                        versions[ver] = set()
+                    versions[ver].add(host)
             except: pass
         
             
