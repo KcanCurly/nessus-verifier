@@ -5,20 +5,34 @@ import argparse
 def identify_service(hosts, output = "", verbose = False):
     hosts = get_hosts_from_file(hosts)
     nm = nmap.PortScanner()
-    for host in hosts:
-        try:
-            ip = host.split(":")[0]
-            port = host.split(":")[1]
-            nm.scan(ip, port, "-sV")
-            
-            if ip in nm.all_hosts():
-                nmap_host = nm[ip]
-                print(f"{host} => {nmap_host['tcp'][int(port)]['name']}")
-                if output:
-                    with open(output, "w") as f:
+    
+    if output:
+        with open(output, "w") as f:
+            for host in hosts:
+                try:
+                    ip = host.split(":")[0]
+                    port = host.split(":")[1]
+                    nm.scan(ip, port, "-sV")
+                    
+                    if ip in nm.all_hosts():
+                        nmap_host = nm[ip]
+                        print(f"{host} => {nmap_host['tcp'][int(port)]['name']}")
                         print(f"{host} => {nmap_host['tcp'][int(port)]['name']}", file=f)
 
-        except Exception as e: print(e)
+                except: pass
+    else:
+        for host in hosts:
+            try:
+                ip = host.split(":")[0]
+                port = host.split(":")[1]
+                nm.scan(ip, port, "-sV")
+                
+                if ip in nm.all_hosts():
+                    nmap_host = nm[ip]
+                    print(f"{host} => {nmap_host['tcp'][int(port)]['name']}")
+
+            except: pass
+        
         
 def main():
     # Create the main parser
