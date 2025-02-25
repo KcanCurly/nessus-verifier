@@ -64,6 +64,7 @@ setup(
             "nv-psql=src.services.postgresql:main",
             "nv-mongodb=src.services.mongodb:main",
             "nv-activemq=src.services.activemq:main",
+            "nv-zookeeper=src.services.zookeeper:main",
             "nv-snaffler-ssh=src.snaffler.ssh.main:main",
         ],
     },
