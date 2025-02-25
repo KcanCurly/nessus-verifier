@@ -3,7 +3,7 @@ import subprocess
 import re
 from src.utilities.utilities import get_hosts_from_file, get_classic_console
 
-def enum_nv(l: list[str], output: str = None, threads: int = 10, verbose: bool = False):
+def enum_nv(l: list[str], output: str = None, verbose: bool = False):
     versions = {}
 
 
@@ -48,7 +48,7 @@ def enum_nv(l: list[str], output: str = None, threads: int = 10, verbose: bool =
         
 
 def enum_console(args):
-    enum_nv(get_hosts_from_file(args.file, False), args.threads, args.verbose)
+    enum_nv(get_hosts_from_file(args.file, False), args.verbose)
     
 
 def main():
