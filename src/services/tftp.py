@@ -23,7 +23,7 @@ def brute_nv(l: list[str], output: str = None, threads: int = 10, verbose: bool 
                 if 'tftp' in nmap_host['udp'][int(port)]['name'].lower():
                     host2.append(host)
                     
-        except: pass
+        except Exception as e: print(e)
     
     if not host2: 
         if verbose: console.print("None of the ports were accessible")
