@@ -110,23 +110,23 @@ def tls_single(single_progress: Progress, single_task_id: TaskID, console: Conso
                     if allow_white_ciphers: # We allow white ciphers
                         if "[" in cipher: # Non-white
                             if host not in weak_ciphers:
-                                weak_ciphers[host] = []
-                            weak_ciphers[host].append(re.sub(r'^\x1b\[[0-9;]*m', '', cipher))
+                                weak_ciphers[host] = set()
+                            weak_ciphers[host].add(re.sub(r'^\x1b\[[0-9;]*m', '', cipher))
                             bit = line.split()[2]
                             if "[33m]" in bit: # If it is a green or white output and bit is low
                                 if host not in weak_bits:
-                                    weak_bits[host] = []
-                                weak_bits[host].append(re.sub(r'^\x1b\[[0-9;]*m', '', bit) + "->" + re.sub(r'^\x1b\[[0-9;]*m', '', cipher))
+                                    weak_bits[host] = set()
+                                weak_bits[host].add(re.sub(r'^\x1b\[[0-9;]*m', '', bit) + "->" + re.sub(r'^\x1b\[[0-9;]*m', '', cipher))
                     else:
                         if host not in weak_ciphers:
-                            weak_ciphers[host] = []
-                        weak_ciphers[host].append(re.sub(r'^\x1b\[[0-9;]*m', '', cipher))
+                            weak_ciphers[host] = set()
+                        weak_ciphers[host].add(re.sub(r'^\x1b\[[0-9;]*m', '', cipher))
                     
                         bit = line.split()[2] # If it is a green output and bit is low
                         if "[33m]" in bit:
                             if host not in weak_bits:
-                                weak_bits[host] = []
-                            weak_bits[host].append(re.sub(r'^\x1b\[[0-9;]*m', '', bit) + "->" + re.sub(r'^\x1b\[[0-9;]*m', '', cipher))
+                                weak_bits[host] = set()
+                            weak_bits[host].add(re.sub(r'^\x1b\[[0-9;]*m', '', bit) + "->" + re.sub(r'^\x1b\[[0-9;]*m', '', cipher))
     except Exception as e: single_progress.update(single_task_id, status=f"[red]Failed: {e}[/red]", advance=1)
                    
     
