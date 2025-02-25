@@ -14,8 +14,8 @@ def brute_nv(l: list[str], output: str = None, threads: int = 10, verbose: bool 
     host2 = []
     for host in l:
         try:
-            ip = host.split(":")[0]
-            port = host.split(":")[1]
+            ip = host
+
             nm.scan(ip, "69", arguments=f'-sV -sU')
             
             if ip in nm.all_hosts():
