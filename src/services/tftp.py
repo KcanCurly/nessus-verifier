@@ -3,6 +3,7 @@ import subprocess
 import re
 from src.utilities.utilities import get_hosts_from_file, get_classic_console
 import nmap
+import traceback
 
 def brute_nv(l: list[str], output: str = None, threads: int = 10, verbose: bool = False):
     nmap_file = "/usr/share/nmap/nselib/data/tftplist.txt"
@@ -23,7 +24,9 @@ def brute_nv(l: list[str], output: str = None, threads: int = 10, verbose: bool 
                 if 'tftp' in nmap_host['udp'][int(port)]['name'].lower():
                     host2.append(host)
                     
-        except Exception as e: print(e)
+        except Exception as e: 
+            print(e)
+            traceback.print_exc()
     
     if not host2: 
         if verbose: console.print("None of the ports were accessible")
