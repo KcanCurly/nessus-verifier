@@ -12,17 +12,18 @@ def brute_nv(l: list[str], output: str = None, threads: int = 10, verbose: bool 
     if verbose: console.print(f"Starting TFTP Brute, i can't show you progress")
     host2 = []
     for host in l:
-            try:
-                ip = host.split(":")[0]
-                port = host.split(":")[1]
-                nm.scan(ip, port, arguments=f'-sV -sU')
-                
-                if ip in nm.all_hosts():
-                    nmap_host = nm[ip]
-                    if 'tftp' in nmap_host['udp'][int(port)]['name'].lower():
-                        host2.append(host)
-                        
-            except: pass
+        try:
+            ip = host.split(":")[0]
+            port = host.split(":")[1]
+            nm.scan(ip, port, arguments=f'-sV -sU')
+            
+            if ip in nm.all_hosts():
+                nmap_host = nm[ip]
+                print(nmap_host['udp'][int(port)]['name'].lower())
+                if 'tftp' in nmap_host['udp'][int(port)]['name'].lower():
+                    host2.append(host)
+                    
+        except: pass
     
     if not host2: 
         if verbose: console.print("None of the ports were accessible")
