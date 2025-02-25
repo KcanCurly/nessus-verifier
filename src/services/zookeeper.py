@@ -61,7 +61,7 @@ def main():
     parser = argparse.ArgumentParser(description="Zookeeper module of nessus-verifier.")
     subparsers = parser.add_subparsers(dest="command")
     
-    brute_parser = subparsers.add_parser("brute", help="Run TFTP bruteforce on targets")
+    brute_parser = subparsers.add_parser("enum", help="Run enumeration on zookeeper host")
     brute_parser.add_argument("-f", "--file", type=str, required=False, help="Path to a file containing a list of hosts, each in 'ip:port' format, one per line.")
     brute_parser.add_argument("--threads", type=int, default=10, help="Threads (Default = 10).")
     brute_parser.add_argument("-v", "--verbose", action="store_true", help="Enable verbose output")
