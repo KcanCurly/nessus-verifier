@@ -54,7 +54,7 @@ def enum_nv(l: list[str], output: str = None, threads: int = 10, verbose: bool =
         
 
 def enum_console(args):
-    enum_nv(get_hosts_from_file(args.file, False), args.output, args.threads, args.verbose)
+    enum_nv(get_hosts_from_file(args.file, False), args.threads, args.verbose)
     
 
 def main():
