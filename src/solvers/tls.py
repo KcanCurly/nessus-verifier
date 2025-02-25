@@ -138,6 +138,7 @@ def tls_single(single_progress: Progress, single_task_id: TaskID, console: Conso
     except ssl.CertificateError as e:
         if "Hostname mismatch" in e.strerror:
             is_wrong_host = True
+    except Exception: pass
     
     single_progress.update(single_task_id, status="[green]Successfully processed[/green]", advance=1)
     return TLS_Vuln_Data(host, weak_versions, weak_ciphers, weak_bits, is_wrong_host, is_cert_expired)
