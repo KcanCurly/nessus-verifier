@@ -134,6 +134,7 @@ def solve(args, is_all = False):
     l= logger.setup_logging(args.verbose)
     scan: GroupNessusScanOutput = find_scan(args.file, code)
     if not scan: 
+        if is_all: return
         if not args.ignore_fail: print("No id found in json file")
         return
     

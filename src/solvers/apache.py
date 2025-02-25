@@ -25,7 +25,8 @@ def solve(args, is_all = False):
     hosts = []
     if args.file:
         scan: GroupNessusScanOutput = find_scan(args.file, code)
-        if not scan: 
+        if not scan:
+            if is_all: return
             if not args.ignore_fail: print("No id found in json file")
             return
         hosts = scan.hosts

@@ -1,5 +1,5 @@
 import argparse
-from src.solvers import grafana, php, python, tls, kibana, elastic, mongo, oracle, smb, ssh, snmp, tomcat, apache, nginx, vmware, openssh, smtp_relay, mssql, idrac, ipmi, terminal, cleartext, ibmwebsphere, obsolete_protocols, postgresql
+from src.solvers import grafana, php, python, tls, kibana, elastic, mongo, oracle, smb, ssh, snmp, tomcat, apache, nginx, vmware, openssh, smtp_relay, mssql, idrac, ipmi, terminal, cleartext, ibmwebsphere, obsolete_protocols, postgresql, nopasswddb
 from src.modules.vuln_parse import GroupNessusScanOutput
 
 solver_dict = {
@@ -11,7 +11,7 @@ solver_dict = {
     6: snmp,
     7: cleartext,
     8: terminal,
-    # 9: Usage of database without password
+    9: nopasswddb,
     10: tomcat,
     11: apache,
     12: nginx,

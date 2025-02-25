@@ -104,10 +104,11 @@
 
 - name: Usage of database without password
   id: 9
-  plugin-ids: [81777, 100634, 101025]
+  plugin-ids: [81777, 100634, 101025, 10483]
   # 81777 - MongoDB Service Without Authentication Detection
   # 100634 - Redis Server Unprotected by Password Authentication
   # 101025 - Elasticsearch Unrestricted Access Information Disclosure
+  # 10483 - PostgreSQL Default Unpassworded Account
 
 - name: Apache Tomcat Version
   id: 10
