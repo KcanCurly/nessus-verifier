@@ -43,10 +43,10 @@ def brute_nv(l: list[str], output: str = None, threads: int = 10, verbose: bool 
 
         for m in matches:
             if m[1] not in vuln:
-                vuln[m[1]] = []
-            vuln[m[1]].append(m[0])
+                vuln[m[1]] = set()
+            vuln[m[1]].add(m[0])
             
-        command = ["msfconsole", "-q", "-x", f"color false; use auxiliary/scanner/tftp/tftpbrute; set RHOSTS {result}; set DICTIONARY {nmap_file}; run; exit"]
+        command = ["msfconsole", "-q", "-x", f"color false; use auxiliary/scanner/tftp/tftpbrute; set RHOSTS {result}; set DICTIONARY {nmap_file}; set THREADS {str(threads)}; run; exit"]
         result = subprocess.run(command, text=True, capture_output=True)
         pattern = r"\[\+\] Found (.*) on (.*)\s+"
         matches = re.findall(pattern, result.stdout)
