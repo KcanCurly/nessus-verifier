@@ -20,8 +20,8 @@ def brute_nv(l: list[str], output: str = None, threads: int = 10, verbose: bool 
             
             if ip in nm.all_hosts():
                 nmap_host = nm[ip]
-                print(nmap_host['udp'][int(port)]['name'].lower())
-                if 'tftp' in nmap_host['udp'][int(port)]['name'].lower():
+                print(nmap_host['udp'][69]['name'].lower())
+                if 'tftp' in nmap_host['udp'][69]['name'].lower():
                     host2.append(host)
                     
         except Exception as e: 
