@@ -12,6 +12,7 @@ from src.services.service import Vuln_Data
 from rich.console import Group
 from rich.panel import Panel
 from pymongo import MongoClient
+import pymongo
 
 def post_nv(l: list[str], output: str = None, threads: int = 10, timeout: int = 3, verbose: bool = False, disable_visual_on_complete: bool = False):
     for host in l:
@@ -35,7 +36,7 @@ def post_nv(l: list[str], output: str = None, threads: int = 10, timeout: int = 
                         
                 print()
 
-        except Exception as e: print(f"Error for {host}:", e)
+        except:pass
         
 def post_console(args):
     post_nv(get_hosts_from_file(args.file))
@@ -69,12 +70,13 @@ def version_nv(l: list[str], output: str = None, threads: int = 10, timeout: int
         try:
             ip = host.split(":")[0]
             port = host.split(":")[1]
-            client = MongoClient(ip, int(port))
-            version = client.server_info()['version']
-            if version not in versions:
-                versions[version] = set()
-            versions[version].add(host)  
-        except Exception as e: print(f"Error for {host}:", e)
+            with pymongo.timeout(timeout):
+                client = MongoClient(ip, int(port))
+                version = client.server_info()['version']
+                if version not in versions:
+                    versions[version] = set()
+                versions[version].add(host)  
+        except:pass
                     
     versions = dict(sorted(versions.items(), reverse=True))
     if len(versions) > 0:       
