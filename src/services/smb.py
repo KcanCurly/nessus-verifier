@@ -136,6 +136,7 @@ def nullguest_nv(l: list[str], output: str = None, threads: int = 10, timeout: i
     if len(null_vuln) > 0:
         print("Null Accessble Shares Found:")
         for host, info in null_vuln.items():
+            if len(info.items()) <= 0: continue
             print(f"{host}:")
             for share, files in info.items():
                 print(f"    {share}:")
@@ -145,6 +146,7 @@ def nullguest_nv(l: list[str], output: str = None, threads: int = 10, timeout: i
     if len(guest_vuln) > 0:
         print("Guest Accessble Shares Found:")
         for host, info in guest_vuln.items():
+            if len(info.items()) <= 0: continue
             print(f"{host}:")
             for share, files in info.items():
                 print(f"    {share}:")
