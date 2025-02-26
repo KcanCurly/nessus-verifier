@@ -97,7 +97,7 @@ def nullguest_single(single_progress: Progress, single_task_id: TaskID, console:
     else: single_progress.update(single_task_id, status = f"[red]Failed to get computer name (nmblookup failed)[/red]",advance=1)
     return NullGuest_Vuln_Data(host, null_vuln, guest_vuln)
 
-def nullguest_nv(l: list[str], output: str = None, threads: int = 10, timeout: int = 3, verbose: bool = False, disable_visual_on_complete: bool = False):
+def nullguest_nv(l: list[str], output: str = None, threads: int = 10, timeout: int = 3, verbose: bool = False, disable_visual_on_complete: bool = False, only_show_progress: bool = False):
     null_vuln: dict[str, dict[str, list[str]]] = {}
     guest_vuln: dict[str, dict[str, list[str]]] = {}
     
@@ -105,10 +105,11 @@ def nullguest_nv(l: list[str], output: str = None, threads: int = 10, timeout: i
     single_progress = get_classic_single_progress()
     overall_task_id = overall_progress.add_task("", start=False, modulename="Null/Guest Share Check")
     console = get_classic_console(force_terminal=True)
+
     progress_group = Group(
         Panel(single_progress, title="Null/Guest Share Check", expand=False),
         overall_progress,
-    )
+    ) if not only_show_progress else Group(overall_progress)
     
     with Live(progress_group, console=console):
         overall_progress.update(overall_task_id, total=len(l), completed=0)
@@ -152,7 +153,7 @@ def nullguest_nv(l: list[str], output: str = None, threads: int = 10, timeout: i
 
 
 def nullguest_console(args):
-    nullguest_nv(get_hosts_from_file(args.file), threads=args.threads, timeout=args.timeout, verbose=args.verbose, disable_visual_on_complete=args.disable_visual_on_complete)
+    nullguest_nv(get_hosts_from_file(args.file), threads=args.threads, timeout=args.timeout, verbose=args.verbose, disable_visual_on_complete=args.disable_visual_on_complete, only_show_progress=args.only_show_progress)
 
 def sign_single(single_progress: Progress, single_task_id: TaskID, console: Console, host: str, output: str, timeout: int, verbose: bool):
     ip = host.split(":")[0]
@@ -296,6 +297,7 @@ def main():
     parser_nullguest.add_argument("--threads", default=10, type=int, help="Number of threads (Default = 10)")
     parser_nullguest.add_argument("--timeout", default=5, type=int, help="Timeout in seconds (Default = 5)")
     parser_nullguest.add_argument("--disable-visual-on-complete", action="store_true", help="Disables the status visual for an individual task when that task is complete, this can help on keeping eye on what is going on at the time")
+    parser_nullguest.add_argument("--only-show-progress", action="store_true", help="Only show overall progress bar")
     parser_nullguest.add_argument("-v", "--verbose", action="store_true", help="Enable verbose")
     parser_nullguest.set_defaults(func=nullguest_console)
 
