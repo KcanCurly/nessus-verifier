@@ -144,7 +144,7 @@ def group_up(l: list[NessusScanOutput]):
     with open(rules_file_path, encoding='utf-8') as f:
         rule_data = yaml.safe_load(f)
         
-    available_id = 0
+    available_id = -1
     for rule in rule_data:
         r = GroupNessusScanOutput(rule['id'], rule['plugin-ids'], rule['name'])
         rules.append(r)
