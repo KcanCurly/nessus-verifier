@@ -49,9 +49,10 @@ def unauth_nv(l: list[str], output: str = None, threads: int = 10, timeout: int 
         try:
             ip = host.split(":")[0]
             port = host.split(":")[1]
-            client = MongoClient(ip, int(port))
-            dbs = client.list_databases()
-            vuln.append(host)
+            with pymongo.timeout(timeout):
+                client = MongoClient(ip, int(port))
+                dbs = client.list_databases()
+                vuln.append(host)
 
         except:pass
     
@@ -76,7 +77,7 @@ def version_nv(l: list[str], output: str = None, threads: int = 10, timeout: int
                 if version not in versions:
                     versions[version] = set()
                 versions[version].add(host)  
-        except Exception as e: print(f"Error for {host}: {e}")
+        except:pass
                     
     versions = dict(sorted(versions.items(), reverse=True))
     if len(versions) > 0:       
