@@ -76,7 +76,7 @@ def version_nv(l: list[str], output: str = None, threads: int = 10, timeout: int
                 if version not in versions:
                     versions[version] = set()
                 versions[version].add(host)  
-        except:pass
+        except Exception as e: print(f"Error for {host}: {e}")
                     
     versions = dict(sorted(versions.items(), reverse=True))
     if len(versions) > 0:       
