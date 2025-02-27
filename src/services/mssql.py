@@ -24,39 +24,47 @@ def post_nv(l: list[str], username: str, password: str, output: str = None, thre
             conn = pymssql.connect(ip, username, password, "master", port=port, login_timeout=10)
             cursor = conn.cursor()
 
-            # Get all databases
-            cursor.execute("SELECT name FROM sys.databases")
-            databases = [db[0] for db in cursor.fetchall()]
-            print("[+] Databases:", databases)
+            try:
+                # Get all databases
+                cursor.execute("SELECT name FROM sys.databases")
+                databases = [db[0] for db in cursor.fetchall()]
+                print("[+] Databases:", databases)
 
-            for db in databases:
-                print(f"\n[+] Processing database: {db}")
-                
-                # Switch to the database
-                cursor.execute(f"USE {db}")
+                for db in databases:
+                    print(f"\n[+] Processing database: {db}")
+                    try:
+                        cursor.execute(f"USE {db}")
 
-                # Get all tables
-                cursor.execute("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE'")
-                tables = [table[0] for table in cursor.fetchall()]
-                print(f"  Tables: {tables}")
+                        # Get all tables
+                        cursor.execute("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE'")
+                        tables = [table[0] for table in cursor.fetchall()]
+                        print(f"  Tables: {tables}")
 
-                for table in tables:
-                    print(f"\n  [Table: {table}]")
-                    
-                    # Get all columns
-                    cursor.execute(f"SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '{table}'")
-                    columns = [col[0] for col in cursor.fetchall()]
-                    print(f"    Columns: {columns}")
+                        for table in tables:
+                            print(f"\n  [Table: {table}]")
+                            try:
+                                # Get all columns
+                                cursor.execute(f"SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '{table}'")
+                                columns = [col[0] for col in cursor.fetchall()]
+                                print(f"    Columns: {columns}")
 
-                    # Get first 10 rows
-                    cursor.execute(f"SELECT TOP 10 * FROM {table}")
-                    rows = cursor.fetchall()
+                                # Get first 10 rows
+                                cursor.execute(f"SELECT TOP 10 * FROM {table}")
+                                rows = cursor.fetchall()
 
-                    if rows:
-                        for row in rows:
-                            print("    Row:", row)
-                    else:
-                        print("    No data available")
+                                if rows:
+                                    for row in rows:
+                                        print("    Row:", row)
+                                else:
+                                    print("    No data available")
+                            except Exception as e: print(f"Column Error: {host}")
+                            
+
+                    except Exception as e: print(f"Table Error: {host}")
+                    # Switch to the database
+
+            except Exception as e: print(f"Database Error: {host}")
+
 
             # Close connection
             conn.close()
