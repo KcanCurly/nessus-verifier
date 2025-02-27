@@ -28,20 +28,25 @@ def post_nv(l: list[str], username: str, password: str, output: str = None, thre
                 # Get all databases
                 cursor.execute("SELECT name FROM sys.databases")
                 databases = [db[0] for db in cursor.fetchall()]
-                print("[+] Databases:", databases)
+
+                schemas = [schema[0] for schema in cursor.fetchall()]
 
                 for db in databases:
                     print(f"\n[+] Processing database: {db}")
+                    print("============================")
                     try:
                         cursor.execute(f"USE {db}")
 
                         # Get all tables
-                        cursor.execute("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE'")
-                        tables = [table[0] for table in cursor.fetchall()]
-                        print(f"  Tables: {tables}")
+                        cursor.execute("SELECT TABLE_SCHEMA, TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE'")
+                        tables = cursor.fetchall()
 
-                        for table in tables:
-                            print(f"\n  [Table: {table}]")
+
+                        for schema, table in tables:
+                            full_table_name = f"{schema}.{table}"
+                            print(f"\n  [Schema: {schema}] [Table: {table}]")
+                            print("----------------------------")
+                            
                             try:
                                 # Get all columns
                                 cursor.execute(f"SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '{table}'")
@@ -50,7 +55,7 @@ def post_nv(l: list[str], username: str, password: str, output: str = None, thre
                                 
                                 try:
                                     # Get first 10 rows
-                                    cursor.execute(f"SELECT TOP 10 * FROM {table}")
+                                    cursor.execute(f"SELECT TOP 10 * FROM {full_table_name}")
                                     rows = cursor.fetchall()
 
                                     if rows:
