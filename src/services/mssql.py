@@ -47,16 +47,20 @@ def post_nv(l: list[str], username: str, password: str, output: str = None, thre
                                 cursor.execute(f"SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '{table}'")
                                 columns = [col[0] for col in cursor.fetchall()]
                                 print(f"    Columns: {columns}")
+                                
+                                try:
+                                    # Get first 10 rows
+                                    cursor.execute(f"SELECT TOP 10 * FROM {table}")
+                                    rows = cursor.fetchall()
 
-                                # Get first 10 rows
-                                cursor.execute(f"SELECT TOP 10 * FROM {table}")
-                                rows = cursor.fetchall()
+                                    if rows:
+                                        for row in rows:
+                                            print("    Row:", row)
+                                    else:
+                                        print("    No data available")
+                                except Exception as e: print(f"Row Error: {host}: {e}")
 
-                                if rows:
-                                    for row in rows:
-                                        print("    Row:", row)
-                                else:
-                                    print("    No data available")
+
                             except Exception as e: print(f"Column Error: {host}: {e}")
                             
 
