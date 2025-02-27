@@ -12,8 +12,7 @@ def identify_service(hosts, output = "", verbose = False):
                 try:
                     ip = host.split(":")[0]
                     port = host.split(":")[1]
-                    nm.scan(ip, port, "-sV")
-                    
+                    nm.scan(ip, port, "-sV", timeout=3600)
                     if ip in nm.all_hosts():
                         nmap_host = nm[ip]
                         print(f"{host} => {nmap_host['tcp'][int(port)]['name']}")
@@ -25,7 +24,7 @@ def identify_service(hosts, output = "", verbose = False):
             try:
                 ip = host.split(":")[0]
                 port = host.split(":")[1]
-                nm.scan(ip, port, "-sV")
+                nm.scan(ip, port, "-sV", timeout=3600)
                 
                 if ip in nm.all_hosts():
                     nmap_host = nm[ip]

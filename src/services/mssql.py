@@ -11,58 +11,62 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from src.services.service import Vuln_Data
 from rich.console import Group
 from rich.panel import Panel
-from pymongo import MongoClient
-import pymongo
+import pymssql
 
-def post_nv(l: list[str], output: str = None, threads: int = 10, timeout: int = 3, verbose: bool = False, disable_visual_on_complete: bool = False):
+def post_nv(l: list[str], username: str, password: str, output: str = None, threads: int = 10, timeout: int = 3, verbose: bool = False, disable_visual_on_complete: bool = False):
+
     for host in l:
         try:
             ip = host.split(":")[0]
             port = host.split(":")[1]
-            client = MongoClient(ip, int(port))
-            dbs = client.list_databases()
-            for db in dbs:
-                print(f"Database: {db["name"]}")
-                print("=====================")
-                d = client[db["name"]]
-                cols = d.list_collections()
-                for c in cols:
-                    print(c["name"])
-                    print("---------------------")
-                    doc = d[c["name"]]
-                    for post in doc.find(filter="", limit=5):
-                        pprint.pprint(post)
-                    print()
-                        
-                print()
 
-        except:pass
+            # Connect to SQL Server
+            conn = pymssql.connect(ip, username, password, "master", port=port, login_timeout=10)
+            cursor = conn.cursor()
+
+            # Get all databases
+            cursor.execute("SELECT name FROM sys.databases")
+            databases = [db[0] for db in cursor.fetchall()]
+            print("[+] Databases:", databases)
+
+            for db in databases:
+                print(f"\n[+] Processing database: {db}")
+                
+                # Switch to the database
+                cursor.execute(f"USE {db}")
+
+                # Get all tables
+                cursor.execute("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE'")
+                tables = [table[0] for table in cursor.fetchall()]
+                print(f"  Tables: {tables}")
+
+                for table in tables:
+                    print(f"\n  [Table: {table}]")
+                    
+                    # Get all columns
+                    cursor.execute(f"SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '{table}'")
+                    columns = [col[0] for col in cursor.fetchall()]
+                    print(f"    Columns: {columns}")
+
+                    # Get first 10 rows
+                    cursor.execute(f"SELECT TOP 10 * FROM {table}")
+                    rows = cursor.fetchall()
+
+                    if rows:
+                        for row in rows:
+                            print("    Row:", row)
+                    else:
+                        print("    No data available")
+
+            # Close connection
+            conn.close()
+        except Exception as e: print(f"Error for {host}: {e}")
+
+
         
 def post_console(args):
-    post_nv(get_hosts_from_file(args.file))
+    post_nv(get_hosts_from_file(args.file), args.username, args.password)
 
-
-def unauth_nv(l: list[str], output: str = None, threads: int = 10, timeout: int = 3, verbose: bool = False, disable_visual_on_complete: bool = False):
-    vuln = []
-    
-    for host in l:
-        try:
-            ip = host.split(":")[0]
-            port = host.split(":")[1]
-            with pymongo.timeout(timeout):
-                client = MongoClient(ip, int(port))
-                dbs = client.list_databases()
-                vuln.append(host)
-
-        except:pass
-    
-    if len(vuln) > 0:
-        print("MongoDB Unauthenticated Access:")
-        for v in vuln:
-            print(f"    {v}")
-
-def unauth_console(args):
-    unauth_nv(get_hosts_from_file(args.file))
 
 def version_nv(l: list[str], output: str = None, threads: int = 10, timeout: int = 3, verbose: bool = False, disable_visual_on_complete: bool = False):
     versions = {}
@@ -71,17 +75,29 @@ def version_nv(l: list[str], output: str = None, threads: int = 10, timeout: int
         try:
             ip = host.split(":")[0]
             port = host.split(":")[1]
-            with pymongo.timeout(timeout):
-                client = MongoClient(ip, int(port))
-                version = client.server_info()['version']
-                if version not in versions:
-                    versions[version] = set()
-                versions[version].add(host)  
-        except:pass
+
+
+            # Connect to SQL Server
+            conn = pymssql.connect(ip, database="master", port=port, login_timeout=10)
+            cursor = conn.cursor()
+
+            # Execute version query
+            cursor.execute("SELECT @@VERSION")
+            version = cursor.fetchone()
+
+            # Print the result
+            print("[+] SQL Server Version:")
+            print(version[0])
+
+            # Close the connection
+            conn.close()
+        except Exception as e: print(f"Error for {host}: e")
+    
+
                     
     versions = dict(sorted(versions.items(), reverse=True))
     if len(versions) > 0:       
-        print("MongoDB versions detected:")                
+        print("MSSQL versions detected:")                
         for key, value in versions.items():
             print(f"{key}:")
             for v in value:
@@ -115,30 +131,10 @@ def main():
     parser_version.add_argument("-v", "--verbose", action="store_true", help="Enable verbose")
     parser_version.set_defaults(func=version_console)
     
-
-    parser_unauth = subparsers.add_parser("unauth", help="Checks if unauthenticated access is allowed")
-    parser_unauth.add_argument("-f", "--file", type=str, required=True, help="input file name")
-    parser_unauth.add_argument("--threads", default=10, type=int, help="Number of threads (Default = 10)")
-    parser_unauth.add_argument("--timeout", default=5, type=int, help="Timeout in seconds (Default = 5)")
-    parser_unauth.add_argument("--disable-visual-on-complete", action="store_true", help="Disables the status visual for an individual task when that task is complete, this can help on keeping eye on what is going on at the time")
-    parser_unauth.add_argument("--only-show-progress", action="store_true", help="Only show overall progress bar")
-    parser_unauth.add_argument("-v", "--verbose", action="store_true", help="Enable verbose")
-    parser_unauth.set_defaults(func=unauth_console)
-    """
-    parser_brute = subparsers.add_parser("brute", help="Bruteforce")
-    parser_brute.add_argument("-f", "--file", type=str, required=True, help="input file name")
-    parser_brute.add_argument("-cf", "--credential-file", type=str, help="Credential file")
-    parser_brute.add_argument("--threads", default=10, type=int, help="Number of threads (Default = 10)")
-    parser_brute.add_argument("--timeout", default=5, type=int, help="Timeout in seconds (Default = 5)")
-    parser_brute.add_argument("--disable-visual-on-complete", action="store_true", help="Disables the status visual for an individual task when that task is complete, this can help on keeping eye on what is going on at the time")
-    parser_brute.add_argument("--only-show-progress", action="store_true", help="Only show overall progress bar")
-    parser_brute.add_argument("-v", "--verbose", action="store_true", help="Enable verbose")
-    parser_brute.set_defaults(func=brute_console)
-    """
     parser_post = subparsers.add_parser("post", help="Post Exploit")
     parser_post.add_argument("-f", "--file", type=str, required=True, help="input file name")
-    parser_post.add_argument("-u", "--username", type=str, default="postgres", help="Username (Default = postgres)")
-    parser_post.add_argument("-p", "--password", type=str, default="", help="Password (Default = '')")
+    parser_post.add_argument("-u", "--username", type=str, required=True, help="Username")
+    parser_post.add_argument("-p", "--password", type=str, required=True, help="Password")
     parser_post.add_argument("--threads", default=10, type=int, help="Number of threads (Default = 10)")
     parser_post.add_argument("--timeout", default=5, type=int, help="Timeout in seconds (Default = 5)")
     parser_post.add_argument("--disable-visual-on-complete", action="store_true", help="Disables the status visual for an individual task when that task is complete, this can help on keeping eye on what is going on at the time")

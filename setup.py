@@ -25,6 +25,7 @@ setup(
         "paramiko",
         "toml",
         "stomp.py",
+        "pymssql",
     ],
     classifiers=[
         "Programming Language :: Python :: 3",
@@ -65,6 +66,7 @@ setup(
             "nv-mongodb=src.services.mongodb:main",
             "nv-activemq=src.services.activemq:main",
             "nv-zookeeper=src.services.zookeeper:main",
+            "nv-mssql=src.services.mssql:main",
             "nv-snaffler-ssh=src.snaffler.ssh.main:main",
         ],
     },
