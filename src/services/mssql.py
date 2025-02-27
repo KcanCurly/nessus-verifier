@@ -57,13 +57,13 @@ def post_nv(l: list[str], username: str, password: str, output: str = None, thre
                                         print("    Row:", row)
                                 else:
                                     print("    No data available")
-                            except Exception as e: print(f"Column Error: {host}")
+                            except Exception as e: print(f"Column Error: {host}: {e}")
                             
 
-                    except Exception as e: print(f"Table Error: {host}")
+                    except Exception as e: print(f"Table Error: {host}: {e}")
                     # Switch to the database
 
-            except Exception as e: print(f"Database Error: {host}")
+            except Exception as e: print(f"Database Error: {host}: {e}")
 
 
             # Close connection
