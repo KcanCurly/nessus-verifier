@@ -47,5 +47,5 @@ def main():
         sftp = client.open_sftp()
         l = sftp.listdir_attr()
         for a in l:
-            print(a.attr)
+            print(a.st_mode & 0o40000)
             print(a)
