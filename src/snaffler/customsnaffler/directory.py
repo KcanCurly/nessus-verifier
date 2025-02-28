@@ -8,11 +8,11 @@ class SnafflerDirectoryRule(SnaffleRule):
 	
 	def match(self, data):
 		for rex in self.wordList:
-			if rex.search(data) is not None:
+			if rex.search(data):
 				return True
 		return False
 
 	def determine_action(self, data):
-		if self.match(data) is False:
+		if not self.match(data):
 			return None, None
 		return self.action, self.triage
