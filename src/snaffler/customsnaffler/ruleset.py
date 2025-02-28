@@ -44,7 +44,7 @@ class SnafflerRuleSet:
 
     def load_rule(self, rule):
         """Adds a single rule to the ruleset"""
-        self.allRules[rule.ruleName] = rule
+        self.allRules[rule.name] = rule
         if rule.enumerationScope == EnumerationScope.Directory:
             self.directoryEnumerationRules[rule.name] = rule
         elif rule.enumerationScope == EnumerationScope.File:
