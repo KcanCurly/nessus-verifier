@@ -26,6 +26,14 @@ def is_remote_file(sftp, path):
     except FileNotFoundError:
         return False  # File does not exist
 
+def is_remote_directory(sftp, path):
+    """Checks if the given remote path is a directory (excluding special files)."""
+    try:
+        file_stat = sftp.stat(path)
+        return stat.S_ISDIR(file_stat.st_mode)  # Proper check for directories
+    except FileNotFoundError:
+        return False  # Path does not exist
+
 def list_remote_directory(sftp: SFTPClient, rules: SnafflerRuleSet, remote_path=".", depth=0):
     """Recursively lists all files and directories in the given remote path."""
     try:
@@ -34,9 +42,8 @@ def list_remote_directory(sftp: SFTPClient, rules: SnafflerRuleSet, remote_path=
     
     for item in items:
         item_path = f"{remote_path if remote_path != "/" else ""}/{item.filename}"
-        print("  " * depth + f"[{'D' if item.st_mode & 0o40000 else 'F'}] {item_path}")
         # If the item is a directory, recursively list its contents
-        if item.st_mode & 0o40000:  # Check if it's a directory
+        if is_remote_directory(sftp, item_path):  # Check if it's a directory
             if not rules.enum_directory(item_path)[0]:continue
             print("  " * depth + f"[D] {item_path}")
             list_remote_directory(sftp, rules, item_path, depth + 1)
