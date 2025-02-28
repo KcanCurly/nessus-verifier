@@ -70,7 +70,7 @@ triage = "Green"
 [[Rule]]
 scope = "Content"
 id = "d3"
-name = "DiscardByFileExtension"
+name = "File content snaffle"
 action = "Snaffle"
 category = []
 relay = []

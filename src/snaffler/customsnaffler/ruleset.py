@@ -156,5 +156,5 @@ class SnafflerRuleSet:
                 return False, None
             if action is not None:
                 rules[rule] = m
-        
-        return True, rules
+        if len(rules) > 0: return True, rules
+        return False, None
