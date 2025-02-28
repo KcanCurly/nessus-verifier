@@ -6,8 +6,8 @@ action = "Discard"
 category = []
 relay = []
 description = "File paths that will be skipped entirely."
-MatchLocation = "FilePath"
-MatchLength = 0
+matchLocation = "FilePath"
+matchLength = 0
 wordListType = "StartsWith"
 wordList = [
 "\\/bin",
