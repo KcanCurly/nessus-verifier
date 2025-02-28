@@ -19,7 +19,7 @@ wordList = [
 "\\/var",
 "\\/sys",
 ]
-Triage = "Green"
+triage = "Green"
 
 [[Rule]]
 scope = "File"
@@ -29,8 +29,8 @@ action = "Discard"
 category = []
 relay = []
 description = "Skip any further scanning for files with these extensions."
-MatchLocation = "FilePath"
-MatchLength = 0
+matchLocation = "FilePath"
+matchLength = 0
 wordListType = "EndsWith"
 wordList = [
 "\\.bmp",
@@ -61,4 +61,4 @@ wordList = [
 "\\.nse",
 "\\.xsl",
 ]
-Triage = "Green"
+triage = "Green"

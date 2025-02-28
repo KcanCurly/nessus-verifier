@@ -63,15 +63,17 @@ class SnaffleRule:
 			return []
 		for d in datadict['Rule']:
 			enumerationScope = EnumerationScope(d['scope'])
+			id = EnumerationScope(d['id'])
 			ruleName = d.get('name', 'Unnamed Rule')
 			matchAction = MatchAction(d['action'])
-			relayTargets = d.get('RelayTargets', []) 
-			description = d.get('Description', 'No description')
-			matchLocation = MatchLoc(d['MatchLocation'])
-			wordListType = MatchListType(d['WordListType'])
-			matchLength = d.get('MatchLength', 0)
-			wordList = d.get('WordList', [])
-			triage = Triage(d.get('Triage', 'Gray'))
+			category = d.get('category', [])
+			relayTargets = d.get('relay', []) 
+			description = d.get('description', 'No description')
+			matchLocation = MatchLoc(d['matchLocation'])
+			wordListType = MatchListType(d['wordListType'])
+			matchLength = d.get('matchLength', 0)
+			wordList = d.get('wordList', [])
+			triage = Triage(d.get('triage', 'Gray'))
 			if enumerationScope == EnumerationScope.File:
 				obj = SnafflerFileRule
 			elif enumerationScope == EnumerationScope.Directory:
@@ -81,6 +83,6 @@ class SnaffleRule:
 			else:
 				raise NotImplementedError(f'EnumerationScope {enumerationScope} not implemented.')
 
-			results.append(obj(enumerationScope, ruleName, matchAction, relayTargets, description, matchLocation, wordListType, matchLength, wordList, triage))
+			results.append(obj(enumerationScope, id, ruleName, matchAction, category, relayTargets, description, matchLocation, wordListType, matchLength, wordList, triage))
 		return results
 
