@@ -27,7 +27,8 @@ def list_remote_directory(sftp, rules: SnafflerRuleSet, remote_path=".", depth=0
     except Exception: return
     
     for item in items:
-        item_path = f"/{item.filename}"
+        
+        item_path = f"{remote_path}/{item.filename}"
         # print("  " * depth + f"[{'D' if item.st_mode & 0o40000 else 'F'}] {item_path}")
 
         # If the item is a directory, recursively list its contents
