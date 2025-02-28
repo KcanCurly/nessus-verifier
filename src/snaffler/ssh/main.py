@@ -52,7 +52,7 @@ def list_remote_directory(sftp: SFTPClient, rules: SnafflerRuleSet, remote_path=
                 if not rules.enum_file(item_path)[0]:continue
                 print("  " * depth + f"[F] {item_path}")
                 with sftp.open(item_path, "r") as f:
-                    a = rules.parse_file(f.read())
+                    a = rules.parse_file(f.read(), 10, 10)
                     if a[0]:
                         for b,c in a[1].items():
                             print(f"{b} : {c}")

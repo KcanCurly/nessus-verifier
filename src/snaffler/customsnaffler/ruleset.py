@@ -151,7 +151,7 @@ class SnafflerRuleSet:
     def parse_file(self, filecontent, fsize:int = 0, chars_before_match:int = 0, chars_after_match:int = 0):# -> tuple[Literal[False], None] | tuple[Literal[True], dict]:
         rules = {}
         for rule in self.contentsEnumerationRules.values():
-            m, action = rule.open_and_match(filecontent)
+            m, action = rule.open_and_match(filecontent, chars_before_match, chars_after_match)
             if action is MatchAction.Snaffle:
                 return False, None
             if action is not None:
