@@ -45,7 +45,7 @@ def list_remote_directory(sftp: SFTPClient, rules: SnafflerRuleSet, remote_path=
         # If the item is a directory, recursively list its contents
         if is_remote_directory(sftp, item_path):  # Check if it's a directory
             if not rules.enum_directory(item_path)[0]:continue
-            print("  " * depth + f"[D] {item_path}")
+            # print("  " * depth + f"[D] {item_path}")
             list_remote_directory(sftp, rules, item_path, depth + 1)
         else:
             if is_remote_file(sftp, item_path): 
@@ -55,6 +55,11 @@ def list_remote_directory(sftp: SFTPClient, rules: SnafflerRuleSet, remote_path=
                     
                 with sftp.open(item_path, "r") as f:
                     data = f.read()
+                    try:
+                        # Try decoding as UTF-8
+                        data = data.decode("utf-8", errors="ignore")
+                    except UnicodeDecodeError:
+                        pass
                     if "s.txt" in item_path:
                         print("  " * depth + f"[F] {item_path}")
                         print(data)
