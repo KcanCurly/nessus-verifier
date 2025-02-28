@@ -18,7 +18,6 @@ class SnafflerRuleSet:
     def enum_directory(self, directory) -> Tuple[bool, List[Triage]]:
         rules = []
         for rule in self.directoryEnumerationRules.values():
-            print(rule)
             action, triage = rule.determine_action(directory)
             if action is MatchAction.Discard:
                 return False, None
