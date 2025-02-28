@@ -10,14 +10,14 @@ matchLocation = "FilePath"
 matchLength = 0
 wordListType = "StartsWith"
 wordList = [
-"\\/bin",
-"\\/boot",
-"\\/dev",
-"\\/proc",
-"\\/run",
-"\\/usr",
-"\\/var",
-"\\/sys",
+"\/bin",
+"\/boot",
+"\/dev",
+"\/proc",
+"\/run",
+"\/usr",
+"\/var",
+"\/sys",
 ]
 triage = "Green"
 
