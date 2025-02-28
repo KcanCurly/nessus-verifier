@@ -50,11 +50,16 @@ def list_remote_directory(sftp: SFTPClient, rules: SnafflerRuleSet, remote_path=
         else:
             if is_remote_file(sftp, item_path): 
                 if not rules.enum_file(item_path)[0]:continue
-                print("  " * depth + f"[F] {item_path}")
+                # print("  " * depth + f"[F] {item_path}")
+
+                    
                 with sftp.open(item_path, "r") as f:
                     data = f.read()
+                    if "s.txt" in item_path:
+                        print("  " * depth + f"[F] {item_path}")
+                        print(data)
                     a = rules.parse_file(f.read(), 10, 10)
-                    print(data)
+                    # print(data)
                     if a[0]:
                         for b,c in a[1].items():
                             print(f"{b.name} : {c}")
