@@ -33,4 +33,4 @@ class SnafflerFileRule(SnaffleRule):
 	def determine_action(self, smbfile):
 		if self.match(smbfile) is False:
 			return None, None
-		return self.matchAction, self.triage
+		return self.action, self.triage

@@ -15,4 +15,4 @@ class SnafflerDirectoryRule(SnaffleRule):
 	def determine_action(self, data):
 		if self.match(data) is False:
 			return None, None
-		return self.matchAction, self.triage
+		return self.action, self.triage
