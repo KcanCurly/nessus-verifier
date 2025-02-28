@@ -32,7 +32,7 @@ def list_remote_directory(sftp, rules: SnafflerRuleSet, remote_path=".", depth=0
         # If the item is a directory, recursively list its contents
         if item.st_mode & 0o40000:  # Check if it's a directory
             if not rules.enum_directory(item.filename):continue
-            list_remote_directory(sftp, item_path, depth + 1)
+            list_remote_directory(sftp, rules, item_path, depth + 1)
 
 def main():
     parser = argparse.ArgumentParser(description="Snaffle via SSH.")
