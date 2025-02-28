@@ -148,7 +148,7 @@ class SnafflerRuleSet:
         self.unrollCache[lookupkey] = finalrules.values()
         return finalrules.values()
 
-    async def parse_file(self, filecontent, fsize:int = 0, chars_before_match:int = 0, chars_after_match:int = 0):# -> tuple[Literal[False], None] | tuple[Literal[True], dict]:
+    def parse_file(self, filecontent, fsize:int = 0, chars_before_match:int = 0, chars_after_match:int = 0):# -> tuple[Literal[False], None] | tuple[Literal[True], dict]:
         rules = {}
         for rule in self.contentsEnumerationRules.values():
             m, action = rule.open_and_match(filecontent)
