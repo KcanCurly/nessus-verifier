@@ -29,14 +29,11 @@ def post_nv(l: list[str], username: str, password: str, output: str = None, thre
                 cursor.execute("SELECT name FROM sys.databases")
                 databases = [db[0] for db in cursor.fetchall()]
 
-                schemas = [schema[0] for schema in cursor.fetchall()]
-
                 for db in databases:
-                    print(f"\n[+] Processing database: {db}")
-                    print("============================")
                     try:
                         cursor.execute(f"USE {db}")
-
+                        print(f"\n[+] Processing database: {db}")
+                        print("============================")
                         # Get all tables
                         cursor.execute("SELECT TABLE_SCHEMA, TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE'")
                         tables = cursor.fetchall()
@@ -54,8 +51,8 @@ def post_nv(l: list[str], username: str, password: str, output: str = None, thre
                                 print(f"    Columns: {columns}")
                                 
                                 try:
-                                    # Get first 10 rows
-                                    cursor.execute(f"SELECT TOP 10 * FROM {full_table_name}")
+                                    # Get first 5 rows
+                                    cursor.execute(f"SELECT TOP 5 * FROM {full_table_name}")
                                     rows = cursor.fetchall()
 
                                     if rows:
@@ -72,7 +69,7 @@ def post_nv(l: list[str], username: str, password: str, output: str = None, thre
                     except Exception as e: print(f"Table Error: {host}: {e}")
                     # Switch to the database
 
-            except Exception as e: print(f"Database Error: {host}: {e}")
+            except: pass
 
 
             # Close connection

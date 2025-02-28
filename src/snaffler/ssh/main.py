@@ -14,7 +14,7 @@ def ssh_connect(host, port, username, password):
         return client
     except Exception as e:
         print(f"[!] SSH Connection failed: {e}")
-        sys.exit(1)
+        return None
 
 def list_readable_files(client):
     try:
@@ -29,7 +29,7 @@ def list_readable_files(client):
 
 def main():
     parser = argparse.ArgumentParser(description="Snaffle via SSH.")
-    parser.add_argument("-f", "--file", type=str, required=True, help="input file name")
+    parser.add_argument("-f", "--file", type=str, required=True, help="Input file name, format is 'host:port => username:password'")
     parser.add_argument("-cf", "--credential-file", type=str, required=True, help="Credential file")
     parser.add_argument("--threads", default=10, type=int, help="Number of threads (Default = 10)")
     parser.add_argument("--timeout", default=5, type=int, help="Timeout in seconds (Default = 5)")
@@ -39,30 +39,13 @@ def main():
     
     args = parser.parse_args()
     
-    rule = SnafflerRuleSet.load_default_ruleset()
-    
-    for host in get_hosts_from_file(args.file):
-        ip = host.split(":")[0]
-        port = host.split(":")[1]
-        for cred in get_hosts_from_file(args.credential_file):
-            username = cred.split(":")[0]
-            password = cred.split(":")[1]
-            client = ssh_connect(ip, port, username, password)
-            
-            files = list_readable_files(client)
-            
-            for file in files:
-                d = rule.enum_directory(file)
-                if not d[0]: continue
-                f = rule.enum_file(file)
-                f = file.rsplit("/", 1)
-                z = rule.enum_file(file)
-                if z[0]:
-                    print(file)
-                    print(z[1])
-            
-            client.close()
-            
-            break
-    
-    
+    for entry in get_hosts_from_file(args.file):
+        host, cred = entry.split(" => ")
+        ip, port = host.split(":")
+        username, password = cred.split(":")
+        client = ssh_connect(ip, port, username, password)
+        if not client: continue
+        sftp = client.open_sftp()
+        l = sftp.listdir()
+        for a in l:
+            print(a)
