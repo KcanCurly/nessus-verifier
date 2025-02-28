@@ -30,9 +30,7 @@ def list_remote_directory(sftp, remote_path=".", depth=0):
     """Recursively lists all files and directories in the given remote path."""
     try:
         items = sftp.listdir_attr(remote_path)
-    except FileNotFoundError:
-        print(f"Directory not found: {remote_path}")
-        return
+    except Exception: return
     
     for item in items:
         item_path = f"{remote_path}/{item.filename}"
