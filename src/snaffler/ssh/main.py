@@ -45,6 +45,6 @@ def main():
         client = ssh_connect(ip, port, username, password)
         if not client: continue
         sftp = client.open_sftp()
-        l = sftp.listdir()
+        l = sftp.listdir_attr()
         for a in l:
             print(a)
