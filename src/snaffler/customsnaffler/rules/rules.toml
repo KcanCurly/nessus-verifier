@@ -72,8 +72,25 @@ wordList = [
 triage = "Green"
 
 [[Rule]]
-scope = "Content"
+scope = "File"
 id = "d3"
+name = "DiscardByFileName"
+action = "Discard"
+category = []
+relay = []
+description = "Skip any further scanning for files with these extensions."
+matchLocation = "FilePath"
+matchLength = 0
+wordListType = "EndsWith"
+wordList = [
+"initrd.img",
+"initrd.img.old",
+]
+triage = "Green"
+
+[[Rule]]
+scope = "Content"
+id = "d4"
 name = "File content snaffle"
 action = "Snaffle"
 category = []
