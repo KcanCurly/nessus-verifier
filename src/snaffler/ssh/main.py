@@ -18,7 +18,7 @@ def ssh_connect(host, port, username, password):
 
 
 
-def list_remote_directory(sftp, rules, remote_path=".", depth=0):
+def list_remote_directory(sftp, rules: SnafflerRuleSet, remote_path=".", depth=0):
     """Recursively lists all files and directories in the given remote path."""
     if not rules.enum_directory(remote_path):return
     try:

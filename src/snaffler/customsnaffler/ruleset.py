@@ -102,7 +102,7 @@ class SnafflerRuleSet:
         return SnafflerRuleSet.from_dict(pickle.loads(gzip.decompress(base64.b64decode(pickled))))
 
     @staticmethod
-    def load_default_ruleset():
+    def load_default_ruleset() -> "SnafflerRuleSet":
         script_dir = Path(__file__)
         target_dir = script_dir.parent / "rules"
         s = SnafflerRuleSet()
