@@ -45,11 +45,11 @@ class SnafflerRuleSet:
     def load_rule(self, rule):
         """Adds a single rule to the ruleset"""
         self.allRules[rule.name] = rule
-        if rule.enumerationScope == EnumerationScope.Directory:
+        if rule.scope == EnumerationScope.Directory:
             self.directoryEnumerationRules[rule.name] = rule
-        elif rule.enumerationScope == EnumerationScope.File:
+        elif rule.scope == EnumerationScope.File:
             self.fileEnumerationRules[rule.name] = rule
-        elif rule.enumerationScope == EnumerationScope.Content:
+        elif rule.scope == EnumerationScope.Content:
             self.contentsEnumerationRules[rule.name] = rule
 
     def load_rules(self, rules:List[SnaffleRule]):
@@ -127,7 +127,7 @@ class SnafflerRuleSet:
     def unroll_relays(self, rules:List[SnaffleRule]) -> List[SnaffleRule]:
         lookupkey = ''
         for rule in rules:
-            lookupkey += rule.ruleName
+            lookupkey += rule.name
         if lookupkey in self.unrollCache:
             return self.unrollCache[lookupkey]
 
@@ -136,16 +136,16 @@ class SnafflerRuleSet:
             if rule.matchAction == MatchAction.Relay:
                 # I can only hope there won't be nested relays
                 # or worse: recursive relays...
-                for relay in rule.relayTargets:
+                for relay in rule.relay:
                     if relay in self.allRules:
                         if relay not in finalrules:
                             finalrules[relay] = self.allRules[relay]
                         # keep it like this so we know which rule is already in the set
                         # and which one is missing
                     else:
-                        print('Rule %s has relay target %s which is not a valid rule' % (rule.ruleName, relay))
+                        print('Rule %s has relay target %s which is not a valid rule' % (rule.name, relay))
             else:
-                finalrules[rule.ruleName] = rule
+                finalrules[rule.name] = rule
         self.unrollCache[lookupkey] = finalrules.values()
         return finalrules.values()
 
