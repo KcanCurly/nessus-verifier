@@ -154,7 +154,7 @@ class SnafflerRuleSet:
             action, m = rule.open_and_match(filecontent, chars_before_match, chars_after_match)
             if action is MatchAction.Discard:
                 return False, None
-            if action is not None:
+            if action is not None and len(m) > 0:
                 rules[rule] = m
         if len(rules) > 0: return True, rules
         return False, None
