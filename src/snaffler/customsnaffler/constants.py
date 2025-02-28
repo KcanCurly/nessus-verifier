@@ -1,9 +1,9 @@
 import enum
 
 class EnumerationScope(enum.Enum):
-	DirectoryEnumeration = 'DirectoryEnumeration'
-	FileEnumeration = 'FileEnumeration'
-	ContentsEnumeration = 'ContentsEnumeration'
+	Directory = 'Directory'
+	File = 'File'
+	Content = 'Content'
 
 class MatchLoc(enum.Enum):
 	FilePath = 'FilePath'

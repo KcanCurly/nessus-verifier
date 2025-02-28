@@ -5,11 +5,13 @@ import re
 from src.snaffler.customsnaffler.constants import EnumerationScope, MatchAction, MatchLoc, MatchListType, Triage
 
 class SnaffleRule:
-	def __init__(self, enumerationScope, RuleName, matchAction, relayTargets, description, matchLocation, wordListType, matchLength, wordList, triage) -> None:
-		self.enumerationScope:EnumerationScope = enumerationScope
-		self.ruleName:str = RuleName
-		self.matchAction:MatchAction = matchAction
-		self.relayTargets:List[str] = relayTargets
+	def __init__(self, scope, id, name, action, category, relay, description, matchLocation, wordListType, matchLength, wordList, triage) -> None:
+		self.scope:EnumerationScope = scope
+		self.id:str = id
+		self.name:str = name
+		self.action:MatchAction = action
+		self.category:list[str] = category
+		self.relay:list[str] = relay
 		self.description:str = description
 		self.matchLocation:MatchLoc = matchLocation
 		self.wordListType:MatchListType = wordListType
@@ -48,38 +50,21 @@ class SnaffleRule:
 		return self.matchAction, self.triage
 	
 	def __repr__(self):
-		return str(self.to_toml())
+		return str(toml.dumps(self.to_dict()))
 	
-	def to_toml(self):
-		return toml.dumps(self.to_dict())
-
-	def to_dict(self):
-		return {
-			'EnumerationScope' : self.enumerationScope.value,
-			'RuleName' : self.ruleName,
-			'MatchAction' : self.matchAction.value,
-			'RelayTargets' : self.relayTargets,
-			'Description' : self.description,
-			'MatchLocation' : self.matchLocation.value,
-			'WordListType' : self.wordListType.value,
-			'MatchLength' : self.matchLength,
-			'WordList' : self.wordList,
-			'Triage' : self.triage.value
-		}
-
 	@staticmethod
 	def from_dict(datadict:Dict):
-		from src.snaffler.pysnaffler.rules.file import SnafflerFileRule
-		from src.snaffler.pysnaffler.rules.directory import SnafflerDirectoryRule
-		from src.snaffler.pysnaffler.rules.contents import SnafflerContentsEnumerationRule
+		from src.snaffler.customsnaffler.file import SnafflerFileRule
+		from src.snaffler.customsnaffler.directory import SnafflerDirectoryRule
+		from src.snaffler.customsnaffler.contents import SnafflerContentsEnumerationRule
 		
 		results = []
-		if 'ClassifierRules' not in datadict:
+		if 'Rule' not in datadict:
 			return []
-		for d in datadict['ClassifierRules']:
-			enumerationScope = EnumerationScope(d['EnumerationScope'])
-			ruleName = d.get('RuleName', 'Unnamed Rule')
-			matchAction = MatchAction(d['MatchAction'])
+		for d in datadict['Rule']:
+			enumerationScope = EnumerationScope(d['scope'])
+			ruleName = d.get('name', 'Unnamed Rule')
+			matchAction = MatchAction(d['action'])
 			relayTargets = d.get('RelayTargets', []) 
 			description = d.get('Description', 'No description')
 			matchLocation = MatchLoc(d['MatchLocation'])
@@ -87,38 +72,15 @@ class SnaffleRule:
 			matchLength = d.get('MatchLength', 0)
 			wordList = d.get('WordList', [])
 			triage = Triage(d.get('Triage', 'Gray'))
-			if enumerationScope == EnumerationScope.FileEnumeration:
+			if enumerationScope == EnumerationScope.File:
 				obj = SnafflerFileRule
-			elif enumerationScope == EnumerationScope.DirectoryEnumeration:
+			elif enumerationScope == EnumerationScope.Directory:
 				obj = SnafflerDirectoryRule
-			elif enumerationScope == EnumerationScope.ContentsEnumeration:
+			elif enumerationScope == EnumerationScope.Content:
 				obj = SnafflerContentsEnumerationRule
 			else:
-				pass
-				# raise NotImplementedError(f'EnumerationScope {enumerationScope} not implemented.')
+				raise NotImplementedError(f'EnumerationScope {enumerationScope} not implemented.')
 
 			results.append(obj(enumerationScope, ruleName, matchAction, relayTargets, description, matchLocation, wordListType, matchLength, wordList, triage))
 		return results
 
-	@staticmethod
-	def from_toml(data:str):
-		
-     
-     
-		# there is a problem how C# toml is being parsed, so we need to split the data to multiple parts
-		def findentries(data:str):
-            
-			entry = ''
-			for line in data.split('\n'):
-				if line.strip().startswith('[[Rule]]'):
-					if entry != '':
-						yield entry
-					entry = line+'\n'
-					continue
-				entry += line + '\n'
-			yield entry
-		results = []
-		for entry in findentries(data):
-			results.extend(SnaffleRule.from_dict(toml.loads(entry)))
-		
-		return results

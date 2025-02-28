@@ -45,24 +45,25 @@ class SnafflerRuleSet:
     def load_rule(self, rule):
         """Adds a single rule to the ruleset"""
         self.allRules[rule.ruleName] = rule
-        if rule.enumerationScope == EnumerationScope.DirectoryEnumeration:
+        if rule.enumerationScope == EnumerationScope.Directory:
             self.directoryEnumerationRules[rule.ruleName] = rule
-        elif rule.enumerationScope == EnumerationScope.FileEnumeration:
+        elif rule.enumerationScope == EnumerationScope.File:
             self.fileEnumerationRules[rule.ruleName] = rule
-        elif rule.enumerationScope == EnumerationScope.ContentsEnumeration:
+        elif rule.enumerationScope == EnumerationScope.Content:
             self.contentsEnumerationRules[rule.ruleName] = rule
 
     def load_rules(self, rules:List[SnaffleRule]):
         """Adds all rules from a list of rules"""
         for rule in rules:
             self.load_rule(rule)
+            print(rule)
 
     def load_rule_file(self, fpath):
         """Adds all rules from a single file"""
         with open(fpath, 'rb') as file:
             d = tomllib.load(file)
-            print(d)
-            # self.load_rules(SnaffleRule.from_toml(data))
+            a = SnaffleRule.from_dict(d)
+            self.load_rules(a)
 
     def load_directory(self, directory):
         """Adds all rules from a directory recursively"""
@@ -151,7 +152,7 @@ class SnafflerRuleSet:
     async def parse_file(self, filepath, rules:List[SnaffleRule], fsize:int = 0, chars_before_match:int = 0, chars_after_match:int = 0):
         finalrules = self.unroll_relays(rules)
         for rule in finalrules:
-            if rule.enumerationScope == EnumerationScope.ContentsEnumeration:
+            if rule.scope == EnumerationScope.Content:
                 res, err = rule.open_and_match(filepath, chars_before_match, chars_after_match)
                 if err is not None:
                     yield None, rule, err

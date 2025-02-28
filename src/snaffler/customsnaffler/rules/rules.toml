@@ -6,6 +6,8 @@ action = "Discard"
 category = []
 relay = []
 description = "File paths that will be skipped entirely."
+MatchLocation = "FilePath"
+MatchLength = 0
 wordListType = "StartsWith"
 wordList = [
 "\\/bin",
@@ -17,6 +19,7 @@ wordList = [
 "\\/var",
 "\\/sys",
 ]
+Triage = "Green"
 
 [[Rule]]
 scope = "File"
@@ -26,6 +29,8 @@ action = "Discard"
 category = []
 relay = []
 description = "Skip any further scanning for files with these extensions."
+MatchLocation = "FilePath"
+MatchLength = 0
 wordListType = "EndsWith"
 wordList = [
 "\\.bmp",
@@ -56,3 +61,4 @@ wordList = [
 "\\.nse",
 "\\.xsl",
 ]
+Triage = "Green"
