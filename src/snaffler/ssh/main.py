@@ -26,6 +26,21 @@ def list_readable_files(client):
         print(f"[!] Error listing files: {e}")
         return []
 
+def list_remote_directory(sftp, remote_path=".", depth=0):
+    """Recursively lists all files and directories in the given remote path."""
+    try:
+        items = sftp.listdir_attr(remote_path)
+    except FileNotFoundError:
+        print(f"Directory not found: {remote_path}")
+        return
+    
+    for item in items:
+        item_path = f"{remote_path}/{item.filename}"
+        print("  " * depth + f"[{'D' if item.st_mode & 0o40000 else 'F'}] {item_path}")
+
+        # If the item is a directory, recursively list its contents
+        if item.st_mode & 0o40000:  # Check if it's a directory
+            list_remote_directory(sftp, item_path, depth + 1)
 
 def main():
     parser = argparse.ArgumentParser(description="Snaffle via SSH.")
@@ -45,7 +60,4 @@ def main():
         client = ssh_connect(ip, port, username, password)
         if not client: continue
         sftp = client.open_sftp()
-        l = sftp.listdir_attr()
-        for a in l:
-            print(a.st_mode & 0o40000)
-            print(a)
+        list_remote_directory(sftp, "/")
