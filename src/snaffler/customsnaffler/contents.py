@@ -18,22 +18,16 @@ class SnafflerContentsEnumerationRule(SnaffleRule):
 				if chars_after > 0:
 					text += data[match.end() : min(match.end() + chars_after, len(data))]
 				matches.append(text)
-		return os.linesep.join(matches)
+		return matches
 
-	def open_and_match(self, filename, chars_before, chars_after):
+	def open_and_match(self, filecontent, chars_before, chars_after):
 		try:
-			if self.matchLocation == MatchLoc.FileContentAsString:
-				with codecs.open(filename, 'r', 'latin-1') as f:
-					data = f.read()
-					return self.match(data, chars_before, chars_after), None
-			elif self.matchLocation == MatchLoc.FileContentAsBytes:
-				with open(filename, 'rb') as f:
-					data = f.read()
-					return self.match(data, chars_before, chars_after), None
+			if self.matchLocation == MatchLoc.FileContentAsString or self.matchLocation == MatchLoc.FileContentAsBytes:
+				return self.action, self.match(filecontent, chars_before, chars_after)
 			else:
-				return False, Exception('ERROR: Unknown match location: %s' % self.matchLocation)
+				return self.action, []
 		except Exception as e:
-			return False, e
+			return self.action, []
 
 	def determine_action(self, data):
 		pass

@@ -13,11 +13,14 @@ wordList = [
 "/bin",
 "/boot",
 "/dev",
+"/etc",
 "/lib",
+"/lib64",
 "/proc",
 "/run",
 "/usr",
 "/var",
+"/sbin",
 "/sys",
 ]
 triage = "Green"
@@ -34,32 +37,50 @@ matchLocation = "FilePath"
 matchLength = 0
 wordListType = "EndsWith"
 wordList = [
-"\\.bmp",
-"\\.eps",
-"\\.gif",
-"\\.ico",
-"\\.jfi",
-"\\.jfif",
-"\\.jif",
-"\\.jpe",
-"\\.jpeg",
-"\\.jpg",
-"\\.png",
-"\\.psd",
-"\\.svg",
-"\\.tif",
-"\\.tiff",
-"\\.webp",
-"\\.xcf",
-"\\.ttf",
-"\\.otf",
-"\\.lock",
-"\\.css",
-"\\.less",
-"\\.admx",
-"\\.adml",
-"\\.xsd",
-"\\.nse",
-"\\.xsl",
+".bmp",
+".eps",
+".gif",
+".ico",
+".jfi",
+".jfif",
+".jif",
+".jpe",
+".jpeg",
+".jpg",
+".png",
+".psd",
+".svg",
+".tif",
+".tiff",
+".webp",
+".xcf",
+".ttf",
+".otf",
+".lock",
+".css",
+".less",
+".admx",
+".adml",
+".xsd",
+".nse",
+".xsl",
+]
+triage = "Green"
+
+[[Rule]]
+scope = "Content"
+id = "d3"
+name = "DiscardByFileExtension"
+action = "Snaffle"
+category = []
+relay = []
+description = "Pick these up."
+matchLocation = "FileContentAsString"
+matchLength = 0
+wordListType = "Contains"
+wordList = [
+"password",
+"passwd",
+"pass",
 ]
 triage = "Green"
