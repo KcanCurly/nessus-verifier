@@ -41,7 +41,7 @@ def list_remote_directory(sftp: SFTPClient, rules: SnafflerRuleSet, remote_path=
             print("  " * depth + f"[D] {item_path}")
             list_remote_directory(sftp, rules, item_path, depth + 1)
         else:
-            if is_remote_file(item_path): print("  " * depth + f"[F] {item_path}")
+            if is_remote_file(sftp, item_path): print("  " * depth + f"[F] {item_path}")
 
             
             
