@@ -50,7 +50,26 @@ class SnaffleRule:
 		return self.matchAction, self.triage
 	
 	def __repr__(self):
-		return str(toml.dumps(self.to_dict()))
+		return str(self.to_toml())
+	
+	def to_toml(self):
+		return toml.dumps(self.to_dict())
+
+	def to_dict(self):
+		return {
+			'scope' : self.scope.value,
+			'id' : self.id,	
+			'name' : self.name,
+			'action' : self.action.value,
+			'category' : self.category,
+			'relay' : self.relay,
+			'description' : self.description,
+			'matchLocation' : self.matchLocation.value,
+			'wordListType' : self.wordListType.value,
+			'matchLength' : self.matchLength,
+			'wordList' : self.wordList,
+			'triage' : self.triage.value
+		}
 	
 	@staticmethod
 	def from_dict(datadict:Dict):
