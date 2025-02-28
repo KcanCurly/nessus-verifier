@@ -1,3 +1,3 @@
 include src/nvconfig.config
 include src/rules.yaml
-recursive-include src/snaffler/pysnaffler/rules/DefaultRules *.toml
+recursive-include src/snaffler/customsnaffler/rules *.toml
