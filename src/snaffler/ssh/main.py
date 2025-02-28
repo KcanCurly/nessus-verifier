@@ -1,7 +1,9 @@
 import argparse
 import pprint
 import paramiko
+import stat
 import sys
+from paramiko import SFTPClient
 from src.snaffler.customsnaffler.ruleset import SnafflerRuleSet
 
 from src.utilities.utilities import get_hosts_from_file
@@ -16,9 +18,15 @@ def ssh_connect(host, port, username, password):
         print(f"[!] SSH Connection failed: {e}")
         return None
 
+def is_remote_file(sftp, path):
+    """Checks if a given remote path is a file."""
+    try:
+        file_stat = sftp.stat(path)
+        return stat.S_ISREG(file_stat.st_mode)  # Checks if it's a regular file
+    except FileNotFoundError:
+        return False  # File does not exist
 
-
-def list_remote_directory(sftp, rules: SnafflerRuleSet, remote_path=".", depth=0):
+def list_remote_directory(sftp: SFTPClient, rules: SnafflerRuleSet, remote_path=".", depth=0):
     """Recursively lists all files and directories in the given remote path."""
     try:
         items = sftp.listdir_attr(remote_path)
@@ -30,9 +38,13 @@ def list_remote_directory(sftp, rules: SnafflerRuleSet, remote_path=".", depth=0
         # If the item is a directory, recursively list its contents
         if item.st_mode & 0o40000:  # Check if it's a directory
             if not rules.enum_directory(item_path)[0]:continue
-            print("  " * depth + f"[{'D' if item.st_mode & 0o40000 else 'F'}] {item_path}")
+            print("  " * depth + f"[D] {item_path}")
             list_remote_directory(sftp, rules, item_path, depth + 1)
-        else: print("  " * depth + f"[{'D' if item.st_mode & 0o40000 else 'F'}] {item_path}")
+        else:
+            if is_remote_file(item_path): print("  " * depth + f"[F] {item_path}")
+
+            
+            
 
 def main():
     parser = argparse.ArgumentParser(description="Snaffle via SSH.")
