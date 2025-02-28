@@ -19,8 +19,6 @@ class SnafflerRuleSet:
         rules = []
         for rule in self.directoryEnumerationRules.values():
             action, triage = rule.determine_action(directory)
-            print(action)
-            
             if action is MatchAction.Discard:
                 return False, None
             if action is not None:
