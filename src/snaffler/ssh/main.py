@@ -55,7 +55,7 @@ def list_remote_directory(sftp: SFTPClient, rules: SnafflerRuleSet, remote_path=
                     a = rules.parse_file(f.read(), 10, 10)
                     if a[0]:
                         for b,c in a[1].items():
-                            print(f"{b} : {c}")
+                            print(f"{b.name} : {c}")
                         
             
 
