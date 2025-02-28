@@ -64,6 +64,9 @@ wordList = [
 ".xsd",
 ".nse",
 ".xsl",
+".zip",
+".tar",
+".tar.gz",
 ]
 triage = "Green"
 
