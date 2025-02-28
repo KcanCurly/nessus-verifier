@@ -12,7 +12,11 @@ class SnafflerContentsEnumerationRule(SnaffleRule):
 		matches = []
 		for rex in self.wordList:
 			for match in rex.finditer(data):
+				print("Match")
+				print(match)
+				
 				text = match.group(0)
+				print(text)
 				if chars_before > 0:
 					text = data[max(match.start() - chars_before, 0) : match.start()] + text
 				if chars_after > 0:

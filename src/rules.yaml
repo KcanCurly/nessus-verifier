@@ -1,6 +1,6 @@
 - name: IGNORE
   id: -1
-  plugin-ids: [142960, 10114, 34850, 51192, 12085, 11213, 98048, 136929, 57582, 24244, 10759, 12224, 18391]
+  plugin-ids: [142960, 10114, 34850, 51192, 12085, 11213, 98048, 136929, 57582, 24244, 10759, 12224, 18391, 44135]
   # 142960 - HSTS Missing From HTTPS Server (RFC 6797)
   # 10114 - ICMP Timestamp Request Remote Date Disclosure
   # 34850 - Web Server Uses Basic Authentication Without HTTPS
@@ -14,6 +14,7 @@
   # 10759 - Web Server HTTP Header Internal IP Disclosure
   # 12224 - Web Server Load Balancer Detection
   # 18391 - SMTP Server Non-standard Port Detection
+  # 44135 - Web Server Generic Cookie Injection
 
 - name: Actionables
   id: 0
