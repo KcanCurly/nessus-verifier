@@ -20,19 +20,17 @@ def ssh_connect(host, port, username, password):
 
 def list_remote_directory(sftp, rules: SnafflerRuleSet, remote_path=".", depth=0):
     """Recursively lists all files and directories in the given remote path."""
-
-    if not rules.enum_directory(remote_path):return
     try:
         items = sftp.listdir_attr(remote_path)
     except Exception: return
     
     for item in items:
         item_path = f"{remote_path if remote_path != "/" else ""}/{item.filename}"
-        print("  " * depth + f"[{'D' if item.st_mode & 0o40000 else 'F'}] {item_path}")
-
+        
         # If the item is a directory, recursively list its contents
         if item.st_mode & 0o40000:  # Check if it's a directory
             if not rules.enum_directory(item_path):continue
+            print("  " * depth + f"[{'D' if item.st_mode & 0o40000 else 'F'}] {item_path}")
             list_remote_directory(sftp, rules, item_path, depth + 1)
 
 def main():
