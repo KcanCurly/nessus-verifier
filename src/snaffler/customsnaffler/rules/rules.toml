@@ -1,0 +1,58 @@
+[[Rule]]
+scope = "Directory"
+id = "d1"
+name = "DiscardLinuxSystemDirs"
+action = "Discard"
+category = []
+relay = []
+description = "File paths that will be skipped entirely."
+wordListType = "StartsWith"
+wordList = [
+"\\/bin",
+"\\/boot",
+"\\/dev",
+"\\/proc",
+"\\/run",
+"\\/usr",
+"\\/var",
+"\\/sys",
+]
+
+[[Rule]]
+scope = "File"
+id = "d2"
+name = "DiscardByFileExtension"
+action = "Discard"
+category = []
+relay = []
+description = "Skip any further scanning for files with these extensions."
+wordListType = "EndsWith"
+wordList = [
+"\\.bmp",
+"\\.eps",
+"\\.gif",
+"\\.ico",
+"\\.jfi",
+"\\.jfif",
+"\\.jif",
+"\\.jpe",
+"\\.jpeg",
+"\\.jpg",
+"\\.png",
+"\\.psd",
+"\\.svg",
+"\\.tif",
+"\\.tiff",
+"\\.webp",
+"\\.xcf",
+"\\.ttf",
+"\\.otf",
+"\\.lock",
+"\\.css",
+"\\.less",
+"\\.admx",
+"\\.adml",
+"\\.xsd",
+"\\.nse",
+"\\.xsl",
+]

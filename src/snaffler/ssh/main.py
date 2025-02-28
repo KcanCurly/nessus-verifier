@@ -2,7 +2,7 @@ import argparse
 import pprint
 import paramiko
 import sys
-from src.snaffler.pysnaffler.ruleset import SnafflerRuleSet
+from src.snaffler.customsnaffler.ruleset import SnafflerRuleSet
 
 from src.utilities.utilities import get_hosts_from_file
 
@@ -16,28 +16,21 @@ def ssh_connect(host, port, username, password):
         print(f"[!] SSH Connection failed: {e}")
         return None
 
-def list_readable_files(client):
-    try:
-        command = "find / -type f -readable 2>/dev/null"
-        stdin, stdout, stderr = client.exec_command(command)
-        files = stdout.read().decode().split('\n')
-        return [file for file in files if file.strip()]
-    except Exception as e:
-        print(f"[!] Error listing files: {e}")
-        return []
 
-def list_remote_directory(sftp, remote_path=".", depth=0):
+
+def list_remote_directory(sftp, rules, remote_path=".", depth=0):
     """Recursively lists all files and directories in the given remote path."""
     try:
         items = sftp.listdir_attr(remote_path)
     except Exception: return
     
     for item in items:
-        item_path = f"{remote_path}/{item.filename}"
-        print("  " * depth + f"[{'D' if item.st_mode & 0o40000 else 'F'}] {item_path}")
+        item_path = f"/{item.filename}"
+        # print("  " * depth + f"[{'D' if item.st_mode & 0o40000 else 'F'}] {item_path}")
 
         # If the item is a directory, recursively list its contents
         if item.st_mode & 0o40000:  # Check if it's a directory
+            if not rules.enum_directory(item.filename):continue
             list_remote_directory(sftp, item_path, depth + 1)
 
 def main():
@@ -51,6 +44,8 @@ def main():
     
     args = parser.parse_args()
     
+    rules = SnafflerRuleSet.load_default_ruleset()
+    
     for entry in get_hosts_from_file(args.file):
         host, cred = entry.split(" => ")
         ip, port = host.split(":")
@@ -58,4 +53,4 @@ def main():
         client = ssh_connect(ip, port, username, password)
         if not client: continue
         sftp = client.open_sftp()
-        list_remote_directory(sftp, "/")
+        list_remote_directory(sftp, rules, "/")
