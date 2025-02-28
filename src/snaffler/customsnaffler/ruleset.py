@@ -60,8 +60,7 @@ class SnafflerRuleSet:
     def load_rule_file(self, fpath):
         """Adds all rules from a single file"""
         with open(fpath, 'r') as file:
-            data = file.read()
-            d = tomllib.load(data)
+            d = tomllib.load(file)
             print(d)
             # self.load_rules(SnaffleRule.from_toml(data))
 
