@@ -56,7 +56,6 @@ class SnafflerRuleSet:
         """Adds all rules from a list of rules"""
         for rule in rules:
             self.load_rule(rule)
-            print(rule)
 
     def load_rule_file(self, fpath):
         """Adds all rules from a single file"""
