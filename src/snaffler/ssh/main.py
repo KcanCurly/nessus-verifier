@@ -60,7 +60,7 @@ def list_remote_directory(sftp: SFTPClient, rules: SnafflerRuleSet, remote_path=
                         data = data.decode("utf-8", errors="ignore")
                     except UnicodeDecodeError:
                         pass
-                    if "s.txt" in item_path:
+                    if "/desktop/s.txt" in item_path.lower():
                         print("  " * depth + f"[F] {item_path}")
                         print(data)
                     a = rules.parse_file(f.read(), 10, 10)
