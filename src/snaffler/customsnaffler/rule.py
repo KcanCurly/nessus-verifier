@@ -63,7 +63,7 @@ class SnaffleRule:
 			return []
 		for d in datadict['Rule']:
 			enumerationScope = EnumerationScope(d['scope'])
-			id = EnumerationScope(d['id'])
+			id = d.get('id', "d0")
 			ruleName = d.get('name', 'Unnamed Rule')
 			matchAction = MatchAction(d['action'])
 			category = d.get('category', [])
