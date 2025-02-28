@@ -8,8 +8,8 @@ class SnafflerDirectoryRule(SnaffleRule):
 	
 	def match(self, data):
 		for rex in self.wordList:
-			print(rex)
 			if rex.search(data):
+				print("T")
 				return True
 		return False
 
