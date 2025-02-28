@@ -1,6 +1,6 @@
 import codecs
-from src.snaffler.pysnaffler.rules.rule import SnaffleRule
-from src.snaffler.pysnaffler.rules.constants import EnumerationScope, MatchAction, MatchLoc, MatchListType, Triage
+from src.snaffler.customsnaffler.rule import SnaffleRule
+from src.snaffler.customsnaffler.constants import EnumerationScope, MatchAction, MatchLoc, MatchListType, Triage
 from typing import List
 import os
 
