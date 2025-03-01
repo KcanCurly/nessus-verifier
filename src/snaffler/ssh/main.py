@@ -114,6 +114,7 @@ async def process_directory(sftp: asyncssh.SFTPClient, host:str, username:str, r
                 # await process_directory(sftp, host, username, rules, verbose, item_path, depth=depth+1)
             elif await sftp.isfile(item_path):
                 enum_file = rules.enum_file(item_path)
+                if "logins.json" in item_path: print(item_path)
                 if not enum_file[0]:continue
                 for b,c in enum_file[1].items():
                     print(f"{host} - {username} => {item_path} - {b.name} - {c}")
