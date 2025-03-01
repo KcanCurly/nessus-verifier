@@ -116,7 +116,7 @@ async def process_host(hostname, port, username, password, rules: SnafflerRuleSe
             print(f"Connected to {hostname}")
 
             sftp = await conn.start_sftp_client()
-            process_directory(sftp, f"{hostname}:{port}", username, rules, verbose, "/")
+            await process_directory(sftp, f"{hostname}:{port}", username, rules, verbose, "/")
             
     except Exception as e:
         print(f"Error processing {hostname}: {e}")
