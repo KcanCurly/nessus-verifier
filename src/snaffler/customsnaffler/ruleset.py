@@ -27,13 +27,13 @@ class SnafflerRuleSet:
         
         return True, rules
 
-    def enum_file(self, filename) -> Tuple[bool, List[SnaffleRule]]:
+    def enum_file(self, filename) -> Tuple[bool, dict[SnaffleRule]]:
         """Returns True if the file should be enumerated, False if it should be discarded.
         Returns a list of rules that matched the file."""
         rules = {}
         for rule in self.fileEnumerationRules.values():
-            action, m = ((SnafflerFileRule)rule).determine_action(filename)
-            print(type(m))
+            action, m = rule.determine_action(filename)
+
             if action == MatchAction.Discard:
                 return False, [rule]
             if action is not None and len(m) > 0:
