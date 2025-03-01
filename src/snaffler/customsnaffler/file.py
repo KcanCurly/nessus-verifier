@@ -12,6 +12,7 @@ class SnafflerFileRule(SnaffleRule):
 		results = []
 		if self.matchLocation == MatchLoc.FileName:
 			for rex in self.wordList:
+				print(rex)
 				s = rex.search(file)
 				if s: results.append(s.group(0))
 
