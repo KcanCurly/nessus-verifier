@@ -121,7 +121,7 @@ async def process_host(hostname, port, username, password, rules: SnafflerRuleSe
     except Exception as e:
         print(f"Error processing {hostname}: {e}")
 
-async def main():
+async def main2():
     parser = argparse.ArgumentParser(description="Snaffle via SSH.")
     parser.add_argument("-f", "--file", type=str, required=True, help="Input file name, format is 'host:port => username:password'")
     parser.add_argument("--threads", default=10, type=int, help="Number of threads (Default = 10)")
@@ -153,7 +153,7 @@ async def main():
             host, cred = entry.split(" => ")
             ip, port = host.split(":")
             username, password = cred.split(":")
-            tasks.append(await process_host(ip, port, username, password, rules))
+            tasks.append(process_host(ip, port, username, password, rules))
             
 
         await asyncio.gather(*tasks)
@@ -172,3 +172,6 @@ async def main():
             for a in as_completed(futures):
                 overall_progress.update(overall_task_id, advance=1)
         """
+
+def main():
+    asyncio.run(main2())
