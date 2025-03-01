@@ -10,9 +10,9 @@ class SnafflerFileRule(SnaffleRule):
 	
 	def match(self, file):
 		results = []
+		print("H")
 		if self.matchLocation == MatchLoc.FileName:
 			for rex in self.wordList:
-				print(rex)
 				s = rex.search(file)
 				if s: results.append(s.group(0))
 
