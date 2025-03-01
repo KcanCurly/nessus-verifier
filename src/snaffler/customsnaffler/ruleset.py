@@ -29,17 +29,16 @@ class SnafflerRuleSet:
     def enum_file(self, filename) -> Tuple[bool, List[SnaffleRule]]:
         """Returns True if the file should be enumerated, False if it should be discarded.
         Returns a list of rules that matched the file."""
-        rules = []
+        rules = {}
         for rule in self.fileEnumerationRules.values():
-            res, triage = rule.determine_action(filename)
-            if res is None:
-                continue
-            if res == MatchAction.Discard:
+            action, m = rule.determine_action(filename)
+            if action == MatchAction.Discard:
                 return False, [rule]
-            else:
-                rules.append(rule)
+            if action is not None and len(m) > 0:
+                rules[rule] = m
         
-        return True, rules
+        if len(rules) > 0: return True, rules
+        return False, None
                 
 
     def load_rule(self, rule):

@@ -72,9 +72,13 @@ def list_remote_directory(sftp: SFTPClient, host:str, username:str, rules: Snaff
         else:
             if is_remote_file(sftp, item_path): 
                 
-                if not rules.enum_file(item_path)[0]:continue
-                
+                enum_file = rules.enum_file(item_path)
+                if not enum_file[0]:continue
                 if verbose: print("  " * depth + f"[F] {item_path}")
+                if enum_file[0]:
+                    for b,c in enum_file[1].items():
+                        print(f"{host} - {username} => {item_path} - {b.name} - {c}")
+                
                 thread = threading.Thread(target=process_file, args=(sftp, rules, item_path, host, username,))
                 thread.start()
                 threads.append(thread)
