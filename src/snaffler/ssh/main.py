@@ -102,15 +102,17 @@ def signal_handler(sig, frame):
 
 
 async def process_directory(sftp: asyncssh.SFTPClient, host:str, username:str, rules: SnafflerRuleSet, verbose, remote_path=".", depth=0):
-    dir = await sftp.readdir(remote_path)
-    for d in dir:
-        if d.filename == "." or d.filename == "..":continue
-        item_path = f"{remote_path if remote_path != "/" else ""}/{d.filename}"
-        if await sftp.isdir(item_path):
-            print("  " * depth + f"[D] {item_path}")
-            await process_directory(sftp, host, username, rules, verbose, item_path, depth=depth+1)
-        elif await sftp.isfile(item_path):
-            print("  " * depth + f"[F] {item_path}")
+    try:
+        dir = await sftp.readdir(remote_path)
+        for d in dir:
+            if d.filename == "." or d.filename == "..":continue
+            item_path = f"{remote_path if remote_path != "/" else ""}/{d.filename}"
+            if await sftp.isdir(item_path):
+                print("  " * depth + f"[D] {item_path}")
+                await process_directory(sftp, host, username, rules, verbose, item_path, depth=depth+1)
+            elif await sftp.isfile(item_path):
+                print("  " * depth + f"[F] {item_path}")
+    except Exception as e: print(e)
     
 
 async def connect_ssh(hostname, port, username, password):
