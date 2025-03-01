@@ -37,8 +37,7 @@ class SnafflerRuleSet:
             if action is not None and len(m) > 0:
                 rules[rule] = m
         
-        if len(rules) > 0: return True, rules
-        return False, None
+        return True, rules
                 
 
     def load_rule(self, rule):
