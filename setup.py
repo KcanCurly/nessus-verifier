@@ -26,7 +26,7 @@ setup(
         "toml",
         "stomp.py",
         "pymssql",
-        "asyncssh[bcrypt,gssapi,pyOpenSSL]",
+        "asyncssh[bcrypt]",
     ],
     classifiers=[
         "Programming Language :: Python :: 3",
