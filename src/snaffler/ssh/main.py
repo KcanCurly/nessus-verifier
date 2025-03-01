@@ -122,7 +122,7 @@ async def process_directory(sftp: asyncssh.SFTPClient, host:str, username:str, r
         await asyncio.gather(*tasks)
     except Exception as e:
         
-        print(e, item_path)
+        print(e, remote_path)
     
 
 async def connect_ssh(hostname, port, username, password):
