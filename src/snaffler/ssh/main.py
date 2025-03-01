@@ -115,7 +115,7 @@ def main():
     rules = SnafflerRuleSet.load_default_ruleset()
 
     with Live(progress_group, console=console):
-        overall_progress.update(overall_task_id, total=len(l), completed=0)
+        overall_progress.update(overall_task_id, total=len(get_hosts_from_file(args.file)), completed=0)
         overall_progress.start_task(overall_task_id)
         futures = []
 
