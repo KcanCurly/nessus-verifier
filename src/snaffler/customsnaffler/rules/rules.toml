@@ -117,7 +117,7 @@ relay = []
 description = "Pick these up."
 matchLocation = "FileName"
 matchLength = 0
-wordListType = "EndsWith"
+wordListType = "Regex"
 wordList = [
 "logins\\.json",
 ]
