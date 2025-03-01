@@ -1,9 +1,11 @@
 import argparse
+from os import remove
 import pprint
+from tabnanny import verbose
 import paramiko
 import stat
 import sys
-from paramiko import SFTPClient, SSHClient
+import asyncssh
 from src.snaffler.customsnaffler.ruleset import SnafflerRuleSet
 import threading
 from rich.console import Group
@@ -14,6 +16,7 @@ from rich.console import Console
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from src.utilities.utilities import get_classic_single_progress, get_classic_overall_progress, get_classic_console, get_hosts_from_file
 import signal
+import asyncio
 
 stop_event = threading.Event()
 
@@ -43,7 +46,7 @@ def is_remote_directory(sftp, path):
     except FileNotFoundError:
         return False  # Path does not exist
 
-def process_file(sftp: SFTPClient, rules: SnafflerRuleSet, path:str, host:str, username:str):
+def process_file(sftp: asyncssh.SFTPClient, rules: SnafflerRuleSet, path:str, host:str, username:str):
     try:
         with sftp.open(path, "r") as f:
             data = f.read()
@@ -60,7 +63,7 @@ def process_file(sftp: SFTPClient, rules: SnafflerRuleSet, path:str, host:str, u
                     print(f"{host} - {username} => {path} - {b.name} - {c}")
     except Exception as e: print(f"Process file error: {e}")
 
-def list_remote_directory(sftp:SFTPClient, host:str, username:str, rules: SnafflerRuleSet, verbose, remote_path=".", depth=0):
+def list_remote_directory(sftp:asyncssh.SFTPClient, host:str, username:str, rules: SnafflerRuleSet, verbose, remote_path=".", depth=0):
     threads = []
     """Recursively lists all files and directories in the given remote path."""
 
@@ -95,7 +98,30 @@ def signal_handler(sig, frame):
     print("\nCTRL+C detected! Stopping all threads...")
     stop_event.set()  # Signal threads to stop
 
-def main():
+async def process_directory(sftp: asyncssh.SFTPClient, host:str, username:str, rules: SnafflerRuleSet, verbose, remote_path=".", depth=0):
+    dir = await sftp.readdir(remote_path)
+    for d in dir:
+         item_path = f"{remote_path if remote_path != "/" else ""}/{d.filename}"
+         print(item_path)
+    
+
+async def connect_ssh(hostname, port, username, password):
+    """Asynchronously establishes an SSH connection."""
+    return await asyncssh.connect(hostname, port=port, username=username, password=password)
+
+async def process_host(hostname, port, username, password, rules: SnafflerRuleSet):
+    """Main function to process a single SSH host asynchronously."""
+    try:
+        async with await connect_ssh(hostname, port, username, password) as conn:
+            print(f"Connected to {hostname}")
+
+            sftp = await conn.start_sftp_client()
+            process_directory(sftp, f"{hostname}:{port}", username, rules, verbose, "/")
+            
+    except Exception as e:
+        print(f"Error processing {hostname}: {e}")
+
+async def main():
     parser = argparse.ArgumentParser(description="Snaffle via SSH.")
     parser.add_argument("-f", "--file", type=str, required=True, help="Input file name, format is 'host:port => username:password'")
     parser.add_argument("--threads", default=10, type=int, help="Number of threads (Default = 10)")
@@ -122,7 +148,16 @@ def main():
         overall_progress.update(overall_task_id, total=len(get_hosts_from_file(args.file)), completed=0)
         overall_progress.start_task(overall_task_id)
         futures = []
+        tasks = []
+        for entry in get_hosts_from_file(args.file):
+            host, cred = entry.split(" => ")
+            ip, port = host.split(":")
+            username, password = cred.split(":")
+            tasks.append(process_host(ip, port, username, password, rules))
+            
 
+        await asyncio.gather(*tasks)
+        """
         with ThreadPoolExecutor(args.threads) as executor:
             for entry in get_hosts_from_file(args.file):
                 host, cred = entry.split(" => ")
@@ -136,3 +171,4 @@ def main():
                 futures.append(future)
             for a in as_completed(futures):
                 overall_progress.update(overall_task_id, advance=1)
+        """
