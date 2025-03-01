@@ -10,13 +10,14 @@ class SnafflerFileRule(SnaffleRule):
 	
 	def match(self, file):
 		results = []
-		print("H")
 		if self.matchLocation == MatchLoc.FileName:
+			print("A")
 			for rex in self.wordList:
 				s = rex.search(file)
 				if s: results.append(s.group(0))
 
 		elif self.matchLocation == MatchLoc.FileExtension:
+			print("B")
 			ext = Path(file).suffix
 			if ext == '':
 				return results
@@ -24,6 +25,7 @@ class SnafflerFileRule(SnaffleRule):
 				s = rex.search(file)
 				if s: results.append(s.group(0))
 		elif self.matchLocation == MatchLoc.FilePath:
+			print("C")
 			for rex in self.wordList:
 				s = rex.search(file)
 				if s: results.append(s.group(0))
