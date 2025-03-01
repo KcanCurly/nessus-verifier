@@ -82,16 +82,16 @@ def list_remote_directory(sftp: SFTPClient, host:str, username:str, rules: Snaff
                     for b,c in enum_file[1].items():
                         print(f"{host} - {username} => {item_path} - {b.name} - {c}")
                     
-                    thread = threading.Thread(target=process_file, args=(sftp, rules, item_path, host, username,))
-                    thread.start()
-                    threads.append(thread)
-                    # process_file(sftp, rules, item_path, host, username)
+                    # thread = threading.Thread(target=process_file, args=(sftp, rules, item_path, host, username,))
+                    # thread.start()
+                    # threads.append(thread)
+                    process_file(sftp, rules, item_path, host, username)
         except Exception as e: print(e)
     
-    if verbose: print(f"Waiting threads to finish for path: {remote_path}")
+    if verbose and len(threads) > 0: print(f"Waiting threads to finish for path: {remote_path}")
     for thread in threads:
         thread.join()
-    if verbose: print(f"Threads finished for path: {remote_path}")
+    if verbose and len(threads) > 0: print(f"Threads finished for path: {remote_path}")
 
             
 
@@ -134,4 +134,5 @@ def main():
                 single_task_id = single_progress.add_task("single", start=False, host=host, status="status", total=1)
                 future = executor.submit(list_remote_directory, sftp, host, username, rules, args.verbose, "/")
                 futures.append(future)
-
+            for a in as_completed(futures):
+                overall_progress.update(overall_task_id, advance=1)
