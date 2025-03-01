@@ -131,7 +131,7 @@ async def process_directory(sftp: asyncssh.SFTPClient, host:str, username:str, r
                 tasks.append(process_file(sftp, host, username, rules, verbose, item_path, live))
         await asyncio.gather(*tasks)
     except Exception as e:
-        pass
+        live.console.print("Process Directory Error:", e)
     
 
 async def connect_ssh(hostname, port, username, password):
