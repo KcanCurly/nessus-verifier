@@ -104,6 +104,7 @@ def signal_handler(sig, frame):
 async def process_directory(sftp: asyncssh.SFTPClient, host:str, username:str, rules: SnafflerRuleSet, verbose, remote_path=".", depth=0):
     dir = await sftp.readdir(remote_path)
     for d in dir:
+        if d == "." or d == "..":continue
         item_path = f"{remote_path if remote_path != "/" else ""}/{d.filename}"
         if await sftp.isdir(item_path):
             print("  " * depth + f"[D] {item_path}")
