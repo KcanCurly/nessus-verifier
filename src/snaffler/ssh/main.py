@@ -43,9 +43,8 @@ def is_remote_directory(sftp, path):
     except FileNotFoundError:
         return False  # Path does not exist
 
-def process_file(sclient: SFTPClient, rules: SnafflerRuleSet, path:str, host:str, username:str):
+def process_file(sftp: SFTPClient, rules: SnafflerRuleSet, path:str, host:str, username:str):
     try:
-        sftp = sclient.open_sftp()
         with sftp.open(path, "r") as f:
             data = f.read()
             try:
@@ -62,10 +61,10 @@ def process_file(sclient: SFTPClient, rules: SnafflerRuleSet, path:str, host:str
         sftp.close()
     except Exception as e: print(f"Process file error: {e}")
 
-def list_remote_directory(sclient:SSHClient, host:str, username:str, rules: SnafflerRuleSet, verbose, remote_path=".", depth=0):
+def list_remote_directory(sftp:SFTPClient, host:str, username:str, rules: SnafflerRuleSet, verbose, remote_path=".", depth=0):
     threads = []
     """Recursively lists all files and directories in the given remote path."""
-    sftp = sclient.open_sftp()
+
     try:
         items = sftp.listdir_attr(remote_path)
     except Exception: return
@@ -77,7 +76,7 @@ def list_remote_directory(sclient:SSHClient, host:str, username:str, rules: Snaf
             if is_remote_directory(sftp, item_path):  # Check if it's a directory
                 if not rules.enum_directory(item_path)[0]:continue
                 if verbose: print("  " * depth + f"[D] {item_path}")
-                list_remote_directory(sclient, host, username, rules, verbose, item_path, depth + 1)
+                list_remote_directory(sftp, host, username, rules, verbose, item_path, depth + 1)
             else:
                 if is_remote_file(sftp, item_path): 
                     
@@ -88,16 +87,9 @@ def list_remote_directory(sclient:SSHClient, host:str, username:str, rules: Snaf
                     for b,c in enum_file[1].items():
                         print(f"{host} - {username} => {item_path} - {b.name} - {c}")
                     
-                    thread = threading.Thread(target=process_file, args=(sclient, rules, item_path, host, username,))
-                    thread.start()
-                    threads.append(thread)
-                    # process_file(sftp, rules, item_path, host, username)
+
+                    process_file(sftp, rules, item_path, host, username)
         except Exception as e: print(e)
-    sftp.close()
-    if verbose and len(threads) > 0: print(f"Waiting threads to finish for path: {remote_path}")
-    for thread in threads:
-        thread.join()
-    if verbose and len(threads) > 0: print(f"Threads finished for path: {remote_path}")
 
 def signal_handler(sig, frame):
     """Handles CTRL+C (SIGINT) to stop all threads cleanly."""
@@ -141,7 +133,7 @@ def main():
                 if not client: continue
                 sftp = client.open_sftp()
                 single_task_id = single_progress.add_task("single", start=False, host=host, status="status", total=1)
-                future = executor.submit(list_remote_directory, client, host, username, rules, args.verbose, "/")
+                future = executor.submit(list_remote_directory, sftp, host, username, rules, args.verbose, "/")
                 futures.append(future)
             for a in as_completed(futures):
                 overall_progress.update(overall_task_id, advance=1)
