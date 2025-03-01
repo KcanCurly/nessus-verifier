@@ -35,4 +35,4 @@ class SnafflerFileRule(SnaffleRule):
 		return results
 
 	def determine_action(self, file):
-		return self.matchAction, self.match(file)
+		return self.action, self.match(file)
