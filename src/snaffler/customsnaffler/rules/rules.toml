@@ -122,3 +122,36 @@ wordList = [
 "\\.mozilla\\/firefox\\/.*/logins\\.json",
 ]
 triage = "Green"
+
+[[Rule]]
+scope = "Directory"
+id = "d6"
+name = "PythonDiscard"
+action = "Discard"
+category = []
+relay = []
+description = "Python discard directories."
+matchLocation = "FilePath"
+matchLength = 0
+wordListType = "Contains"
+wordList = [
+"\\/share\\/pipx",
+]
+triage = "Green"
+
+[[Rule]]
+scope = "Directory"
+id = "d7"
+name = "GoDiscard"
+action = "Discard"
+category = []
+relay = []
+description = "Go discard directories."
+matchLocation = "FilePath"
+matchLength = 0
+wordListType = "Contains"
+wordList = [
+"\\/go\\/bin",
+"\\/go\\/pkg",
+]
+triage = "Green"
