@@ -34,7 +34,7 @@ def is_remote_directory(sftp, path):
     except FileNotFoundError:
         return False  # Path does not exist
 
-def list_remote_directory(sftp: SFTPClient, rules: SnafflerRuleSet, remote_path=".", depth=0):
+def list_remote_directory(sftp: SFTPClient, host:str, username:str, rules: SnafflerRuleSet, remote_path=".", depth=0):
     """Recursively lists all files and directories in the given remote path."""
     try:
         items = sftp.listdir_attr(remote_path)
@@ -65,7 +65,7 @@ def list_remote_directory(sftp: SFTPClient, rules: SnafflerRuleSet, remote_path=
                     # print(data)
                     if a[0]:
                         for b,c in a[1].items():
-                            print(f"{b.name} : {c}")
+                            print(f"{host} - {username} => {item_path} - {b.name} - {c}")
                         
             
 
@@ -89,4 +89,4 @@ def main():
         client = ssh_connect(ip, port, username, password)
         if not client: continue
         sftp = client.open_sftp()
-        list_remote_directory(sftp, rules, "/")
+        list_remote_directory(sftp, host, username, rules, "/")
