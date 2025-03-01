@@ -128,7 +128,7 @@ async def process_directory(sftp: asyncssh.SFTPClient, host:str, username:str, r
                 for b,c in enum_file[1].items():
                     live.console.print(f"{host} - {username} => {item_path} - {b.name} - {c}")
                 if verbose: live.console.print("  " * depth + f"[F] {item_path}")
-                tasks.append(process_file(sftp, host, username, rules, verbose, item_path))
+                tasks.append(process_file(sftp, host, username, rules, verbose, item_path, live))
         await asyncio.gather(*tasks)
     except Exception as e:
         pass
