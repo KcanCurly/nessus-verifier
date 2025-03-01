@@ -98,7 +98,16 @@ def signal_handler(sig, frame):
     print("\nCTRL+C detected! Stopping all threads...")
     stop_event.set()  # Signal threads to stop
 
-
+async def process_file(sftp: asyncssh.SFTPClient, host:str, username:str, rules: SnafflerRuleSet, verbose, path):
+    try:
+        async with await sftp.open(path) as f:
+            data = f.read()
+            a = rules.parse_file(data, 10, 10)
+            # print(data)
+            if a[0]:
+                for b,c in a[1].items():
+                    print(f"{host} - {username} => {path} - {b.name} - {c}")
+    except Exception as e: print("Process File Error:", e)
 
 async def process_directory(sftp: asyncssh.SFTPClient, host:str, username:str, rules: SnafflerRuleSet, verbose, remote_path=".", depth=0):
     try:
@@ -114,11 +123,12 @@ async def process_directory(sftp: asyncssh.SFTPClient, host:str, username:str, r
                 # await process_directory(sftp, host, username, rules, verbose, item_path, depth=depth+1)
             elif await sftp.isfile(item_path):
                 enum_file = rules.enum_file(item_path)
-                if "logins.json" in item_path: print(item_path)
+
                 if not enum_file[0]:continue
                 for b,c in enum_file[1].items():
                     print(f"{host} - {username} => {item_path} - {b.name} - {c}")
                 if verbose: print("  " * depth + f"[F] {item_path}")
+                tasks.append(process_file(sftp, host, username, rules, verbose, item_path))
         await asyncio.gather(*tasks)
     except Exception as e:
         
