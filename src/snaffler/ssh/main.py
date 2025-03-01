@@ -102,7 +102,7 @@ def signal_handler(sig, frame):
     print("\nCTRL+C detected! Stopping all threads...")
     stop_event.set()  # Signal threads to stop
 
-async def process_file(sftp: asyncssh.SFTPClient, host:str, username:str, rules: SnafflerRuleSet, verbose, path, live:Live):
+async def process_file(sftp: asyncssh.SFTPClient, host:str, username:str, rules: SnafflerRuleSet, verbose, path, live:Live, error):
     try:
         async with await sftp.open(path) as f:
             data = await f.read()
@@ -115,9 +115,10 @@ async def process_file(sftp: asyncssh.SFTPClient, host:str, username:str, rules:
                 if a[0]:
                     for b,c in a[1].items():
                         live.console.print(f"{host} - {username} => {path} - {b.name} - {c}")
-    except Exception as e: live.console.print("Process File Error:", e)
+    except Exception as e: 
+        if error: live.console.print("Process File Error:", e)
 
-async def process_directory(sftp: asyncssh.SFTPClient, host:str, username:str, rules: SnafflerRuleSet, verbose, live:Live, remote_path=".", depth=0):
+async def process_directory(sftp: asyncssh.SFTPClient, host:str, username:str, rules: SnafflerRuleSet, verbose, live:Live, error, remote_path=".", depth=0):
     try:
         tasks = []
         dir = await sftp.readdir(remote_path)
@@ -127,7 +128,7 @@ async def process_directory(sftp: asyncssh.SFTPClient, host:str, username:str, r
             if await sftp.isdir(item_path):
                 if not rules.enum_directory(item_path)[0]:continue
                 if verbose: live.console.print("  " * depth + f"[D] {item_path}")
-                tasks.append(process_directory(sftp, host, username, rules, verbose, live, item_path, depth=depth+1))
+                tasks.append(process_directory(sftp, host, username, rules, verbose, live, error, item_path, depth=depth+1))
                 # await process_directory(sftp, host, username, rules, verbose, item_path, depth=depth+1)
             elif await sftp.isfile(item_path):
                 enum_file = rules.enum_file(item_path)
@@ -136,24 +137,24 @@ async def process_directory(sftp: asyncssh.SFTPClient, host:str, username:str, r
                 for b,c in enum_file[1].items():
                     live.console.print(f"{host} - {username} => {item_path} - {b.name} - {c}")
                 if verbose: live.console.print("  " * depth + f"[F] {item_path}")
-                tasks.append(process_file(sftp, host, username, rules, verbose, item_path, live))
+                tasks.append(process_file(sftp, host, username, rules, verbose, item_path, live, error))
         await asyncio.gather(*tasks)
     except Exception as e:
-        live.console.print("Process Directory Error:", e)
+        if error: live.console.print("Process Directory Error:", e)
     
 
 async def connect_ssh(hostname, port, username, password):
     """Asynchronously establishes an SSH connection."""
     return await asyncssh.connect(hostname, port=port, username=username, password=password, known_hosts=None, client_keys=None)
 
-async def process_host(hostname, port, username, password, rules: SnafflerRuleSet, verbose, live:Live):
+async def process_host(hostname, port, username, password, rules: SnafflerRuleSet, verbose, live:Live, error):
     """Main function to process a single SSH host asynchronously."""
     try:
         async with await connect_ssh(hostname, port, username, password) as conn:
             live.console.print(f"Connected to {hostname}")
 
             sftp = await conn.start_sftp_client()
-            await process_directory(sftp, f"{hostname}:{port}", username, rules, verbose, live, "/")
+            await process_directory(sftp, f"{hostname}:{port}", username, rules, verbose, live, error, "/")
             
     except Exception as e:
         print(f"Error processing {hostname}: {e}")
@@ -166,6 +167,7 @@ async def main2():
     parser.add_argument("--disable-visual-on-complete", action="store_true", help="Disables the status visual for an individual task when that task is complete, this can help on keeping eye on what is going on at the time")
     parser.add_argument("--only-show-progress", action="store_true", help="Only show overall progress bar")
     parser.add_argument("-v", "--verbose", action="store_true", help="Enable verbose")
+    parser.add_argument("-e", "--error", action="store_true", help="Prints errors")
     
     args = parser.parse_args()
     signal.signal(signal.SIGINT, signal_handler)
@@ -190,7 +192,7 @@ async def main2():
             host, cred = entry.split(" => ")
             ip, port = host.split(":")
             username, password = cred.split(":")
-            tasks.append(process_host(ip, port, username, password, rules, args.verbose, live))
+            tasks.append(process_host(ip, port, username, password, rules, args.verbose, live, args.error))
             
 
         await asyncio.gather(*tasks)
