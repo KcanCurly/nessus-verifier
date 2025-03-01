@@ -13,6 +13,9 @@ from rich.progress import Progress, TaskID
 from rich.console import Console
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from src.utilities.utilities import get_classic_single_progress, get_classic_overall_progress, get_classic_console, get_hosts_from_file
+import signal
+
+stop_event = threading.Event()
 
 def ssh_connect(host, port, username, password):
     try:
@@ -96,7 +99,10 @@ def list_remote_directory(sclient:SSHClient, host:str, username:str, rules: Snaf
         thread.join()
     if verbose and len(threads) > 0: print(f"Threads finished for path: {remote_path}")
 
-            
+def signal_handler(sig, frame):
+    """Handles CTRL+C (SIGINT) to stop all threads cleanly."""
+    print("\nCTRL+C detected! Stopping all threads...")
+    stop_event.set()  # Signal threads to stop
 
 def main():
     parser = argparse.ArgumentParser(description="Snaffle via SSH.")
@@ -108,7 +114,7 @@ def main():
     parser.add_argument("-v", "--verbose", action="store_true", help="Enable verbose")
     
     args = parser.parse_args()
-    
+    signal.signal(signal.SIGINT, signal_handler)
     overall_progress = get_classic_overall_progress()
     single_progress = get_classic_single_progress()
     overall_task_id = overall_progress.add_task("", start=False, modulename="SSH Snaffle")
