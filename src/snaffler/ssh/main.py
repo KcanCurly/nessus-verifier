@@ -93,7 +93,7 @@ def list_remote_directory(sclient:SSHClient, host:str, username:str, rules: Snaf
                     threads.append(thread)
                     # process_file(sftp, rules, item_path, host, username)
         except Exception as e: print(e)
-    
+    sftp.close()
     if verbose and len(threads) > 0: print(f"Waiting threads to finish for path: {remote_path}")
     for thread in threads:
         thread.join()
