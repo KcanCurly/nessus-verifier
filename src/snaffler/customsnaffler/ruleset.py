@@ -35,6 +35,7 @@ class SnafflerRuleSet:
             action, m = rule.determine_action(filename)
 
             if action == MatchAction.Discard:
+                print("Discarding", filename, rule)
                 return False, [rule]
             elif action and len(m) > 0:
                 rules[rule] = m
