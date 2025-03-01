@@ -27,6 +27,8 @@ class SnafflerFileRule(SnaffleRule):
 			for rex in self.wordList:
 				s = rex.search(file)
 				if s: results.append(s.group(0))
+		else:
+			print("H")
 		"""
 		elif self.matchLocation == MatchLoc.FileLength:
 			return False
