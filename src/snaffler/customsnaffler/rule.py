@@ -36,6 +36,7 @@ class SnaffleRule:
 				word = '^' + word + '$'
 
 			res.append(re.compile(word, flags=re.IGNORECASE))
+			print(re.compile(word, flags=re.IGNORECASE))
 		self.wordList = res
 
 	
