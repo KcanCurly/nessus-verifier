@@ -98,7 +98,7 @@ def signal_handler(sig, frame):
     print("\nCTRL+C detected! Stopping all threads...")
     stop_event.set()  # Signal threads to stop
 
-async def process_file(sftp: asyncssh.SFTPClient, host:str, username:str, rules: SnafflerRuleSet, verbose, path):
+async def process_file(sftp: asyncssh.SFTPClient, host:str, username:str, rules: SnafflerRuleSet, verbose, path, live:Live):
     try:
         async with await sftp.open(path) as f:
             data = await f.read()
@@ -106,10 +106,10 @@ async def process_file(sftp: asyncssh.SFTPClient, host:str, username:str, rules:
             # print(data)
             if a[0]:
                 for b,c in a[1].items():
-                    print(f"{host} - {username} => {path} - {b.name} - {c}")
-    except Exception as e: print("Process File Error:", e)
+                    live.console.print(f"{host} - {username} => {path} - {b.name} - {c}")
+    except Exception as e: live.console.print("Process File Error:", e)
 
-async def process_directory(sftp: asyncssh.SFTPClient, host:str, username:str, rules: SnafflerRuleSet, verbose, remote_path=".", depth=0):
+async def process_directory(sftp: asyncssh.SFTPClient, host:str, username:str, rules: SnafflerRuleSet, verbose, live:Live, remote_path=".", depth=0):
     try:
         tasks = []
         dir = await sftp.readdir(remote_path)
@@ -118,16 +118,16 @@ async def process_directory(sftp: asyncssh.SFTPClient, host:str, username:str, r
             item_path = f"{remote_path if remote_path != "/" else ""}/{d.filename}"
             if await sftp.isdir(item_path):
                 if not rules.enum_directory(item_path)[0]:continue
-                if verbose: print("  " * depth + f"[D] {item_path}")
-                tasks.append(process_directory(sftp, host, username, rules, verbose, item_path, depth=depth+1))
+                if verbose: live.console.print("  " * depth + f"[D] {item_path}")
+                tasks.append(process_directory(sftp, host, username, rules, verbose, item_path, live, depth=depth+1))
                 # await process_directory(sftp, host, username, rules, verbose, item_path, depth=depth+1)
             elif await sftp.isfile(item_path):
                 enum_file = rules.enum_file(item_path)
 
                 if not enum_file[0]:continue
                 for b,c in enum_file[1].items():
-                    print(f"{host} - {username} => {item_path} - {b.name} - {c}")
-                if verbose: print("  " * depth + f"[F] {item_path}")
+                    live.console.print(f"{host} - {username} => {item_path} - {b.name} - {c}")
+                if verbose: live.console.print("  " * depth + f"[F] {item_path}")
                 tasks.append(process_file(sftp, host, username, rules, verbose, item_path))
         await asyncio.gather(*tasks)
     except Exception as e:
@@ -138,14 +138,14 @@ async def connect_ssh(hostname, port, username, password):
     """Asynchronously establishes an SSH connection."""
     return await asyncssh.connect(hostname, port=port, username=username, password=password, known_hosts=None, client_keys=None)
 
-async def process_host(hostname, port, username, password, rules: SnafflerRuleSet, verbose):
+async def process_host(hostname, port, username, password, rules: SnafflerRuleSet, verbose, live:Live):
     """Main function to process a single SSH host asynchronously."""
     try:
         async with await connect_ssh(hostname, port, username, password) as conn:
-            print(f"Connected to {hostname}")
+            live.console.print(f"Connected to {hostname}")
 
             sftp = await conn.start_sftp_client()
-            await process_directory(sftp, f"{hostname}:{port}", username, rules, verbose, "/")
+            await process_directory(sftp, f"{hostname}:{port}", username, rules, verbose, live, "/")
             
     except Exception as e:
         print(f"Error processing {hostname}: {e}")
@@ -173,7 +173,7 @@ async def main2():
     
     rules = SnafflerRuleSet.load_default_ruleset()
 
-    with Live(progress_group, console=console):
+    with Live(progress_group, console=console) as live:
         overall_progress.update(overall_task_id, total=len(get_hosts_from_file(args.file)), completed=0)
         overall_progress.start_task(overall_task_id)
         futures = []
@@ -182,7 +182,7 @@ async def main2():
             host, cred = entry.split(" => ")
             ip, port = host.split(":")
             username, password = cred.split(":")
-            tasks.append(process_host(ip, port, username, password, rules, args.verbose))
+            tasks.append(process_host(ip, port, username, password, rules, args.verbose, live))
             
 
         await asyncio.gather(*tasks)
