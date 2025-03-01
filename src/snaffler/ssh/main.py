@@ -63,26 +63,28 @@ def list_remote_directory(sftp: SFTPClient, host:str, username:str, rules: Snaff
     except Exception: return
     
     for item in items:
-        item_path = f"{remote_path if remote_path != "/" else ""}/{item.filename}"
-        # If the item is a directory, recursively list its contents
-        if is_remote_directory(sftp, item_path):  # Check if it's a directory
-            if not rules.enum_directory(item_path)[0]:continue
-            if verbose: print("  " * depth + f"[D] {item_path}")
-            list_remote_directory(sftp, host, username, rules, verbose, item_path, depth + 1)
-        else:
-            if is_remote_file(sftp, item_path): 
-                
-                enum_file = rules.enum_file(item_path)
-                if not enum_file[0]:continue
-                if verbose: print("  " * depth + f"[F] {item_path}")
-                if enum_file[0]:
+        try:
+            item_path = f"{remote_path if remote_path != "/" else ""}/{item.filename}"
+            # If the item is a directory, recursively list its contents
+            if is_remote_directory(sftp, item_path):  # Check if it's a directory
+                if not rules.enum_directory(item_path)[0]:continue
+                if verbose: print("  " * depth + f"[D] {item_path}")
+                list_remote_directory(sftp, host, username, rules, verbose, item_path, depth + 1)
+            else:
+                if is_remote_file(sftp, item_path): 
+                    
+                    enum_file = rules.enum_file(item_path)
+                    if not enum_file[0]:continue
+                    if verbose: print("  " * depth + f"[F] {item_path}")
+
                     for b,c in enum_file[1].items():
                         print(f"{host} - {username} => {item_path} - {b.name} - {c}")
-                
-                thread = threading.Thread(target=process_file, args=(sftp, rules, item_path, host, username,))
-                thread.start()
-                threads.append(thread)
-                # process_file(sftp, rules, item_path, host, username)
+                    
+                    thread = threading.Thread(target=process_file, args=(sftp, rules, item_path, host, username,))
+                    thread.start()
+                    threads.append(thread)
+                    # process_file(sftp, rules, item_path, host, username)
+        except Exception as e: print(e)
     
     if verbose: print(f"Waiting threads to finish for path: {remote_path}")
     for thread in threads:
