@@ -128,7 +128,7 @@ def main():
                 if not client: continue
                 sftp = client.open_sftp()
                 single_task_id = single_progress.add_task("single", start=False, host=host, status="status", total=1)
-                future = executor.submit(list_remote_directory, sftp, host, username, rules, args.v, "/")
+                future = executor.submit(list_remote_directory, sftp, host, username, rules, args.verbose, "/")
                 futures.append(future)
             for a in as_completed(futures):
                 overall_progress.update(overall_task_id, advance=1)
