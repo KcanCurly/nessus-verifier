@@ -109,6 +109,7 @@ async def process_directory(sftp: asyncssh.SFTPClient, host:str, username:str, r
             if d.filename == "." or d.filename == "..":continue
             item_path = f"{remote_path if remote_path != "/" else ""}/{d.filename}"
             if await sftp.isdir(item_path):
+                if not rules.enum_directory(item_path)[0]:continue
                 print("  " * depth + f"[D] {item_path}")
                 tasks.append(process_directory(sftp, host, username, rules, verbose, item_path, depth=depth+1))
                 # await process_directory(sftp, host, username, rules, verbose, item_path, depth=depth+1)
