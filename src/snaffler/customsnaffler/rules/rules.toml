@@ -119,6 +119,6 @@ matchLocation = "FileName"
 matchLength = 0
 wordListType = "Regex"
 wordList = [
-"logins\\.json",
+"logins.json",
 ]
 triage = "Green"
