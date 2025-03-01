@@ -8,29 +8,31 @@ class SnafflerFileRule(SnaffleRule):
 	def __init__(self, enumerationScope:EnumerationScope, ruleName:str, matchAction:MatchAction, relayTargets:List[str], description:str, matchLocation:MatchLoc, wordListType:MatchListType, matchLength:int, wordList:List[str], triage:Triage):
 		super().__init__(enumerationScope, ruleName, matchAction, relayTargets, description, matchLocation, wordListType, matchLength, wordList, triage)
 	
-	def match(self, smbfile):
+	def match(self, file):
+		results = []
 		if self.matchLocation == MatchLoc.FileName:
 			for rex in self.wordList:
-				if rex.search(smbfile) is not None:
-					return True
+				s = rex.search(file)
+				if s: results.append(s.group(0))
+
 		elif self.matchLocation == MatchLoc.FileExtension:
-			ext = Path(smbfile).suffix
+			ext = Path(file).suffix
 			if ext == '':
-				return False
+				return results
 			for rex in self.wordList:
-				if rex.search(ext) is not None:
-					return True
+				s = rex.search(file)
+				if s: results.append(s.group(0))
 		elif self.matchLocation == MatchLoc.FilePath:
 			for rex in self.wordList:
-				if rex.search(smbfile) is not None:
-					return True
+				s = rex.search(file)
+				if s: results.append(s.group(0))
+		"""
 		elif self.matchLocation == MatchLoc.FileLength:
 			return False
-			if smbfile.size == self.matchLength:
+			if file.size == self.matchLength:
 				return True
-		return False
+		"""
+		return results
 
-	def determine_action(self, smbfile):
-		if self.match(smbfile) is False:
-			return None, None
-		return self.matchAction, self.triage
+	def determine_action(self, file):
+		return self.matchAction, self.match(file)

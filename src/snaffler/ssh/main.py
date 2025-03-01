@@ -5,8 +5,14 @@ import stat
 import sys
 from paramiko import SFTPClient
 from src.snaffler.customsnaffler.ruleset import SnafflerRuleSet
-
-from src.utilities.utilities import get_hosts_from_file
+import threading
+from rich.console import Group
+from rich.panel import Panel
+from rich.live import Live
+from rich.progress import Progress, TaskID
+from rich.console import Console
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from src.utilities.utilities import get_classic_single_progress, get_classic_overall_progress, get_classic_console, get_hosts_from_file
 
 def ssh_connect(host, port, username, password):
     try:
@@ -34,7 +40,23 @@ def is_remote_directory(sftp, path):
     except FileNotFoundError:
         return False  # Path does not exist
 
-def list_remote_directory(sftp: SFTPClient, host:str, username:str, rules: SnafflerRuleSet, remote_path=".", depth=0):
+def process_file(sftp: SFTPClient, rules: SnafflerRuleSet, path:str, host:str, username:str):
+    with sftp.open(path, "r") as f:
+        data = f.read()
+        try:
+            # Try decoding as UTF-8
+            data = data.decode("utf-8", errors="ignore")
+        except UnicodeDecodeError:
+            pass
+
+        a = rules.parse_file(data, 10, 10)
+        # print(data)
+        if a[0]:
+            for b,c in a[1].items():
+                print(f"{host} - {username} => {path} - {b.name} - {c}")
+
+def list_remote_directory(sftp: SFTPClient, host:str, username:str, rules: SnafflerRuleSet, verbose, remote_path=".", depth=0):
+    threads = []
     """Recursively lists all files and directories in the given remote path."""
     try:
         items = sftp.listdir_attr(remote_path)
@@ -45,28 +67,24 @@ def list_remote_directory(sftp: SFTPClient, host:str, username:str, rules: Snaff
         # If the item is a directory, recursively list its contents
         if is_remote_directory(sftp, item_path):  # Check if it's a directory
             if not rules.enum_directory(item_path)[0]:continue
-            # print("  " * depth + f"[D] {item_path}")
-            list_remote_directory(sftp, host, username, rules, item_path, depth + 1)
+            if verbose: print("  " * depth + f"[D] {item_path}")
+            list_remote_directory(sftp, host, username, rules, verbose, item_path, depth + 1)
         else:
             if is_remote_file(sftp, item_path): 
+                
                 if not rules.enum_file(item_path)[0]:continue
-                # print("  " * depth + f"[F] {item_path}")
+                
+                if verbose: print("  " * depth + f"[F] {item_path}")
+                thread = threading.Thread(target=process_file, args=(sftp, rules, item_path, host, username,))
+                thread.start()
+                threads.append(thread)
+                # process_file(sftp, rules, item_path, host, username)
+    
+    if verbose: print(f"Waiting threads to finish for path: {remote_path}")
+    for thread in threads:
+        thread.join()
+    if verbose: print(f"Threads finished for path: {remote_path}")
 
-                    
-                with sftp.open(item_path, "r") as f:
-                    data = f.read()
-                    try:
-                        # Try decoding as UTF-8
-                        data = data.decode("utf-8", errors="ignore")
-                    except UnicodeDecodeError:
-                        pass
-
-                    a = rules.parse_file(data, 10, 10)
-                    # print(data)
-                    if a[0]:
-                        for b,c in a[1].items():
-                            print(f"{host} - {username} => {item_path} - {b.name} - {c}")
-                        
             
 
 def main():
@@ -80,13 +98,33 @@ def main():
     
     args = parser.parse_args()
     
-    rules = SnafflerRuleSet.load_default_ruleset()
+    overall_progress = get_classic_overall_progress()
+    single_progress = get_classic_single_progress()
+    overall_task_id = overall_progress.add_task("", start=False, modulename="SSH Snaffle")
+    console = get_classic_console(force_terminal=True)
     
-    for entry in get_hosts_from_file(args.file):
-        host, cred = entry.split(" => ")
-        ip, port = host.split(":")
-        username, password = cred.split(":")
-        client = ssh_connect(ip, port, username, password)
-        if not client: continue
-        sftp = client.open_sftp()
-        list_remote_directory(sftp, host, username, rules, "/")
+    progress_group = Group(
+        Panel(single_progress, title="SSH Snaffle", expand=False),
+        overall_progress,
+    ) if not args.only_show_progress else Group(overall_progress)
+    
+    rules = SnafflerRuleSet.load_default_ruleset()
+
+    with Live(progress_group, console=console):
+        overall_progress.update(overall_task_id, total=len(l), completed=0)
+        overall_progress.start_task(overall_task_id)
+        futures = []
+
+        with ThreadPoolExecutor(args.threads) as executor:
+            for entry in get_hosts_from_file(args.file):
+                host, cred = entry.split(" => ")
+                ip, port = host.split(":")
+                username, password = cred.split(":")
+                client = ssh_connect(ip, port, username, password)
+                if not client: continue
+                sftp = client.open_sftp()
+                single_task_id = single_progress.add_task("single", start=False, host=host, status="status", total=1)
+                future = executor.submit(list_remote_directory, sftp, host, username, rules, args.v, "/")
+                futures.append(future)
+            for a in as_completed(futures):
+                overall_progress.update(overall_task_id, advance=1)

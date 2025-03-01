@@ -2,7 +2,6 @@ import argparse
 import subprocess
 import re
 from impacket.smbconnection import SMBConnection
-from src.utilities.utilities import get_hosts_from_file
 from smb import SMBConnection as pysmbconn
 from src.utilities.utilities import get_classic_single_progress, get_classic_overall_progress, get_classic_console, get_hosts_from_file
 from rich.live import Live

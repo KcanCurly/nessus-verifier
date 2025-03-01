@@ -68,6 +68,7 @@ wordList = [
 ".zip",
 ".tar",
 ".tar.gz",
+".so",
 ]
 triage = "Green"
 
@@ -91,7 +92,7 @@ triage = "Green"
 [[Rule]]
 scope = "Content"
 id = "d4"
-name = "File content snaffle"
+name = "Generic file content snaffle"
 action = "Snaffle"
 category = []
 relay = []
@@ -103,5 +104,21 @@ wordList = [
 "password",
 "passwd",
 "pass",
+]
+triage = "Green"
+
+[[Rule]]
+scope = "File"
+id = "d5"
+name = "Interesting File"
+action = "Snaffle"
+category = []
+relay = []
+description = "Pick these up."
+matchLocation = "FileName"
+matchLength = 0
+wordListType = "EndsWith"
+wordList = [
+"\\.mozilla\\/firefox\\/.*\\/logins.json",
 ]
 triage = "Green"
