@@ -41,19 +41,21 @@ def is_remote_directory(sftp, path):
         return False  # Path does not exist
 
 def process_file(sftp: SFTPClient, rules: SnafflerRuleSet, path:str, host:str, username:str):
-    with sftp.open(path, "r") as f:
-        data = f.read()
-        try:
-            # Try decoding as UTF-8
-            data = data.decode("utf-8", errors="ignore")
-        except UnicodeDecodeError:
-            pass
+    try:
+        with sftp.open(path, "r") as f:
+            data = f.read()
+            try:
+                # Try decoding as UTF-8
+                data = data.decode("utf-8", errors="ignore")
+            except UnicodeDecodeError:
+                pass
 
-        a = rules.parse_file(data, 10, 10)
-        # print(data)
-        if a[0]:
-            for b,c in a[1].items():
-                print(f"{host} - {username} => {path} - {b.name} - {c}")
+            a = rules.parse_file(data, 10, 10)
+            # print(data)
+            if a[0]:
+                for b,c in a[1].items():
+                    print(f"{host} - {username} => {path} - {b.name} - {c}")
+    except Exception as e: print(f"Process file error: {e}")
 
 def list_remote_directory(sftp: SFTPClient, host:str, username:str, rules: SnafflerRuleSet, verbose, remote_path=".", depth=0):
     threads = []
