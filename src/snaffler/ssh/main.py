@@ -107,7 +107,8 @@ async def process_directory(sftp: asyncssh.SFTPClient, host:str, username:str, r
 
 async def connect_ssh(hostname, port, username, password):
     """Asynchronously establishes an SSH connection."""
-    return await asyncssh.connect(hostname, port=port, username=username, password=password)
+    asyncssh.connect()
+    return await asyncssh.connect(hostname, port=port, username=username, password=password, known_hosts=None, client_keys=None)
 
 async def process_host(hostname, port, username, password, rules: SnafflerRuleSet):
     """Main function to process a single SSH host asynchronously."""
