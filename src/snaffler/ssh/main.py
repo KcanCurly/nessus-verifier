@@ -1,4 +1,5 @@
 import argparse
+from genericpath import isfile
 from os import remove
 import pprint
 from tabnanny import verbose
@@ -98,16 +99,21 @@ def signal_handler(sig, frame):
     print("\nCTRL+C detected! Stopping all threads...")
     stop_event.set()  # Signal threads to stop
 
+
+
 async def process_directory(sftp: asyncssh.SFTPClient, host:str, username:str, rules: SnafflerRuleSet, verbose, remote_path=".", depth=0):
     dir = await sftp.readdir(remote_path)
     for d in dir:
-         item_path = f"{remote_path if remote_path != "/" else ""}/{d.filename}"
-         print(item_path)
+        item_path = f"{remote_path if remote_path != "/" else ""}/{d.filename}"
+        if sftp.isdir(item_path):
+            print("  " * depth + f"[D] {item_path}")
+            await process_directory(sftp, host, username, rules, verbose, item_path, depth=depth+1)
+        if sftp.isfile(item_path):
+            print("  " * depth + f"[F] {item_path}")
     
 
 async def connect_ssh(hostname, port, username, password):
     """Asynchronously establishes an SSH connection."""
-    asyncssh.connect()
     return await asyncssh.connect(hostname, port=port, username=username, password=password, known_hosts=None, client_keys=None)
 
 async def process_host(hostname, port, username, password, rules: SnafflerRuleSet):
