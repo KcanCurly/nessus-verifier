@@ -46,7 +46,7 @@ def list_remote_directory(sftp: SFTPClient, host:str, username:str, rules: Snaff
         if is_remote_directory(sftp, item_path):  # Check if it's a directory
             if not rules.enum_directory(item_path)[0]:continue
             # print("  " * depth + f"[D] {item_path}")
-            list_remote_directory(sftp, rules, item_path, depth + 1)
+            list_remote_directory(sftp, host, username, rules, item_path, depth + 1)
         else:
             if is_remote_file(sftp, item_path): 
                 if not rules.enum_file(item_path)[0]:continue
