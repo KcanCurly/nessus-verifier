@@ -120,7 +120,9 @@ async def process_directory(sftp: asyncssh.SFTPClient, host:str, username:str, r
                     print(f"{host} - {username} => {item_path} - {b.name} - {c}")
                 if verbose: print("  " * depth + f"[F] {item_path}")
         await asyncio.gather(*tasks)
-    except Exception as e: pass
+    except Exception as e:
+        
+        print(e, item_path)
     
 
 async def connect_ssh(hostname, port, username, password):
