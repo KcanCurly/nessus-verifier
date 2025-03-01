@@ -32,6 +32,7 @@ class SnafflerRuleSet:
         rules = {}
         for rule in self.fileEnumerationRules.values():
             action, m = rule.determine_action(filename)
+            print(type(m))
             if action == MatchAction.Discard:
                 return False, [rule]
             if action is not None and len(m) > 0:

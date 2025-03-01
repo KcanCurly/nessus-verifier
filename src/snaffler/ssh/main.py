@@ -2,7 +2,6 @@ import argparse
 from genericpath import isfile
 from os import remove
 import pprint
-from tabnanny import verbose
 import paramiko
 import stat
 import sys
@@ -129,7 +128,7 @@ async def connect_ssh(hostname, port, username, password):
     """Asynchronously establishes an SSH connection."""
     return await asyncssh.connect(hostname, port=port, username=username, password=password, known_hosts=None, client_keys=None)
 
-async def process_host(hostname, port, username, password, rules: SnafflerRuleSet):
+async def process_host(hostname, port, username, password, rules: SnafflerRuleSet, verbose):
     """Main function to process a single SSH host asynchronously."""
     try:
         async with await connect_ssh(hostname, port, username, password) as conn:
@@ -173,7 +172,7 @@ async def main2():
             host, cred = entry.split(" => ")
             ip, port = host.split(":")
             username, password = cred.split(":")
-            tasks.append(process_host(ip, port, username, password, rules))
+            tasks.append(process_host(ip, port, username, password, rules, args.verbose))
             
 
         await asyncio.gather(*tasks)
