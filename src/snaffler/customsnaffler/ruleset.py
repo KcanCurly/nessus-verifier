@@ -1,6 +1,7 @@
 from src.snaffler.customsnaffler.constants import EnumerationScope, MatchAction, MatchLoc, MatchListType, Triage
 from typing import Dict, List, Tuple
 from src.snaffler.customsnaffler.rule import SnaffleRule
+from src.snaffler.customsnaffler.file import SnafflerFileRule
 from pathlib import PureWindowsPath
 from glob import glob
 import hashlib
@@ -31,7 +32,7 @@ class SnafflerRuleSet:
         Returns a list of rules that matched the file."""
         rules = {}
         for rule in self.fileEnumerationRules.values():
-            action, m = rule.determine_action(filename)
+            action, m = ((SnafflerFileRule)rule).determine_action(filename)
             print(type(m))
             if action == MatchAction.Discard:
                 return False, [rule]
