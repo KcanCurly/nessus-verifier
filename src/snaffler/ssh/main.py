@@ -58,7 +58,6 @@ def process_file(sftp: SFTPClient, rules: SnafflerRuleSet, path:str, host:str, u
             if a[0]:
                 for b,c in a[1].items():
                     print(f"{host} - {username} => {path} - {b.name} - {c}")
-        sftp.close()
     except Exception as e: print(f"Process file error: {e}")
 
 def list_remote_directory(sftp:SFTPClient, host:str, username:str, rules: SnafflerRuleSet, verbose, remote_path=".", depth=0):
