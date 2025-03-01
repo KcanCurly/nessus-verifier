@@ -153,7 +153,7 @@ async def main():
             host, cred = entry.split(" => ")
             ip, port = host.split(":")
             username, password = cred.split(":")
-            tasks.append(process_host(ip, port, username, password, rules))
+            tasks.append(await process_host(ip, port, username, password, rules))
             
 
         await asyncio.gather(*tasks)
