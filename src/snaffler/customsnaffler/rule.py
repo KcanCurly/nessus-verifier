@@ -46,6 +46,7 @@ class SnaffleRule:
 		return False
 
 	def determine_action(self, data):
+		print("a")
 		if self.match(data) is False:
 			return None, None
 		return self.matchAction, self.triage
