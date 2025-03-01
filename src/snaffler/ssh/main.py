@@ -101,7 +101,7 @@ def signal_handler(sig, frame):
 async def process_file(sftp: asyncssh.SFTPClient, host:str, username:str, rules: SnafflerRuleSet, verbose, path):
     try:
         async with await sftp.open(path) as f:
-            data = f.read()
+            data = await f.read()
             a = rules.parse_file(data, 10, 10)
             # print(data)
             if a[0]:
