@@ -50,6 +50,10 @@ def process_file(sftp: asyncssh.SFTPClient, rules: SnafflerRuleSet, path:str, ho
     try:
         with sftp.open(path, "r") as f:
             data = f.read()
+            if "\r\n" in data:
+                data = data.split("\r\n")
+            else:
+                data = data.split("\n")
             try:
                 # Try decoding as UTF-8
                 data = data.decode("utf-8", errors="ignore")
@@ -102,11 +106,15 @@ async def process_file(sftp: asyncssh.SFTPClient, host:str, username:str, rules:
     try:
         async with await sftp.open(path) as f:
             data = await f.read()
-            a = rules.parse_file(data, 10, 10)
-            # print(data)
-            if a[0]:
-                for b,c in a[1].items():
-                    live.console.print(f"{host} - {username} => {path} - {b.name} - {c}")
+            if "\r\n" in data:
+                data = data.split("\r\n")
+            else:
+                data = data.split("\n")
+            for line in data:
+                a = rules.parse_file(line, 10, 10)
+                if a[0]:
+                    for b,c in a[1].items():
+                        live.console.print(f"{host} - {username} => {path} - {b.name} - {c}")
     except Exception as e: live.console.print("Process File Error:", e)
 
 async def process_directory(sftp: asyncssh.SFTPClient, host:str, username:str, rules: SnafflerRuleSet, verbose, live:Live, remote_path=".", depth=0):
