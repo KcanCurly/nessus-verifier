@@ -36,7 +36,7 @@ class SnafflerRuleSet:
 
             if action == MatchAction.Discard:
                 return False, [rule]
-            if action is not None and len(m) > 0:
+            elif action and len(m) > 0:
                 rules[rule] = m
         
         return True, rules
