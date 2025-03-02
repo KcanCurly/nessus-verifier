@@ -35,43 +35,43 @@ action = "Discard"
 category = []
 relay = []
 description = "Skip any further scanning for files with these extensions."
-matchLocation = "FilePath"
+matchLocation = "FileExtension"
 matchLength = 0
 importance = ""
-wordListType = "EndsWith"
+wordListType = "Exact"
 wordList = [
-".bmp",
-".eps",
-".gif",
-".ico",
-".jfi",
-".jfif",
-".jif",
-".jpe",
-".jpeg",
-".jpg",
-".png",
-".psd",
-".svg",
-".tif",
-".tiff",
-".webp",
-".xcf",
-".ttf",
-".otf",
-".lock",
-".css",
-".less",
-".admx",
-".adml",
-".xsd",
-".nse",
-".xsl",
-".zip",
-".tar",
-".tar.gz",
-".so",
-".nessus",
+"\\.bmp",
+"\\.eps",
+"\\.gif",
+"\\.ico",
+"\\.jfi",
+"\\.jfif",
+"\\.jif",
+"\\.jpe",
+"\\.jpeg",
+"\\.jpg",
+"\\.png",
+"\\.psd",
+"\\.svg",
+"\\.tif",
+"\\.tiff",
+"\\.webp",
+"\\.xcf",
+"\\.ttf",
+"\\.otf",
+"\\.lock",
+"\\.css",
+"\\.less",
+"\\.admx",
+"\\.adml",
+"\\.xsd",
+"\\.nse",
+"\\.xsl",
+"\\.zip",
+"\\.tar",
+"\\.tar.gz",
+"\\.so",
+"\\.nessus",
 ]
 triage = "gray"
 
@@ -319,3 +319,49 @@ matchLength = 0
 wordList = ["ldapsearch.*-w.*", 
 ]
 triage = "red"
+
+[[Rule]]
+scope = "Content"
+id = "d16"
+name = "KeepCSharpDbConnStringsYellow"
+action = "Snaffle"
+category = []
+relay = []
+description = "Match SQL connection strings that appear to use integrated security (so no passwords)."
+matchLocation = "FileContentAsString"
+wordListType = "Regex"
+importance = "⭐⭐⭐"
+matchLength = 0
+wordList = ["Data Source=.+Integrated Security=(SSPI|true)","Integrated Security=(SSPI|true);.*Data Source=.+"]
+triage = "Yellow"
+
+[[Rule]]
+scope = "Content"
+id = "d17"
+name = "KeepCSharpDbConnStringsRed"
+action = "Snaffle"
+category = []
+relay = []
+description = "Match SQL connection strings that appear to have a password."
+matchLocation = "FileContentAsString"
+importance = "⭐⭐⭐⭐⭐"
+wordListType = "Regex"
+matchLength = 0
+wordList = ["Data Source=.+(;|)Password=.+(;|)","Password=.+(;|)Data Source=.+(;|)"]  # ["(?!.+Integrated Security)Data Source=.+Password=.+"]
+triage = "Red"
+
+[[Rule]]
+scope = "Content"
+id = "d18"
+name = "KeepCSharpViewstateKeys"
+action = "Snaffle"
+category = []
+relay = []
+description = "Files with contents matching these regexen are very interesting."
+matchLocation = "FileContentAsString"
+importance = "⭐⭐⭐⭐⭐"
+wordListType = "Regex"
+matchLength = 0
+wordList = ["validationkey\\s*=\\s*[\\'\\\"][^\\'\\\"]....",
+"decryptionkey\\s*=\\s*[\\'\\\"][^\\'\\\"]...."]
+triage = "Red" 
