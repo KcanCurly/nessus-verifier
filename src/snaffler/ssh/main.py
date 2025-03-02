@@ -157,7 +157,7 @@ async def process_host(hostname, port, username, password, rules: SnafflerRuleSe
             while True:
                 try:
                     z = asyncssh.SSHClientSession()
-                    c,d = await conn.create_session(z)
+                    c,d = await conn.create_session(asyncssh.SSHClientProcess())
                     a += 1
                     print(c, d)
                 except Exception as e:
