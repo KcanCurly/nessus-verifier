@@ -32,6 +32,7 @@ class MatchAction(enum.Enum):
 class Triage(enum.Enum):
 	Black = 'black'
 	Green = 'green'
+	Blue = 'blue'
 	Yellow = 'yellow'
 	Red = 'red'
 	Gray = 'gray'
