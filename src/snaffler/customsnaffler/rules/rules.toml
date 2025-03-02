@@ -109,7 +109,7 @@ wordList = [
 "passwd",
 "pass",
 ]
-triage = "Green"
+triage = "green"
 
 [[Rule]]
 scope = "File"
@@ -126,7 +126,7 @@ wordListType = "Regex"
 wordList = [
 "\\.mozilla\\/firefox\\/.*/logins\\.json",
 ]
-triage = "Green"
+triage = "blue"
 
 [[Rule]]
 scope = "Directory"
