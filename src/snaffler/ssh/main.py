@@ -152,10 +152,8 @@ async def process_host(hostname, port, username, password, rules: SnafflerRuleSe
     """Main function to process a single SSH host asynchronously."""
     try:
         async with await connect_ssh(hostname, port, username, password) as conn:
-            live.console.print(f"Connected to {hostname}")
-            await process_host(hostname, port, username, password, rules, verbose, live, error)
+            if verbose: live.console.print(f"Connected to {hostname}")
 
-            return
             sftp = await conn.start_sftp_client()
             await process_directory(sftp, f"{hostname}:{port}", username, rules, verbose, live, error, "/")
             
