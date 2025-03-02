@@ -257,4 +257,21 @@ wordList = [
 "key3\\.db", 
 "key4\\.db", 
 "Login Data"]
-triage = "green"
+triage = "red"
+
+[[Rule]]
+scope = "File"
+id = "d13"
+name = "KeepFilenameExactYellow"
+action = "Snaffle"
+category = []
+relay = []
+description = "Files with these exact names are very interesting."
+matchLocation = "FileName"
+importance = "⭐⭐⭐⭐⭐"
+wordListType = "Exact"
+matchLength = 0
+wordList = [
+"web\\.config", 
+]
+triage = "yellow"
