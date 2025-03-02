@@ -1,13 +1,10 @@
 import argparse
-from genericpath import isfile
-from os import remove
 import pprint
 import paramiko
 import stat
 import sys
 import asyncssh
 from src.snaffler.customsnaffler.ruleset import SnafflerRuleSet
-import threading
 from rich.console import Group
 from rich.panel import Panel
 from rich.live import Live
@@ -15,10 +12,8 @@ from rich.progress import Progress, TaskID
 from rich.console import Console
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from src.utilities.utilities import get_classic_single_progress, get_classic_overall_progress, get_classic_console, get_hosts_from_file
-import signal
 import asyncio
 
-stop_event = threading.Event()
 
 def ssh_connect(host, port, username, password):
     try:
@@ -97,10 +92,6 @@ def list_remote_directory(sftp:asyncssh.SFTPClient, host:str, username:str, rule
                     process_file(sftp, rules, item_path, host, username)
         except Exception as e: print(e)
 
-def signal_handler(sig, frame):
-    """Handles CTRL+C (SIGINT) to stop all threads cleanly."""
-    print("\nCTRL+C detected! Stopping all threads...")
-    stop_event.set()  # Signal threads to stop
 
 async def process_file(sftp: asyncssh.SFTPClient, host:str, username:str, rules: SnafflerRuleSet, verbose, path, live:Live, error):
     try:
@@ -115,6 +106,7 @@ async def process_file(sftp: asyncssh.SFTPClient, host:str, username:str, rules:
             live.console.print(f"Split file: {path}")
             z = 0
             for line in data:
+                if len(line) > 300: continue
                 live.console.print(f"Processing split[{z}] file: {path}")
                 z += 1
                 a = rules.parse_file(line, 10, 10)
@@ -179,7 +171,6 @@ async def main2():
     parser.add_argument("-e", "--error", action="store_true", help="Prints errors")
     
     args = parser.parse_args()
-    signal.signal(signal.SIGINT, signal_handler)
     overall_progress = get_classic_overall_progress()
     single_progress = get_classic_single_progress()
     overall_task_id = overall_progress.add_task("", start=False, modulename="SSH Snaffle")
