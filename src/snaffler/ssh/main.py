@@ -104,6 +104,7 @@ def signal_handler(sig, frame):
 
 async def process_file(sftp: asyncssh.SFTPClient, host:str, username:str, rules: SnafflerRuleSet, verbose, path, live:Live, error):
     try:
+        live.console.print(f"Processing file {path}")
         async with await sftp.open(path) as f:
             data = await f.read()
             if "\r\n" in data:
