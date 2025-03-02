@@ -4,6 +4,7 @@ import paramiko
 import stat
 import sys
 import asyncssh
+from src.snaffler.customsnaffler.rule import SnaffleRule
 from src.snaffler.customsnaffler.ruleset import SnafflerRuleSet
 from rich.console import Group
 from rich.panel import Panel
@@ -92,6 +93,8 @@ def list_remote_directory(sftp:asyncssh.SFTPClient, host:str, username:str, rule
                     process_file(sftp, rules, item_path, host, username)
         except Exception as e: print(e)
 
+def print_finding(console, host:str, username:str, rule:SnaffleRule, path:str, findings:list[str]):
+    console.print(f"[white][{host}][{username}][{rule.importance}][{rule.name}] | {path} | {findings}[/white]")
 
 async def process_file(sftp: asyncssh.SFTPClient, host:str, username:str, rules: SnafflerRuleSet, verbose, path, live:Live, error):
     try:
@@ -112,8 +115,7 @@ async def process_file(sftp: asyncssh.SFTPClient, host:str, username:str, rules:
 
                 if a[0]:
                     for b,c in a[1].items():
-                        live.console.print(f"{host} - {username} => {path} - {b.name} - {c}")
-
+                        print_finding(live.console, host, username, b, path, c)
     except Exception as e: 
         if error: live.console.print("Process File Error:", e)
 

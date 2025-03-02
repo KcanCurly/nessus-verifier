@@ -8,6 +8,7 @@ relay = []
 description = "File paths that will be skipped entirely."
 matchLocation = "FilePath"
 matchLength = 0
+importance = ""
 wordListType = "StartsWith"
 wordList = [
 "/bin",
@@ -36,6 +37,7 @@ relay = []
 description = "Skip any further scanning for files with these extensions."
 matchLocation = "FilePath"
 matchLength = 0
+importance = ""
 wordListType = "EndsWith"
 wordList = [
 ".bmp",
@@ -82,6 +84,7 @@ relay = []
 description = "Skip any further scanning for files with these extensions."
 matchLocation = "FilePath"
 matchLength = 0
+importance = ""
 wordListType = "EndsWith"
 wordList = [
 "initrd.img",
@@ -99,6 +102,7 @@ relay = []
 description = "Pick these up."
 matchLocation = "FileContentAsString"
 matchLength = 0
+importance = "⭐"
 wordListType = "Contains"
 wordList = [
 "password",
@@ -117,6 +121,7 @@ relay = []
 description = "Pick these up."
 matchLocation = "FileName"
 matchLength = 0
+importance = "⭐⭐"
 wordListType = "Regex"
 wordList = [
 "\\.mozilla\\/firefox\\/.*/logins\\.json",
@@ -133,6 +138,7 @@ relay = []
 description = "Python discard directories."
 matchLocation = "FilePath"
 matchLength = 0
+importance = ""
 wordListType = "Contains"
 wordList = [
 "\\/share\\/pipx",
@@ -149,6 +155,7 @@ relay = []
 description = "Go discard directories."
 matchLocation = "FilePath"
 matchLength = 0
+importance = ""
 wordListType = "Contains"
 wordList = [
 "\\/go\\/bin",
