@@ -9,11 +9,11 @@ class SnafflerFileRule(SnaffleRule):
 		super().__init__(enumerationScope, id, ruleName, matchAction, category, relayTargets, description, matchLocation, wordListType, matchLength, wordList, triage, importance, dontignorecase)
 	
 	def match(self, file):
-		p = Path(str(file.str))
+		p = Path(file)
 		results = []
 		if self.matchLocation == MatchLoc.FileName:
 			for rex in self.wordList:
-				s = rex.search(p.name)
+				s = rex.search(str(p.name))
 				if s: results.append(s.group(0))
 
 		elif self.matchLocation == MatchLoc.FileExtension:
@@ -21,11 +21,11 @@ class SnafflerFileRule(SnaffleRule):
 			if ext == '':
 				return results
 			for rex in self.wordList:
-				s = rex.search(file)
+				s = rex.search(ext)
 				if s: results.append(s.group(0))
 		elif self.matchLocation == MatchLoc.FilePath:
 			for rex in self.wordList:
-				s = rex.search(p.resolve())
+				s = rex.search(str(p.resolve()))
 				if s: results.append(s.group(0))
 		else:
 			print("H")
