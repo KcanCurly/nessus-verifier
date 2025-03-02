@@ -30,8 +30,8 @@ class MatchAction(enum.Enum):
 	EnterArchive = 'EnterArchive'
 
 class Triage(enum.Enum):
-	Black = 'Black'
-	Green = 'Green'
-	Yellow = 'Yellow'
-	Red = 'Red'
-	Gray = 'Gray'
+	Black = 'black'
+	Green = 'green'
+	Yellow = 'yellow'
+	Red = 'red'
+	Gray = 'gray'
