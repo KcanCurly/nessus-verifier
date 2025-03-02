@@ -153,17 +153,8 @@ async def process_host(hostname, port, username, password, rules: SnafflerRuleSe
     try:
         async with await connect_ssh(hostname, port, username, password) as conn:
             live.console.print(f"Connected to {hostname}")
-            a = 0
-            while True:
-                try:
-                    z = asyncssh.SSHClientSession()
-                    c,d = await conn.create_session(asyncssh.SSHClientProcess())
-                    a += 1
-                    print(c, d)
-                except Exception as e:
-                    print(a)
-                    print(e)
-                    break 
+            await process_host(hostname, port, username, password, rules, verbose, live, error)
+
             return
             sftp = await conn.start_sftp_client()
             await process_directory(sftp, f"{hostname}:{port}", username, rules, verbose, live, error, "/")
