@@ -96,7 +96,7 @@ class SnaffleRule:
 			matchLength = d.get('matchLength', 0)
 			wordList = d.get('wordList', [])
 			importance = d.get('importance', "")
-			triage = Triage(d.get('triage', 'Gray'))
+			triage = Triage(d.get('triage', 'gray'))
 			if enumerationScope == EnumerationScope.File:
 				obj = SnafflerFileRule
 			elif enumerationScope == EnumerationScope.Directory:

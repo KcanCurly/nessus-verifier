@@ -25,7 +25,7 @@ wordList = [
 "/sys",
 "/opt",
 ]
-triage = "Green"
+triage = "green"
 
 [[Rule]]
 scope = "File"
@@ -72,7 +72,7 @@ wordList = [
 ".tar.gz",
 ".so",
 ]
-triage = "Green"
+triage = "green"
 
 [[Rule]]
 scope = "File"
@@ -90,7 +90,7 @@ wordList = [
 "initrd.img",
 "initrd.img.old",
 ]
-triage = "Green"
+triage = "green"
 
 [[Rule]]
 scope = "Content"
