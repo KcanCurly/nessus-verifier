@@ -71,6 +71,7 @@ wordList = [
 ".tar",
 ".tar.gz",
 ".so",
+".nessus",
 ]
 triage = "gray"
 
@@ -108,6 +109,10 @@ wordList = [
 "password",
 "passwd",
 "pass",
+"credential",
+"cred",
+"sifre",
+"şifre",
 ]
 triage = "green"
 
@@ -172,6 +177,7 @@ category = []
 relay = []
 description = "Private keys."
 matchLocation = "FileContentAsString"
+importance = "⭐⭐⭐⭐⭐"
 wordListType = "Regex"
 matchLength = 0
 wordList = ["-----BEGIN( RSA| OPENSSH| DSA| EC| PGP)? PRIVATE KEY( BLOCK)?-----"]
