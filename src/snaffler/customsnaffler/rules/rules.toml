@@ -276,5 +276,6 @@ wordListType = "EndsWith"
 matchLength = 0
 wordList = [
 "web\\.config", 
+"\\.bash_history",
 ]
 triage = "yellow"
