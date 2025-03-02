@@ -333,7 +333,7 @@ wordListType = "Regex"
 importance = "⭐⭐⭐"
 matchLength = 0
 wordList = ["Data Source=.+Integrated Security=(SSPI|true)","Integrated Security=(SSPI|true);.*Data Source=.+"]
-triage = "Yellow"
+triage = "yellow"
 
 [[Rule]]
 scope = "Content"
@@ -348,7 +348,7 @@ importance = "⭐⭐⭐⭐⭐"
 wordListType = "Regex"
 matchLength = 0
 wordList = ["Data Source=.+(;|)Password=.+(;|)","Password=.+(;|)Data Source=.+(;|)"]  # ["(?!.+Integrated Security)Data Source=.+Password=.+"]
-triage = "Red"
+triage = "red"
 
 [[Rule]]
 scope = "Content"
@@ -364,4 +364,4 @@ wordListType = "Regex"
 matchLength = 0
 wordList = ["validationkey\\s*=\\s*[\\'\\\"][^\\'\\\"]....",
 "decryptionkey\\s*=\\s*[\\'\\\"][^\\'\\\"]...."]
-triage = "Red" 
+triage = "red" 
