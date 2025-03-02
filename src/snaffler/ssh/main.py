@@ -113,8 +113,12 @@ async def process_file(sftp: asyncssh.SFTPClient, host:str, username:str, rules:
             else:
                 data = data.split("\n")
             live.console.print(f"Split file: {path}")
+            z = 0
             for line in data:
+                live.console.print(f"Processing split[{z}] file: {path}")
+                z += 1
                 a = rules.parse_file(line, 10, 10)
+                live.console.print(f"Parsed split[{z}] file: {path}")
                 if a[0]:
                     for b,c in a[1].items():
                         live.console.print(f"{host} - {username} => {path} - {b.name} - {c}")
