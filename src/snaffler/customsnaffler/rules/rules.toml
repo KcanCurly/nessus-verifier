@@ -130,9 +130,11 @@ description = "Pick these up."
 matchLocation = "FileName"
 matchLength = 0
 importance = "⭐⭐"
-wordListType = "Regex"
+wordListType = "EndsWith"
 wordList = [
 "\\.mozilla\\/firefox\\/.*/logins\\.json",
+"\\.conf",
+"\\.config",
 ]
 triage = "blue"
 
