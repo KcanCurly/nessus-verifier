@@ -90,6 +90,8 @@ wordListType = "EndsWith"
 wordList = [
 "initrd.img",
 "initrd.img.old",
+"jmxremote\\.password\\.template",
+"sceregvl\\.inf"
 ]
 triage = "gray"
 
@@ -165,6 +167,7 @@ wordListType = "Contains"
 wordList = [
 "\\/go\\/bin",
 "\\/go\\/pkg",
+"\\/go-build\\/"
 ]
 triage = "gray"
 
@@ -268,8 +271,8 @@ category = []
 relay = []
 description = "Files with these exact names are very interesting."
 matchLocation = "FileName"
-importance = "⭐⭐⭐⭐⭐"
-wordListType = "Exact"
+importance = "⭐⭐⭐"
+wordListType = "EndsWith"
 matchLength = 0
 wordList = [
 "web\\.config", 
