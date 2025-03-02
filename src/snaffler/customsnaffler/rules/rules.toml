@@ -162,3 +162,89 @@ wordList = [
 "\\/go\\/pkg",
 ]
 triage = "gray"
+
+[[Rule]]
+scope = "Content"
+id = "d8"
+name = "KeepCertRegexRed"
+action = "Snaffle"
+category = []
+relay = []
+description = "Private keys."
+matchLocation = "FileContentAsString"
+wordListType = "Regex"
+matchLength = 0
+wordList = ["-----BEGIN( RSA| OPENSSH| DSA| EC| PGP)? PRIVATE KEY( BLOCK)?-----"]
+triage = "red"
+
+[[Rule]]
+scope = "File"
+id = "d9"
+name = "KeepPathContainsRed"
+action = "Snaffle"
+category = []
+relay = []
+description = "Files with a path containing these strings are very interesting."
+matchLocation = "FilePath"
+wordListType = "Contains"
+matchLength = 0
+wordList = ["\\.purple\\/accounts.xml", 
+"\\.gem\\/credentials", 
+"config\\/hub"]
+triage = "red"
+
+[[Rule]]
+scope = "Content"
+id = "d10"
+name = "KeepConfigRegexRed"
+action = "Snaffle"
+category = []
+relay = []
+description = "A description of what a rule does."
+matchLocation = "FileContentAsString"
+wordListType = "Regex"
+matchLength = 0
+wordList = ["NVRAM config last updated", 
+"enable password \\.", 
+"simple-bind authenticated encrypt"]
+triage = "red"
+
+[[Rule]]
+scope = "File"
+id = "d11"
+name = "KeepExtExactYellow"
+action = "Snaffle"
+category = []
+relay = []
+description = "Files with these extensions are a little interesting."
+matchLocation = "FileExtension"
+wordListType = "Exact"
+matchLength = 0
+wordList = ["\\.key", 
+"\\.keypair", 
+"\\.jks", ]
+triage = "yellow"
+
+[[Rule]]
+scope = "File"
+id = "d12"
+name = "KeepFilenameExactRed"
+action = "Snaffle"
+category = []
+relay = []
+description = "Files with these exact names are very interesting."
+matchLocation = "FileName"
+wordListType = "Exact"
+matchLength = 0
+wordList = [
+"otr\\.private_key", 
+"Favorites\\.plist", 
+"proxy\\.config", 
+"keystore", 
+"keyring", 
+"\\.gitconfig", 
+"\\.dockercfg", 
+"key3\\.db", 
+"key4\\.db", 
+"Login Data"]
+triage = "green"

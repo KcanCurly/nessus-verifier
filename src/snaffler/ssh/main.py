@@ -196,7 +196,7 @@ async def main2():
             tasks.append(process_host(ip, port, username, password, rules, args.verbose, live, args.error))
             
 
-        await asyncio.gather(*tasks)
+        results = [await asyncio.gather(*tasks)]
         """
         with ThreadPoolExecutor(args.threads) as executor:
             for entry in get_hosts_from_file(args.file):
