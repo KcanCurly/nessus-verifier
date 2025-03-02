@@ -150,7 +150,8 @@ importance = ""
 wordListType = "Contains"
 wordList = [
 "\\/share\\/pipx",
-"\\.cache\\/pip\\/",
+"\\.cache\\/pip\\",
+"\\/\\.local\\/state\\/pipx",
 ]
 triage = "gray"
 
