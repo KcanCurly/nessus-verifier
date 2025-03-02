@@ -133,8 +133,8 @@ importance = "⭐⭐"
 wordListType = "EndsWith"
 wordList = [
 "\\.mozilla\\/firefox\\/.*/logins\\.json",
-"\\.conf",
-"\\.config",
+".*\\.conf",
+".*\\.config",
 ]
 triage = "blue"
 
