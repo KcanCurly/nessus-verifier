@@ -11,8 +11,10 @@ class SnafflerContentsEnumerationRule(SnaffleRule):
 	def match(self, data, chars_before = 0, chars_after = 0):
 		matches = []
 		for rex in self.wordList:
+			print("Trying", rex)
 			try:
 				for match in rex.finditer(data):
+					print("Finditer finished", rex)
 					text = match.group(0)
 
 					if chars_before > 0:
