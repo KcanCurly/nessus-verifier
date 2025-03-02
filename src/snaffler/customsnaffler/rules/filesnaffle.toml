@@ -142,7 +142,7 @@ matchLength = 0
 importance = "⭐⭐⭐⭐"
 wordList = ["\\.ppk",
 ]
-triage = "orange"
+triage = "orange1"
 
 [[Rule]]
 scope = "File"
