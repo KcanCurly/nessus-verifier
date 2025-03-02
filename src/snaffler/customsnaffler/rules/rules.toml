@@ -25,7 +25,7 @@ wordList = [
 "/sys",
 "/opt",
 ]
-triage = "green"
+triage = "gray"
 
 [[Rule]]
 scope = "File"
@@ -72,7 +72,7 @@ wordList = [
 ".tar.gz",
 ".so",
 ]
-triage = "green"
+triage = "gray"
 
 [[Rule]]
 scope = "File"
@@ -90,7 +90,7 @@ wordList = [
 "initrd.img",
 "initrd.img.old",
 ]
-triage = "green"
+triage = "gray"
 
 [[Rule]]
 scope = "Content"
@@ -143,7 +143,7 @@ wordListType = "Contains"
 wordList = [
 "\\/share\\/pipx",
 ]
-triage = "Green"
+triage = "gray"
 
 [[Rule]]
 scope = "Directory"
@@ -161,4 +161,4 @@ wordList = [
 "\\/go\\/bin",
 "\\/go\\/pkg",
 ]
-triage = "Green"
+triage = "gray"
