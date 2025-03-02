@@ -9,7 +9,7 @@ class SnafflerFileRule(SnaffleRule):
 		super().__init__(enumerationScope, id, ruleName, matchAction, category, relayTargets, description, matchLocation, wordListType, matchLength, wordList, triage, importance, dontignorecase)
 	
 	def match(self, file):
-		p = Path(file)
+		p = Path(str(file.str))
 		results = []
 		if self.matchLocation == MatchLoc.FileName:
 			for rex in self.wordList:
