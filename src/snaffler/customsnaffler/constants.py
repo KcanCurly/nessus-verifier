@@ -36,4 +36,4 @@ class Triage(enum.Enum):
 	Yellow = 'yellow'
 	Red = 'red'
 	Gray = 'gray'
-	Orange = 'orange'
+	Orange1 = 'orange1'

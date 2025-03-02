@@ -127,7 +127,7 @@ wordList = ["id_rsa",
 "id_ecdsa",
 "id_ed25519",
 ]
-triage = "orange"
+triage = "orange1"
 
 [[Rule]]
 scope = "File"
