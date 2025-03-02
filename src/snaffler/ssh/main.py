@@ -94,7 +94,7 @@ def list_remote_directory(sftp:asyncssh.SFTPClient, host:str, username:str, rule
         except Exception as e: print(e)
 
 def print_finding(console, host:str, username:str, rule:SnaffleRule, path:str, findings:list[str]):
-    console.print(f"[{rule.triage.value}][{host}][{username}][{rule.importance}][{rule.name}][/{rule.triage.value}][white] | {path} | {findings}[/white]")
+    console.print(f"[{rule.triage.value}]\[{host}]\[{username}]\[{rule.importance}]\[{rule.name}]\[{rule.triage.value}][white] | {path} | {findings}[/white]")
 
 async def process_file(sftp: asyncssh.SFTPClient, host:str, username:str, rules: SnafflerRuleSet, verbose, path, live:Live, error):
     try:
