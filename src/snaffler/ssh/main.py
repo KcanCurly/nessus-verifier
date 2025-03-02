@@ -81,7 +81,6 @@ def list_remote_directory(sftp:asyncssh.SFTPClient, host:str, username:str, rule
                 list_remote_directory(sftp, host, username, rules, verbose, item_path, depth + 1)
             else:
                 if is_remote_file(sftp, item_path): 
-                    
                     enum_file = rules.enum_file(item_path)
                     if not enum_file[0]:continue
                     if verbose: print("  " * depth + f"[F] {item_path}")
