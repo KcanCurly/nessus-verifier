@@ -133,8 +133,11 @@ importance = "⭐⭐"
 wordListType = "EndsWith"
 wordList = [
 "\\.mozilla\\/firefox\\/.*/logins\\.json",
-".*\\.conf",
-".*\\.config",
+"\\.conf",
+"\\.config",
+"web\\.config", 
+"\\.bash_history",
+"\\.zsh_history",
 ]
 triage = "blue"
 
@@ -250,9 +253,9 @@ action = "Snaffle"
 category = []
 relay = []
 description = "Files with these exact names are very interesting."
-matchLocation = "FileName"
+matchLocation = "FilePath"
 importance = "⭐⭐⭐⭐⭐"
-wordListType = "Exact"
+wordListType = "EndsWith"
 matchLength = 0
 wordList = [
 "otr\\.private_key", 
@@ -264,7 +267,10 @@ wordList = [
 "\\.dockercfg", 
 "key3\\.db", 
 "key4\\.db", 
-"Login Data"]
+"Login Data",
+"\\.htpasswd",
+"accounts\\.v4"
+]
 triage = "red"
 
 [[Rule]]
