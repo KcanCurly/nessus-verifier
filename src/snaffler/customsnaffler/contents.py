@@ -18,8 +18,7 @@ class SnafflerContentsEnumerationRule(SnaffleRule):
 					text = data[max(match.start() - chars_before, 0) : match.start()] + text
 				if chars_after > 0:
 					text += data[match.end() : min(match.end() + chars_after, len(data))]
-				text.strip()
-				matches.append(text)
+				matches.append(text.strip())
 
 		return matches
 
