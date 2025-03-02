@@ -316,6 +316,6 @@ importance = "⭐⭐⭐⭐⭐"
 wordListType = "Regex"
 dontignorecase = true
 matchLength = 0
-wordList = ["ldapsearch.*-w", 
+wordList = ["ldapsearch.*-w.*", 
 ]
 triage = "red"
