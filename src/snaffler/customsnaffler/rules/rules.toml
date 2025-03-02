@@ -284,7 +284,7 @@ wordList = [
 ]
 triage = "yellow"
 
-[[ClassifierRules]]
+[[Rule]]
 scope = "File"
 id = "d14"
 name = "KeepNameContainsGreen"
@@ -302,3 +302,20 @@ wordList = ["passw",
 "thycotic",
 "cyberark"]
 triage = "green"
+
+[[Rule]]
+scope = "Content"
+id = "d15"
+name = "KeepCmdRegexRedDontIgnoreCase"
+action = "Snaffle"
+category = []
+relay = []
+description = "Commands that have cleartext password in them."
+matchLocation = "FileContentAsString"
+importance = "⭐⭐⭐⭐⭐"
+wordListType = "Regex"
+dontignorecase = true
+matchLength = 0
+wordList = ["ldapsearch.*-w", 
+]
+triage = "red"
