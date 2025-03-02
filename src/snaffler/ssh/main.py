@@ -136,7 +136,7 @@ async def process_directory(sftp: asyncssh.SFTPClient, host:str, username:str, r
 
                 if not enum_file[0]:continue
                 for b,c in enum_file[1].items():
-                    live.console.print(f"{host} - {username} => {item_path} - {b.name} - {c}")
+                    print_finding(live.console, host, username, b, item_path, c)
                 if verbose: live.console.print(f"[F] {item_path}")
                 # await process_file(sftp, host, username, rules, verbose, item_path, live, error)
                 tasks.append(process_file(sftp, host, username, rules, verbose, item_path, live, error))
