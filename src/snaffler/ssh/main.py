@@ -107,10 +107,12 @@ async def process_file(sftp: asyncssh.SFTPClient, host:str, username:str, rules:
         live.console.print(f"Processing file: {path}")
         async with await sftp.open(path) as f:
             data = await f.read()
+            live.console.print(f"Read file: {path}")
             if "\r\n" in data:
                 data = data.split("\r\n")
             else:
                 data = data.split("\n")
+            live.console.print(f"Split file: {path}")
             for line in data:
                 a = rules.parse_file(line, 10, 10)
                 if a[0]:
