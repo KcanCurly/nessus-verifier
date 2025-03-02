@@ -95,26 +95,25 @@ def list_remote_directory(sftp:asyncssh.SFTPClient, host:str, username:str, rule
 
 async def process_file(sftp: asyncssh.SFTPClient, host:str, username:str, rules: SnafflerRuleSet, verbose, path, live:Live, error):
     try:
-        live.console.print(f"Processing file: {path}")
         async with await sftp.open(path) as f:
             data = await f.read()
-            live.console.print(f"Read file: {path}")
+
             if "\r\n" in data:
                 data = data.split("\r\n")
             else:
                 data = data.split("\n")
-            live.console.print(f"Split file: {path}")
+
             z = 0
             for line in data:
                 if len(line) > 300: continue
-                live.console.print(f"Processing split[{z}] file: {path}")
+
                 z += 1
                 a = rules.parse_file(line, 10, 10)
-                live.console.print(f"Parsed split[{z}] file: {path}")
+
                 if a[0]:
                     for b,c in a[1].items():
                         live.console.print(f"{host} - {username} => {path} - {b.name} - {c}")
-            live.console.print(f"Finished Processing file: {path}")
+
     except Exception as e: 
         if error: live.console.print("Process File Error:", e)
 
