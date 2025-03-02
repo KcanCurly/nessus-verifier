@@ -1,0 +1,160 @@
+[[Rule]]
+scope = "File"
+name = "Firefox"
+action = "Snaffle"
+category = []
+relay = []
+description = "Pick these up."
+matchLocation = "FileName"
+matchLength = 0
+importance = "⭐⭐"
+wordListType = "EndsWith"
+wordList = [
+"\\.mozilla\\/firefox\\/.*/logins\\.json",
+]
+triage = "blue"
+
+[[Rule]]
+scope = "File"
+name = "Generic Config File"
+action = "Snaffle"
+category = []
+relay = []
+description = "Pick these up."
+matchLocation = "FileName"
+matchLength = 0
+importance = "⭐⭐"
+wordListType = "EndsWith"
+wordList = [
+"\\.conf",
+"\\.config",
+"web\\.config", 
+]
+triage = "blue"
+
+[[Rule]]
+scope = "File"
+name = "Linux Interesting File"
+action = "Snaffle"
+category = []
+relay = []
+description = "Pick these up."
+matchLocation = "FileName"
+matchLength = 0
+importance = "⭐⭐"
+wordListType = "EndsWith"
+wordList = [
+"\\.bash_history",
+"\\.zsh_history",
+]
+triage = "blue"
+
+[[Rule]]
+scope = "File"
+id = "d9"
+name = "Snaffler KeepPathContainsRed"
+action = "Snaffle"
+category = []
+relay = []
+description = "Files with a path containing these strings are very interesting."
+matchLocation = "FilePath"
+importance = "⭐⭐⭐⭐⭐"
+wordListType = "Contains"
+matchLength = 0
+wordList = ["\\.purple\\/accounts.xml", 
+"\\.gem\\/credentials", 
+"config\\/hub"]
+triage = "red"
+
+[[Rule]]
+scope = "File"
+id = "d11"
+name = "Snaffler KeepExtExactYellow"
+action = "Snaffle"
+category = []
+relay = []
+description = "Files with these extensions are a little interesting."
+matchLocation = "FileExtension"
+importance = "⭐⭐⭐"
+wordListType = "Exact"
+matchLength = 0
+wordList = ["\\.key", 
+"\\.keypair", 
+"\\.jks", ]
+triage = "yellow"
+
+[[Rule]]
+scope = "File"
+id = "d12"
+name = "Snaffler KeepFilenameExactRed"
+action = "Snaffle"
+category = []
+relay = []
+description = "Files with these exact names are very interesting."
+matchLocation = "FilePath"
+importance = "⭐⭐⭐⭐⭐"
+wordListType = "EndsWith"
+matchLength = 0
+wordList = [
+"otr\\.private_key", 
+"Favorites\\.plist", 
+"proxy\\.config", 
+"keystore", 
+"keyring", 
+"\\.gitconfig", 
+"\\.dockercfg", 
+"key3\\.db", 
+"key4\\.db", 
+"Login Data",
+"\\.htpasswd",
+"accounts\\.v4"
+]
+triage = "red"
+
+[[Rule]]
+scope = "File"
+name = "Snaffler KeepSSHKeysByFileName"
+action = "Snaffle"
+category = []
+relay = []
+description = "SSHKeys"
+matchLocation = "FileName"
+wordListType = "Exact"
+matchLength = 0
+importance = "⭐⭐⭐⭐"
+wordList = ["id_rsa",
+"id_dsa",
+"id_ecdsa",
+"id_ed25519",
+]
+triage = "orange"
+
+[[Rule]]
+scope = "File"
+name = "Snaffler KeepSSHKeysByFilExtension"
+action = "Snaffle"
+category = []
+relay = []
+description = "SSHKeys"
+matchLocation = "FileExtension"
+wordListType = "EndsWith"
+matchLength = 0
+importance = "⭐⭐⭐⭐"
+wordList = ["\\.ppk",
+]
+triage = "orange"
+
+[[Rule]]
+scope = "File"
+name = "Snaffler KeepFtpClientConfigConfigByName"
+action = "Snaffle"
+category = []
+relay = []
+description = "Files with these exact names are very interesting."
+matchLocation = "FileName"
+wordListType = "Exact"
+matchLength = 0
+importance = "⭐⭐⭐⭐⭐"
+wordList = ["recentservers\\.xml",
+"sftp-config\\.json"]
+triage = "red"

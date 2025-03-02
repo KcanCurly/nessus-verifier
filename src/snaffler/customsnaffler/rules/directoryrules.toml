@@ -1,0 +1,66 @@
+[[Rule]]
+scope = "Directory"
+id = "d1"
+name = "DiscardLinuxSystemDirs"
+action = "Discard"
+category = []
+relay = []
+description = "File paths that will be skipped entirely."
+matchLocation = "FilePath"
+matchLength = 0
+importance = ""
+wordListType = "StartsWith"
+wordList = [
+"/bin",
+"/boot",
+"/dev",
+"/etc",
+"/lib",
+"/lib64",
+"/proc",
+"/run",
+"/usr",
+"/var",
+"/sbin",
+"/sys",
+"/opt",
+]
+triage = "gray"
+
+[[Rule]]
+scope = "Directory"
+id = "d6"
+name = "PythonDiscard"
+action = "Discard"
+category = []
+relay = []
+description = "Python discard directories."
+matchLocation = "FilePath"
+matchLength = 0
+importance = ""
+wordListType = "Contains"
+wordList = [
+"\\/share\\/pipx",
+"\\.cache\\/pip\\",
+"\\/\\.local\\/state\\/pipx",
+]
+triage = "gray"
+
+[[Rule]]
+scope = "Directory"
+id = "d7"
+name = "GoDiscard"
+action = "Discard"
+category = []
+relay = []
+description = "Go discard directories."
+matchLocation = "FilePath"
+matchLength = 0
+importance = ""
+wordListType = "Contains"
+wordList = [
+"\\/go\\/bin",
+"\\/go\\/pkg",
+"\\/go-build\\/"
+]
+triage = "gray"

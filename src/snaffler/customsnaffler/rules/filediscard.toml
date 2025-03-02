@@ -1,0 +1,67 @@
+[[Rule]]
+scope = "File"
+id = "d2"
+name = "DiscardByFileExtension"
+action = "Discard"
+category = []
+relay = []
+description = "Skip any further scanning for files with these extensions."
+matchLocation = "FileExtension"
+matchLength = 0
+importance = ""
+wordListType = "Exact"
+wordList = [
+"\\.bmp",
+"\\.eps",
+"\\.gif",
+"\\.ico",
+"\\.jfi",
+"\\.jfif",
+"\\.jif",
+"\\.jpe",
+"\\.jpeg",
+"\\.jpg",
+"\\.png",
+"\\.psd",
+"\\.svg",
+"\\.tif",
+"\\.tiff",
+"\\.webp",
+"\\.xcf",
+"\\.ttf",
+"\\.otf",
+"\\.lock",
+"\\.css",
+"\\.less",
+"\\.admx",
+"\\.adml",
+"\\.xsd",
+"\\.nse",
+"\\.xsl",
+"\\.zip",
+"\\.tar",
+"\\.tar.gz",
+"\\.so",
+"\\.nessus",
+]
+triage = "gray"
+
+[[Rule]]
+scope = "File"
+id = "d3"
+name = "DiscardByFileName"
+action = "Discard"
+category = []
+relay = []
+description = "Skip any further scanning for files with these extensions."
+matchLocation = "FilePath"
+matchLength = 0
+importance = ""
+wordListType = "EndsWith"
+wordList = [
+"initrd.img",
+"initrd.img.old",
+"jmxremote\\.password\\.template",
+"sceregvl\\.inf"
+]
+triage = "gray"
