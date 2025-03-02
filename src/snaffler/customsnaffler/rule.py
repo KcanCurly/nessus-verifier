@@ -37,7 +37,8 @@ class SnaffleRule:
 			elif self.wordListType == MatchListType.Exact:
 				word = '^' + word + '$'
 
-			res.append(re.compile(word, flags=re.IGNORECASE|re.MULTILINE))
+			if self.dontignorecase: res.append(re.compile(word, flags=re.MULTILINE))
+			else: res.append(re.compile(word, flags=re.IGNORECASE|re.MULTILINE))
 		self.wordList = res
 
 	
