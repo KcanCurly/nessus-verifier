@@ -11,14 +11,16 @@ class SnafflerContentsEnumerationRule(SnaffleRule):
 	def match(self, data, chars_before = 0, chars_after = 0):
 		matches = []
 		for rex in self.wordList:
-			for match in rex.finditer(data):
-				text = match.group(0)
+			try:
+				for match in rex.finditer(data):
+					text = match.group(0)
 
-				if chars_before > 0:
-					text = data[max(match.start() - chars_before, 0) : match.start()] + text
-				if chars_after > 0:
-					text += data[match.end() : min(match.end() + chars_after, len(data))]
-				matches.append(text)
+					if chars_before > 0:
+						text = data[max(match.start() - chars_before, 0) : match.start()] + text
+					if chars_after > 0:
+						text += data[match.end() : min(match.end() + chars_after, len(data))]
+					matches.append(text)
+			except Exception as e: print(f"Content Enumeration Failed for {rex}: {e}")
 		return matches
 
 	def open_and_match(self, filecontent, chars_before, chars_after):
