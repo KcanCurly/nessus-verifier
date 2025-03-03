@@ -1,7 +1,7 @@
 from impacket.smbconnection import SMBConnection
 import argparse
 
-def list_files_recursively(conn, share, password, directory="*"):
+def list_files_recursively(conn, share, directory="\\"):
     """
     Recursively lists all files and directories in a given SMB share.
     """
@@ -49,7 +49,7 @@ def main():
         conn.login(username, password, domain)
 
         print(f"Connected to {target}, listing files in {share}:")
-        list_files_recursively(conn, share, password)
+        list_files_recursively(conn, share)
 
         conn.close()
     except Exception as e:
