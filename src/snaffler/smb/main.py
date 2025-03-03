@@ -7,7 +7,7 @@ from src.utilities.utilities import get_classic_single_progress, get_classic_ove
 MAX_FILE_SIZE_MB = 100
 
 def process_file2(data):
-    print(data)
+    print(data.decode("utf-8", "ignore"))
 
 def process_file(conn, share, file, rules, error, verbose):
     try:
