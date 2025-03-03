@@ -69,6 +69,7 @@ setup(
             "nv-zookeeper=src.services.zookeeper:main",
             "nv-mssql=src.services.mssql:main",
             "nv-snaffler-ssh=src.snaffler.ssh.main:main",
+            "nv-snaffler-smb=src.snaffler.smb.main:main",
         ],
     },
 )
