@@ -59,43 +59,6 @@ wordList = ["NVRAM config last updated",
 ]
 triage = "red"
 
-[[Rule]]
-scope = "File"
-id = "d13"
-name = "KeepFilenameExactYellow"
-action = "Snaffle"
-category = []
-relay = []
-description = "Files with these exact names are very interesting."
-matchLocation = "FileName"
-importance = "⭐⭐⭐"
-wordListType = "EndsWith"
-matchLength = 0
-wordList = [
-"web\\.config", 
-"\\.bash_history",
-"\\.zsh_history",
-]
-triage = "yellow"
-
-[[Rule]]
-scope = "File"
-id = "d14"
-name = "KeepNameContainsGreen"
-action = "Snaffle"
-category = []
-relay = []
-description = "A description of what a rule does."
-matchLocation = "FileName"
-importance = "⭐"
-wordListType = "Contains"
-matchLength = 0
-wordList = ["passw",
-"secret",
-"credential",
-"thycotic",
-"cyberark"]
-triage = "green"
 
 [[Rule]]
 scope = "Content"
@@ -112,6 +75,8 @@ dontignorecase = true
 matchLength = 0
 wordList = ["ldapsearch.*-w.*",
 "mongo.*--password.*",
+"mongodb:\\/\\/\\w+:\\w+",
+"(http|https):\\/\\/\\w+:\\w+"
 ]
 triage = "red"
 

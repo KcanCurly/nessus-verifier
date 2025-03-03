@@ -15,82 +15,17 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from src.utilities.utilities import get_classic_single_progress, get_classic_overall_progress, get_classic_console, get_hosts_from_file
 import asyncio
 
-
-def ssh_connect(host, port, username, password):
+async def can_read_file(sftp, path):
+    """Attempts to open a remote file in read mode to check permissions."""
     try:
-        client = paramiko.SSHClient()
-        client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        client.connect(host, int(port), username, password)
-        return client
+        async with sftp.open(path, "r") as f:
+            await f.read(1)  # Try reading a byte
+        return True
+    except PermissionError:
+        return False
     except Exception as e:
-        print(f"[!] SSH Connection failed: {e}")
-        return None
-
-def is_remote_file(sftp, path):
-    """Checks if a given remote path is a file."""
-    try:
-        file_stat = sftp.stat(path)
-        return stat.S_ISREG(file_stat.st_mode)  # Checks if it's a regular file
-    except FileNotFoundError:
-        return False  # File does not exist
-
-def is_remote_directory(sftp, path):
-    """Checks if the given remote path is a directory (excluding special files)."""
-    try:
-        file_stat = sftp.stat(path)
-        return stat.S_ISDIR(file_stat.st_mode)  # Proper check for directories
-    except FileNotFoundError:
-        return False  # Path does not exist
-
-def process_file(sftp: asyncssh.SFTPClient, rules: SnafflerRuleSet, path:str, host:str, username:str):
-    try:
-        with sftp.open(path, "r") as f:
-            data = f.read()
-            if "\r\n" in data:
-                data = data.split("\r\n")
-            else:
-                data = data.split("\n")
-            try:
-                # Try decoding as UTF-8
-                data = data.decode("utf-8", errors="ignore")
-            except UnicodeDecodeError:
-                pass
-
-            a = rules.parse_file(data, 10, 10)
-            # print(data)
-            if a[0]:
-                for b,c in a[1].items():
-                    print(f"{host} - {username} => {path} - {b.name} - {c}")
-    except Exception as e: print(f"Process file error: {e}")
-
-def list_remote_directory(sftp:asyncssh.SFTPClient, host:str, username:str, rules: SnafflerRuleSet, verbose, remote_path=".", depth=0):
-    threads = []
-    """Recursively lists all files and directories in the given remote path."""
-
-    try:
-        items = sftp.listdir_attr(remote_path)
-    except Exception: return
-    
-    for item in items:
-        try:
-            item_path = f"{remote_path if remote_path != "/" else ""}/{item.filename}"
-            # If the item is a directory, recursively list its contents
-            if is_remote_directory(sftp, item_path):  # Check if it's a directory
-                if not rules.enum_directory(item_path)[0]:continue
-                if verbose: print("  " * depth + f"[D] {item_path}")
-                list_remote_directory(sftp, host, username, rules, verbose, item_path, depth + 1)
-            else:
-                if is_remote_file(sftp, item_path): 
-                    enum_file = rules.enum_file(item_path)
-                    if not enum_file[0]:continue
-                    if verbose: print("  " * depth + f"[F] {item_path}")
-
-                    for b,c in enum_file[1].items():
-                        print(f"{host} - {username} => {item_path} - {b.name} - {c}")
-                    
-
-                    process_file(sftp, rules, item_path, host, username)
-        except Exception as e: print(e)
+        # print(f"Error checking read access: {e}")
+        return False
 
 def print_finding(console, host:str, username:str, rule:SnaffleRule, path:str, findings:list[str]):
     console.print(f"[{rule.triage.value}]\[{host}]\[{username}]\[{rule.importance}]\[{rule.name}][/{rule.triage.value}][white] | {path} | {findings}[/white]")
@@ -130,7 +65,7 @@ async def process_directory(sftp: asyncssh.SFTPClient, host:str, username:str, r
                 if verbose: live.console.print(f"[D] {item_path}")
                 # tasks.append(process_directory(sftp, host, username, rules, verbose, live, error, item_path, depth=depth+1))
                 await process_directory(sftp, host, username, rules, verbose, live, error, item_path, depth=depth+1)
-            elif await sftp.isfile(item_path):
+            elif await sftp.isfile(item_path) and await can_read_file(sftp, item_path): # If its a file and we can read it
                 enum_file = rules.enum_file(item_path)
 
                 if not enum_file[0]:continue

@@ -673,3 +673,22 @@ wordList = ["database\\.yml",
 "carrierwave\\.rb",
 "omniauth\\.rb"]
 triage = "red"
+
+[[Rule]]
+scope = "File"
+id = "d14"
+name = "KeepNameContainsGreen"
+action = "Snaffle"
+category = []
+relay = []
+description = "A description of what a rule does."
+matchLocation = "FileName"
+importance = "⭐"
+wordListType = "Contains"
+matchLength = 0
+wordList = ["passw",
+"secret",
+"credential",
+"thycotic",
+"cyberark"]
+triage = "green"
