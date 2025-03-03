@@ -11,7 +11,7 @@ def list_files_recursively(conn, share, directory="*"):
         files = conn.listPath(share, directory)
         print(2)
         for file in files:
-            filename = file.get_longname()
+            filename = file.get_shortname()
             if filename in [".", ".."]:  # Skip current and parent directory links
                 continue
 
