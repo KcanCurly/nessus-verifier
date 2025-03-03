@@ -65,7 +65,7 @@ async def process_directory(sftp: asyncssh.SFTPClient, host:str, username:str, r
                 if verbose: live.console.print(f"[D] {item_path}")
                 # tasks.append(process_directory(sftp, host, username, rules, verbose, live, error, item_path, depth=depth+1))
                 await process_directory(sftp, host, username, rules, verbose, live, error, item_path, depth=depth+1)
-            elif await sftp.isfile(item_path) and await can_read_file(sftp, item_path): # If its a file and we can read it
+            elif await sftp.isfile(item_path):
                 enum_file = rules.enum_file(item_path)
 
                 if not enum_file[0]:continue

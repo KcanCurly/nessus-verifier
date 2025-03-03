@@ -76,7 +76,10 @@ matchLength = 0
 wordList = ["ldapsearch.*-w.*",
 "mongo.*--password.*",
 "mongodb:\\/\\/\\w+:\\w+",
-"(http|https):\\/\\/\\w+:\\w+"
+"(http|https):\\/\\/\\w+:\\w+",
+".*bind_password.*",
+"curl.*-u \\w+:\\w+.*",
+".*querypassword.*"
 ]
 triage = "red"
 
