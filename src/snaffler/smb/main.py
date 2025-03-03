@@ -20,7 +20,7 @@ def can_read_file(conn, share, file):
     try:
         conn.getFile(share, file)
         return True
-    except: return False
+    except Exception as e: print("Can read file error", e)
     
 def print_finding(console, host:str, username:str, rule:SnaffleRule, path:str, findings:list[str]):
     console.print(f"[{rule.triage.value}]\[{host}]\[{username}]\[{rule.importance}]\[{rule.name}][/{rule.triage.value}][white] | {path} | {findings}[/white]")
