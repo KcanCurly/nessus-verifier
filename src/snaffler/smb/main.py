@@ -1,14 +1,15 @@
 from impacket.smbconnection import SMBConnection
 import argparse
 
-def list_files_recursively(conn, share, password, directory=""):
+def list_files_recursively(conn, share, password, directory="*"):
     """
     Recursively lists all files and directories in a given SMB share.
     """
     try:
+        print(1)
         # List contents of the current directory
         files = conn.listPath(share, directory, password)
-
+        print(2)
         for file in files:
             filename = file.get_longname()
             if filename in [".", ".."]:  # Skip current and parent directory links
@@ -38,7 +39,7 @@ def main():
     
     target = "192.168.48.167"  # Change to the target's IP or hostname
     username = "Administrator"
-    password = "Password1!aa"
+    password = "Password1!"
     domain = "lab.local"  # Change if needed
     share = "C$"  # Admin shares (C$, D$, etc.) require admin access
 
