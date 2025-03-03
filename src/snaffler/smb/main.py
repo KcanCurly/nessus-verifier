@@ -16,9 +16,12 @@ def process_file(conn, share, file, rules, error, verbose):
     except Exception as e: 
         if error: print("Process File Error:", e)
 
+def can_read_file2(data):
+    pass
+
 def can_read_file(conn, share, file):
     try:
-        conn.getFile(share, file)
+        conn.getFile(share, file, can_read_file2)
         return True
     except Exception as e: print("Can read file error", e)
     
