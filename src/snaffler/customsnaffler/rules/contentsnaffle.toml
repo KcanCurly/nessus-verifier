@@ -96,7 +96,8 @@ wordList = [
 "(http|https):\\/\\/\\w+:\\w+@",
 ".*bind_password.*",
 "curl.*-u \\w+:\\w+.*",
-".*querypassword.*"
+".*querypassword.*",
+".*sqldbpassword.*",
 ]
 triage = "red"
 
