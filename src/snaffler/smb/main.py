@@ -8,7 +8,7 @@ def list_files_recursively(conn, share, password, directory="*"):
     try:
         print(1)
         # List contents of the current directory
-        files = conn.listPath(share, directory, password)
+        files = conn.listPath(share, directory)
         print(2)
         for file in files:
             filename = file.get_longname()
