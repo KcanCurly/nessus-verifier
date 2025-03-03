@@ -20,7 +20,7 @@ def list_files_recursively(conn, share, directory="*"):
             if file.is_directory():
                 print(f"[DIR] {full_path}")
                 # Recursively list the contents of subdirectories
-                list_files_recursively(conn, share, file + "/*")
+                list_files_recursively(conn, share, full_path + "/*")
             else:
                 print(f"[FILE] {full_path}")
 
