@@ -6,10 +6,8 @@ def list_files_recursively(conn, share, directory="*"):
     Recursively lists all files and directories in a given SMB share.
     """
     try:
-        print(1)
         # List contents of the current directory
         files = conn.listPath(share, directory)
-        print(2)
         for file in files:
             filename = file.get_longname()
             if filename in [".", ".."]:  # Skip current and parent directory links
@@ -18,7 +16,7 @@ def list_files_recursively(conn, share, directory="*"):
             full_path = directory.replace("*", "")  + filename
             
             if file.is_directory():
-                print(f"[DIR] {full_path}")
+                print(f"[DIR] {share.replace("$", "")}:/{full_path}")
                 # Recursively list the contents of subdirectories
                 list_files_recursively(conn, share, full_path + "/*")
             else:
