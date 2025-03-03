@@ -1,7 +1,7 @@
 from impacket.smbconnection import SMBConnection
 import argparse
 
-def list_files_recursively(conn, share, directory="\\\\anonshare"):
+def list_files_recursively(conn, share, directory="*"):
     """
     Recursively lists all files and directories in a given SMB share.
     """
@@ -11,7 +11,7 @@ def list_files_recursively(conn, share, directory="\\\\anonshare"):
         files = conn.listPath(share, directory)
         print(2)
         for file in files:
-            filename = file.get_shortname()
+            filename = file.get_longname()
             if filename in [".", ".."]:  # Skip current and parent directory links
                 continue
 
