@@ -31,7 +31,7 @@ def list_files_recursively(conn, share, rules, directory="*"):
             elif file.is_file():
                 print(file.get_filesize())
                 enum_file = rules.enum_file(full_path)
-                if not enum_file[0] or not can_read_file(conn, full_path):continue
+                # if not enum_file[0] or not can_read_file(conn, full_path):continue
                 print(f"[FILE] {full_path}")
 
     except Exception as e:
