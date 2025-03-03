@@ -267,6 +267,7 @@ description = "Files with these exact names are very interesting."
 matchLocation = "FileName"
 wordListType = "Exact"
 matchLength = 0
+importance = "⭐"
 wordList = ["\\.netrc",
 "_netrc",
 "\\.exports",
@@ -289,6 +290,7 @@ description = "Files with these exact names are very interesting."
 matchLocation = "FileName"
 wordListType = "Exact"
 matchLength = 0
+importance = "⭐⭐⭐⭐⭐"
 wordList = ["SqlStudio\\.bin",
 "\\.mysql_history",
 "\\.psql_history",
