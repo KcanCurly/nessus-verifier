@@ -74,6 +74,23 @@ wordListType = "Regex"
 dontignorecase = true
 matchLength = 0
 wordList = ["ldapsearch.*-w.*",
+]
+triage = "red"
+
+[[Rule]]
+scope = "Content"
+id = "d15"
+name = "KeepCmdRegex"
+action = "Snaffle"
+category = []
+relay = []
+description = "Commands that have cleartext password in them."
+matchLocation = "FileContentAsString"
+importance = "⭐⭐⭐⭐⭐"
+wordListType = "Regex"
+dontignorecase = true
+matchLength = 0
+wordList = [
 "mongo.*--password.*",
 "mongodb:\\/\\/\\w+:\\w+",
 "(http|https):\\/\\/\\w+:\\w+@",
