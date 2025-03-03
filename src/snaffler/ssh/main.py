@@ -17,6 +17,17 @@ import asyncio
 
 MAX_FILE_SIZE_MB = 100
 
+async def can_read_file(sftp, path):
+    """Attempts to open a remote file in read mode to check permissions."""
+    try:
+        async with sftp.open(path, "r") as f:
+            await f.read(1)  # Try reading a byte
+        return True
+    except PermissionError:
+        return False
+    except Exception as e:
+        return False
+
 async def get_file_size_mb(sftp, path):
     """Returns the size of a remote file in MB."""
     try:
@@ -71,7 +82,8 @@ async def process_directory(sftp: asyncssh.SFTPClient, host:str, username:str, r
             elif await sftp.isfile(item_path):
                 enum_file = rules.enum_file(item_path)
 
-                if not enum_file[0]:continue
+                if not enum_file[0] or not await can_read_file(sftp, item_path):continue
+                
                 for b,c in enum_file[1].items():
                     print_finding(live.console, host, username, b, item_path, c)
                 if verbose: live.console.print(f"[F] {item_path}")
