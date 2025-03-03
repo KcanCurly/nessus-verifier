@@ -38,7 +38,7 @@ def main():
     
     target = "192.168.48.167"  # Change to the target's IP or hostname
     username = "Administrator"
-    password = "Password1!"
+    password = "Password1!aa"
     domain = "lab.local"  # Change if needed
     share = "C$"  # Admin shares (C$, D$, etc.) require admin access
 
