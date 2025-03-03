@@ -6,13 +6,26 @@ from src.utilities.utilities import get_classic_single_progress, get_classic_ove
 
 MAX_FILE_SIZE_MB = 100
 
+def process_file2(data):
+    print(data)
+
+def process_file(conn, share, file, rules, error, verbose):
+    try:
+
+        conn.getFile(share, file, process_file2)
+    except Exception as e: 
+        if error: print("Process File Error:", e)
+
 def can_read_file(conn, share, file):
     try:
         conn.getFile(share, file)
         return True
     except: return False
+    
+def print_finding(console, host:str, username:str, rule:SnaffleRule, path:str, findings:list[str]):
+    console.print(f"[{rule.triage.value}]\[{host}]\[{username}]\[{rule.importance}]\[{rule.name}][/{rule.triage.value}][white] | {path} | {findings}[/white]")
 
-def list_files_recursively(conn, share, rules, directory="*"):
+def list_files_recursively(conn, share, rules, error, verbose, directory="*"):
     """
     Recursively lists all files and directories in a given SMB share.
     """
@@ -28,17 +41,19 @@ def list_files_recursively(conn, share, rules, directory="*"):
             
             if file.is_directory():
                 if not rules.enum_directory(full_path)[0]:continue
-                print(f"[DIR] {share.replace("$", "")}:/{full_path}")
+                if verbose: print(f"[DIR] {full_path}")
                 # Recursively list the contents of subdirectories
-                list_files_recursively(conn, share, rules, full_path + "/*")
+                list_files_recursively(conn, share, rules, error, verbose, full_path + "/*")
             else:
                 if file.get_filesize() / 1024 > MAX_FILE_SIZE_MB: continue
                 enum_file = rules.enum_file(full_path)
                 if not enum_file[0] or file.get_filesize() / 1024 > MAX_FILE_SIZE_MB or not can_read_file(conn, share, full_path):continue
-                print(f"[FILE] {full_path}")
+                
+                if verbose: print(f"[FILE] {full_path}")
+                process_file(conn, share, full_path, rules, error, verbose)
 
     except Exception as e:
-        print(f"Error accessing {directory}: {e}")
+        if error:print(f"Error accessing {directory}: {e}")
 
 def main():
     parser = argparse.ArgumentParser(description="Snaffle via SSH.")
@@ -63,7 +78,7 @@ def main():
         conn.login(username, password, domain)
 
         if args.verbose: print(f"Connected to {target}, listing files in {share}:")
-        list_files_recursively(conn, share, rules)
+        list_files_recursively(conn, share, rules, args.error, args.verbose)
 
         conn.close()
     except Exception as e:
