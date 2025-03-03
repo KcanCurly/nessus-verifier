@@ -15,23 +15,26 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from src.utilities.utilities import get_classic_single_progress, get_classic_overall_progress, get_classic_console, get_hosts_from_file
 import asyncio
 
-async def can_read_file(sftp, path):
-    """Attempts to open a remote file in read mode to check permissions."""
+MAX_FILE_SIZE_MB = 100
+
+async def get_file_size_mb(sftp, path):
+    """Returns the size of a remote file in MB."""
     try:
-        async with sftp.open(path, "r") as f:
-            await f.read(1)  # Try reading a byte
-        return True
-    except PermissionError:
-        return False
+        file_stat = await sftp.stat(path)
+        size_mb = file_stat.size / (1024 * 1024)  # Convert bytes to MB
+        return round(size_mb, 2)  # Round to 2 decimal places
     except Exception as e:
-        # print(f"Error checking read access: {e}")
-        return False
+        print(f"Error getting file size: {e}")
+        return None
 
 def print_finding(console, host:str, username:str, rule:SnaffleRule, path:str, findings:list[str]):
     console.print(f"[{rule.triage.value}]\[{host}]\[{username}]\[{rule.importance}]\[{rule.name}][/{rule.triage.value}][white] | {path} | {findings}[/white]")
 
 async def process_file(sftp: asyncssh.SFTPClient, host:str, username:str, rules: SnafflerRuleSet, verbose, path, live:Live, error):
     try:
+        file_stat = await sftp.stat(path)
+        size_mb = file_stat.size / (1024 * 1024)
+        if size_mb > MAX_FILE_SIZE_MB: return
         async with await sftp.open(path, errors='ignore') as f:
             data = await f.read()
 
