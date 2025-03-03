@@ -11,15 +11,15 @@ matchLength = 0
 importance = "⭐"
 wordListType = "Contains"
 wordList = [
-"password",
-"passwd",
-"pass",
-"pwd",
-"credential",
-"cred",
-"sifre",
-"şifre",
-"secret",
+".*password.*",
+".*passwd.*",
+".*pass.*",
+".*pwd.*",
+".*credential.*",
+".*cred.*",
+".*sifre.*",
+".*şifre.*",
+".*secret.*",
 ]
 triage = "green"
 
@@ -110,7 +110,8 @@ importance = "⭐⭐⭐⭐⭐"
 wordListType = "Regex"
 dontignorecase = true
 matchLength = 0
-wordList = ["ldapsearch.*-w.*", 
+wordList = ["ldapsearch.*-w.*",
+"mongo.*--password.*",
 ]
 triage = "red"
 
@@ -172,4 +173,206 @@ importance = "⭐⭐⭐⭐⭐"
 wordListType = "Regex"
 matchLength = 0
 wordList = ["password 51\\:b"]
+triage = "red"
+
+[[Rule]]
+scope = "Content"
+name = "Snaffler KeepFFRegexRed"
+action = "Snaffle"
+category = []
+relay = []
+description = "Files with contents matching these regexes are very interesting."
+matchLocation = "FileContentAsString"
+wordListType = "Regex"
+matchLength = 0
+importance = "⭐⭐⭐⭐⭐"
+wordList = ["\"encryptedPassword\":\"[A-Za-z0-9+/=]+\""]
+triage = "red"
+
+[[Rule]]
+scope = "Content"
+name = "Snaffler KeepUnattendXmlRegexRed"
+action = "Snaffle"
+category = []
+relay = []
+description = "Files with contents matching these regexen are very interesting."
+matchLocation = "FileContentAsString"
+wordListType = "Regex"
+matchLength = 0
+importance = "⭐⭐⭐⭐⭐"
+wordList = ["(?s)<AdministratorPassword>.{0,30}<Value>.*<\\/Value>",
+"(?s)<AutoLogon>.{0,30}<Value>.*<\\/Value>"]
+triage = "red"
+
+[[Rule]]
+scope = "Content"
+name = "Snaffler KeepNetConfigCreds"
+action = "Snaffle"
+category = []
+relay = []
+description = "A description of what a rule does."
+matchLocation = "FileContentAsString"
+wordListType = "Regex"
+matchLength = 0
+importance = "⭐⭐⭐⭐⭐"
+wordList = ["NVRAM config last updated", 
+"enable password \\.", 
+"simple-bind authenticated encrypt",
+"pac key [0-7] ",
+"snmp-server community\\s.+\\sRW"]
+triage = "red"
+
+[[Rule]]
+scope = "Content"
+name = "Snaffler KeepPerlDbConnStrings"
+action = "Snaffle"
+category = []
+relay = []
+description = "Files with contents matching these regexen are very interesting."
+matchLocation = "FileContentAsString"
+wordListType = "Regex"
+matchLength = 0
+importance = "⭐⭐⭐⭐⭐"
+wordList = ["DBI\\-\\>connect\\("]
+triage = "red"
+
+[[Rule]]
+scope = "Content"
+name = "Snaffler KeepPsCredentials"
+action = "Snaffle"
+category = []
+relay = []
+description = "Files with contents matching these regexen are very interesting."
+matchLocation = "FileContentAsString"
+wordListType = "Regex"
+matchLength = 0
+importance = "⭐⭐⭐⭐⭐"
+wordList = [    "-SecureString",
+"-AsPlainText",
+"\\[Net.NetworkCredential\\]::new\\("]
+triage = "red"
+
+[[Rule]]
+scope = "Content"
+name = "Snaffler KeepPyDbConnStrings"
+action = "Snaffle"
+category = []
+relay = []
+description = "Files with contents matching these regexen are very interesting."
+matchLocation = "FileContentAsString"
+wordListType = "Regex"
+matchLength = 0
+importance = "⭐⭐⭐⭐⭐"
+wordList = ["mysql\\.connector\\.connect\\(",
+"psycopg2\\.connect\\("]
+triage = "red"
+
+[[Rule]]
+scope = "Content"
+name = "Snaffler KeepRubyDbConnStrings"
+action = "Snaffle"
+category = []
+relay = []
+description = "Files with contents matching these regexen are very interesting."
+matchLocation = "FileContentAsString"
+wordListType = "Regex"
+matchLength = 0
+importance = "⭐⭐⭐⭐⭐"
+wordList = ["DBI\\.connect\\("]
+triage = "red"
+
+[[Rule]]
+scope = "Content"
+name = "Snaffler KeepAwsKeysInCode"
+action = "Snaffle"
+category = []
+relay = []
+description = "Files with contents matching these regexen are very interesting."
+matchLocation = "FileContentAsString"
+wordListType = "Regex"
+matchLength = 0
+importance = "⭐⭐⭐⭐⭐"
+wordList = ["aws[_\\-\\.]?key",
+"(\\s|\\'|\\\"|\\^|=)(A3T[A-Z0-9]|AKIA|AGPA|AROA|AIPA|ANPA|ANVA|ASIA)[A-Z2-7]{12,16}(\\s|\\'|\\\"|$)"]
+triage = "red"
+
+[[Rule]]
+scope = "Content"
+name = "Snaffler KeepDbConnStringPw"
+action = "Snaffle"
+category = []
+relay = []
+description = "Files with contents matching these regexen are very interesting."
+matchLocation = "FileContentAsString"
+wordListType = "Regex"
+matchLength = 0
+importance = "⭐⭐⭐"
+wordList = ["connectionstring.{1,200}passw"]
+triage = "yellow"
+
+[[Rule]]
+scope = "Content"
+name = "Snaffler KeepPassOrKeyInCode"
+action = "Snaffle"
+category = []
+relay = []
+description = "Files with contents matching these regexen are very interesting."
+matchLocation = "FileContentAsString"
+wordListType = "Regex"
+matchLength = 0
+importance = "⭐⭐⭐⭐⭐"
+wordList = ["passw?o?r?d\\s*=\\s*[\\'\\\"][^\\'\\\"]....",
+"api[Kk]ey\\s*=\\s*[\\'\\\"][^\\'\\\"]....",
+"passw?o?r?d?>\\s*[^\\s<]+\\s*<",
+"passw?o?r?d?>.{3,2000}</pass",
+"[\\s]+-passw?o?r?d?",
+"api[kK]ey>\\s*[^\\s<]+\\s*<",
+"[_\\-\\.]oauth\\s*=\\s*[\\'\\\"][^\\'\\\"]....",
+"client_secret\\s*=*\\s*",
+"<ExtendedMatchKey>ClientAuth",
+"GIUserPassword"
+]
+triage = "red"
+
+[[Rule]]
+scope = "Content"
+name = "Snaffler KeepS3UriPrefixInCode"
+action = "Snaffle"
+category = []
+relay = []
+description = "Files with content matching an AWS S3 or Apache Hadoop S3A URI Prefix"
+matchLocation = "FileContentAsString"
+wordListType = "Regex"
+matchLength = 0
+importance = "⭐⭐⭐"
+wordList = ["s3[a]?:\\/\\/[a-zA-Z0-9\\-\\+\\/]{2,16}"]
+triage = "yellow"
+
+[[Rule]]
+scope = "Content"
+name = "Snaffler KeepSlackTokensInCode"
+action = "Snaffle"
+category = []
+relay = []
+description = "Files with contents matching these regexen are very interesting."
+matchLocation = "FileContentAsString"
+wordListType = "Regex"
+matchLength = 0
+importance = "⭐⭐⭐⭐⭐"
+wordList = ["(xox[pboa]-[0-9]{12}-[0-9]{12}-[0-9]{12}-[a-z0-9]{32})",
+"https://hooks.slack.com/services/T[a-zA-Z0-9_]{8}/B[a-zA-Z0-9_]{8}/[a-zA-Z0-9_]{24}"]
+triage = "red"
+
+[[Rule]]
+scope = "Content"
+name = "Snaffler KeepSqlAccountCreation"
+action = "Snaffle"
+category = []
+relay = []
+description = "Files with contents matching these regexen are very interesting."
+matchLocation = "FileContentAsString"
+wordListType = "Regex"
+matchLength = 0
+importance = "⭐⭐⭐⭐⭐"
+wordList = ["CREATE (USER|LOGIN) .{0,200} (IDENTIFIED BY|WITH PASSWORD)"]
 triage = "red"
