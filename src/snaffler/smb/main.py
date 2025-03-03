@@ -15,9 +15,7 @@ def list_files_recursively(conn, share, directory="*"):
             if filename in [".", ".."]:  # Skip current and parent directory links
                 continue
 
-            if "\\" not in directory: full_path = "\\" + filename
-            else:  full_path = f"{directory}\\{filename}"
-
+            full_path = filename
             if file.is_directory():
                 print(f"[DIR] {full_path}")
                 # Recursively list the contents of subdirectories
