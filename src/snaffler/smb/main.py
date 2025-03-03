@@ -1,7 +1,7 @@
 from impacket.smbconnection import SMBConnection
 import argparse
 
-def list_files_recursively(conn, share, directory="\\"):
+def list_files_recursively(conn, share, directory="/"):
     """
     Recursively lists all files and directories in a given SMB share.
     """
