@@ -126,7 +126,7 @@ def main():
                 for host in get_hosts_from_file(args.file):
                     ip, port = host.split(":")
                     username, password = cred.split(":")
-                    single_task_id = single_progress.add_task("single", start=False, host=host, status="status", total=1)
+                    # single_task_id = single_progress.add_task("single", start=False, host=host, status="status", total=1)
                     future = executor.submit(process_host(ip, username, password, rules, args.verbose, live, args.error))
                     futures.append(future)
                     for a in as_completed(futures):

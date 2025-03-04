@@ -93,7 +93,7 @@ matchLength = 0
 wordList = [
 "mongo.*--password.*",
 "mongodb:\\/\\/\\w+:\\w+",
-"(http|https):\\/\\/\\w+:\\w+@",
+".*:\\/\\/\\w+:\\w+@",
 ".*bind_password.*",
 "curl.*-u \\w+:\\w+.*",
 ".*querypassword.*",
