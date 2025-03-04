@@ -54,11 +54,8 @@ async def process_file(sftp: asyncssh.SFTPClient, host:str, username:str, rules:
             else:
                 data = data.split("\n")
 
-            z = 0
             for line in data:
                 if len(line) > 300: continue
-
-                z += 1
                 a = rules.parse_file(line, 10, 10)
 
                 if a[0]:
