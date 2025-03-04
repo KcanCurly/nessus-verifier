@@ -11,19 +11,20 @@ matchLength = 0
 importance = ""
 wordListType = "StartsWith"
 wordList = [
-"/bin",
-"/boot",
-"/dev",
-"/etc",
-"/lib",
-"/lib64",
-"/proc",
-"/run",
-"/usr",
-"/var",
-"/sbin",
-"/sys",
-"/opt",
+"\\/bin",
+"\\/boot",
+"\\/dev",
+"\\/etc",
+"\\/lib",
+"\\/lib64",
+"\\/proc",
+"\\/run",
+"\\/usr",
+"\\/var",
+"\\/sbin",
+"\\/sys",
+"\\/opt",
+"\\/sw"
 ]
 triage = "gray"
 
