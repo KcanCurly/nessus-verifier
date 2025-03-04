@@ -109,11 +109,6 @@ def main():
         overall_progress,
     ) if not args.only_show_progress else Group(overall_progress)
     
-    target = "192.168.48.167"  # Change to the target's IP or hostname
-    username = "Administrator"
-    password = "Password1!"
-    domain = "lab.local"  # Change if needed
-    share = "C$"  # Admin shares (C$, D$, etc.) require admin access
     rules = SnafflerRuleSet.load_default_ruleset()
     
     with Live(progress_group, console=console) as live:
