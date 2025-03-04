@@ -78,12 +78,11 @@ def process_host(target, username, password, rules, verbose, live, error):
         # Establish SMB connection
         conn = SMBConnection(target, target)
         conn.login(username, password)
-        if verbose: print(f"Connected to {target}, listing files in {share}:")
         for share in conn.listShares():
             try:
-                list_files_recursively(conn, share, rules, target, username, error, verbose, live)
+                list_files_recursively(conn, share['shi1_netname'][:-1], rules, target, username, error, verbose, live)
             except Exception as e:
-                if error: print(f"Failed list share {share} on {target}: {e}")
+                if error: print(f"Failed list share {share['shi1_netname'][:-1]} on {target}: {e}")
 
         conn.close()
     except Exception as e:
