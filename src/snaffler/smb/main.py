@@ -132,16 +132,3 @@ def main():
                     futures.append(future)
                     for a in as_completed(futures):
                         overall_progress.update(overall_task_id, advance=1)
-
-
-    try:
-        # Establish SMB connection
-        conn = SMBConnection(target, target)
-        conn.login(username, password, domain)
-
-        if args.verbose: print(f"Connected to {target}, listing files in {share}:")
-        list_files_recursively(conn, share, rules, args.error, args.verbose)
-
-        conn.close()
-    except Exception as e:
-        if args.error: print(f"Failed to connect: {e}")
