@@ -1,10 +1,7 @@
-from src.snaffler.customsnaffler.constants import EnumerationScope, MatchAction, MatchLoc, MatchListType, Triage
+from src.snaffler.customsnaffler.constants import EnumerationScope, MatchAction, Triage
 from typing import Dict, List, Tuple
 from src.snaffler.customsnaffler.rule import SnaffleRule
-from src.snaffler.customsnaffler.file import SnafflerFileRule
-from pathlib import PureWindowsPath
 from glob import glob
-import hashlib
 from pathlib import Path
 import tomllib
 

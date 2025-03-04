@@ -8,7 +8,7 @@ relay = []
 description = "Pick these up."
 matchLocation = "FileContentAsString"
 matchLength = 0
-importance = "⭐"
+importance = "1⭐"
 wordListType = "Contains"
 wordList = [
 ".*password.*",
@@ -32,7 +32,7 @@ category = []
 relay = []
 description = "Private keys."
 matchLocation = "FileContentAsString"
-importance = "⭐⭐⭐⭐⭐"
+importance = "5⭐"
 wordListType = "Regex"
 matchLength = 0
 wordList = ["-----BEGIN( RSA| OPENSSH| DSA| EC| PGP)? PRIVATE KEY( BLOCK)?-----"]
@@ -47,7 +47,7 @@ category = []
 relay = []
 description = "A description of what a rule does."
 matchLocation = "FileContentAsString"
-importance = "⭐⭐⭐⭐⭐"
+importance = "5⭐"
 wordListType = "Regex"
 matchLength = 0
 wordList = ["NVRAM config last updated", 
@@ -69,7 +69,7 @@ category = []
 relay = []
 description = "Commands that have cleartext password in them."
 matchLocation = "FileContentAsString"
-importance = "⭐⭐⭐⭐⭐"
+importance = "5⭐"
 wordListType = "Regex"
 dontignorecase = true
 matchLength = 0
@@ -86,7 +86,7 @@ category = []
 relay = []
 description = "Commands that have cleartext password in them."
 matchLocation = "FileContentAsString"
-importance = "⭐⭐⭐⭐⭐"
+importance = "5⭐"
 wordListType = "Regex"
 dontignorecase = true
 matchLength = 0
@@ -111,7 +111,7 @@ relay = []
 description = "Match SQL connection strings that appear to use integrated security (so no passwords)."
 matchLocation = "FileContentAsString"
 wordListType = "Regex"
-importance = "⭐⭐⭐"
+importance = "3⭐"
 matchLength = 0
 wordList = ["Data Source=.+Integrated Security=(SSPI|true)","Integrated Security=(SSPI|true);.*Data Source=.+"]
 triage = "yellow"
@@ -125,7 +125,7 @@ category = []
 relay = []
 description = "Match SQL connection strings that appear to have a password."
 matchLocation = "FileContentAsString"
-importance = "⭐⭐⭐⭐⭐"
+importance = "5⭐"
 wordListType = "Regex"
 matchLength = 0
 wordList = ["Data Source=.+(;|)Password=.+(;|)","Password=.+(;|)Data Source=.+(;|)"]  # ["(?!.+Integrated Security)Data Source=.+Password=.+"]
@@ -140,7 +140,7 @@ category = []
 relay = []
 description = "Files with contents matching these regexen are very interesting."
 matchLocation = "FileContentAsString"
-importance = "⭐⭐⭐⭐⭐"
+importance = "5⭐"
 wordListType = "Regex"
 matchLength = 0
 wordList = ["validationkey\\s*=\\s*[\\'\\\"][^\\'\\\"]....",
@@ -155,7 +155,7 @@ category = []
 relay = []
 description = "Files with contents matching these regexen are very interesting."
 matchLocation = "FileContentAsString"
-importance = "⭐⭐⭐⭐⭐"
+importance = "5⭐"
 wordListType = "Regex"
 matchLength = 0
 wordList = ["password 51\\:b"]
@@ -171,7 +171,7 @@ description = "Files with contents matching these regexes are very interesting."
 matchLocation = "FileContentAsString"
 wordListType = "Regex"
 matchLength = 0
-importance = "⭐⭐⭐⭐⭐"
+importance = "5⭐"
 wordList = ["\"encryptedPassword\":\"[A-Za-z0-9+/=]+\""]
 triage = "red"
 
@@ -185,7 +185,7 @@ description = "Files with contents matching these regexen are very interesting."
 matchLocation = "FileContentAsString"
 wordListType = "Regex"
 matchLength = 0
-importance = "⭐⭐⭐⭐⭐"
+importance = "5⭐"
 wordList = ["(?s)<AdministratorPassword>.{0,30}<Value>.*<\\/Value>",
 "(?s)<AutoLogon>.{0,30}<Value>.*<\\/Value>"]
 triage = "red"
@@ -200,7 +200,7 @@ description = "A description of what a rule does."
 matchLocation = "FileContentAsString"
 wordListType = "Regex"
 matchLength = 0
-importance = "⭐⭐⭐⭐⭐"
+importance = "5⭐"
 wordList = ["NVRAM config last updated", 
 "enable password \\.", 
 "simple-bind authenticated encrypt",
@@ -218,8 +218,22 @@ description = "Files with contents matching these regexen are very interesting."
 matchLocation = "FileContentAsString"
 wordListType = "Regex"
 matchLength = 0
-importance = "⭐⭐⭐⭐⭐"
+importance = "5⭐"
 wordList = ["DBI\\-\\>connect\\("]
+triage = "red"
+
+[[Rule]]
+scope = "Content"
+name = "KeepPerlOracleConnStrings"
+action = "Snaffle"
+category = []
+relay = []
+description = "Files with contents matching these regexen are very interesting."
+matchLocation = "FileContentAsString"
+wordListType = "Regex"
+matchLength = 0
+importance = "5⭐"
+wordList = [".*cx_oracle\\.connect.*"]
 triage = "red"
 
 [[Rule]]
@@ -232,7 +246,7 @@ description = "Files with contents matching these regexen are very interesting."
 matchLocation = "FileContentAsString"
 wordListType = "Regex"
 matchLength = 0
-importance = "⭐⭐⭐⭐⭐"
+importance = "5⭐"
 wordList = [    "-SecureString",
 "-AsPlainText",
 "\\[Net.NetworkCredential\\]::new\\("]
@@ -248,7 +262,7 @@ description = "Files with contents matching these regexen are very interesting."
 matchLocation = "FileContentAsString"
 wordListType = "Regex"
 matchLength = 0
-importance = "⭐⭐⭐⭐⭐"
+importance = "5⭐"
 wordList = ["mysql\\.connector\\.connect\\(",
 "psycopg2\\.connect\\("]
 triage = "red"
@@ -263,7 +277,7 @@ description = "Files with contents matching these regexen are very interesting."
 matchLocation = "FileContentAsString"
 wordListType = "Regex"
 matchLength = 0
-importance = "⭐⭐⭐⭐⭐"
+importance = "5⭐"
 wordList = ["DBI\\.connect\\("]
 triage = "red"
 
@@ -277,7 +291,7 @@ description = "Files with contents matching these regexen are very interesting."
 matchLocation = "FileContentAsString"
 wordListType = "Regex"
 matchLength = 0
-importance = "⭐⭐⭐⭐⭐"
+importance = "5⭐"
 wordList = ["aws[_\\-\\.]?key",
 "(\\s|\\'|\\\"|\\^|=)(A3T[A-Z0-9]|AKIA|AGPA|AROA|AIPA|ANPA|ANVA|ASIA)[A-Z2-7]{12,16}(\\s|\\'|\\\"|$)"]
 triage = "red"
@@ -292,7 +306,7 @@ description = "Files with contents matching these regexen are very interesting."
 matchLocation = "FileContentAsString"
 wordListType = "Regex"
 matchLength = 0
-importance = "⭐⭐⭐"
+importance = "3⭐"
 wordList = ["connectionstring.{1,200}passw"]
 triage = "yellow"
 
@@ -306,7 +320,7 @@ description = "Files with contents matching these regexen are very interesting."
 matchLocation = "FileContentAsString"
 wordListType = "Regex"
 matchLength = 0
-importance = "⭐⭐⭐⭐⭐"
+importance = "5⭐"
 wordList = ["passw?o?r?d\\s*=\\s*[\\'\\\"][^\\'\\\"]....",
 "api[Kk]ey\\s*=\\s*[\\'\\\"][^\\'\\\"]....",
 "passw?o?r?d?>\\s*[^\\s<]+\\s*<",
@@ -330,7 +344,7 @@ description = "Files with content matching an AWS S3 or Apache Hadoop S3A URI Pr
 matchLocation = "FileContentAsString"
 wordListType = "Regex"
 matchLength = 0
-importance = "⭐⭐⭐"
+importance = "3⭐"
 wordList = ["s3[a]?:\\/\\/[a-zA-Z0-9\\-\\+\\/]{2,16}"]
 triage = "yellow"
 
@@ -344,7 +358,7 @@ description = "Files with contents matching these regexen are very interesting."
 matchLocation = "FileContentAsString"
 wordListType = "Regex"
 matchLength = 0
-importance = "⭐⭐⭐⭐⭐"
+importance = "5⭐"
 wordList = ["(xox[pboa]-[0-9]{12}-[0-9]{12}-[0-9]{12}-[a-z0-9]{32})",
 "https://hooks.slack.com/services/T[a-zA-Z0-9_]{8}/B[a-zA-Z0-9_]{8}/[a-zA-Z0-9_]{24}"]
 triage = "red"
@@ -359,6 +373,26 @@ description = "Files with contents matching these regexen are very interesting."
 matchLocation = "FileContentAsString"
 wordListType = "Regex"
 matchLength = 0
-importance = "⭐⭐⭐⭐⭐"
+importance = "5⭐"
 wordList = ["CREATE (USER|LOGIN) .{0,200} (IDENTIFIED BY|WITH PASSWORD)"]
+triage = "red"
+
+[[Rule]]
+scope = "Content"
+name = "KeytoolRegexRed"
+action = "Snaffle"
+category = []
+relay = []
+description = "Keytool pass commands."
+matchLocation = "FileContentAsString"
+importance = "5⭐"
+wordListType = "Regex"
+dontignorecase = true
+matchLength = 0
+wordList = ["keytool.*-srcstorepass.*",
+"keytool.*-keypass",
+"keytool.*-srckeypass",
+"keytool.*-destkeypass",
+"keytool.*-deststorepass",
+]
 triage = "red"

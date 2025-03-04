@@ -7,7 +7,7 @@ relay = []
 description = "Pick these up."
 matchLocation = "FileName"
 matchLength = 0
-importance = "⭐⭐"
+importance = "2⭐"
 wordListType = "EndsWith"
 wordList = [
 "\\.mozilla\\/firefox\\/.*/logins\\.json",
@@ -23,7 +23,7 @@ relay = []
 description = "Pick these up."
 matchLocation = "FileName"
 matchLength = 0
-importance = "⭐⭐"
+importance = "2⭐"
 wordListType = "EndsWith"
 wordList = [
 "\\.conf",
@@ -41,7 +41,7 @@ category = []
 relay = []
 description = "Files with a path containing these strings are very interesting."
 matchLocation = "FilePath"
-importance = "⭐⭐⭐⭐⭐"
+importance = "5⭐"
 wordListType = "Contains"
 matchLength = 0
 wordList = ["\\.purple\\/accounts.xml", 
@@ -58,7 +58,7 @@ category = []
 relay = []
 description = "Files with these extensions are a little interesting."
 matchLocation = "FileExtension"
-importance = "⭐⭐⭐"
+importance = "3⭐"
 wordListType = "Exact"
 matchLength = 0
 wordList = ["\\.key", 
@@ -75,7 +75,7 @@ category = []
 relay = []
 description = "Files with these exact names are very interesting."
 matchLocation = "FilePath"
-importance = "⭐⭐⭐⭐⭐"
+importance = "5⭐"
 wordListType = "EndsWith"
 matchLength = 0
 wordList = [
@@ -104,7 +104,7 @@ description = "SSHKeys"
 matchLocation = "FileName"
 wordListType = "Exact"
 matchLength = 0
-importance = "⭐⭐⭐⭐"
+importance = "4⭐"
 wordList = ["id_rsa",
 "id_dsa",
 "id_ecdsa",
@@ -122,7 +122,7 @@ description = "SSHKeys"
 matchLocation = "FileExtension"
 wordListType = "EndsWith"
 matchLength = 0
-importance = "⭐⭐⭐⭐"
+importance = "4⭐"
 wordList = ["\\.ppk",
 ]
 triage = "orange1"
@@ -137,7 +137,7 @@ description = "Files with these exact names are very interesting."
 matchLocation = "FileName"
 wordListType = "Exact"
 matchLength = 0
-importance = "⭐⭐⭐⭐⭐"
+importance = "5⭐"
 wordList = ["recentservers\\.xml",
 "sftp-config\\.json"]
 triage = "red"
@@ -152,7 +152,7 @@ description = "Files with these extensions are a little interesting."
 matchLocation = "FileExtension"
 wordListType = "Exact"
 matchLength = 0
-importance = "⭐⭐⭐"
+importance = "3⭐"
 wordList = ["\\.rdg","\\.rtsz","\\.rtsx","\\.ovpn","\\.tvopt","\\.sdtid"]
 triage = "yellow"
 
@@ -164,7 +164,7 @@ description = "Files with these exact names are very very interesting."
 matchLocation = "FileName"
 wordListType = "Exact"
 matchLength = 0
-importance = "⭐⭐⭐⭐⭐"
+importance = "5⭐"
 wordList = [ "mobaxterm\\.ini",
 "mobaxterm backup\\.zip",
 "confCons.xml"]
@@ -180,7 +180,7 @@ description = "Files with these extensions are very very interesting."
 matchLocation = "FileExtension"
 wordListType = "Exact"
 matchLength = 0
-importance = "⭐⭐⭐⭐⭐"
+importance = "5⭐"
 wordList = ["\\.kdbx",
 "\\.kdb",
 "\\.psafe3",
@@ -200,7 +200,7 @@ description = "Files with these exact names are very interesting."
 matchLocation = "FileName"
 wordListType = "Exact"
 matchLength = 0
-importance = "⭐⭐⭐⭐⭐"
+importance = "5⭐"
 wordList = ["passwords\\.txt",
 "pass\\.txt",
 "accounts\\.txt",
@@ -234,7 +234,7 @@ description = "Files with these exact names are very interesting."
 matchLocation = "FileName"
 wordListType = "Exact"
 matchLength = 0
-importance = "⭐⭐⭐⭐⭐"
+importance = "5⭐"
 wordList = ["\\.git-credentials"]
 triage = "red"
 
@@ -248,7 +248,7 @@ description = "Files with these exact names are very interesting."
 matchLocation = "FileName"
 wordListType = "Exact"
 matchLength = 0
-importance = "⭐⭐"
+importance = "2⭐"
 wordList = ["\\.bash_history",
 "\\.zsh_history",
 "\\.sh_history",
@@ -290,7 +290,7 @@ description = "Files with these exact names are very interesting."
 matchLocation = "FileName"
 wordListType = "Exact"
 matchLength = 0
-importance = "⭐⭐⭐⭐⭐"
+importance = "5⭐"
 wordList = ["SqlStudio\\.bin",
 "\\.mysql_history",
 "\\.psql_history",
@@ -311,7 +311,7 @@ description = "Files with these exact names are very interesting."
 matchLocation = "FileName"
 wordListType = "Exact"
 matchLength = 0
-importance = "⭐⭐⭐⭐⭐"
+importance = "5⭐"
 wordList = ["\\.tugboat"]
 triage = "red"
 
@@ -325,7 +325,7 @@ description = "Files with a path containing these strings are very very interest
 matchLocation = "FilePath"
 wordListType = "Contains"
 matchLength = 0
-importance = "⭐⭐⭐⭐⭐"
+importance = "5⭐"
 wordList = ["\\/.aws\\/",
 "doctl\\/config.yaml"]
 triage = "red"
@@ -340,7 +340,7 @@ description = "Files with these exact names are very interesting."
 matchLocation = "FileName"
 wordListType = "Exact"
 matchLength = 0
-importance = "⭐⭐⭐⭐⭐"
+importance = "5⭐"
 wordList = ["jenkins\\.plugins\\.publish_over_ssh\\.BapSshPublisherPlugin\\.xml",
 "credentials\\.xml"]
 triage = "red"
@@ -355,7 +355,7 @@ description = "Files with these extensions are a little interesting."
 matchLocation = "FileExtension"
 wordListType = "Exact"
 matchLength = 0
-importance = "⭐⭐⭐"
+importance = "3⭐"
 wordList = [
 "\\.mdf",
 "\\.sdf",
@@ -373,7 +373,7 @@ description = "Files containing Defender Configs are very interesting."
 matchLocation = "FileName"
 wordListType = "Exact"
 matchLength = 0
-importance = "⭐⭐⭐"
+importance = "3⭐"
 wordList = ["SensorConfiguration.json","mdatp_managed.json"]
 triage = "yellow"
 
@@ -387,7 +387,7 @@ description = "Files with these extensions are a little interesting."
 matchLocation = "FileExtension"
 wordListType = "Exact"
 matchLength = 0
-importance = "⭐⭐⭐"
+importance = "3⭐"
 wordList = [
 "\\.wim",
 "\\.ova",
@@ -404,7 +404,7 @@ description = "Files containing Domain Join Credes are quite interesting."
 matchLocation = "FileName"
 wordListType = "Exact"
 matchLength = 0
-importance = "⭐⭐⭐"
+importance = "3⭐"
 wordList = ["customsettings.ini"]
 triage = "yellow"
 
@@ -418,7 +418,7 @@ description = "Files with a path containing these strings are very interesting."
 matchLocation = "FilePath"
 wordListType = "Contains"
 matchLength = 0
-importance = "⭐⭐⭐⭐⭐"
+importance = "5⭐"
 wordList = ["control\\\\customsettings.ini"]
 triage = "red"
 
@@ -432,7 +432,7 @@ description = "Files with a path containing these strings are very interesting."
 matchLocation = "FilePath"
 wordListType = "Regex"
 matchLength = 0
-importance = "⭐⭐⭐⭐⭐"
+importance = "5⭐"
 wordList = ["REMINST\\\\SMSTemp\\\\.*\\.var",
 			"SMS\\\\data\\\\Variables.dat",
 			"SMS\\\\data\\\\Policy.xml"
@@ -464,7 +464,7 @@ description = "Files with these exact names are very interesting."
 matchLocation = "FileName"
 wordListType = "Exact"
 matchLength = 0
-importance = "⭐⭐⭐⭐⭐"
+importance = "5⭐"
 wordList = ["proftpdpasswd",
 "filezilla\\.xml"]
 triage = "red"
@@ -479,7 +479,7 @@ description = "Files with these extensions are very very interesting."
 matchLocation = "FileExtension"
 wordListType = "Exact"
 matchLength = 0
-importance = "⭐⭐⭐⭐⭐"
+importance = "5⭐"
 wordList = [    "\\.cscfg",
 "\\.tfvars"]
 triage = "red"
@@ -494,7 +494,7 @@ description = "Files with these extensions are a little interesting."
 matchLocation = "FileExtension"
 wordListType = "Exact"
 matchLength = 0
-importance = "⭐⭐⭐⭐⭐"
+importance = "5⭐"
 wordList = ["\\.dmp"]
 triage = "red"
 
@@ -508,7 +508,7 @@ description = "Files with these exact names are very very interesting."
 matchLocation = "FileName"
 wordListType = "Exact"
 matchLength = 0
-importance = "⭐⭐⭐⭐⭐"
+importance = "5⭐"
 wordList = [ "MEMORY\\.DMP",
 "hiberfil\\.sys",
 "lsass\\.dmp",
@@ -525,7 +525,7 @@ description = "Files with these exact names are very very interesting."
 matchLocation = "FileName"
 wordListType = "Exact"
 matchLength = 0
-importance = "⭐⭐⭐⭐⭐"
+importance = "5⭐"
 wordList = [ "running-config\\.cfg",
 "startup-config\\.cfg",
 "running-config",
@@ -542,7 +542,7 @@ description = "Files with these extensions are interesting."
 matchLocation = "FileExtension"
 wordListType = "Exact"
 matchLength = 0
-importance = "⭐⭐⭐"
+importance = "3⭐"
 wordList = [
 "\\.keytab",
 "\\.CCACHE"]
@@ -558,7 +558,7 @@ Ddescription = "Files with these names are interesting."
 matchLocation = "FileName"
 wordListType = "Regex"
 matchLength = 0
-importance = "⭐⭐⭐"
+importance = "3⭐"
 wordList = [
 "krb5cc_.*"]
 triage = "yellow"
@@ -573,7 +573,7 @@ description = "Files with these exact names are very very interesting."
 matchLocation = "FileName"
 wordListType = "Exact"
 matchLength = 0
-importance = "⭐⭐⭐⭐⭐"
+importance = "5⭐"
 wordList = [ "shadow",
 "pwd\\.db",
 "passwd"]
@@ -589,7 +589,7 @@ description = "Files with these exact names are very very interesting."
 matchLocation = "FileName"
 wordListType = "Exact"
 matchLength = 0
-importance = "⭐⭐⭐⭐⭐"
+importance = "5⭐"
 wordList = [ 
 	"Psmapp\\.cred",
 	"psmgw\\.cred",
@@ -618,7 +618,7 @@ description = "Files with these extensions are a little interesting."
 matchLocation = "FileExtension"
 wordListType = "Exact"
 matchLength = 0
-importance = "⭐⭐⭐"
+importance = "3⭐"
 wordList = ["\\.pcap",
 "\\.cap",
 "\\.pcapng",
@@ -635,7 +635,7 @@ description = "Files with these exact names are very very interesting."
 matchLocation = "FileName"
 wordListType = "Exact"
 matchLength = 0
-importance = "⭐⭐⭐⭐⭐"
+importance = "5⭐"
 wordList = [ "NTDS.DIT",
 "SYSTEM",
 "SAM",
@@ -652,7 +652,7 @@ description = "Files with these exact names are very interesting."
 matchLocation = "FileName"
 wordListType = "Exact"
 matchLength = 0
-importance = "⭐⭐⭐⭐⭐"
+importance = "5⭐"
 wordList = ["LocalSettings\\.php"]
 triage = "red"
 
@@ -666,7 +666,7 @@ description = "Files with these exact names are very interesting."
 matchLocation = "FileName"
 wordListType = "Exact"
 matchLength = 0
-importance = "⭐⭐⭐⭐⭐"
+importance = "5⭐"
 wordList = ["database\\.yml",
 "\\.secret_token\\.rb",
 "knife\\.rb",

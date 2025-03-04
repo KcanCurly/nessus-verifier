@@ -7,8 +7,13 @@ from rich.console import Group
 from rich.panel import Panel
 from rich.live import Live
 from concurrent.futures import ThreadPoolExecutor, as_completed
+import threading
 
 MAX_FILE_SIZE_MB = 100
+
+history_lock = threading.Lock()
+
+history_dict = dict[str, set]()
 
 def process_file(conn, share, file, host, username, rules, error, verbose, live):
     def process_file2(data):
@@ -65,7 +70,10 @@ def list_files_recursively(conn, share, rules, target, username, error, verbose,
                 if file.get_filesize() / 1024 > MAX_FILE_SIZE_MB: continue
                 enum_file = rules.enum_file(full_path)
                 if not enum_file[0] or file.get_filesize() / 1024 > MAX_FILE_SIZE_MB or not can_read_file(conn, share, full_path):continue
-                
+                with history_lock:
+                    if full_path in history_dict[f"{target}{share}"]: continue
+
+                history_dict[f"{target}{share}"].add(full_path)
                 if verbose: live.console.print(f"[FILE] {full_path}")
                 process_file(conn, share, full_path, target, username, rules, error, verbose, live)
 
@@ -78,8 +86,10 @@ def process_host(target, username, password, rules, verbose, live, error):
         # Establish SMB connection
         conn = SMBConnection(target, target)
         conn.login(username, password)
+        
         for share in conn.listShares():
             try:
+                history_dict[f"{target}{share['shi1_netname'][:-1]}"] = set()
                 list_files_recursively(conn, share['shi1_netname'][:-1], rules, target, username, error, verbose, live)
             except Exception as e:
                 if error: print(f"Failed list share {share['shi1_netname'][:-1]} on {target}: {e}")
@@ -105,7 +115,7 @@ def main():
     console = get_classic_console(force_terminal=True)
     
     progress_group = Group(
-        Panel(single_progress, title="SSH Snaffle", expand=False),
+        Panel(single_progress, title="SMB Snaffle", expand=False),
         overall_progress,
     ) if not args.only_show_progress else Group(overall_progress)
     

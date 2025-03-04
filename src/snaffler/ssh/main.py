@@ -14,8 +14,13 @@ from rich.console import Console
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from src.utilities.utilities import get_classic_single_progress, get_classic_overall_progress, get_classic_console, get_hosts_from_file
 import asyncio
+import threading
 
 MAX_FILE_SIZE_MB = 100
+
+history_lock = threading.Lock()
+
+history_dict = dict[str, set]()
 
 async def can_read_file(sftp, path):
     """Attempts to open a remote file in read mode to check permissions."""
@@ -80,7 +85,10 @@ async def process_directory(sftp: asyncssh.SFTPClient, host:str, username:str, r
                 enum_file = rules.enum_file(item_path)
 
                 if not enum_file[0] or not await can_read_file(sftp, item_path):continue
-                
+                with history_lock:
+                    if item_path in history_dict[host]: continue
+
+                history_dict[host].add(item_path)
                 for b,c in enum_file[1].items():
                     print_finding(live.console, host, username, b, item_path, c)
                 if verbose: live.console.print(f"[F] {item_path}")
