@@ -135,11 +135,13 @@ async def main2():
         overall_progress.start_task(overall_task_id)
         futures = []
         tasks = []
-        for entry in get_hosts_from_file(args.file):
-            host, cred = entry.split(" => ")
-            ip, port = host.split(":")
-            username, password = cred.split(":")
-            tasks.append(process_host(ip, port, username, password, rules, args.verbose, live, args.error))
+        with ThreadPoolExecutor(args.threads) as executor:
+            for entry in get_hosts_from_file(args.file):
+                host, cred = entry.split(" => ")
+                ip, port = host.split(":")
+                username, password = cred.split(":")
+                executor.submit(await process_host(ip, port, username, password, rules, args.verbose, live, args.error))
+                #tasks.append(process_host(ip, port, username, password, rules, args.verbose, live, args.error))
             
 
         results = [await asyncio.gather(*tasks)]
