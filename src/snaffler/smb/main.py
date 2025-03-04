@@ -72,8 +72,8 @@ def list_files_recursively(conn, share, rules, target, username, error, verbose,
                 if not enum_file[0] or file.get_filesize() / 1024 > MAX_FILE_SIZE_MB or not can_read_file(conn, share, full_path):continue
                 with history_lock:
                     if full_path in history_dict[f"{target}{share}"]: continue
-
-                history_dict[f"{target}{share}"].add(full_path)
+                    history_dict[f"{target}{share}"].add(full_path)
+                    
                 if verbose: live.console.print(f"[FILE] {full_path}")
                 process_file(conn, share, full_path, target, username, rules, error, verbose, live)
 

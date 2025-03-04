@@ -38,7 +38,7 @@ async def get_file_size_mb(sftp, path):
     try:
         file_stat = await sftp.stat(path)
         size_mb = file_stat.size / (1024 * 1024)  # Convert bytes to MB
-        return round(size_mb, 2)  # Round to 2 decimal places
+        return size_mb  # Round to 2 decimal places
     except Exception as e:
         print(f"Error getting file size: {e}")
         return None
@@ -87,8 +87,8 @@ async def process_directory(sftp: asyncssh.SFTPClient, host:str, username:str, r
                 if not enum_file[0] or not await can_read_file(sftp, item_path):continue
                 with history_lock:
                     if item_path in history_dict[host]: continue
-
-                history_dict[host].add(item_path)
+                    history_dict[host].add(item_path)
+                    
                 for b,c in enum_file[1].items():
                     print_finding(live.console, host, username, b, item_path, c)
                 if verbose: live.console.print(f"[F] {item_path}")
