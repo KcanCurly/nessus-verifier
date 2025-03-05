@@ -1,6 +1,7 @@
 from src.utilities.utilities import find_scan
 from src.modules.vuln_parse import GroupNessusScanOutput
 from src.utilities import logger
+from src.services.idrac import version_nv
 import requests
 
 code = 19
@@ -15,7 +16,13 @@ def helper_parse(subparser):
     group = parser_task1.add_mutually_exclusive_group(required=True)
     group.add_argument("-f", "--file", type=str, help="JSON file")
     group.add_argument("-lf", "--list-file", type=str, help="List file")
+    parser_task1.add_argument("--threads", default=10, type=int, help="Number of threads (Default = 10)")
+    parser_task1.add_argument("--timeout", default=5, type=int, help="Timeout in seconds (Default = 5)")
+    parser_task1.add_argument("--disable-visual-on-complete", action="store_true", help="Disables the status visual for an individual task when that task is complete, this can help on keeping eye on what is going on at the time")
+    parser_task1.add_argument("--only-show-progress", action="store_true", help="Only show overall progress bar")
+    parser_task1.add_argument("-v", "--verbose", action="store_true", help="Enable verbose")
     parser_task1.set_defaults(func=solve) 
+    
 
 def solve(args, is_all = False):
     versions = {}
@@ -33,28 +40,4 @@ def solve(args, is_all = False):
         with open(args.list_file, 'r') as f:
             hosts = [line.strip() for line in f]
     
-    for host in hosts:
-        try:
-            try:
-                resp = requests.get(f"https://{host}/sysmgmt/2015/bmc/info", allow_redirects=True, verify=False, timeout=10)
-            except Exception:
-                try:
-                    resp = requests.get(f"http://{host}/sysmgmt/2015/bmc/info", allow_redirects=True, verify=False, timeout=10)
-                except: continue
-            
-            version = resp.json()["Attributes"]["FwVer"]
-            if version:
-                if version not in versions:
-                    versions[version] = set()
-                versions[version].add(host)
-            
-        except:pass
-
-
-    
-    if len(versions) > 0:
-        print("Detected iDRAC versions:")
-        for key, value in versions.items():
-            print(f"{key}:")
-            for v in value:
-                print(f"\t{v}")
+    version_nv(hosts, timeout=args.timeout, verbose=args.verbose, disable_visual_on_complete=args.disable_visual_on_complete, only_show_progress=args.only_show_progress)
