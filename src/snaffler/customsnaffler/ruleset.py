@@ -63,7 +63,7 @@ class SnafflerRuleSet:
                 if i not in self.contentsImportanceEnumerationRules:
                     self.contentsImportanceEnumerationRules[i] = []
                 self.contentsImportanceEnumerationRules[i].append(rule)
-            # self.contentsEnumerationRules[rule.name] = rule
+            self.contentsEnumerationRules[rule.name] = rule
 
     def load_rules(self, rules:List[SnaffleRule]):
         """Adds all rules from a list of rules"""
