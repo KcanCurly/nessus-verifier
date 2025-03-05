@@ -27,6 +27,7 @@ def process_file(conn, share, file, host, username, rules, error, verbose, live)
             a = rules.enum_file(line, 10, 10)
 
             if a[0]:
+                print(a)
                 for b,c in a[1].items():
                     print_finding(live.console, host, share, username, b, file, c)
     try:
