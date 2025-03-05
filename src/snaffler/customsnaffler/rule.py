@@ -5,7 +5,7 @@ import re
 from src.snaffler.customsnaffler.constants import EnumerationScope, MatchAction, MatchLoc, MatchListType, Triage
 
 class SnaffleRule:
-	def __init__(self, scope, id, name, action, category, relay, description, matchLocation, wordListType, matchLength, wordList, triage, importance, dontignorecase) -> None:
+	def __init__(self, scope, id, name, action, category, relay, description, matchLocation, wordListType, matchLength, wordList, triage, importance, dontignorecase, notwordList) -> None:
 		self.scope:EnumerationScope = scope
 		self.id:str = id
 		self.name:str = name
@@ -20,6 +20,7 @@ class SnaffleRule:
 		self.triage:Triage = triage
 		self.importance:str = importance
 		self.dontignorecase:bool = dontignorecase
+		self.notWordList:List[re.Pattern] = notwordList
 		self.__convert_wordlist()
 
 	def __convert_wordlist(self):
@@ -74,6 +75,7 @@ class SnaffleRule:
 			'wordList' : self.wordList,
 			'triage' : self.triage.value,
 			'importance' : self.importance,
+			'notWordList' : self.notWordList
 		}
 	
 	@staticmethod
@@ -100,6 +102,7 @@ class SnaffleRule:
 			importance = d.get('importance', "0⭐")
 			dontignorecase = d.get('dontignorecase', False)
 			triage = Triage(d.get('triage', 'gray'))
+			notWordList = d.get('notWordList', [])	
 			if enumerationScope == EnumerationScope.File:
 				obj = SnafflerFileRule
 			elif enumerationScope == EnumerationScope.Directory:
@@ -109,6 +112,6 @@ class SnaffleRule:
 			else:
 				raise NotImplementedError(f'EnumerationScope {enumerationScope} not implemented.')
 
-			results.append(obj(enumerationScope, id, ruleName, matchAction, category, relayTargets, description, matchLocation, wordListType, matchLength, wordList, triage, importance, dontignorecase))
+			results.append(obj(enumerationScope, id, ruleName, matchAction, category, relayTargets, description, matchLocation, wordListType, matchLength, wordList, triage, importance, dontignorecase, notWordList))
 		return results
 
