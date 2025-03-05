@@ -24,6 +24,7 @@ wordList = [
 "key",
 "auth",
 ]
+notWordList = []
 triage = "green"
 
 [[Rule]]
@@ -94,8 +95,6 @@ wordListType = "Regex"
 dontignorecase = true
 matchLength = 0
 wordList = [
-"mongo.*(-p|--password) \\S+",
-"mongodb:\\/\\/\\S+:\\S+@",
 ".*:\\/\\/\\S+:\\S+@",
 ".*bind_password.*",
 "curl.*-u \\S+:\\S+ .*",
