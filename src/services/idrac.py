@@ -61,7 +61,7 @@ def version_nv(l: list[str], output: str = None, threads: int = 10, timeout: int
         if not r: continue
         if r.version not in versions:
             versions[r.version] = set()
-        versions[r.version].add(host)
+        versions[r.version].add(r.host)
 
     if len(versions) > 0:
         print("Detected iDRAC versions:")
