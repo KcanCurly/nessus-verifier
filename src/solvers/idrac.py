@@ -36,10 +36,10 @@ def solve(args, is_all = False):
     for host in hosts:
         try:
             try:
-                resp = requests.get(f"https://{host}/sysmgmt/2015/bmc/info", allow_redirects=True, verify=False)
+                resp = requests.get(f"https://{host}/sysmgmt/2015/bmc/info", allow_redirects=True, verify=False, timeout=10)
             except Exception:
                 try:
-                    resp = requests.get(f"http://{host}/sysmgmt/2015/bmc/info", allow_redirects=True, verify=False)
+                    resp = requests.get(f"http://{host}/sysmgmt/2015/bmc/info", allow_redirects=True, verify=False, timeout=10)
                 except: continue
             
             version = resp.json()["Attributes"]["FwVer"]
@@ -48,7 +48,7 @@ def solve(args, is_all = False):
                     versions[version] = set()
                 versions[version].add(host)
             
-        except Exception as e: print(e)
+        except:pass
 
 
     
