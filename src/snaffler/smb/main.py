@@ -83,7 +83,9 @@ def list_files_recursively(conn, share, rules, target, username, error, verbose,
                     continue
 
                 with history_lock:
-                    if item_path in history_dict[f"{target}{share}"]: continue
+                    if item_path in history_dict[f"{target}{share}"]: 
+                        if verbose: live.console.print(f"[F] | Already processed, skipping | {item_path}")
+                        continue
                     history_dict[f"{target}{share}"].add(item_path)
                     
                 if verbose: live.console.print(f"[FILE] {item_path}")

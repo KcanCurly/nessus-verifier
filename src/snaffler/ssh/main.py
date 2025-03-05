@@ -93,7 +93,9 @@ async def process_directory(sftp: asyncssh.SFTPClient, host:str, username:str, r
                     continue
 
                 with history_lock:
-                    if item_path in history_dict[host]: continue
+                    if item_path in history_dict[host]:
+                        if verbose: live.console.print(f"[F] | Already processed, skipping | {item_path}")
+                        continue
                     history_dict[host].add(item_path)
                     
                 for b,c in enum_file[1].items():
