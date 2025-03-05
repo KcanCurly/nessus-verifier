@@ -419,7 +419,7 @@ matchLocation = "FilePath"
 wordListType = "Contains"
 matchLength = 0
 importance = "5⭐"
-wordList = ["control\\\\customsettings.ini"]
+wordList = ["control\\/customsettings.ini"]
 triage = "red"
 
 [[Rule]]
@@ -433,9 +433,9 @@ matchLocation = "FilePath"
 wordListType = "Regex"
 matchLength = 0
 importance = "5⭐"
-wordList = ["REMINST\\\\SMSTemp\\\\.*\\.var",
-			"SMS\\\\data\\\\Variables.dat",
-			"SMS\\\\data\\\\Policy.xml"
+wordList = ["REMINST\\/SMSTemp\\/.*\\.var",
+			"SMS\\/data\\/Variables.dat",
+			"SMS\\/data\\/Policy.xml"
 		]
 triage = "red"
 
@@ -449,10 +449,59 @@ description = "Look inside unattend.xml files for actual values."
 matchLocation = "FileName"
 wordListType = "Exact"
 matchLength = 0
-importance = "⭐"
+importance = "2⭐"
 wordList = ["unattend\\.xml",
 "Autounattend\\.xml"]
-triage = "green"
+triage = "blue"
+
+[[Rule]]
+scope = "File"
+name = "WinSysprep"
+action = "Snaffle"
+category = []
+relay = []
+description = "Look inside unattend.xml files for actual values."
+matchLocation = "FileName"
+wordListType = "Exact"
+matchLength = 0
+importance = "2⭐"
+wordList = ["sysprep\\.inf",
+"sysprep\\.xml"]
+triage = "blue"
+
+[[Rule]]
+scope = "File"
+name = "Wi3rdParty"
+action = "Snaffle"
+category = []
+relay = []
+description = "Look inside unattend.xml files for actual values."
+matchLocation = "FilePath"
+wordListType = "EndsWith"
+matchLength = 0
+importance = "2⭐"
+wordList = ["vnc\\.ini",
+"McAfee\\/Common Framework\\/SiteList\\.xml"]
+triage = "blue"
+
+[[Rule]]
+scope = "File"
+name = "WinRandomXML"
+action = "Snaffle"
+category = []
+relay = []
+description = "Look inside unattend.xml files for actual values."
+matchLocation = "FilePath"
+wordListType = "EndsWith"
+matchLength = 0
+importance = "2⭐"
+wordList = ["Services\\/Services\\.xml",
+"ScheduledTasks\\/ScheduledTasks\\.xml",
+"Printers\\/Printers\\.xml",
+"Drives\\/Drives\\.xml",
+"DataSources\\/DataSources\\.xml",
+]
+triage = "blue"
 
 [[Rule]]
 scope = "File"
@@ -655,6 +704,45 @@ matchLength = 0
 importance = "5⭐"
 wordList = ["LocalSettings\\.php"]
 triage = "red"
+
+#################
+#################
+### DATABASES ###
+#################
+#################
+
+[[Rule]]
+scope = "File"
+name = "FileDatabasesRed"
+action = "Snaffle"
+category = []
+relay = []
+description = "Files with these exact names are very interesting."
+matchLocation = "FileName"
+wordListType = "Exact"
+matchLength = 0
+importance = "5⭐"
+wordList = [
+"my\\.cnf",		# MYSQL	
+"\\.my\\.cnf"	# MYSQL
+]
+triage = "red"
+
+[[Rule]]
+scope = "File"
+name = "FileDatabasesYellow"
+action = "Snaffle"
+category = []
+relay = []
+description = "Files with these exact names are very interesting."
+matchLocation = "FileName"
+wordListType = "Exact"
+matchLength = 0
+importance = "3⭐"
+wordList = [
+"\\.mylogin\\.cnf",		# MYSQL
+]
+triage = "yellow"
 
 [[Rule]]
 scope = "File"

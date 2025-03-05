@@ -35,10 +35,11 @@ def process_file(conn, share, file, host, username, rules, error, verbose, live)
     except Exception as e: 
         if error: print("Process File Error:", e)
 
-def can_read_file2(data):
-    pass
+
 
 def can_read_file(conn, share, file):
+    def can_read_file2(data):
+        pass
     try:
         conn.getFile(share, file, can_read_file2)
         return True

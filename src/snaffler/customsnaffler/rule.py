@@ -27,7 +27,7 @@ class SnaffleRule:
 		res = []
 		for word in self.wordList:
 			if self.wordListType == MatchListType.Regex:
-				a=1
+				pass
 			elif self.wordListType == MatchListType.EndsWith:
 				word = word + '$'
 			elif self.wordListType == MatchListType.StartsWith:

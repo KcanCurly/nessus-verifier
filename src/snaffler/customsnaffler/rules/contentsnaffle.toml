@@ -11,15 +11,18 @@ matchLength = 0
 importance = "1⭐"
 wordListType = "Contains"
 wordList = [
-".*password.*",
-".*passwd.*",
-".*pass.*",
-".*pwd.*",
-".*credential.*",
-".*cred.*",
-".*sifre.*",
-".*şifre.*",
-".*secret.*",
+"password",
+"passwd",
+"pass",
+"pwd",
+"credential",
+"cred",
+"(s|ş)ifre",
+"parola",
+"secret",
+"token",
+"key",
+"auth",
 ]
 triage = "green"
 
@@ -91,15 +94,88 @@ wordListType = "Regex"
 dontignorecase = true
 matchLength = 0
 wordList = [
-"mongo.*--password.*",
-"mongodb:\\/\\/\\w+:\\w+",
-".*:\\/\\/\\w+:\\w+@",
+"mongo.*(-p|--password) \\S+",
+"mongodb:\\/\\/\\S+:\\S+@",
+".*:\\/\\/\\S+:\\S+@",
 ".*bind_password.*",
-"curl.*-u \\w+:\\w+.*",
+"curl.*-u \\S+:\\S+ .*",
 ".*querypassword.*",
 ".*sqldbpassword.*",
 ]
 triage = "red"
+
+[[Rule]]
+scope = "Content"
+id = "d16"
+name = "ContentDatabasesRed"
+action = "Snaffle"
+category = []
+relay = []
+description = "Database related matches."
+matchLocation = "FileContentAsString"
+wordListType = "Regex"
+importance = "5⭐"
+matchLength = 0
+wordList = [
+"(mysql|mongodb|postgresql):\\/\\/\\S+:\\S+@",   # MYSQL, MONGODB, PSQL
+]
+triage = "red"
+
+[[Rule]]
+scope = "Content"
+id = "d16"
+name = "ContentDatabasesRedDIC"
+action = "Snaffle"
+category = []
+relay = []
+description = "Match SQL connection strings that appear to use integrated security (so no passwords)."
+matchLocation = "FileContentAsString"
+wordListType = "Contains"
+importance = "5⭐"
+matchLength = 0
+dontignorecase = true
+wordList = [
+"IDENTIFIED BY",    # MYSQL SQL PASSWORD
+"mysql.*(-p|--password)",   # MYSQL CLI
+"couchbase-cli.*-p", # COUCHBASE
+"mongo.*(-p|--password) \\S+",  # MONGODB
+]
+triage = "red"
+
+[[Rule]]
+scope = "Content"
+id = "d16"
+name = "ContentDatabasesRedDIC"
+action = "Snaffle"
+category = []
+relay = []
+description = "Match SQL connection strings that appear to use integrated security (so no passwords)."
+matchLocation = "FileContentAsString"
+wordListType = "Contains"
+importance = "5⭐"
+matchLength = 0
+dontignorecase = true
+wordList = [
+"psql.*-w", # COUCHBASE
+]
+triage = "red"
+
+[[Rule]]
+scope = "Content"
+id = "d16"
+name = "ContentDatabasesYellow"
+action = "Snaffle"
+category = []
+relay = []
+description = "Match SQL connection strings that appear to use integrated security (so no passwords)."
+matchLocation = "FileContentAsString"
+wordListType = "Contains"
+importance = "5⭐"
+matchLength = 0
+wordList = [
+"couchbase-cli.*--config-path", # COUCHBASE
+]
+triage = "yellow"
 
 [[Rule]]
 scope = "Content"
