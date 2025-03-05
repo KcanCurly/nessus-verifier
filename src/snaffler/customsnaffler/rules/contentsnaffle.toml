@@ -11,7 +11,7 @@ matchLength = 0
 importance = "1⭐"
 wordListType = "Contains"
 wordList = [
-"password",
+".*password.*",
 "passwd",
 "pass",
 "pwd",
