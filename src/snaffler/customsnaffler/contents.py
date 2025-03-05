@@ -1,15 +1,19 @@
-import codecs
 from src.snaffler.customsnaffler.rule import SnaffleRule
-from src.snaffler.customsnaffler.constants import EnumerationScope, MatchAction, MatchLoc, MatchListType, Triage
-from typing import List
-import os
+from src.snaffler.customsnaffler.constants import MatchLoc
 
 class SnafflerContentsEnumerationRule(SnaffleRule):
+	def match_not(self, data):
+		for notrex in self.notWordList:
+			if notrex.search(data): return True
+		return False
+    
 	def match(self, data, chars_before = 0, chars_after = 0):
 		matches = []
 		for rex in self.wordList:
 			for match in rex.finditer(data):
 				text = match.group(0)
+				if self.match_not(text): continue
+				
 
 				if chars_before > 0:
 					text = data[max(match.start() - chars_before, 0) : match.start()] + text

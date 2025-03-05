@@ -41,18 +41,36 @@ class SnaffleRule:
 			if self.dontignorecase: res.append(re.compile(word, flags=re.MULTILINE))
 			else: res.append(re.compile(word, flags=re.IGNORECASE|re.MULTILINE))
 		self.wordList = res
+  
+		res = []
+		for word in self.notWordList:
+			if self.wordListType == MatchListType.Regex:
+				pass
+			elif self.wordListType == MatchListType.EndsWith:
+				word = word + '$'
+			elif self.wordListType == MatchListType.StartsWith:
+				word = '^' + word
+			elif self.wordListType == MatchListType.Contains:
+				word = '.*' + word + '.*'
+			elif self.wordListType == MatchListType.Exact:
+				word = '^' + word + '$'
+
+			if self.dontignorecase: res.append(re.compile(word, flags=re.MULTILINE))
+			else: res.append(re.compile(word, flags=re.IGNORECASE|re.MULTILINE))
+		self.notWordList = res
 
 	
 	def match(self, data):
 		for rex in self.wordList:
-			if rex.search(data) is not None:
-				return True
+			if not rex.search(data): continue
+			for notrex in self.notWordList:
+				if notrex.search(data): continue
+			return True
 		return False
 
 	def determine_action(self, data):
-		if self.match(data) is False:
-			return None, None
-		return self.matchAction, self.triage
+		if self.match(data): return self.matchAction, self.triage
+		return None, None
 	
 	def __repr__(self):
 		return str(self.to_toml())

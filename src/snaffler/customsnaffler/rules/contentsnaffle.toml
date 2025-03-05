@@ -24,7 +24,9 @@ wordList = [
 "key",
 "auth",
 ]
-notWordList = []
+notWordList = [
+"reauth",
+]
 triage = "green"
 
 [[Rule]]
