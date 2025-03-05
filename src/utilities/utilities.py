@@ -15,11 +15,9 @@ def savetofile(path, message, mode = "a+"):
         f.write(message)
         
 def get_hosts_from_file(name, get_ports = True):
-    try:
-        with open(name, "r") as file:
-            if get_ports: return list(set(line.strip() for line in file)) 
-            else: return list(set(line.strip().split(":")[0] for line in file)) 
-    except: return None
+    with open(name, "r") as file:
+        if get_ports: return list(set(line.strip() for line in file)) 
+        else: return list(set(line.strip().split(":")[0] for line in file)) 
     
 def confirm_prompt(prompt="Are you sure?", suppress = False):
     extra = " [y/N]: " if not suppress else ""

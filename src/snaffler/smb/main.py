@@ -37,13 +37,14 @@ def process_file(conn, share, file, host, username, rules, error, verbose, live)
 
 
 
-def can_read_file(conn, share, file):
+def can_read_file(conn, share, file, verbose, error, live):
     def can_read_file2(data):
         pass
     try:
         conn.getFile(share, file, can_read_file2)
         return True
-    except Exception as e: print("Can read file error", e)
+    except Exception as e: 
+        if error:live.console.print("Can read file error", e)
     
 def print_finding(console, host:str, share:str, username:str, rule:SnaffleRule, path:str, findings:list[str]):
     console.print(f"[{rule.triage.value}]\[{host}]\[{share}]\[{username}]\[{rule.importance}]\[{rule.name}][/{rule.triage.value}][white] | {path} | {findings}[/white]")
@@ -70,7 +71,7 @@ def list_files_recursively(conn, share, rules, target, username, error, verbose,
             else:
                 if file.get_filesize() / 1024 > MAX_FILE_SIZE_MB: continue
                 enum_file = rules.enum_file(full_path)
-                if not enum_file[0] or file.get_filesize() / 1024 > MAX_FILE_SIZE_MB or not can_read_file(conn, share, full_path):continue
+                if not enum_file[0] or file.get_filesize() / 1024 > MAX_FILE_SIZE_MB or not can_read_file(conn, share, full_path, verbose, error, live):continue
                 with history_lock:
                     if full_path in history_dict[f"{target}{share}"]: continue
                     history_dict[f"{target}{share}"].add(full_path)
@@ -93,11 +94,11 @@ def process_host(target, username, password, rules, verbose, live, error):
                 history_dict[f"{target}{share['shi1_netname'][:-1]}"] = set()
                 list_files_recursively(conn, share['shi1_netname'][:-1], rules, target, username, error, verbose, live)
             except Exception as e:
-                if error: print(f"Failed list share {share['shi1_netname'][:-1]} on {target}: {e}")
+                if live.console.print: print(f"Failed list share {share['shi1_netname'][:-1]} on {target}: {e}")
 
         conn.close()
     except Exception as e:
-        if error: print(f"Failed to connect: {e}")
+        if error: live.console.print(f"Failed to connect: {e}")
 
 def main():
     parser = argparse.ArgumentParser(description="Snaffle via SMB.")
