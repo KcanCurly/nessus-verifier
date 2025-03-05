@@ -172,7 +172,7 @@ class SnafflerRuleSet:
                     return False, None
                 if action and len(m) > 0:
                     rules_return[rule] = m
-            if len(rules) > 0: return True, rules
+            if len(rules_return) > 0: return True, rules_return
         """
         for rule in self.contentsEnumerationRules.values():
             action, m = rule.open_and_match(filecontent, chars_before_match, chars_after_match)
