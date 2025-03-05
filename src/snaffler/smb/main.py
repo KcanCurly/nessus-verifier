@@ -24,7 +24,7 @@ def process_file(conn, share, file, host, username, rules, error, verbose, live)
             data = data.split("\n")
         for line in data:
             if len(line) > 300: continue
-            a = rules.enum_file(line, 10, 10)
+            a = rules.enum_content(line, 10, 10)
 
             if a[0]:
                 for b,c in a[1].items():
