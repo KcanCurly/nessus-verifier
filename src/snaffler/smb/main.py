@@ -61,23 +61,33 @@ def list_files_recursively(conn, share, rules, target, username, error, verbose,
             if filename in [".", ".."]:  # Skip current and parent directory links
                 continue
 
-            full_path = directory.replace("*", "")  + filename
+            item_path = directory.replace("*", "")  + filename
             
             if file.is_directory():
-                if not rules.enum_directory(full_path)[0]:continue
-                if verbose: live.console.print(f"[DIR] {full_path}")
+                if not rules.enum_directory(item_path)[0]:continue
+                if verbose: live.console.print(f"[DIR] {item_path}")
                 # Recursively list the contents of subdirectories
-                list_files_recursively(conn, share, rules, target, username, error, verbose, live, full_path + "/*")
+                list_files_recursively(conn, share, rules, target, username, error, verbose, live, item_path + "/*")
             else:
                 if file.get_filesize() / 1024 > MAX_FILE_SIZE_MB: continue
-                enum_file = rules.enum_file(full_path)
-                if not enum_file[0] or file.get_filesize() / 1024 > MAX_FILE_SIZE_MB or not can_read_file(conn, share, full_path, verbose, error, live):continue
+                enum_file = rules.enum_file(item_path)
+                if verbose: live.console.print(f"[F] | Processing | {item_path}")
+                if not enum_file[0]:
+                    if verbose: live.console.print(f"[F] | Discarded by {enum_file[1][0].name} | {item_path}")
+                    continue
+                if file.get_filesize() / 1024 > MAX_FILE_SIZE_MB:
+                    if verbose: live.console.print(f"[F] | File too large: {file.get_filesize() / 1024} MB | {item_path}")
+                    continue
+                if not can_read_file(conn, share, item_path, verbose, error, live):
+                    if verbose: live.console.print(f"[F] | Read Failed | {item_path}")
+                    continue
+
                 with history_lock:
-                    if full_path in history_dict[f"{target}{share}"]: continue
-                    history_dict[f"{target}{share}"].add(full_path)
+                    if item_path in history_dict[f"{target}{share}"]: continue
+                    history_dict[f"{target}{share}"].add(item_path)
                     
-                if verbose: live.console.print(f"[FILE] {full_path}")
-                process_file(conn, share, full_path, target, username, rules, error, verbose, live)
+                if verbose: live.console.print(f"[FILE] {item_path}")
+                process_file(conn, share, item_path, target, username, rules, error, verbose, live)
 
     except Exception as e:
         if error:live.console.print(f"Error accessing {directory}: {e}")

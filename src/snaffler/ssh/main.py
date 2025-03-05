@@ -48,9 +48,6 @@ def print_finding(console, host:str, username:str, rule:SnaffleRule, path:str, f
 
 async def process_file(sftp: asyncssh.SFTPClient, host:str, username:str, rules: SnafflerRuleSet, verbose, path, live:Live, error):
     try:
-        file_stat = await sftp.stat(path)
-        size_mb = file_stat.size / (1024 * 1024)
-        if size_mb > MAX_FILE_SIZE_MB: return
         async with await sftp.open(path, errors='ignore') as f:
             data = await f.read()
 
@@ -85,7 +82,11 @@ async def process_directory(sftp: asyncssh.SFTPClient, host:str, username:str, r
                 enum_file = rules.enum_file(item_path)
                 if verbose: live.console.print(f"[F] | Processing | {item_path}")
                 if not enum_file[0]:
-                    if verbose: live.console.print(f"[F] | Discarded | {item_path}")
+                    if verbose: live.console.print(f"[F] | Discarded by {enum_file[1][0].name} | {item_path}")
+                    continue
+                file_size = await get_file_size_mb(sftp, item_path)
+                if file_size > MAX_FILE_SIZE_MB:
+                    if verbose: live.console.print(f"[F] | File too large: {file_size} MB | {item_path}")
                     continue
                 if not await can_read_file(sftp, item_path):
                     if verbose: live.console.print(f"[F] | Read Failed | {item_path}")
