@@ -10,6 +10,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 import threading
 
 MAX_FILE_SIZE_MB = 100
+MAX_LINE_CHARACTER = 300
 
 history_lock = threading.Lock()
 
@@ -23,7 +24,7 @@ def process_file(conn, share, file, host, username, rules, error, verbose, live)
         else:
             data = data.split("\n")
         for line in data:
-            if len(line) > 300: continue
+            if len(line) > MAX_LINE_CHARACTER: continue
             a = rules.enum_content(line, 10, 10)
 
             if a[0]:

@@ -17,6 +17,7 @@ import asyncio
 import threading
 
 MAX_FILE_SIZE_MB = 100
+MAX_LINE_CHARACTER = 300
 
 history_lock = threading.Lock()
 
@@ -57,7 +58,7 @@ async def process_file(sftp: asyncssh.SFTPClient, host:str, username:str, rules:
                 data = data.split("\n")
 
             for line in data:
-                if len(line) > 300: continue
+                if len(line) > MAX_LINE_CHARACTER: continue
                 a = rules.enum_content(line, 10, 10)
 
                 if a[0]:
