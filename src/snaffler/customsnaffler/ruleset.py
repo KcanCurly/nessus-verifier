@@ -165,7 +165,7 @@ class SnafflerRuleSet:
     def enum_content(self, filecontent, fsize:int = 0, chars_before_match:int = 0, chars_after_match:int = 0):# -> tuple[Literal[False], None] | tuple[Literal[True], dict]:
         rules_return = {}
 
-        """
+
         for importance, rules in self.contentsImportanceEnumerationRules.items():
             for rule in rules:
                 action, m = rule.open_and_match(filecontent, chars_before_match, chars_after_match)
@@ -182,5 +182,6 @@ class SnafflerRuleSet:
             if action and len(m) > 0:
                 rules_return[rule] = m
         if len(rules_return) > 0: return True, rules_return
+        """
         
         return False, None
