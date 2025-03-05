@@ -97,7 +97,7 @@ class SnaffleRule:
 			wordListType = MatchListType(d['wordListType'])
 			matchLength = d.get('matchLength', 0)
 			wordList = d.get('wordList', [])
-			importance = d.get('importance', "")
+			importance = d.get('importance', "0⭐")
 			dontignorecase = d.get('dontignorecase', False)
 			triage = Triage(d.get('triage', 'gray'))
 			if enumerationScope == EnumerationScope.File:

@@ -51,7 +51,7 @@ triage = "gray"
 [[Rule]]
 scope = "File"
 id = "d3"
-name = "DiscardByFileName"
+name = "DiscardByFilePathEndsWith"
 action = "Discard"
 category = []
 relay = []
@@ -61,9 +61,43 @@ matchLength = 0
 importance = ""
 wordListType = "EndsWith"
 wordList = [
+"jmxremote\\.password\\.template",
+]
+triage = "gray"
+
+[[Rule]]
+scope = "File"
+id = "d3"
+name = "DiscardByFileNameExact"
+action = "Discard"
+category = []
+relay = []
+description = "Skip any further scanning for files with these extensions."
+matchLocation = "FileName"
+matchLength = 0
+importance = ""
+wordListType = "Exact"
+wordList = [
 "initrd.img",
 "initrd.img.old",
-"jmxremote\\.password\\.template",
-"sceregvl\\.inf"
+"sceregvl\\.inf",
+"readme\\.md",
+]
+triage = "gray"
+
+[[Rule]]
+scope = "File"
+id = "d3"
+name = "DiscardByFileNameContains"
+action = "Discard"
+category = []
+relay = []
+description = "Skip any further scanning for files with these extensions."
+matchLocation = "FileName"
+matchLength = 0
+importance = ""
+wordListType = "Contains"
+wordList = [
+"how-?to",
 ]
 triage = "gray"

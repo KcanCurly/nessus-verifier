@@ -1,3 +1,4 @@
+import re
 from src.snaffler.customsnaffler.constants import EnumerationScope, MatchAction, Triage
 from typing import Dict, List, Tuple
 from src.snaffler.customsnaffler.rule import SnaffleRule
@@ -7,9 +8,11 @@ import tomllib
 
 class SnafflerRuleSet:
     def __init__(self):
+        self.fileDiscardEnumerationRules:Dict[str, SnaffleRule] = {}
         self.fileEnumerationRules:Dict[str, SnaffleRule] = {}
         self.directoryEnumerationRules:Dict[str, SnaffleRule] = {}
         self.contentsEnumerationRules:Dict[str, SnaffleRule] = {}
+        self.contentsImportanceEnumerationRules:Dict[str, list[SnaffleRule]] = {}
         self.allRules:Dict[str, SnaffleRule] = {}
         self.unrollCache:Dict[str, List[SnaffleRule]] = {}
 
@@ -28,14 +31,17 @@ class SnafflerRuleSet:
         """Returns True if the file should be enumerated, False if it should be discarded.
         Returns a list of rules that matched the file."""
         rules = {}
+        for rule in self.fileDiscardEnumerationRules.values():
+            action, m = rule.determine_action(filename)
+            if len(m) >0:
+                return False, [rule]
+            
+
         for rule in self.fileEnumerationRules.values():
             action, m = rule.determine_action(filename)
-
-            if action == MatchAction.Discard and len(m) > 0:
-                return False, [rule]
-            elif action and len(m) > 0:
+            if len(m) > 0:
                 rules[rule] = m
-        
+
         return True, rules
                 
 
@@ -45,9 +51,19 @@ class SnafflerRuleSet:
         if rule.scope == EnumerationScope.Directory:
             self.directoryEnumerationRules[rule.name] = rule
         elif rule.scope == EnumerationScope.File:
-            self.fileEnumerationRules[rule.name] = rule
+            if rule.action == MatchAction.Discard:
+                self.fileDiscardEnumerationRules[rule.name] = rule
+            else:
+                self.fileEnumerationRules[rule.name] = rule
         elif rule.scope == EnumerationScope.Content:
-            self.contentsEnumerationRules[rule.name] = rule
+            reg = r"(\d+)⭐"
+            m = re.match(reg, rule.importance)
+            if m:
+                i = m.group(1)
+                if i not in self.contentsImportanceEnumerationRules:
+                    self.contentsImportanceEnumerationRules[i] = []
+                self.contentsImportanceEnumerationRules[i].append(rule)
+            # self.contentsEnumerationRules[rule.name] = rule
 
     def load_rules(self, rules:List[SnaffleRule]):
         """Adds all rules from a list of rules"""
@@ -65,6 +81,7 @@ class SnafflerRuleSet:
         """Adds all rules from a directory recursively"""
         for rulefilepath in glob(directory + '/**/*.toml', recursive=True):
             self.load_rule_file(rulefilepath)
+        self.contentsImportanceEnumerationRules = dict(sorted(self.contentsImportanceEnumerationRules.items(), reverse=True))
 
     def to_dict(self):
         return {
@@ -145,13 +162,24 @@ class SnafflerRuleSet:
         self.unrollCache[lookupkey] = finalrules.values()
         return finalrules.values()
 
-    def parse_file(self, filecontent, fsize:int = 0, chars_before_match:int = 0, chars_after_match:int = 0):# -> tuple[Literal[False], None] | tuple[Literal[True], dict]:
+    def enum_file(self, filecontent, fsize:int = 0, chars_before_match:int = 0, chars_after_match:int = 0):# -> tuple[Literal[False], None] | tuple[Literal[True], dict]:
         rules = {}
+
+        for importance, rules in self.contentsImportanceEnumerationRules.items():
+            for rule in rules:
+                action, m = rule.open_and_match(filecontent, chars_before_match, chars_after_match)
+                if action is MatchAction.Discard:
+                    return False, None
+                if action and len(m) > 0:
+                    rules[rule] = m
+            if len(rules) > 0: return True, rules
+        """
         for rule in self.contentsEnumerationRules.values():
             action, m = rule.open_and_match(filecontent, chars_before_match, chars_after_match)
             if action is MatchAction.Discard:
                 return False, None
             if action is not None and len(m) > 0:
                 rules[rule] = m
-        if len(rules) > 0: return True, rules
+        """
+        
         return False, None

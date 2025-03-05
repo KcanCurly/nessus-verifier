@@ -61,7 +61,7 @@ async def process_file(sftp: asyncssh.SFTPClient, host:str, username:str, rules:
 
             for line in data:
                 if len(line) > 300: continue
-                a = rules.parse_file(line, 10, 10)
+                a = rules.enum_file(line, 10, 10)
 
                 if a[0]:
                     for b,c in a[1].items():
