@@ -83,8 +83,14 @@ async def process_directory(sftp: asyncssh.SFTPClient, host:str, username:str, r
                 await process_directory(sftp, host, username, rules, verbose, live, error, item_path, depth=depth+1)
             elif await sftp.isfile(item_path):
                 enum_file = rules.enum_file(item_path)
+                if verbose: live.console.print(f"[F] | Processing | {item_path}")
+                if not enum_file[0]:
+                    if verbose: live.console.print(f"[F] | Discarded | {item_path}")
+                    continue
+                if not await can_read_file(sftp, item_path):
+                    if verbose: live.console.print(f"[F] | Read Failed | {item_path}")
+                    continue
 
-                if not enum_file[0] or not await can_read_file(sftp, item_path):continue
                 with history_lock:
                     if item_path in history_dict[host]: continue
                     history_dict[host].add(item_path)
