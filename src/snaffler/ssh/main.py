@@ -189,19 +189,29 @@ def process_host2(data):
     """Main function to process a single SSH host asynchronously."""
     print("c")
     try:
-        hostname = data["hostname"]
-        port = data["port"]
-        username = data["username"]
-        password = data["password"]
-        verbose = data["verbose"]
-        live = data["live"]
-        rules = data["rules"]
-        error = data["error"]
-        ip = data["ip"]
-        client = paramiko.SSHClient()
         print(1)
+        hostname = data["hostname"]
+        print(2)
+        port = data["port"]
+        print(3)
+        username = data["username"]
+        print(4)
+        password = data["password"]
+        print(5)
+        verbose = data["verbose"]
+        print(6)
+        live = data["live"]
+        print(7)
+        rules = data["rules"]
+        print(8)
+        error = data["error"]
+        print(9)
+        ip = data["ip"]
+        print(0)
+        client = paramiko.SSHClient()
+        
         client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        client.connect(ip, username=username, password=password, timeout=10)
+        client.connect(ip, port=int(port),username=username, password=password, timeout=10)
         sftp = client.open_sftp()
         process_directory(sftp, hostname, username, rules, verbose, live, error, "/")
         client.close()
