@@ -60,6 +60,7 @@ async def get_file_size_mb(sftp, path, error, live):
         return None
 
 def print_finding(console, host:str, username:str, rule:SnaffleRule, path:str, findings:list[str]):
+    return
     console.print(f"[{rule.triage.value}]\[{host}]\[{username}]\[{rule.importance}]\[{rule.name}][/{rule.triage.value}][white] | {path} | {findings}[/white]")
 
 async def process_file(sftp: asyncssh.SFTPClient, host:str, username:str, rules: SnafflerRuleSet, verbose, path, live:Live, error):
