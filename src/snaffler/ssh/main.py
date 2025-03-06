@@ -26,7 +26,7 @@ history_dict = dict[str, set]()
 
 def multithread_export_print(console: Console):
     with output_lock:
-        a = console.export_text("output1.txt")
+        a = console.export_text()
         with open("output1.txt", "a") as f:
             f.write(a)
 
