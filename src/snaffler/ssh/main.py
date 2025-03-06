@@ -242,7 +242,7 @@ async def main2():
                 username, password = cred.split(":")
                 l.append({"hostname": host, "username": username, "password": password, "port": port, "verbose": args.verbose, "error": args.error, "live": live, "rules": rules})
                 # tasks.append(asyncio.create_task(process_host(ip, port, username, password, rules, args.verbose, live, args.error)))
-            with multiprocessing.Pool(processes=args.threads) as pool:
+            with multiprocessing.Pool(processes=args.thread) as pool:
                 results = pool.map(process_host2, l)  # Run SSH connections in parallel
             
 
