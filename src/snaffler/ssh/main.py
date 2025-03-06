@@ -187,7 +187,7 @@ async def main2():
 def process_host2(data):
 
     """Main function to process a single SSH host asynchronously."""
-    print(c)
+    print("c")
     try:
         hostname = data["hostname"]
         port = data["port"]
@@ -207,7 +207,7 @@ def process_host2(data):
         client.close()
             
     except Exception as e:
-        print(f"Error processing {hostname}: {e}")
+        if error: live.console.print(f"Error processing {hostname}: {e}")
 
 def main2():
     parser = argparse.ArgumentParser(description="Snaffle via SSH.")
