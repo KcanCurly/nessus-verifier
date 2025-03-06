@@ -29,7 +29,7 @@ module_console = None
 
 def multithread_export_print(console: Console):
     with output_lock:
-        a = console.export_text()
+        a = console.export_text(styles=True)
         with open(output_file, "a") as f:
             f.write(a)
 
