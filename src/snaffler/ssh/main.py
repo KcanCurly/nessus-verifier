@@ -25,6 +25,7 @@ output_lock = threading.Lock()
 output_file = ""
 output_file_path = ""
 history_dict = dict[str, set]()
+module_console = None
 
 def multithread_export_print(console: Console):
     with output_lock:
@@ -74,7 +75,8 @@ async def process_file(sftp: asyncssh.SFTPClient, host:str, username:str, rules:
                 if a[0]:
                     for b,c in a[1].items():
                         print_finding(live.console, host, username, b, path, c)
-                    multithread_export_print(live.console)
+                        print_finding(module_console, host, username, b, path, c)
+                    multithread_export_print(module_console)
     except Exception as e: 
         if error: live.console.print("Process File Error:", e)
 
@@ -113,7 +115,8 @@ async def process_directory(sftp: asyncssh.SFTPClient, host:str, username:str, r
                     
                 for b,c in enum_file[1].items():
                     print_finding(live.console, host, username, b, item_path, c)
-                multithread_export_print(live.console)
+                    print_finding(module_console, host, username, b, item_path, c)
+                multithread_export_print(module_console)
                 if verbose: live.console.print(f"[F] {item_path}")
                 await process_file(sftp, host, username, rules, verbose, item_path, live, error)
                 #tasks.append(process_file(sftp, host, username, rules, verbose, item_path, live, error))
@@ -153,14 +156,15 @@ async def main2():
     overall_progress = get_classic_overall_progress()
     single_progress = get_classic_single_progress()
     overall_task_id = overall_progress.add_task("", start=False, modulename="SSH Snaffle")
-    console = Console(force_terminal=True, record=True)    
+    console = Console(force_terminal=True)    
     
     progress_group = Group(
         Panel(single_progress, title="SSH Snaffle", expand=False),
         overall_progress,
     ) if not args.only_show_progress else Group(overall_progress)
     
-    global output_file, output_file_path
+    global output_file, output_file_path, module_console
+    module_console = Console(force_terminal=True, record=True)    
     
     rules = SnafflerRuleSet.load_default_ruleset()
     if args.output:
@@ -173,7 +177,7 @@ async def main2():
         overall_progress.start_task(overall_task_id)
         futures = []
         tasks = []
-        live.console.print()
+
         with ThreadPoolExecutor(args.threads) as executor:
             for entry in get_hosts_from_file(args.file):
                 host, cred = entry.split(" => ")
