@@ -185,7 +185,6 @@ async def main2():
 
 
 def process_host2(data):
-    return
     hostname = data["hostname"]
     port = data["port"]
     username = data["username"]
@@ -201,7 +200,7 @@ def process_host2(data):
         client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         client.connect(hostname, username=username, password=password, timeout=10)
         sftp = client.open_sftp()
-        # process_directory(sftp, f"{hostname}:{port}", username, rules, verbose, live, error, "/")
+        process_directory(sftp, f"{hostname}:{port}", username, rules, verbose, live, error, "/")
         client.close()
             
     except Exception as e:
