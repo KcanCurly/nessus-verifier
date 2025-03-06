@@ -261,8 +261,10 @@ def main2():
                 with ProcessPoolExecutor(max_workers=args.thread) as executor:
                     print(l)
                     print("a")
-                    executor.map(process_host2, l)
+                    results = list(executor.map(process_host2, l))
                     print("b")
+                for res in results:
+                    print(res)
     except Exception as e: print(f"First {e}")
             
 
