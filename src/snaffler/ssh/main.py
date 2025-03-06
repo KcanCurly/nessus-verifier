@@ -20,8 +20,16 @@ MAX_FILE_SIZE_MB = 100
 MAX_LINE_CHARACTER = 300
 
 history_lock = threading.Lock()
+output_lock = threading.Lock()
 
 history_dict = dict[str, set]()
+
+def multithread_export_print(console: Console):
+    with output_lock:
+        a = console.export_text("output1.txt")
+        with open("output1.txt", "a") as f:
+            f.write(a)
+
 
 async def can_read_file(sftp, path):
     """Attempts to open a remote file in read mode to check permissions."""
@@ -34,14 +42,14 @@ async def can_read_file(sftp, path):
     except Exception as e:
         return False
 
-async def get_file_size_mb(sftp, path):
+async def get_file_size_mb(sftp, path, error, live):
     """Returns the size of a remote file in MB."""
     try:
         file_stat = await sftp.stat(path)
         size_mb = file_stat.size / (1024 * 1024)  # Convert bytes to MB
         return size_mb  # Round to 2 decimal places
     except Exception as e:
-        print(f"Error getting file size: {e}")
+        live.console.print("Error getting file size:", e)
         return None
 
 def print_finding(console, host:str, username:str, rule:SnaffleRule, path:str, findings:list[str]):
@@ -64,6 +72,7 @@ async def process_file(sftp: asyncssh.SFTPClient, host:str, username:str, rules:
                 if a[0]:
                     for b,c in a[1].items():
                         print_finding(live.console, host, username, b, path, c)
+                    multithread_export_print(live.console)
     except Exception as e: 
         if error: live.console.print("Process File Error:", e)
 
@@ -101,6 +110,7 @@ async def process_directory(sftp: asyncssh.SFTPClient, host:str, username:str, r
                     
                 for b,c in enum_file[1].items():
                     print_finding(live.console, host, username, b, item_path, c)
+                multithread_export_print(live.console)
                 if verbose: live.console.print(f"[F] {item_path}")
                 await process_file(sftp, host, username, rules, verbose, item_path, live, error)
                 #tasks.append(process_file(sftp, host, username, rules, verbose, item_path, live, error))
@@ -113,7 +123,7 @@ async def connect_ssh(hostname, port, username, password):
     """Asynchronously establishes an SSH connection."""
     return await asyncssh.connect(hostname, port=port, username=username, password=password, known_hosts=None, client_keys=None)
 
-async def process_host(hostname, port, username, password, rules: SnafflerRuleSet, verbose, live:Live, error):
+async def process_host(hostname, port, username, password, rules: SnafflerRuleSet, verbose, live:Live, error, output):
     """Main function to process a single SSH host asynchronously."""
     try:
         async with await connect_ssh(hostname, port, username, password) as conn:
@@ -128,6 +138,7 @@ async def process_host(hostname, port, username, password, rules: SnafflerRuleSe
 async def main2():
     parser = argparse.ArgumentParser(description="Snaffle via SSH.")
     parser.add_argument("-f", "--file", type=str, required=True, help="Input file name, format is 'host:port => username:password'")
+    parser.add_argument("-o", "--output", type=str, required=False, help="Output File")
     parser.add_argument("--threads", default=10, type=int, help="Number of threads (Default = 10)")
     parser.add_argument("--timeout", default=5, type=int, help="Timeout in seconds (Default = 5)")
     parser.add_argument("--disable-visual-on-complete", action="store_true", help="Disables the status visual for an individual task when that task is complete, this can help on keeping eye on what is going on at the time")
@@ -139,7 +150,7 @@ async def main2():
     overall_progress = get_classic_overall_progress()
     single_progress = get_classic_single_progress()
     overall_task_id = overall_progress.add_task("", start=False, modulename="SSH Snaffle")
-    console = get_classic_console(force_terminal=True)
+    console = Console(force_terminal=True, record=True)    
     
     progress_group = Group(
         Panel(single_progress, title="SSH Snaffle", expand=False),
@@ -153,16 +164,16 @@ async def main2():
         overall_progress.start_task(overall_task_id)
         futures = []
         tasks = []
+        live.console.print()
         with ThreadPoolExecutor(args.threads) as executor:
             for entry in get_hosts_from_file(args.file):
                 host, cred = entry.split(" => ")
                 ip, port = host.split(":")
                 username, password = cred.split(":")
-                executor.submit(await process_host(ip, port, username, password, rules, args.verbose, live, args.error))
-                #tasks.append(process_host(ip, port, username, password, rules, args.verbose, live, args.error))
-            
-
-        results = [await asyncio.gather(*tasks)]
+                future = executor.submit(await process_host(ip, port, username, password, rules, args.verbose, live, args.error, args.output))
+                futures.append(future)
+            for a in as_completed(futures):
+                overall_progress.update(overall_task_id, advance=1)
 
 def main():
     asyncio.run(main2())

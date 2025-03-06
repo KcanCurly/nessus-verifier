@@ -26,6 +26,16 @@ wordList = [
 ]
 notWordList = [
 "reauth",
+"bindkey",
+"access-control-allow-credentials",
+"primary key",
+"foreign key",
+"keyPrefix",
+"keyspace",
+"os-auth\\.optout",
+"pass( |-)?thru",
+"pass( |-)?through",
+"keyword",
 ]
 triage = "green"
 
