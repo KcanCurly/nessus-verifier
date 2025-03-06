@@ -12,6 +12,7 @@ from src.services.service import Vuln_Data
 from rich.console import Group
 from rich.panel import Panel
 import pymssql
+import nmap
 
 def post_nv(l: list[str], username: str, password: str, output: str = None, threads: int = 10, timeout: int = 3, verbose: bool = False, disable_visual_on_complete: bool = False):
 
@@ -85,33 +86,44 @@ def post_console(args):
 def version_nv(l: list[str], output: str = None, threads: int = 10, timeout: int = 3, verbose: bool = False, disable_visual_on_complete: bool = False):
     versions = {}
     
+    nm = nmap.PortScanner()
     for host in l:
         try:
             ip = host.split(":")[0]
             port = host.split(":")[1]
+            nm.scan(ip, port, arguments=f'--script ms-sql-info')
+            
+            if ip in nm.all_hosts():
+                nmap_host = nm[ip]
+                if 'tcp' in nmap_host and 1433 in nmap_host['tcp']:
+                    tcp_info = nmap_host['tcp'][1433]
+                    if 'script' in tcp_info and 'ms-sql-info' in tcp_info['script']:
+                        # Extract the ms-sql-info output
+                        ms_sql_info = tcp_info['script']['ms-sql-info']
+
+                        # Parse the output to get product name and version
+                        product_name = None
+                        version_number = None
+
+                        # Look for product and version in the output
+                        for line in ms_sql_info.splitlines():
+                            if "Product:" in line:
+                                product_name = line.split(":")[1].strip()
+                            if "number:" in line:
+                                version_number = line.split(":")[1].strip()
+
+                        # Print the results
+                        if product_name and version_number:
+                            z = product_name + " " + version_number
+                            if z not in versions:
+                                versions[z] = set()
+                            versions[z].add(host)
+        except Exception as e: pass #print(e)
 
 
-            # Connect to SQL Server
-            conn = pymssql.connect(ip, database="master", port=port, login_timeout=10)
-            cursor = conn.cursor()
-
-            # Execute version query
-            cursor.execute("SELECT @@VERSION")
-            version = cursor.fetchone()
-
-            # Print the result
-            print("[+] SQL Server Version:")
-            print(version[0])
-
-            # Close the connection
-            conn.close()
-        except Exception as e: print(f"Error for {host}: e")
     
-
-                    
-    versions = dict(sorted(versions.items(), reverse=True))
-    if len(versions) > 0:       
-        print("MSSQL versions detected:")                
+    if len(versions) > 0:
+        print("Detected MSSQL Versions:")
         for key, value in versions.items():
             print(f"{key}:")
             for v in value:
