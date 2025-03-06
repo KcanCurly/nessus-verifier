@@ -238,10 +238,6 @@ def main2():
     global output_file, output_file_path, module_console
     module_console = Console(force_terminal=True, record=True, quiet=True)    
     
-    with ProcessPoolExecutor(max_workers=args.thread) as executor:
-        print("a")
-        executor.map(process_host2, l)
-        print("b")
     output_file = args.output
     with open(output_file, "w") as f:
         output_file_path = os.path.abspath(f.name)
@@ -259,14 +255,16 @@ def main2():
                 username, password = cred.split(":")
                 l.append({"hostname": host, "username": username, "password": password, "port": port, "verbose": args.verbose, "error": args.error, "live": live, "rules": rules, "ip": ip})
 
+    """
             with ProcessPoolExecutor(max_workers=args.thread) as executor:
                 print("a")
                 executor.map(process_host2, l)
                 print("b")
     """
-    with multiprocessing.Pool(processes=args.thread) as pool:
-        results = pool.map(process_host2, l)  # Run SSH connections in parallel
-    """
+    with ProcessPoolExecutor(max_workers=args.thread) as executor:
+        print("a")
+        executor.map(process_host2, l)
+        print("b")
             
 
 
