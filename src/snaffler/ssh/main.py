@@ -86,7 +86,7 @@ def process_directory(sftp: paramiko.SFTPClient, host:str, username:str, rules: 
             if stat.S_ISDIR(sftp.stat(item_path).st_mode):
                 if not rules.enum_directory(item_path)[0]:continue
                 if verbose: live.console.print(f"[D] {item_path}")
-                # tasks.append(process_directory(sftp, host, username, rules, verbose, live, error, item_path, depth=depth+1))
+
                 process_directory(sftp, host, username, rules, verbose, live, error, item_path, depth=depth+1)
             elif stat.S_ISREG(sftp.stat(item_path).st_mode):
                 if item_path == output_file_path: continue
@@ -119,7 +119,7 @@ def process_directory(sftp: paramiko.SFTPClient, host:str, username:str, rules: 
                     print_finding(module_console, host, username, b, item_path, c)
                 if verbose: live.console.print(f"[F] {item_path}")
                 process_file(sftp, host, username, rules, verbose, item_path, live, error)
-                #tasks.append(process_file(sftp, host, username, rules, verbose, item_path, live, error))
+
     except Exception as e:
         if error: live.console.print("Process Directory Error:", e)
     
@@ -185,22 +185,24 @@ async def main2():
 
 
 def process_host2(data):
-    hostname = data["hostname"]
-    port = data["port"]
-    username = data["username"]
-    password = data["password"]
-    verbose = data["verbose"]
-    live = data["live"]
-    rules = data["rules"]
-    error = data["error"]
+
     """Main function to process a single SSH host asynchronously."""
 
     try:
+        hostname = data["hostname"]
+        port = data["port"]
+        username = data["username"]
+        password = data["password"]
+        verbose = data["verbose"]
+        live = data["live"]
+        rules = data["rules"]
+        error = data["error"]
+        ip = data["ip"]
         client = paramiko.SSHClient()
         client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        client.connect(hostname, username=username, password=password, timeout=10)
+        client.connect(ip, username=username, password=password, timeout=10)
         sftp = client.open_sftp()
-        process_directory(sftp, f"{hostname}:{port}", username, rules, verbose, live, error, "/")
+        process_directory(sftp, hostname, username, rules, verbose, live, error, "/")
         client.close()
             
     except Exception as e:
@@ -242,7 +244,7 @@ def main2():
                 host, cred = entry.split(" => ")
                 ip, port = host.split(":")
                 username, password = cred.split(":")
-                l.append({"hostname": host, "username": username, "password": password, "port": port, "verbose": args.verbose, "error": args.error, "live": live, "rules": rules})
+                l.append({"hostname": host, "username": username, "password": password, "port": port, "verbose": args.verbose, "error": args.error, "live": live, "rules": rules, "ip": ip})
                 # tasks.append(asyncio.create_task(process_host(ip, port, username, password, rules, args.verbose, live, args.error)))
             with ProcessPoolExecutor(max_workers=args.thread) as executor:
                 executor.map(process_host2, l)
