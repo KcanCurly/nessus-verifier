@@ -6,15 +6,27 @@ from src.utilities.utilities import get_classic_single_progress, get_classic_ove
 from rich.console import Group
 from rich.panel import Panel
 from rich.live import Live
+from rich.console import Console
 from concurrent.futures import ThreadPoolExecutor, as_completed
+import os
 import threading
 
 MAX_FILE_SIZE_MB = 100
 MAX_LINE_CHARACTER = 300
+output_lock = threading.Lock()
+output_file = ""
+output_file_path = ""
+module_console = None
 
 history_lock = threading.Lock()
 
 history_dict = dict[str, set]()
+
+def multithread_export_print(console: Console):
+    with output_lock:
+        a = console.export_text(styles=True)
+        with open(output_file, "a") as f:
+            f.write(a)
 
 def process_file(conn, share, file, host, username, rules, error, verbose, live):
     def process_file2(data):
@@ -30,6 +42,8 @@ def process_file(conn, share, file, host, username, rules, error, verbose, live)
             if a[0]:
                 for b,c in a[1].items():
                     print_finding(live.console, host, share, username, b, file, c)
+                    print_finding(module_console, host, share, username, b, file, c)
+                multithread_export_print(module_console)
     try:
 
         conn.getFile(share, file, process_file2)
@@ -71,6 +85,10 @@ def list_files_recursively(conn, share, rules, target, username, error, verbose,
                 list_files_recursively(conn, share, rules, target, username, error, verbose, live, item_path + "/*")
             else:
                 if file.get_filesize() / 1024 > MAX_FILE_SIZE_MB: continue
+                with history_lock:
+                    if item_path in history_dict[f"{target}{share}"]: 
+                        if verbose: live.console.print(f"[F] | Already processed, skipping | {item_path}")
+                        continue
                 enum_file = rules.enum_file(item_path)
                 if verbose: live.console.print(f"[F] | Processing | {item_path}")
                 if not enum_file[0]:
@@ -84,11 +102,12 @@ def list_files_recursively(conn, share, rules, target, username, error, verbose,
                     continue
 
                 with history_lock:
-                    if item_path in history_dict[f"{target}{share}"]: 
-                        if verbose: live.console.print(f"[F] | Already processed, skipping | {item_path}")
-                        continue
                     history_dict[f"{target}{share}"].add(item_path)
                     
+                for b,c in enum_file[1].items():
+                    print_finding(live.console, target, share, username, b, item_path, c)
+                    print_finding(module_console, target, share, username, b, item_path, c)
+                multithread_export_print(module_console)
                 if verbose: live.console.print(f"[FILE] {item_path}")
                 process_file(conn, share, item_path, target, username, rules, error, verbose, live)
 
@@ -117,6 +136,7 @@ def main():
     parser = argparse.ArgumentParser(description="Snaffle via SMB.")
     parser.add_argument("-f", "--file", type=str, required=True, help="Input file name, format is 'host:port => username:password'")
     parser.add_argument("-cf", "--cred-file", type=str, required=True, help="Input file name, format is 'username:password'")
+    parser.add_argument("-o", "--output", type=str, required=True, help="Output File")
     parser.add_argument("--threads", default=10, type=int, help="Number of threads (Default = 10)")
     parser.add_argument("--timeout", default=5, type=int, help="Timeout in seconds (Default = 5)")
     parser.add_argument("--disable-visual-on-complete", action="store_true", help="Disables the status visual for an individual task when that task is complete, this can help on keeping eye on what is going on at the time")
@@ -133,6 +153,13 @@ def main():
         Panel(single_progress, title="SMB Snaffle", expand=False),
         overall_progress,
     ) if not args.only_show_progress else Group(overall_progress)
+    
+    global output_file, output_file_path, module_console
+    module_console = Console(force_terminal=True, record=True)
+    if args.output:
+        output_file = args.output
+        with open(output_file, "w") as f:
+            output_file_path = os.path.abspath(f.name)
     
     rules = SnafflerRuleSet.load_default_ruleset()
     

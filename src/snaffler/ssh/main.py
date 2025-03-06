@@ -24,8 +24,9 @@ history_lock = threading.Lock()
 output_lock = threading.Lock()
 output_file = ""
 output_file_path = ""
-history_dict = dict[str, set]()
 module_console = None
+history_dict = dict[str, set]()
+
 
 def multithread_export_print(console: Console):
     with output_lock:
@@ -129,7 +130,7 @@ async def connect_ssh(hostname, port, username, password):
     """Asynchronously establishes an SSH connection."""
     return await asyncssh.connect(hostname, port=port, username=username, password=password, known_hosts=None, client_keys=None)
 
-async def process_host(hostname, port, username, password, rules: SnafflerRuleSet, verbose, live:Live, error, output):
+async def process_host(hostname, port, username, password, rules: SnafflerRuleSet, verbose, live:Live, error):
     """Main function to process a single SSH host asynchronously."""
     try:
         async with await connect_ssh(hostname, port, username, password) as conn:
@@ -144,7 +145,7 @@ async def process_host(hostname, port, username, password, rules: SnafflerRuleSe
 async def main2():
     parser = argparse.ArgumentParser(description="Snaffle via SSH.")
     parser.add_argument("-f", "--file", type=str, required=True, help="Input file name, format is 'host:port => username:password'")
-    parser.add_argument("-o", "--output", type=str, required=False, help="Output File")
+    parser.add_argument("-o", "--output", type=str, required=True, help="Output File")
     parser.add_argument("--threads", default=10, type=int, help="Number of threads (Default = 10)")
     parser.add_argument("--timeout", default=5, type=int, help="Timeout in seconds (Default = 5)")
     parser.add_argument("--disable-visual-on-complete", action="store_true", help="Disables the status visual for an individual task when that task is complete, this can help on keeping eye on what is going on at the time")
@@ -166,11 +167,13 @@ async def main2():
     global output_file, output_file_path, module_console
     module_console = Console(force_terminal=True, record=True)    
     
-    rules = SnafflerRuleSet.load_default_ruleset()
     if args.output:
         output_file = args.output
         with open(output_file, "w") as f:
             output_file_path = os.path.abspath(f.name)
+    
+    rules = SnafflerRuleSet.load_default_ruleset()
+
 
     with Live(progress_group, console=console) as live:
         overall_progress.update(overall_task_id, total=len(get_hosts_from_file(args.file)), completed=0)
@@ -183,7 +186,7 @@ async def main2():
                 host, cred = entry.split(" => ")
                 ip, port = host.split(":")
                 username, password = cred.split(":")
-                future = executor.submit(await process_host(ip, port, username, password, rules, args.verbose, live, args.error, args.output))
+                future = executor.submit(await process_host(ip, port, username, password, rules, args.verbose, live, args.error))
                 futures.append(future)
             for a in as_completed(futures):
                 overall_progress.update(overall_task_id, advance=1)
