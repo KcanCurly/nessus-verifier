@@ -256,16 +256,11 @@ def main2():
                 username, password = cred.split(":")
                 l.append({"hostname": host, "username": username, "password": password, "port": port, "verbose": args.verbose, "error": args.error, "live": live, "rules": rules, "ip": ip})
 
-    """
+
             with ProcessPoolExecutor(max_workers=args.thread) as executor:
                 print("a")
                 executor.map(process_host2, l)
                 print("b")
-    """
-    with ProcessPoolExecutor(max_workers=args.thread) as executor:
-        print("a")
-        executor.map(process_host2, l)
-        print("b")
             
 
 
