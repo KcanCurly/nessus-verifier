@@ -187,7 +187,7 @@ async def main2():
 def process_host2(data):
 
     """Main function to process a single SSH host asynchronously."""
-
+    print(c)
     try:
         hostname = data["hostname"]
         port = data["port"]
@@ -248,7 +248,9 @@ def main2():
                 l.append({"hostname": host, "username": username, "password": password, "port": port, "verbose": args.verbose, "error": args.error, "live": live, "rules": rules, "ip": ip})
 
             with ProcessPoolExecutor(max_workers=args.thread) as executor:
+                print("a")
                 executor.map(process_host2, l)
+                print("b")
     """
     with multiprocessing.Pool(processes=args.thread) as pool:
         results = pool.map(process_host2, l)  # Run SSH connections in parallel
