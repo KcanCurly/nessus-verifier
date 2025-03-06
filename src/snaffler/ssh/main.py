@@ -19,8 +19,8 @@ import multiprocessing
 import threading
 from concurrent.futures import ProcessPoolExecutor
 
-MAX_FILE_SIZE_MB = 100
-MAX_LINE_CHARACTER = 300
+# MAX_FILE_SIZE_MB = 100
+# MAX_LINE_CHARACTER = 300
 
 # history_lock = multiprocessing.Lock()
 # output_lock = multiprocessing.Lock()
