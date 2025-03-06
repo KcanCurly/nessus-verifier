@@ -14,6 +14,7 @@ from rich.console import Console
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from src.utilities.utilities import get_classic_single_progress, get_classic_overall_progress, get_classic_console, get_hosts_from_file
 import asyncio
+import os
 import threading
 
 MAX_FILE_SIZE_MB = 100
@@ -21,13 +22,14 @@ MAX_LINE_CHARACTER = 300
 
 history_lock = threading.Lock()
 output_lock = threading.Lock()
-
+output_file = "output.txt"
+output_file_path = ""
 history_dict = dict[str, set]()
 
 def multithread_export_print(console: Console):
     with output_lock:
         a = console.export_text()
-        with open("output1.txt", "a") as f:
+        with open(output_file, "a") as f:
             f.write(a)
 
 
@@ -89,6 +91,7 @@ async def process_directory(sftp: asyncssh.SFTPClient, host:str, username:str, r
                 # tasks.append(process_directory(sftp, host, username, rules, verbose, live, error, item_path, depth=depth+1))
                 await process_directory(sftp, host, username, rules, verbose, live, error, item_path, depth=depth+1)
             elif await sftp.isfile(item_path):
+                if item_path == output_file_path: continue
                 enum_file = rules.enum_file(item_path)
                 if verbose: live.console.print(f"[F] | Processing | {item_path}")
                 if not enum_file[0]:
@@ -158,7 +161,12 @@ async def main2():
     ) if not args.only_show_progress else Group(overall_progress)
     
     rules = SnafflerRuleSet.load_default_ruleset()
+    if args.output:
+        output_file = args.output
+        with open(output_file, "w") as f:
+            output_file_path = os.path.abspath(f.name)
 
+        output_file_path
     with Live(progress_group, console=console) as live:
         overall_progress.update(overall_task_id, total=len(get_hosts_from_file(args.file)), completed=0)
         overall_progress.start_task(overall_task_id)
