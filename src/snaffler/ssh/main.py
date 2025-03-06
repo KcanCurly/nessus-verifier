@@ -235,10 +235,8 @@ def main2():
     overall_progress = get_classic_overall_progress()
     overall_task_id = overall_progress.add_task("", start=False, modulename="SSH Snaffle")
     console = Console(force_terminal=True)
-    global semaphore
-    semaphore = asyncio.Semaphore(args.thread)
+
     
-    global output_file, output_file_path, module_console
     module_console = Console(force_terminal=True, record=True, quiet=True)    
     
     output_file = args.output
@@ -257,7 +255,7 @@ def main2():
                     host, cred = entry.split(" => ")
                     ip, port = host.split(":")
                     username, password = cred.split(":")
-                    l.append({"hostname": host, "username": username, "password": password, "port": port, "verbose": args.verbose, "error": args.error, "live": live, "rules": rules, "ip": ip})
+                    l.append({"hostname": host, "username": username, "password": password, "port": port, "verbose": args.verbose, "error": args.error, "live": live, "rules": rules, "ip": ip, "module_console": module_console, "output_file_path": output_file_path})
 
 
                 with ProcessPoolExecutor(max_workers=args.thread) as executor:
