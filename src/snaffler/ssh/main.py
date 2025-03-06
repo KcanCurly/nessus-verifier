@@ -86,7 +86,6 @@ async def process_file(sftp: asyncssh.SFTPClient, host:str, username:str, rules:
 
 async def process_directory(sftp: asyncssh.SFTPClient, host:str, username:str, rules: SnafflerRuleSet, verbose, live:Live, error, remote_path=".", depth=0):
     try:
-        tasks = []
         dir = await sftp.readdir(remote_path)
         for d in dir:
             if d.filename == "." or d.filename == "..":continue
@@ -111,12 +110,13 @@ async def process_directory(sftp: asyncssh.SFTPClient, host:str, username:str, r
                     if verbose: live.console.print(f"[F] | Read Failed | {item_path}")
                     continue
 
+                """
                 with history_lock:
                     if item_path in history_dict[host]:
                         if verbose: live.console.print(f"[F] | Already processed, skipping | {item_path}")
                         continue
                     history_dict[host].add(item_path)
-                    
+                """
                 for b,c in enum_file[1].items():
                     print_finding(live.console, host, username, b, item_path, c)
                     #print_finding(module_console, host, username, b, item_path, c)
@@ -124,7 +124,6 @@ async def process_directory(sftp: asyncssh.SFTPClient, host:str, username:str, r
                 if verbose: live.console.print(f"[F] {item_path}")
                 await process_file(sftp, host, username, rules, verbose, item_path, live, error)
                 #tasks.append(process_file(sftp, host, username, rules, verbose, item_path, live, error))
-        await asyncio.gather(*tasks)
     except Exception as e:
         if error: live.console.print("Process Directory Error:", e)
     
@@ -151,7 +150,7 @@ async def main2():
     parser.add_argument("-f", "--file", type=str, required=True, help="Input file name, format is 'host:port => username:password'")
     parser.add_argument("-o", "--output", type=str, required=True, help="Output File.")
     parser.add_argument("--show-importance", type=int, default=0, help="Print only snaffles that is above given importance level, does NOT affect output to file.")
-    parser.add_argument("--threads", default=10, type=int, help="Number of threads (Default = 10)")
+    parser.add_argument("-t","--thread", default=10, type=int, help="Number of threads (Default = 10)")
     parser.add_argument("--timeout", default=5, type=int, help="Timeout in seconds (Default = 5)")
     parser.add_argument("-v", "--verbose", action="store_true", help="Enable verbose")
     parser.add_argument("-e", "--error", action="store_true", help="Prints errors")
@@ -161,7 +160,7 @@ async def main2():
     overall_task_id = overall_progress.add_task("", start=False, modulename="SSH Snaffle")
     console = Console(force_terminal=True)    
     global semaphore
-    semaphore = asyncio.Semaphore(args.threads)
+    semaphore = asyncio.Semaphore(args.thread)
     
     global output_file, output_file_path, module_console
     module_console = Console(force_terminal=True, record=True, quiet=True)    
