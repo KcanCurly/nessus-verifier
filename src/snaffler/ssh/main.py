@@ -191,16 +191,16 @@ async def process_host2(data):
     rules = data["rules"]
     error = data["error"]
     """Main function to process a single SSH host asynchronously."""
-    async with semaphore:
-        try:
-            async with await connect_ssh(hostname, port, username, password) as conn:
-                if verbose: live.console.print(f"Connected to {hostname}:{port}")
-                history_dict[f"{hostname}:{port}"] = set()
-                sftp = await conn.start_sftp_client()
-                await process_directory(sftp, f"{hostname}:{port}", username, rules, verbose, live, error, "/")
-                
-        except Exception as e:
-            print(f"Error processing {hostname}: {e}")
+
+    try:
+        async with await connect_ssh(hostname, port, username, password) as conn:
+            if verbose: live.console.print(f"Connected to {hostname}:{port}")
+            history_dict[f"{hostname}:{port}"] = set()
+            sftp = await conn.start_sftp_client()
+            await process_directory(sftp, f"{hostname}:{port}", username, rules, verbose, live, error, "/")
+            
+    except Exception as e:
+        print(f"Error processing {hostname}: {e}")
 
 def main2():
     parser = argparse.ArgumentParser(description="Snaffle via SSH.")
