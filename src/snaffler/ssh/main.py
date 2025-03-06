@@ -188,7 +188,7 @@ def process_host2(data):
     """Main function to process a single SSH host asynchronously."""
     print("c")
     try:
-        print(1)
+        print(data)
         hostname = data["hostname"]
         print(2)
         port = data["port"]
