@@ -249,7 +249,7 @@ def main2():
         with Live(overall_progress, console=console) as live:
             overall_progress.update(overall_task_id, total=len(get_hosts_from_file(args.file)), completed=0)
             overall_progress.start_task(overall_task_id)
-            l = [{}]
+            l = []
             for entry in get_hosts_from_file(args.file):
                 host, cred = entry.split(" => ")
                 ip, port = host.split(":")
