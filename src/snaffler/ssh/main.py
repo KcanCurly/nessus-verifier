@@ -258,6 +258,7 @@ def main2():
 
 
             with ProcessPoolExecutor(max_workers=args.thread) as executor:
+                print(l)
                 print("a")
                 executor.map(process_host2, l)
                 print("b")
