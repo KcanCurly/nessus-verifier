@@ -167,29 +167,29 @@ async def main2():
     global output_file, output_file_path, module_console
     module_console = Console(force_terminal=True, record=True, quiet=True)    
     
-    if args.output:
-        output_file = args.output
-        with open(output_file, "w") as f:
-            output_file_path = os.path.abspath(f.name)
-    
-    rules = SnafflerRuleSet.load_default_ruleset()
+
+    output_file = args.output
+    with open(output_file, "w") as f:
+        output_file_path = os.path.abspath(f.name)
+        module_console = Console(force_terminal=True, record=True, file=f)    
+        rules = SnafflerRuleSet.load_default_ruleset()
 
 
-    with Live(progress_group, console=console) as live:
-        overall_progress.update(overall_task_id, total=len(get_hosts_from_file(args.file)), completed=0)
-        overall_progress.start_task(overall_task_id)
-        futures = []
-        tasks = []
+        with Live(progress_group, console=console) as live:
+            overall_progress.update(overall_task_id, total=len(get_hosts_from_file(args.file)), completed=0)
+            overall_progress.start_task(overall_task_id)
+            futures = []
+            tasks = []
 
-        with ThreadPoolExecutor(args.threads) as executor:
-            for entry in get_hosts_from_file(args.file):
-                host, cred = entry.split(" => ")
-                ip, port = host.split(":")
-                username, password = cred.split(":")
-                future = executor.submit(await process_host(ip, port, username, password, rules, args.verbose, live, args.error))
-                futures.append(future)
-            for a in as_completed(futures):
-                overall_progress.update(overall_task_id, advance=1)
+            with ThreadPoolExecutor(args.threads) as executor:
+                for entry in get_hosts_from_file(args.file):
+                    host, cred = entry.split(" => ")
+                    ip, port = host.split(":")
+                    username, password = cred.split(":")
+                    future = executor.submit(await process_host(ip, port, username, password, rules, args.verbose, live, args.error))
+                    futures.append(future)
+                for a in as_completed(futures):
+                    overall_progress.update(overall_task_id, advance=1)
 
 def main():
     asyncio.run(main2())
