@@ -79,7 +79,7 @@ async def process_file(sftp: asyncssh.SFTPClient, host:str, username:str, rules:
                 if a[0]:
                     for b,c in a[1].items():
                         print_finding(live.console, host, username, b, path, c)
-                        print_finding(module_console, host, username, b, path, c)
+                        #print_finding(module_console, host, username, b, path, c)
                     multithread_export_print(module_console)
     except Exception as e: 
         if error: live.console.print("Process File Error:", e)
@@ -119,7 +119,7 @@ async def process_directory(sftp: asyncssh.SFTPClient, host:str, username:str, r
                     
                 for b,c in enum_file[1].items():
                     print_finding(live.console, host, username, b, item_path, c)
-                    print_finding(module_console, host, username, b, item_path, c)
+                    #print_finding(module_console, host, username, b, item_path, c)
                 multithread_export_print(module_console)
                 if verbose: live.console.print(f"[F] {item_path}")
                 await process_file(sftp, host, username, rules, verbose, item_path, live, error)
@@ -149,25 +149,19 @@ async def process_host(hostname, port, username, password, rules: SnafflerRuleSe
 async def main2():
     parser = argparse.ArgumentParser(description="Snaffle via SSH.")
     parser.add_argument("-f", "--file", type=str, required=True, help="Input file name, format is 'host:port => username:password'")
-    parser.add_argument("-o", "--output", type=str, required=True, help="Output File")
+    parser.add_argument("-o", "--output", type=str, required=True, help="Output File.")
+    parser.add_argument("--show-importance", type=int, default=0, help="Print only snaffles that is above given importance level, does NOT affect output to file.")
     parser.add_argument("--threads", default=10, type=int, help="Number of threads (Default = 10)")
     parser.add_argument("--timeout", default=5, type=int, help="Timeout in seconds (Default = 5)")
-    parser.add_argument("--disable-visual-on-complete", action="store_true", help="Disables the status visual for an individual task when that task is complete, this can help on keeping eye on what is going on at the time")
-    parser.add_argument("--only-show-progress", action="store_true", help="Only show overall progress bar")
     parser.add_argument("-v", "--verbose", action="store_true", help="Enable verbose")
     parser.add_argument("-e", "--error", action="store_true", help="Prints errors")
     
     args = parser.parse_args()
     overall_progress = get_classic_overall_progress()
-    single_progress = get_classic_single_progress()
     overall_task_id = overall_progress.add_task("", start=False, modulename="SSH Snaffle")
     console = Console(force_terminal=True)    
     global semaphore
     semaphore = asyncio.Semaphore(args.threads)
-    progress_group = Group(
-        Panel(single_progress, title="SSH Snaffle", expand=False),
-        overall_progress,
-    ) if not args.only_show_progress else Group(overall_progress)
     
     global output_file, output_file_path, module_console
     module_console = Console(force_terminal=True, record=True, quiet=True)    
@@ -180,7 +174,7 @@ async def main2():
         rules = SnafflerRuleSet.load_default_ruleset()
 
 
-        with Live(progress_group, console=console) as live:
+        with Live(overall_progress, console=console) as live:
             overall_progress.update(overall_task_id, total=len(get_hosts_from_file(args.file)), completed=0)
             overall_progress.start_task(overall_task_id)
 
