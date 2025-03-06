@@ -165,7 +165,7 @@ async def main2():
     ) if not args.only_show_progress else Group(overall_progress)
     
     global output_file, output_file_path, module_console
-    module_console = Console(force_terminal=True, record=True)    
+    module_console = Console(force_terminal=True, record=True, quiet=True)    
     
     if args.output:
         output_file = args.output
