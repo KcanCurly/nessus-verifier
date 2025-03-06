@@ -135,15 +135,16 @@ async def connect_ssh(hostname, port, username, password):
 
 async def process_host(hostname, port, username, password, rules: SnafflerRuleSet, verbose, live:Live, error):
     """Main function to process a single SSH host asynchronously."""
-    try:
-        async with await connect_ssh(hostname, port, username, password) as conn:
-            if verbose: live.console.print(f"Connected to {hostname}:{port}")
-            history_dict[f"{hostname}:{port}"] = set()
-            sftp = await conn.start_sftp_client()
-            await process_directory(sftp, f"{hostname}:{port}", username, rules, verbose, live, error, "/")
-            
-    except Exception as e:
-        print(f"Error processing {hostname}: {e}")
+    async with semaphore:
+        try:
+            async with await connect_ssh(hostname, port, username, password) as conn:
+                if verbose: live.console.print(f"Connected to {hostname}:{port}")
+                history_dict[f"{hostname}:{port}"] = set()
+                sftp = await conn.start_sftp_client()
+                await process_directory(sftp, f"{hostname}:{port}", username, rules, verbose, live, error, "/")
+                
+        except Exception as e:
+            print(f"Error processing {hostname}: {e}")
 
 async def main2():
     parser = argparse.ArgumentParser(description="Snaffle via SSH.")
@@ -161,7 +162,8 @@ async def main2():
     single_progress = get_classic_single_progress()
     overall_task_id = overall_progress.add_task("", start=False, modulename="SSH Snaffle")
     console = Console(force_terminal=True)    
-    
+    global semaphore
+    semaphore = asyncio.Semaphore(args.threads)
     progress_group = Group(
         Panel(single_progress, title="SSH Snaffle", expand=False),
         overall_progress,
