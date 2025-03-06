@@ -155,26 +155,26 @@ def main():
     ) if not args.only_show_progress else Group(overall_progress)
     
     global output_file, output_file_path, module_console
-    module_console = Console(force_terminal=True, record=True)
-    if args.output:
-        output_file = args.output
-        with open(output_file, "w") as f:
-            output_file_path = os.path.abspath(f.name)
     
-    rules = SnafflerRuleSet.load_default_ruleset()
-    
-    with Live(progress_group, console=console) as live:
-        overall_progress.update(overall_task_id, total=len(get_hosts_from_file(args.file)) * len(get_hosts_from_file(args.cred_file)), completed=0)
-        overall_progress.start_task(overall_task_id)
-        futures = []
-        tasks = []
-        with ThreadPoolExecutor(args.threads) as executor:
-            for cred in get_hosts_from_file(args.cred_file):
-                for host in get_hosts_from_file(args.file):
-                    ip, port = host.split(":")
-                    username, password = cred.split(":")
-                    # single_task_id = single_progress.add_task("single", start=False, host=host, status="status", total=1)
-                    future = executor.submit(process_host(ip, username, password, rules, args.verbose, live, args.error))
-                    futures.append(future)
-            for a in as_completed(futures):
-                overall_progress.update(overall_task_id, advance=1)
+
+    output_file = args.output
+    with open(output_file, "w") as f:
+        output_file_path = os.path.abspath(f.name)
+        module_console = Console(force_terminal=True, record=True, file=f)
+        rules = SnafflerRuleSet.load_default_ruleset()
+        
+        with Live(progress_group, console=console) as live:
+            overall_progress.update(overall_task_id, total=len(get_hosts_from_file(args.file)) * len(get_hosts_from_file(args.cred_file)), completed=0)
+            overall_progress.start_task(overall_task_id)
+            futures = []
+            tasks = []
+            with ThreadPoolExecutor(args.threads) as executor:
+                for cred in get_hosts_from_file(args.cred_file):
+                    for host in get_hosts_from_file(args.file):
+                        ip, port = host.split(":")
+                        username, password = cred.split(":")
+                        # single_task_id = single_progress.add_task("single", start=False, host=host, status="status", total=1)
+                        future = executor.submit(process_host(ip, username, password, rules, args.verbose, live, args.error))
+                        futures.append(future)
+                for a in as_completed(futures):
+                    overall_progress.update(overall_task_id, advance=1)
