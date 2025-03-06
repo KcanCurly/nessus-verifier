@@ -24,12 +24,10 @@ MAX_LINE_CHARACTER = 300
 
 # history_lock = multiprocessing.Lock()
 # output_lock = multiprocessing.Lock()
-output_file = ""
-output_file_path = ""
-module_console = None
-history_dict = dict[str, set]()
-
-semaphore = asyncio.Semaphore(1)
+# output_file = ""
+# output_file_path = ""
+# module_console = None
+# history_dict = dict[str, set]()
 
 def can_read_file(sftp: paramiko.SFTPClient, path):
     """Attempts to open a remote file in read mode to check permissions."""
