@@ -185,7 +185,6 @@ async def main2():
 
 
 def process_host2(data):
-
     """Main function to process a single SSH host asynchronously."""
     print("c")
     try:
@@ -239,7 +238,10 @@ def main2():
     global output_file, output_file_path, module_console
     module_console = Console(force_terminal=True, record=True, quiet=True)    
     
-
+    with ProcessPoolExecutor(max_workers=args.thread) as executor:
+        print("a")
+        executor.map(process_host2, l)
+        print("b")
     output_file = args.output
     with open(output_file, "w") as f:
         output_file_path = os.path.abspath(f.name)
