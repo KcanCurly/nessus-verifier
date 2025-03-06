@@ -220,6 +220,8 @@ def process_host2(data):
         print(e)
         if error: live.console.print(f"Error processing {hostname}: {e}")
 
+
+
 def main3():
     parser = argparse.ArgumentParser(description="Snaffle via SSH.")
     parser.add_argument("-f", "--file", type=str, required=True, help="Input file name, format is 'host:port => username:password'")
@@ -239,6 +241,24 @@ def main3():
     module_console = Console(force_terminal=True, record=True, quiet=True)    
     
     output_file = args.output
+    
+    l = []
+    for entry in get_hosts_from_file(args.file):
+        host, cred = entry.split(" => ")
+        ip, port = host.split(":")
+        username, password = cred.split(":")
+        l.append({"hostname": host, "username": username, "password": password, "port": port, "verbose": args.verbose, "error": args.error, "live": live, "rules": rules, "ip": ip, "module_console": module_console, "output_file_path": output_file_path})
+
+
+    with ProcessPoolExecutor(max_workers=args.thread) as executor:
+        print(l)
+        print("a")
+        results = list(executor.map(process_host2, l))
+        print("b")
+    for res in results:
+        print(res)
+    return
+    
     try:
         with open(output_file, "w") as f:
             output_file_path = os.path.abspath(f.name)
