@@ -22,7 +22,7 @@ MAX_LINE_CHARACTER = 300
 
 history_lock = threading.Lock()
 output_lock = threading.Lock()
-output_file = "output.txt"
+output_file = ""
 output_file_path = ""
 history_dict = dict[str, set]()
 
@@ -160,13 +160,14 @@ async def main2():
         overall_progress,
     ) if not args.only_show_progress else Group(overall_progress)
     
+    global output_file, output_file_path
+    
     rules = SnafflerRuleSet.load_default_ruleset()
     if args.output:
         output_file = args.output
         with open(output_file, "w") as f:
             output_file_path = os.path.abspath(f.name)
 
-        output_file_path
     with Live(progress_group, console=console) as live:
         overall_progress.update(overall_task_id, total=len(get_hosts_from_file(args.file)), completed=0)
         overall_progress.start_task(overall_task_id)
