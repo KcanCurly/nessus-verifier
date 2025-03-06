@@ -247,7 +247,7 @@ def main3():
         host, cred = entry.split(" => ")
         ip, port = host.split(":")
         username, password = cred.split(":")
-        l.append({"hostname": host, "username": username, "password": password, "port": port, "verbose": args.verbose, "error": args.error, "live": live, "rules": rules, "ip": ip, "module_console": module_console, "output_file_path": output_file_path})
+        l.append({"a"})
 
 
     with ProcessPoolExecutor(max_workers=args.thread) as executor:
