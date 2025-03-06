@@ -22,8 +22,8 @@ from concurrent.futures import ProcessPoolExecutor
 MAX_FILE_SIZE_MB = 100
 MAX_LINE_CHARACTER = 300
 
-history_lock = multiprocessing.Lock()
-output_lock = multiprocessing.Lock()
+# history_lock = multiprocessing.Lock()
+# output_lock = multiprocessing.Lock()
 output_file = ""
 output_file_path = ""
 module_console = None
@@ -42,7 +42,7 @@ def can_read_file(sftp: paramiko.SFTPClient, path):
     except Exception as e:
         return False
 
-async def get_file_size_mb(sftp: paramiko.SFTPClient, path, error, live):
+def get_file_size_mb(sftp: paramiko.SFTPClient, path, error, live):
     """Returns the size of a remote file in MB."""
     try:
         file_size_bytes = sftp.stat(path).st_size
@@ -90,11 +90,12 @@ def process_directory(sftp: paramiko.SFTPClient, host:str, username:str, rules: 
                 process_directory(sftp, host, username, rules, verbose, live, error, item_path, depth=depth+1)
             elif stat.S_ISREG(sftp.stat(item_path).st_mode):
                 if item_path == output_file_path: continue
-
+                """
                 with history_lock:
                     if item_path in history_dict[host]:
                         if verbose: live.console.print(f"[F] | Already processed, skipping | {item_path}")
                         continue
+                """
 
                 enum_file = rules.enum_file(item_path)
                 if verbose: live.console.print(f"[F] | Processing | {item_path}")
@@ -109,9 +110,10 @@ def process_directory(sftp: paramiko.SFTPClient, host:str, username:str, rules: 
                     if verbose: live.console.print(f"[F] | Read Failed | {item_path}")
                     continue
 
-
+                """
                 with history_lock:
                     history_dict[host].add(item_path)
+                """
 
 
                 for b,c in enum_file[1].items():
