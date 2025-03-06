@@ -216,7 +216,7 @@ def process_host2(data):
         client.close()
             
     except Exception as e:
-        print(10)
+        print(e)
         if error: live.console.print(f"Error processing {hostname}: {e}")
 
 def main2():
