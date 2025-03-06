@@ -240,28 +240,30 @@ def main2():
     module_console = Console(force_terminal=True, record=True, quiet=True)    
     
     output_file = args.output
-    with open(output_file, "w") as f:
-        output_file_path = os.path.abspath(f.name)
-        module_console = Console(force_terminal=True, record=True, file=f)    
-        rules = SnafflerRuleSet.load_default_ruleset()
+    try:
+        with open(output_file, "w") as f:
+            output_file_path = os.path.abspath(f.name)
+            module_console = Console(force_terminal=True, record=True, file=f)    
+            rules = SnafflerRuleSet.load_default_ruleset()
 
 
-        with Live(overall_progress, console=console) as live:
-            overall_progress.update(overall_task_id, total=len(get_hosts_from_file(args.file)), completed=0)
-            overall_progress.start_task(overall_task_id)
-            l = []
-            for entry in get_hosts_from_file(args.file):
-                host, cred = entry.split(" => ")
-                ip, port = host.split(":")
-                username, password = cred.split(":")
-                l.append({"hostname": host, "username": username, "password": password, "port": port, "verbose": args.verbose, "error": args.error, "live": live, "rules": rules, "ip": ip})
+            with Live(overall_progress, console=console) as live:
+                overall_progress.update(overall_task_id, total=len(get_hosts_from_file(args.file)), completed=0)
+                overall_progress.start_task(overall_task_id)
+                l = []
+                for entry in get_hosts_from_file(args.file):
+                    host, cred = entry.split(" => ")
+                    ip, port = host.split(":")
+                    username, password = cred.split(":")
+                    l.append({"hostname": host, "username": username, "password": password, "port": port, "verbose": args.verbose, "error": args.error, "live": live, "rules": rules, "ip": ip})
 
 
-            with ProcessPoolExecutor(max_workers=args.thread) as executor:
-                print(l)
-                print("a")
-                executor.map(process_host2, l)
-                print("b")
+                with ProcessPoolExecutor(max_workers=args.thread) as executor:
+                    print(l)
+                    print("a")
+                    executor.map(process_host2, l)
+                    print("b")
+    except Exception as e: print(f"First {e}")
             
 
 
