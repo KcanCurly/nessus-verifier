@@ -199,6 +199,7 @@ def process_host2(data):
         error = data["error"]
         ip = data["ip"]
         client = paramiko.SSHClient()
+        print(1)
         client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         client.connect(ip, username=username, password=password, timeout=10)
         sftp = client.open_sftp()
@@ -245,7 +246,7 @@ def main2():
                 ip, port = host.split(":")
                 username, password = cred.split(":")
                 l.append({"hostname": host, "username": username, "password": password, "port": port, "verbose": args.verbose, "error": args.error, "live": live, "rules": rules, "ip": ip})
-                # tasks.append(asyncio.create_task(process_host(ip, port, username, password, rules, args.verbose, live, args.error)))
+
             with ProcessPoolExecutor(max_workers=args.thread) as executor:
                 executor.map(process_host2, l)
     """
