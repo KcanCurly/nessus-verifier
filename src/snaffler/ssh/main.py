@@ -27,8 +27,11 @@ output_file_path = ""
 module_console = None
 history_dict = dict[str, set]()
 
+semaphore = asyncio.Semaphore(1)
+
 
 def multithread_export_print(console: Console):
+    return
     with output_lock:
         a = console.export_text(styles=True)
         with open(output_file, "a") as f:
@@ -178,18 +181,19 @@ async def main2():
         with Live(progress_group, console=console) as live:
             overall_progress.update(overall_task_id, total=len(get_hosts_from_file(args.file)), completed=0)
             overall_progress.start_task(overall_task_id)
-            futures = []
+
             tasks = []
 
-            with ThreadPoolExecutor(args.threads) as executor:
-                for entry in get_hosts_from_file(args.file):
-                    host, cred = entry.split(" => ")
-                    ip, port = host.split(":")
-                    username, password = cred.split(":")
-                    future = executor.submit(await process_host(ip, port, username, password, rules, args.verbose, live, args.error))
-                    futures.append(future)
-                for a in as_completed(futures):
-                    overall_progress.update(overall_task_id, advance=1)
+            for entry in get_hosts_from_file(args.file):
+                host, cred = entry.split(" => ")
+                ip, port = host.split(":")
+                username, password = cred.split(":")
+                tasks.append(asyncio.create_task(process_host(ip, port, username, password, rules, args.verbose, live, args.error)))
+            
+            await asyncio.gather(*tasks)  # Wait for all tasks to complete
+
+
+
 
 def main():
     asyncio.run(main2())
