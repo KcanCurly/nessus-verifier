@@ -94,7 +94,7 @@ async def process_directory(sftp: asyncssh.SFTPClient, host:str, username:str, r
                 if not enum_file[0]:
                     if verbose: live.console.print(f"[F] | Discarded by {enum_file[1][0].name} | {item_path}")
                     continue
-                file_size = await get_file_size_mb(sftp, item_path)
+                file_size = await get_file_size_mb(sftp, item_path, error, live)
                 if file_size > MAX_FILE_SIZE_MB:
                     if verbose: live.console.print(f"[F] | File too large: {file_size} MB | {item_path}")
                     continue
