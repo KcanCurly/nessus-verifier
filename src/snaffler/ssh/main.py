@@ -30,34 +30,33 @@ history_dict = dict[str, set]()
 
 semaphore = asyncio.Semaphore(1)
 
-async def can_read_file(sftp, path):
+def can_read_file(sftp: paramiko.SFTPClient, path):
     """Attempts to open a remote file in read mode to check permissions."""
     try:
-        async with sftp.open(path, "r") as f:
-            await f.read(1)  # Try reading a byte
+        with sftp.open(path, "r") as f:
+            f.read(1)  # Try reading a byte
         return True
     except PermissionError:
         return False
     except Exception as e:
         return False
 
-async def get_file_size_mb(sftp, path, error, live):
+async def get_file_size_mb(sftp: paramiko.SFTPClient, path, error, live):
     """Returns the size of a remote file in MB."""
     try:
-        file_stat = await sftp.stat(path)
-        size_mb = file_stat.size / (1024 * 1024)  # Convert bytes to MB
-        return size_mb  # Round to 2 decimal places
+        file_size_bytes = sftp.stat(path).st_size
+        return file_size_bytes.size / (1024 * 1024)  # Convert bytes to MB
     except Exception as e:
-        live.console.print("Error getting file size:", e)
+        if error: live.console.print("Error getting file size:", e)
         return None
 
 def print_finding(console, host:str, username:str, rule:SnaffleRule, path:str, findings:list[str]):
     console.print(f"[{rule.triage.value}]\[{host}]\[{username}]\[{rule.importance}]\[{rule.name}][/{rule.triage.value}][white] | {path} | {findings}[/white]")
 
-async def process_file(sftp: asyncssh.SFTPClient, host:str, username:str, rules: SnafflerRuleSet, verbose, path, live:Live, error):
+def process_file(sftp: paramiko.SFTPClient, host:str, username:str, rules: SnafflerRuleSet, verbose, path, live:Live, error):
     try:
-        async with await sftp.open(path, errors='ignore') as f:
-            data = await f.read()
+        with sftp.open(path) as f:
+            data = f.read().decode("utf-8")
 
             if "\r\n" in data:
                 data = data.split("\r\n")
@@ -76,49 +75,49 @@ async def process_file(sftp: asyncssh.SFTPClient, host:str, username:str, rules:
     except Exception as e: 
         if error: live.console.print("Process File Error:", e)
 
-async def process_directory(sftp: asyncssh.SFTPClient, host:str, username:str, rules: SnafflerRuleSet, verbose, live:Live, error, remote_path=".", depth=0):
+def process_directory(sftp: paramiko.SFTPClient, host:str, username:str, rules: SnafflerRuleSet, verbose, live:Live, error, remote_path=".", depth=0):
     try:
         tasks = []
-        dir = await sftp.readdir(remote_path)
+        dir = sftp.listdir(remote_path)
         for d in dir:
-            if d.filename == "." or d.filename == "..":continue
             item_path = f"{remote_path if remote_path != "/" else ""}/{d.filename}"
-            if await sftp.isdir(item_path):
+            
+            if stat.S_ISDIR(sftp.stat(item_path).st_mode):
                 if not rules.enum_directory(item_path)[0]:continue
                 if verbose: live.console.print(f"[D] {item_path}")
                 # tasks.append(process_directory(sftp, host, username, rules, verbose, live, error, item_path, depth=depth+1))
-                await process_directory(sftp, host, username, rules, verbose, live, error, item_path, depth=depth+1)
-            elif await sftp.isfile(item_path):
+                process_directory(sftp, host, username, rules, verbose, live, error, item_path, depth=depth+1)
+            elif stat.S_ISREG(sftp.stat(item_path).st_mode):
                 if item_path == output_file_path: continue
-                """
+
                 with history_lock:
                     if item_path in history_dict[host]:
                         if verbose: live.console.print(f"[F] | Already processed, skipping | {item_path}")
                         continue
-                """
+
                 enum_file = rules.enum_file(item_path)
                 if verbose: live.console.print(f"[F] | Processing | {item_path}")
                 if not enum_file[0]:
                     if verbose: live.console.print(f"[F] | Discarded by {enum_file[1][0].name} | {item_path}")
                     continue
-                file_size = await get_file_size_mb(sftp, item_path, error, live)
+                file_size = get_file_size_mb(sftp, item_path, error, live)
                 if file_size > MAX_FILE_SIZE_MB:
                     if verbose: live.console.print(f"[F] | File too large: {file_size} MB | {item_path}")
                     continue
-                if not await can_read_file(sftp, item_path):
+                if not can_read_file(sftp, item_path):
                     if verbose: live.console.print(f"[F] | Read Failed | {item_path}")
                     continue
 
-                """
+
                 with history_lock:
                     history_dict[host].add(item_path)
-                """
+
 
                 for b,c in enum_file[1].items():
                     print_finding(live.console, host, username, b, item_path, c)
                     print_finding(module_console, host, username, b, item_path, c)
                 if verbose: live.console.print(f"[F] {item_path}")
-                await process_file(sftp, host, username, rules, verbose, item_path, live, error)
+                process_file(sftp, host, username, rules, verbose, item_path, live, error)
                 #tasks.append(process_file(sftp, host, username, rules, verbose, item_path, live, error))
     except Exception as e:
         if error: live.console.print("Process Directory Error:", e)
@@ -184,7 +183,7 @@ async def main2():
             await asyncio.gather(*tasks)  # Wait for all tasks to complete
 
 
-async def process_host2(data):
+def process_host2(data):
     hostname = data["hostname"]
     port = data["port"]
     username = data["username"]
@@ -196,11 +195,12 @@ async def process_host2(data):
     """Main function to process a single SSH host asynchronously."""
 
     try:
-        async with await connect_ssh(hostname, port, username, password) as conn:
-            if verbose: live.console.print(f"Connected to {hostname}:{port}")
-            history_dict[f"{hostname}:{port}"] = set()
-            sftp = await conn.start_sftp_client()
-            await process_directory(sftp, f"{hostname}:{port}", username, rules, verbose, live, error, "/")
+        client = paramiko.SSHClient()
+        client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        client.connect(hostname, username=username, password=password, timeout=10)
+        sftp = client.open_sftp()
+        process_directory(sftp, f"{hostname}:{port}", username, rules, verbose, live, error, "/")
+        client.close()
             
     except Exception as e:
         print(f"Error processing {hostname}: {e}")
