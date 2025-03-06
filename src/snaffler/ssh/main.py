@@ -221,7 +221,7 @@ def process_host2(data):
         print(e)
         if error: live.console.print(f"Error processing {hostname}: {e}")
 
-def main2():
+def main3():
     parser = argparse.ArgumentParser(description="Snaffle via SSH.")
     parser.add_argument("-f", "--file", type=str, required=True, help="Input file name, format is 'host:port => username:password'")
     parser.add_argument("-o", "--output", type=str, required=True, help="Output File.")
@@ -271,4 +271,4 @@ def main2():
 
 
 def main():
-    main2()
+    main3()
