@@ -91,12 +91,13 @@ def process_directory(sftp: paramiko.SFTPClient, host:str, username:str, rules: 
                 elif stat.S_ISREG(sftp.stat(item_path).st_mode):
                     if item_path == output_file_path: continue
                     if verbose: console.print(f"[F] {host} | {username} | Pre-Processing | {item_path}")
+                    """
                     with history_lock:
                         print(history_dict[host])
                         if item_path in history_dict[host]:
                             if verbose: console.print(f"[F] {host} | {username} | Already processed, skipping | {item_path}")
                             continue
-
+                    """
                     enum_file = rules.enum_file(item_path)
                     if not enum_file[0]:
                         if verbose: console.print(f"[F] {host} | {username} | Discarded by {enum_file[1][0].name} | {item_path}")
@@ -108,13 +109,13 @@ def process_directory(sftp: paramiko.SFTPClient, host:str, username:str, rules: 
                     if not can_read_file(sftp, item_path):
                         if verbose: console.print(f"[F] {host} | {username} | Read Failed | {item_path}")
                         continue
-
+                    """
                     with history_lock:
                         with history_dict.get(host, set()) as shared_set:
                             shared_set.add(item_path)
                             history_dict[host] = shared_set  # Update the dictionary
                         #history_dict[host].add(item_path)
-
+                    """
                     for b,c in enum_file[1].items():
                         print_finding(host, username, b, item_path, c)
 
