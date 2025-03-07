@@ -110,7 +110,10 @@ def process_directory(sftp: paramiko.SFTPClient, host:str, username:str, rules: 
                         continue
 
                     with history_lock:
-                        history_dict[host].add(item_path)
+                        with history_dict.get(host, set()) as shared_set:
+                            shared_set.add(item_path)
+                            history_dict[host] = shared_set  # Update the dictionary
+                        #history_dict[host].add(item_path)
 
                     for b,c in enum_file[1].items():
                         print_finding(host, username, b, item_path, c)
