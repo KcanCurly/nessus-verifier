@@ -90,16 +90,13 @@ def process_directory(sftp: paramiko.SFTPClient, host:str, username:str, rules: 
                     process_directory(sftp, host, username, rules, verbose, error, history_lock, history_dict, item_path, depth=depth+1)
                 elif stat.S_ISREG(sftp.stat(item_path).st_mode):
                     if item_path == output_file_path: continue
-
+                    if verbose: console.print(f"[F] {host} | {username} | Pre-Processing | {item_path}")
                     with history_lock:
                         if item_path in history_dict[host]:
                             if verbose: console.print(f"[F] {host} | {username} | Already processed, skipping | {item_path}")
                             continue
 
-
-
                     enum_file = rules.enum_file(item_path)
-                    if verbose: console.print(f"[F] {host} | {username} | Pre-Processing | {item_path}")
                     if not enum_file[0]:
                         if verbose: console.print(f"[F] {host} | {username} | Discarded by {enum_file[1][0].name} | {item_path}")
                         continue
@@ -132,18 +129,24 @@ async def connect_ssh(hostname, port, username, password):
 
 def process_host(ip, port, username, password, rules: SnafflerRuleSet, verbose, error, history_lock, history_dict):
     """Main function to process a single SSH host asynchronously."""
+    client = None
+    sftp = None
     try:
         client = paramiko.SSHClient()
         client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         client.connect(ip, port=int(port),username=username, password=password, timeout=10)
         sftp = client.open_sftp()
-        console.print(f"Starting Processing {ip}:{port}")
+        console.print(f"Starting Processing {ip}:{port} as user {username}")
         process_directory(sftp, f"{ip}:{port}", username, rules, verbose, error, history_lock, history_dict, "/")
-        console.print(f"Ending Processing {ip}:{port}")
+        console.print(f"Ending Processing {ip}:{port} as user {username}")
+        sftp.close()
         client.close()
             
     except Exception as e:
         if error: console.print(f"Error processing {ip}:{port}: {e}")
+        if sftp: sftp.close()
+        if client: client.close()
+        
 
 def main3():
     parser = argparse.ArgumentParser(description="Snaffle via SSH.")
