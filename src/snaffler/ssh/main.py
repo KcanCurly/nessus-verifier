@@ -29,15 +29,6 @@ history_dict = dict[str, set]()
 
 semaphore = asyncio.Semaphore(1)
 
-
-def multithread_export_print(console: Console):
-    return
-    with output_lock:
-        a = console.export_text(styles=True)
-        with open(output_file, "a") as f:
-            f.write(a)
-
-
 async def can_read_file(sftp, path):
     """Attempts to open a remote file in read mode to check permissions."""
     try:
@@ -79,8 +70,8 @@ async def process_file(sftp: asyncssh.SFTPClient, host:str, username:str, rules:
                 if a[0]:
                     for b,c in a[1].items():
                         print_finding(live.console, host, username, b, path, c)
-                        #print_finding(module_console, host, username, b, path, c)
-                    multithread_export_print(module_console)
+                        print_finding(module_console, host, username, b, path, c)
+
     except Exception as e: 
         if error: live.console.print("Process File Error:", e)
 
@@ -119,8 +110,7 @@ async def process_directory(sftp: asyncssh.SFTPClient, host:str, username:str, r
                     
                 for b,c in enum_file[1].items():
                     print_finding(live.console, host, username, b, item_path, c)
-                    #print_finding(module_console, host, username, b, item_path, c)
-                multithread_export_print(module_console)
+                    print_finding(module_console, host, username, b, item_path, c)
                 if verbose: live.console.print(f"[F] {item_path}")
                 await process_file(sftp, host, username, rules, verbose, item_path, live, error)
                 #tasks.append(process_file(sftp, host, username, rules, verbose, item_path, live, error))
