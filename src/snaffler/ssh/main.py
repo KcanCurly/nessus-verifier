@@ -71,7 +71,7 @@ async def process_file(sftp: asyncssh.SFTPClient, host:str, username:str, rules:
                         i = m.group(1)
                         if int(i) >= show_importance:
                             print_finding(live.console, host, username, rule, path, findings_list)
-                    # print_finding(module_console, host, username, rule, path, findings_list)
+                    print_finding(module_console, host, username, rule, path, findings_list)
 
     except Exception as e: 
         if error: live.console.print("Process File Error:", e)
@@ -120,7 +120,7 @@ async def process_directory(sftp: asyncssh.SFTPClient, host:str, username:str, r
                         i = m.group(1)
                         if int(i) >= show_importance:
                             print_finding(live.console, host, username, rule, item_path, findings_list)
-                    # print_finding(module_console, host, username, rule, item_path, findings_list)
+                    print_finding(module_console, host, username, rule, item_path, findings_list)
                 if verbose: live.console.print(f"[F] {item_path}")
                 await process_file(sftp, host, username, rules, verbose, item_path, live, error, show_importance)
 
