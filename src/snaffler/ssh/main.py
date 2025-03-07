@@ -165,6 +165,7 @@ def main3():
     output_file = args.output
     futures = []
     rules = SnafflerRuleSet.load_default_ruleset()
+    global history_dict
     with multiprocessing.Manager() as manager:
         history_lock = manager.Lock()
         with ProcessPoolExecutor(max_workers=args.thread) as executor:
@@ -172,7 +173,6 @@ def main3():
                 host, cred = entry.split(" => ")
                 ip, port = host.split(":")
                 username, password = cred.split(":")
-                global history_dict
                 history_dict[host] = set()
                 futures.append(executor.submit(process_host, ip, port, username, password, rules, args.verbose, args.error, history_lock))
             start_time = time.time()
