@@ -94,11 +94,12 @@ def process_directory(sftp: paramiko.SFTPClient, host:str, username:str, rules: 
                     process_directory(sftp, host, username, rules, verbose, error, item_path, depth=depth+1)
                 elif stat.S_ISREG(sftp.stat(item_path).st_mode):
                     if item_path == output_file_path: continue
-
+                    """
                     with history_lock:
                         if item_path in history_dict[host]:
                             if verbose: console.print(f"[F] | Already processed, skipping | {item_path}")
                             continue
+                    """
 
 
                     enum_file = rules.enum_file(item_path)
@@ -251,18 +252,19 @@ def main3():
     output_file = args.output
     futures = []
     rules = SnafflerRuleSet.load_default_ruleset()
-    with ProcessPoolExecutor(max_workers=args.thread) as executor:
-        for entry in get_hosts_from_file(args.file):
-            host, cred = entry.split(" => ")
-            ip, port = host.split(":")
-            username, password = cred.split(":")
-            futures.append(executor.submit(process_host, ip, port, username, password, rules, args.verbose, args.error))
-        start_time = time.time()
-        for future in futures:
-            future.result()
-        end_time = time.time()
-        execution_time = end_time - start_time
-        print(f"Function took {execution_time:.4f} seconds to execute.")
+    with multiprocessing.Manager() as manager:
+        with ProcessPoolExecutor(max_workers=args.thread) as executor:
+            for entry in get_hosts_from_file(args.file):
+                host, cred = entry.split(" => ")
+                ip, port = host.split(":")
+                username, password = cred.split(":")
+                futures.append(executor.submit(process_host, ip, port, username, password, rules, args.verbose, args.error))
+            start_time = time.time()
+            for future in futures:
+                future.result()
+            end_time = time.time()
+            execution_time = end_time - start_time
+            print(f"Function took {execution_time:.4f} seconds to execute.")
     """
     with overall_progress as progress:
         futures = []  # keep track of the jobs
