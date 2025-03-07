@@ -84,48 +84,51 @@ def process_directory(sftp: paramiko.SFTPClient, host:str, username:str, rules: 
         tasks = []
         dir = sftp.listdir(remote_path)
         for d in dir:
-            item_path = f"{remote_path if remote_path != "/" else ""}/{d}"
-            print(f"Processing {host}:{item_path}")
-            
-            if stat.S_ISDIR(sftp.stat(item_path).st_mode):
-                if not rules.enum_directory(item_path)[0]:continue
-                # if verbose: console.print(f"[D] {item_path}")
+            try:
+                item_path = f"{remote_path if remote_path != "/" else ""}/{d}"
+                print(f"Processing {host}:{item_path}")
+                
+                if stat.S_ISDIR(sftp.stat(item_path).st_mode):
+                    if not rules.enum_directory(item_path)[0]:continue
+                    # if verbose: console.print(f"[D] {item_path}")
 
-                process_directory(sftp, host, username, rules, verbose, error, item_path, depth=depth+1)
-            elif stat.S_ISREG(sftp.stat(item_path).st_mode):
-                if item_path == output_file_path: continue
+                    process_directory(sftp, host, username, rules, verbose, error, item_path, depth=depth+1)
+                elif stat.S_ISREG(sftp.stat(item_path).st_mode):
+                    if item_path == output_file_path: continue
 
-                with history_lock:
-                    if item_path in history_dict[host]:
-                        # if verbose: console.print(f"[F] | Already processed, skipping | {item_path}")
+                    with history_lock:
+                        if item_path in history_dict[host]:
+                            # if verbose: console.print(f"[F] | Already processed, skipping | {item_path}")
+                            continue
+
+
+                    enum_file = rules.enum_file(item_path)
+                    # if verbose: console.print(f"[F] | Processing | {item_path}")
+                    if not enum_file[0]:
+                        # if verbose: console.print(f"[F] | Discarded by {enum_file[1][0].name} | {item_path}")
+                        continue
+                    file_size = get_file_size_mb(sftp, item_path, error)
+                    if file_size > MAX_FILE_SIZE_MB:
+                        # if verbose: console.print(f"[F] | File too large: {file_size} MB | {item_path}")
+                        continue
+                    if not can_read_file(sftp, item_path):
+                        # if verbose: console.print(f"[F] | Read Failed | {item_path}")
                         continue
 
 
-                enum_file = rules.enum_file(item_path)
-                # if verbose: console.print(f"[F] | Processing | {item_path}")
-                if not enum_file[0]:
-                    # if verbose: console.print(f"[F] | Discarded by {enum_file[1][0].name} | {item_path}")
-                    continue
-                file_size = get_file_size_mb(sftp, item_path, error)
-                if file_size > MAX_FILE_SIZE_MB:
-                    # if verbose: console.print(f"[F] | File too large: {file_size} MB | {item_path}")
-                    continue
-                if not can_read_file(sftp, item_path):
-                    # if verbose: console.print(f"[F] | Read Failed | {item_path}")
-                    continue
-
-
-                with history_lock:
-                    history_dict[host].add(item_path)
+                    with history_lock:
+                        history_dict[host].add(item_path)
 
 
 
-                for b,c in enum_file[1].items():
-                    pass
-                    # print_finding(console, host, username, b, item_path, c)
-                    # print_finding(module_console, host, username, b, item_path, c)
-                # if verbose: console.print(f"[F] {item_path}")
-                process_file(sftp, host, username, rules, verbose, item_path, error)
+                    for b,c in enum_file[1].items():
+                        pass
+                        # print_finding(console, host, username, b, item_path, c)
+                        # print_finding(module_console, host, username, b, item_path, c)
+                    # if verbose: console.print(f"[F] {item_path}")
+                    process_file(sftp, host, username, rules, verbose, item_path, error)
+            except Exception as e:
+                print(f"Process Directory Error for: {host} with user {username} for path {remote_path}: {e}")
 
     except Exception as e:
         print(f"Process Directory Error for: {host} with user {username} for path {remote_path}: {e}")
