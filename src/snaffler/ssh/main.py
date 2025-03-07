@@ -92,6 +92,7 @@ def process_directory(sftp: paramiko.SFTPClient, host:str, username:str, rules: 
                     if item_path == output_file_path: continue
                     if verbose: console.print(f"[F] {host} | {username} | Pre-Processing | {item_path}")
                     with history_lock:
+                        print(history_dict[host])
                         if item_path in history_dict[host]:
                             if verbose: console.print(f"[F] {host} | {username} | Already processed, skipping | {item_path}")
                             continue
@@ -143,7 +144,7 @@ def process_host(ip, port, username, password, rules: SnafflerRuleSet, verbose, 
         client.close()
             
     except Exception as e:
-        if error: console.print(f"Error processing {ip}:{port}: {e}")
+        if error: console.print(f"Error processing {ip}:{port} as user {username}: {e}")
         if sftp: sftp.close()
         if client: client.close()
         
