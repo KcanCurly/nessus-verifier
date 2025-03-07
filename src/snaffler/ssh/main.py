@@ -56,6 +56,7 @@ def get_file_size_mb(sftp: paramiko.SFTPClient, path, error):
         return None
 
 def print_finding(host:str, username:str, rule:SnaffleRule, path:str, findings:list[str]):
+    return
     console.print(f"[{rule.triage.value}]\[{host}]\[{username}]\[{rule.importance}]\[{rule.name}][/{rule.triage.value}][white] | {path} | {findings}[/white]")
 
 def process_file(sftp: paramiko.SFTPClient, host:str, username:str, rules: SnafflerRuleSet, verbose, path, error):
