@@ -90,12 +90,12 @@ def process_directory(sftp: paramiko.SFTPClient, host:str, username:str, rules: 
                     process_directory(sftp, host, username, rules, verbose, error, history_lock, item_path, depth=depth+1)
                 elif stat.S_ISREG(sftp.stat(item_path).st_mode):
                     if item_path == output_file_path: continue
-                    """
+
                     with history_lock:
                         if item_path in history_dict[host]:
                             if verbose: console.print(f"[F] | Already processed, skipping | {item_path}")
                             continue
-                    """
+
 
 
                     enum_file = rules.enum_file(item_path)
