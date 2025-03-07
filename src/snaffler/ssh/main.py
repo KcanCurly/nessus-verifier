@@ -28,7 +28,7 @@ from colorama import init, Fore
 
 MAX_FILE_SIZE_MB = 100
 MAX_LINE_CHARACTER = 300
-
+console = Console()
 history_lock = multiprocessing.Lock()
 output_lock = multiprocessing.Lock()
 output_file = ""
@@ -147,6 +147,7 @@ def process_directory(sftp: paramiko.SFTPClient, host:str, username:str, rules: 
 def process_host(ip, port, username, password, rules: SnafflerRuleSet, verbose, error):
     """Main function to process a single SSH host asynchronously."""
     init(autoreset=True)
+    console.print("[blue]HEHE[/blue]")
     try:
         client = paramiko.SSHClient()
         
