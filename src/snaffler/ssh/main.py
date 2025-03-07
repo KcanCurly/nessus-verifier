@@ -191,7 +191,10 @@ async def main2():
                 username, password = cred.split(":")
                 tasks.append(asyncio.create_task(process_host(ip, port, username, password, rules, args.verbose, live, args.error, args.show_importance)))
             
-            await asyncio.gather(*tasks)  # Wait for all tasks to complete
+            for task in asyncio.as_completed(tasks):  # Process tasks as they finish
+                await task
+                overall_progress.update(overall_task_id, total=len(get_hosts_from_file(args.file)), completed=0)
+
 
 
 
