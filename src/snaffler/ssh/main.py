@@ -16,6 +16,7 @@ from src.utilities.utilities import get_classic_single_progress, get_classic_ove
 import asyncio
 import os
 import threading
+import re
 
 MAX_FILE_SIZE_MB = 100
 MAX_LINE_CHARACTER = 300
@@ -53,7 +54,7 @@ async def get_file_size_mb(sftp, path, error, live):
 def print_finding(console, host:str, username:str, rule:SnaffleRule, path:str, findings:list[str]):
     console.print(f"[{rule.triage.value}]\[{host}]\[{username}]\[{rule.importance}]\[{rule.name}][/{rule.triage.value}][white] | {path} | {findings}[/white]")
 
-async def process_file(sftp: asyncssh.SFTPClient, host:str, username:str, rules: SnafflerRuleSet, verbose, path, live:Live, error):
+async def process_file(sftp: asyncssh.SFTPClient, host:str, username:str, rules: SnafflerRuleSet, verbose, path, live:Live, error, show_importance):
     try:
         async with await sftp.open(path, errors='ignore') as f:
             data = await f.read()
@@ -69,13 +70,19 @@ async def process_file(sftp: asyncssh.SFTPClient, host:str, username:str, rules:
 
                 if a[0]:
                     for b,c in a[1].items():
-                        print_finding(live.console, host, username, b, path, c)
+                        imp = c[0].importance
+                        reg = r"(\d+)⭐"
+                        m = re.match(reg, imp)
+                        if m:
+                            i = m.group(1)
+                            if i >= show_importance:
+                                print_finding(live.console, host, username, b, path, c)
                         print_finding(module_console, host, username, b, path, c)
 
     except Exception as e: 
         if error: live.console.print("Process File Error:", e)
 
-async def process_directory(sftp: asyncssh.SFTPClient, host:str, username:str, rules: SnafflerRuleSet, verbose, live:Live, error, remote_path=".", depth=0):
+async def process_directory(sftp: asyncssh.SFTPClient, host:str, username:str, rules: SnafflerRuleSet, verbose, live:Live, error, show_importance, remote_path=".", depth=0):
     try:
         tasks = []
         dir = await sftp.readdir(remote_path)
@@ -85,8 +92,8 @@ async def process_directory(sftp: asyncssh.SFTPClient, host:str, username:str, r
             if await sftp.isdir(item_path):
                 if not rules.enum_directory(item_path)[0]:continue
                 if verbose: live.console.print(f"[D] {item_path}")
-                # tasks.append(process_directory(sftp, host, username, rules, verbose, live, error, item_path, depth=depth+1))
-                await process_directory(sftp, host, username, rules, verbose, live, error, item_path, depth=depth+1)
+
+                await process_directory(sftp, host, username, rules, verbose, live, error, show_importance, item_path, depth=depth+1)
             elif await sftp.isfile(item_path):
                 if item_path == output_file_path: continue
                 enum_file = rules.enum_file(item_path)
@@ -109,10 +116,16 @@ async def process_directory(sftp: asyncssh.SFTPClient, host:str, username:str, r
                     history_dict[host].add(item_path)
                     
                 for b,c in enum_file[1].items():
-                    print_finding(live.console, host, username, b, item_path, c)
+                    imp = c[0].importance
+                    reg = r"(\d+)⭐"
+                    m = re.match(reg, imp)
+                    if m:
+                        i = m.group(1)
+                        if i >= show_importance:
+                            print_finding(live.console, host, username, b, item_path, c)
                     print_finding(module_console, host, username, b, item_path, c)
                 if verbose: live.console.print(f"[F] {item_path}")
-                await process_file(sftp, host, username, rules, verbose, item_path, live, error)
+                await process_file(sftp, host, username, rules, verbose, item_path, live, error, show_importance)
                 #tasks.append(process_file(sftp, host, username, rules, verbose, item_path, live, error))
         await asyncio.gather(*tasks)
     except Exception as e:
@@ -123,7 +136,7 @@ async def connect_ssh(hostname, port, username, password):
     """Asynchronously establishes an SSH connection."""
     return await asyncssh.connect(hostname, port=port, username=username, password=password, known_hosts=None, client_keys=None)
 
-async def process_host(hostname, port, username, password, rules: SnafflerRuleSet, verbose, live:Live, error):
+async def process_host(hostname, port, username, password, rules: SnafflerRuleSet, verbose, live:Live, error, show_importance):
     """Main function to process a single SSH host asynchronously."""
     async with semaphore:
         try:
@@ -131,7 +144,7 @@ async def process_host(hostname, port, username, password, rules: SnafflerRuleSe
                 if verbose: live.console.print(f"Connected to {hostname}:{port}")
                 history_dict[f"{hostname}:{port}"] = set()
                 sftp = await conn.start_sftp_client()
-                await process_directory(sftp, f"{hostname}:{port}", username, rules, verbose, live, error, "/")
+                await process_directory(sftp, f"{hostname}:{port}", username, rules, verbose, live, error, show_importance, "/")
                 
         except Exception as e:
             print(f"Error processing {hostname}: {e}")
@@ -174,7 +187,7 @@ async def main2():
                 host, cred = entry.split(" => ")
                 ip, port = host.split(":")
                 username, password = cred.split(":")
-                tasks.append(asyncio.create_task(process_host(ip, port, username, password, rules, args.verbose, live, args.error)))
+                tasks.append(asyncio.create_task(process_host(ip, port, username, password, rules, args.verbose, live, args.error, args.show_importance)))
             
             await asyncio.gather(*tasks)  # Wait for all tasks to complete
 
