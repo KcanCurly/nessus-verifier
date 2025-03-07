@@ -21,6 +21,7 @@ import multiprocessing
 import threading
 import rich
 from concurrent.futures import ProcessPoolExecutor
+from datetime import datetime
 
 MAX_FILE_SIZE_MB = 100
 MAX_LINE_CHARACTER = 300
@@ -263,9 +264,10 @@ def main3():
             ip, port = host.split(":")
             username, password = cred.split(":")
             futures.append(executor.submit(process_host, ip, port, username, password, rules, args.verbose, args.error))
-            
+        print(f"Start Time: {datetime.now().time()}")
         for future in futures:
             future.result()
+        print(f"End Time: {datetime.now().time()}")
     """
     with overall_progress as progress:
         futures = []  # keep track of the jobs
