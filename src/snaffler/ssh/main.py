@@ -125,8 +125,8 @@ async def process_directory(sftp: asyncssh.SFTPClient, host:str, username:str, r
                             print_finding(live.console, host, username, b, item_path, c)
                     print_finding(module_console, host, username, b, item_path, c)
                 if verbose: live.console.print(f"[F] {item_path}")
-                await process_file(sftp, host, username, rules, verbose, item_path, live, error, show_importance)
-                #tasks.append(process_file(sftp, host, username, rules, verbose, item_path, live, error))
+                # await process_file(sftp, host, username, rules, verbose, item_path, live, error, show_importance)
+                tasks.append(asyncio.create_task(process_file(sftp, host, username, rules, verbose, item_path, live, error)))
         await asyncio.gather(*tasks)
     except Exception as e:
         if error: live.console.print("Process Directory Error:", e)
