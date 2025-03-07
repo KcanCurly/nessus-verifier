@@ -92,7 +92,6 @@ def process_directory(sftp: paramiko.SFTPClient, host:str, username:str, rules: 
                     if item_path == output_file_path: continue
 
                     with history_lock:
-                        global history_dict
                         print(history_dict)
                         print(f"{host in history_dict}")
                         if item_path in history_dict[host]:
@@ -165,19 +164,18 @@ def main3():
     output_file = args.output
     futures = []
     rules = SnafflerRuleSet.load_default_ruleset()
-    global history_dict
+    
     with multiprocessing.Manager() as manager:
         history_lock = manager.Lock()
+        history_dict = manager.dict()
         with ProcessPoolExecutor(max_workers=args.thread) as executor:
             for entry in get_hosts_from_file(args.file):
                 host, cred = entry.split(" => ")
                 ip, port = host.split(":")
                 username, password = cred.split(":")
-                print(host)
                 history_dict[host] = set()
                 futures.append(executor.submit(process_host, ip, port, username, password, rules, args.verbose, args.error, history_lock))
             start_time = time.time()
-            print(history_dict)
             for future in futures:
                 future.result()
             end_time = time.time()
