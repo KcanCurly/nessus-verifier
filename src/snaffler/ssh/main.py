@@ -251,9 +251,19 @@ def main3():
     module_console = Console(force_terminal=True, record=True, quiet=True)    
     
     output_file = args.output
-
+    futures = []
     rules = SnafflerRuleSet.load_default_ruleset()
-    
+    with ProcessPoolExecutor(max_workers=args.thread) as executor:
+        for entry in get_hosts_from_file(args.file):
+            host, cred = entry.split(" => ")
+            ip, port = host.split(":")
+            username, password = cred.split(":")
+            task_id = progress.add_task(f"task", visible=False, modulename="something1")
+            futures.append(executor.submit(process_host, ip, port, username, password, rules, args.verbose, args.error))
+            
+        for future in futures:
+            future.result()
+    """
     with overall_progress as progress:
         futures = []  # keep track of the jobs
         with multiprocessing.Manager() as manager:
@@ -293,7 +303,7 @@ def main3():
                 for future in futures:
                     future.result()
                     # progress.update(overall_progress_task, advance=1)
-
+    """
             
 
 
