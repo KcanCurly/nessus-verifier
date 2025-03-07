@@ -69,15 +69,15 @@ async def process_file(sftp: asyncssh.SFTPClient, host:str, username:str, rules:
                 a = rules.enum_content(line, 10, 10)
 
                 if a[0]:
-                    for b,c in a[1].items():
-                        imp = c[0].importance
+                    for rules, findings_list in a[1].items():
+                        imp = rules.importance
                         reg = r"(\d+)⭐"
                         m = re.match(reg, imp)
                         if m:
                             i = m.group(1)
-                            if i >= show_importance:
-                                print_finding(live.console, host, username, b, path, c)
-                        print_finding(module_console, host, username, b, path, c)
+                            if int(i) >= show_importance:
+                                print_finding(live.console, host, username, rules, path, findings_list)
+                        print_finding(module_console, host, username, rules, path, findings_list)
 
     except Exception as e: 
         if error: live.console.print("Process File Error:", e)
@@ -121,7 +121,7 @@ async def process_directory(sftp: asyncssh.SFTPClient, host:str, username:str, r
                     m = re.match(reg, imp)
                     if m:
                         i = m.group(1)
-                        if i >= show_importance:
+                        if int(i) >= show_importance:
                             print_finding(live.console, host, username, rule, item_path, findings_list)
                     print_finding(module_console, host, username, rule, item_path, findings_list)
                 if verbose: live.console.print(f"[F] {item_path}")
