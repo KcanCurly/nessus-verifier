@@ -92,6 +92,7 @@ def process_directory(sftp: paramiko.SFTPClient, host:str, username:str, rules: 
                     if item_path == output_file_path: continue
 
                     with history_lock:
+                        global history_dict
                         print(history_dict)
                         print(f"{host in history_dict}")
                         if item_path in history_dict[host]:
