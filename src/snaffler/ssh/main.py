@@ -89,7 +89,7 @@ def process_directory(sftp: paramiko.SFTPClient, host:str, username:str, rules: 
                     if not rules.enum_directory(item_path)[0]:continue
                     if verbose: console.print(f"[D] {host} | {username} | {item_path}")
 
-                    process_directory(sftp, host, username, rules, verbose, error, item_path, depth=depth+1)
+                    process_directory(sftp, host, username, rules, verbose, error, item_path, history_lock, depth=depth+1)
                 elif stat.S_ISREG(sftp.stat(item_path).st_mode):
                     if item_path == output_file_path: continue
                     """
@@ -148,88 +148,6 @@ def process_host(ip, port, username, password, rules: SnafflerRuleSet, verbose, 
             
     except Exception as e:
         if error: console.print(f"Error processing {ip}:{port}: {e}")
-
-async def main2():
-    parser = argparse.ArgumentParser(description="Snaffle via SSH.")
-    parser.add_argument("-f", "--file", type=str, required=True, help="Input file name, format is 'host:port => username:password'")
-    parser.add_argument("-o", "--output", type=str, required=True, help="Output File.")
-    parser.add_argument("--show-importance", type=int, default=0, help="Print only snaffles that is above given importance level, does NOT affect output to file.")
-    parser.add_argument("-t","--thread", default=10, type=int, help="Number of threads (Default = 10)")
-    parser.add_argument("--timeout", default=5, type=int, help="Timeout in seconds (Default = 5)")
-    parser.add_argument("-v", "--verbose", action="store_true", help="Enable verbose")
-    parser.add_argument("-e", "--error", action="store_true", help="Prints errors")
-    
-    args = parser.parse_args()
-    overall_progress = get_classic_overall_progress()
-    overall_task_id = overall_progress.add_task("", start=False, modulename="SSH Snaffle")
-    console = Console(force_terminal=True)
-    global semaphore
-    semaphore = asyncio.Semaphore(args.thread)
-    
-    global output_file, output_file_path, module_console
-    module_console = Console(force_terminal=True, record=True, quiet=True)    
-    
-
-    output_file = args.output
-    with open(output_file, "w") as f:
-        output_file_path = os.path.abspath(f.name)
-        module_console = Console(force_terminal=True, record=True, file=f)    
-        rules = SnafflerRuleSet.load_default_ruleset()
-
-
-        with Live(overall_progress, console=console) as live:
-            overall_progress.update(overall_task_id, total=len(get_hosts_from_file(args.file)), completed=0)
-            overall_progress.start_task(overall_task_id)
-
-            tasks = []
-
-            for entry in get_hosts_from_file(args.file):
-                host, cred = entry.split(" => ")
-                ip, port = host.split(":")
-                username, password = cred.split(":")
-                
-                tasks.append(asyncio.create_task(process_host(ip, port, username, password, rules, args.verbose, live, args.error)))
-            
-            await asyncio.gather(*tasks)  # Wait for all tasks to complete
-
-
-def process_host2(data):
-    """Main function to process a single SSH host asynchronously."""
-    print("c")
-    return
-    try:
-        print(data)
-        hostname = data["hostname"]
-        print(2)
-        port = data["port"]
-        print(3)
-        username = data["username"]
-        print(4)
-        password = data["password"]
-        print(5)
-        verbose = data["verbose"]
-        print(6)
-        live = data["live"]
-        print(7)
-        rules = data["rules"]
-        print(8)
-        error = data["error"]
-        print(9)
-        ip = data["ip"]
-        print(0)
-        client = paramiko.SSHClient()
-        
-        client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        client.connect(ip, port=int(port),username=username, password=password, timeout=10)
-        sftp = client.open_sftp()
-        process_directory(sftp, hostname, username, rules, verbose, live, error, "/")
-        client.close()
-            
-    except Exception as e:
-        print(e)
-        if error: live.console.print(f"Error processing {hostname}: {e}")
-
-
 
 def main3():
     parser = argparse.ArgumentParser(description="Snaffle via SSH.")
