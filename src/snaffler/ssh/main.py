@@ -1,18 +1,11 @@
 import argparse
-import pprint
-import paramiko
-import stat
-import sys
 import asyncssh
 from src.snaffler.customsnaffler.rule import SnaffleRule
 from src.snaffler.customsnaffler.ruleset import SnafflerRuleSet
-from rich.console import Group
-from rich.panel import Panel
 from rich.live import Live
 from rich.progress import Progress, TaskID
 from rich.console import Console
-from concurrent.futures import ThreadPoolExecutor, as_completed
-from src.utilities.utilities import get_classic_single_progress, get_classic_overall_progress, get_classic_console, get_hosts_from_file
+from src.utilities.utilities import get_classic_overall_progress, get_hosts_from_file
 import asyncio
 import os
 import threading
@@ -85,6 +78,7 @@ async def process_file(sftp: asyncssh.SFTPClient, host:str, username:str, rules:
 async def process_directory(sftp: asyncssh.SFTPClient, host:str, username:str, rules: SnafflerRuleSet, verbose, live:Live, error, show_importance, remote_path=".", depth=0):
     try:
         global history_dict
+        global output_file_path
         # tasks = []
         dir = await sftp.readdir(remote_path)
         for d in dir:
@@ -128,8 +122,7 @@ async def process_directory(sftp: asyncssh.SFTPClient, host:str, username:str, r
                     print_finding(module_console, host, username, rule, item_path, findings_list)
                 if verbose: live.console.print(f"[F] {item_path}")
                 await process_file(sftp, host, username, rules, verbose, item_path, live, error, show_importance)
-                # tasks.append(asyncio.create_task(process_file(sftp, host, username, rules, verbose, item_path, live, error, show_importance)))
-        # await asyncio.gather(*tasks)
+
     except Exception as e:
         if error: live.console.print("Process Directory Error:", e)
     
@@ -169,8 +162,6 @@ async def main2():
     semaphore = asyncio.Semaphore(args.threads)
     
     global output_file, output_file_path, module_console
-    module_console = Console(force_terminal=True, record=True, quiet=True)    
-    
 
     output_file = args.output
     with open(output_file, "w") as f:
@@ -192,10 +183,6 @@ async def main2():
             for task in asyncio.as_completed(tasks):  # Process tasks as they finish
                 await task
                 overall_progress.update(overall_task_id, total=len(get_hosts_from_file(args.file)), advance=1)
-
-
-
-
 
 def main():
     asyncio.run(main2())
