@@ -169,6 +169,7 @@ def main3():
                 host, cred = entry.split(" => ")
                 ip, port = host.split(":")
                 username, password = cred.split(":")
+                history_dict["host"] = set()
                 futures.append(executor.submit(process_host, ip, port, username, password, rules, args.verbose, args.error, history_lock))
             start_time = time.time()
             for future in futures:
