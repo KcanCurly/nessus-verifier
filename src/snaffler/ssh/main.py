@@ -77,7 +77,7 @@ def process_file(sftp: paramiko.SFTPClient, host:str, username:str, rules: Snaff
     except Exception as e:
         if error: console.print("Process File Error:", e)
 
-def process_directory(sftp: paramiko.SFTPClient, host:str, username:str, rules: SnafflerRuleSet, verbose, error, history_lock, remote_path=".", depth=0):
+def process_directory(sftp: paramiko.SFTPClient, host:str, username:str, rules: SnafflerRuleSet, verbose, error, history_lock, history_dict, remote_path=".", depth=0):
     try:
         dir = sftp.listdir(remote_path)
         for d in dir:
@@ -87,12 +87,11 @@ def process_directory(sftp: paramiko.SFTPClient, host:str, username:str, rules: 
                     if not rules.enum_directory(item_path)[0]:continue
                     if verbose: console.print(f"[D] {host} | {username} | {item_path}")
 
-                    process_directory(sftp, host, username, rules, verbose, error, history_lock, item_path, depth=depth+1)
+                    process_directory(sftp, host, username, rules, verbose, error, history_lock, history_dict, item_path, depth=depth+1)
                 elif stat.S_ISREG(sftp.stat(item_path).st_mode):
                     if item_path == output_file_path: continue
 
                     with history_lock:
-                        global history_dict
                         print(history_dict)
                         print(f"{host in history_dict}")
                         if item_path in history_dict[host]:
@@ -135,7 +134,7 @@ async def connect_ssh(hostname, port, username, password):
     """Asynchronously establishes an SSH connection."""
     return await asyncssh.connect(hostname, port=port, username=username, password=password, known_hosts=None, client_keys=None)
 
-def process_host(ip, port, username, password, rules: SnafflerRuleSet, verbose, error, history_lock):
+def process_host(ip, port, username, password, rules: SnafflerRuleSet, verbose, error, history_lock, history_dict):
     """Main function to process a single SSH host asynchronously."""
     try:
         client = paramiko.SSHClient()
@@ -143,7 +142,7 @@ def process_host(ip, port, username, password, rules: SnafflerRuleSet, verbose, 
         client.connect(ip, port=int(port),username=username, password=password, timeout=10)
         sftp = client.open_sftp()
         console.print(f"Starting Processing {ip}:{port}")
-        process_directory(sftp, f"{ip}:{port}", username, rules, verbose, error, history_lock, "/")
+        process_directory(sftp, f"{ip}:{port}", username, rules, verbose, error, history_lock, history_dict, "/")
         console.print(f"Ending Processing {ip}:{port}")
         client.close()
             
@@ -165,7 +164,7 @@ def main3():
     output_file = args.output
     futures = []
     rules = SnafflerRuleSet.load_default_ruleset()
-    global history_lock
+
     with multiprocessing.Manager() as manager:
         history_lock = manager.Lock()
         history_dict = manager.dict()
@@ -175,7 +174,7 @@ def main3():
                 ip, port = host.split(":")
                 username, password = cred.split(":")
                 history_dict[host] = set()
-                futures.append(executor.submit(process_host, ip, port, username, password, rules, args.verbose, args.error, history_lock))
+                futures.append(executor.submit(process_host, ip, port, username, password, rules, args.verbose, args.error, history_lock, history_dict))
             start_time = time.time()
             for future in futures:
                 future.result()
