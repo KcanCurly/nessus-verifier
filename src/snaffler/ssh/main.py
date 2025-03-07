@@ -84,7 +84,8 @@ async def process_file(sftp: asyncssh.SFTPClient, host:str, username:str, rules:
 
 async def process_directory(sftp: asyncssh.SFTPClient, host:str, username:str, rules: SnafflerRuleSet, verbose, live:Live, error, show_importance, remote_path=".", depth=0):
     try:
-        tasks = []
+        global history_dict
+        # tasks = []
         dir = await sftp.readdir(remote_path)
         for d in dir:
             if d.filename == "." or d.filename == "..":continue
@@ -96,6 +97,10 @@ async def process_directory(sftp: asyncssh.SFTPClient, host:str, username:str, r
                 await process_directory(sftp, host, username, rules, verbose, live, error, show_importance, item_path, depth=depth+1)
             elif await sftp.isfile(item_path):
                 if item_path == output_file_path: continue
+                with history_lock:
+                    if item_path in history_dict[host]:
+                        if verbose: live.console.print(f"[F] | Already processed, skipping | {item_path}")
+                        continue
                 enum_file = rules.enum_file(item_path)
                 if verbose: live.console.print(f"[F] | Processing | {item_path}")
                 if not enum_file[0]:
@@ -108,11 +113,8 @@ async def process_directory(sftp: asyncssh.SFTPClient, host:str, username:str, r
                 if not await can_read_file(sftp, item_path):
                     if verbose: live.console.print(f"[F] | Read Failed | {item_path}")
                     continue
-
+                
                 with history_lock:
-                    if item_path in history_dict[host]:
-                        if verbose: live.console.print(f"[F] | Already processed, skipping | {item_path}")
-                        continue
                     history_dict[host].add(item_path)
                     
                 for rule, findings_list in enum_file[1].items():
@@ -125,9 +127,9 @@ async def process_directory(sftp: asyncssh.SFTPClient, host:str, username:str, r
                             print_finding(live.console, host, username, rule, item_path, findings_list)
                     print_finding(module_console, host, username, rule, item_path, findings_list)
                 if verbose: live.console.print(f"[F] {item_path}")
-                # await process_file(sftp, host, username, rules, verbose, item_path, live, error, show_importance)
-                tasks.append(asyncio.create_task(process_file(sftp, host, username, rules, verbose, item_path, live, error, show_importance)))
-        await asyncio.gather(*tasks)
+                await process_file(sftp, host, username, rules, verbose, item_path, live, error, show_importance)
+                # tasks.append(asyncio.create_task(process_file(sftp, host, username, rules, verbose, item_path, live, error, show_importance)))
+        # await asyncio.gather(*tasks)
     except Exception as e:
         if error: live.console.print("Process Directory Error:", e)
     
