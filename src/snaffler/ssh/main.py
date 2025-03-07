@@ -115,15 +115,15 @@ async def process_directory(sftp: asyncssh.SFTPClient, host:str, username:str, r
                         continue
                     history_dict[host].add(item_path)
                     
-                for b,c in enum_file[1].items():
-                    imp = c[0].importance
+                for rule, findings_list in enum_file[1].items():
+                    imp = rule.importance
                     reg = r"(\d+)⭐"
                     m = re.match(reg, imp)
                     if m:
                         i = m.group(1)
                         if i >= show_importance:
-                            print_finding(live.console, host, username, b, item_path, c)
-                    print_finding(module_console, host, username, b, item_path, c)
+                            print_finding(live.console, host, username, rule, item_path, findings_list)
+                    print_finding(module_console, host, username, rule, item_path, findings_list)
                 if verbose: live.console.print(f"[F] {item_path}")
                 # await process_file(sftp, host, username, rules, verbose, item_path, live, error, show_importance)
                 tasks.append(asyncio.create_task(process_file(sftp, host, username, rules, verbose, item_path, live, error, show_importance)))
