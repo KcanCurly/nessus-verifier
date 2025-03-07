@@ -113,10 +113,8 @@ def process_directory(sftp: paramiko.SFTPClient, host:str, username:str, rules: 
                         if verbose: console.print(f"[F] {host} | {username} | Read Failed | {item_path}")
                         continue
 
-                    """
                     with history_lock:
                         history_dict[host].add(item_path)
-                    """
 
                     for b,c in enum_file[1].items():
                         print_finding(host, username, b, item_path, c)
