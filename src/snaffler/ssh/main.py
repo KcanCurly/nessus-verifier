@@ -48,28 +48,30 @@ def print_finding(console, host:str, username:str, rule:SnaffleRule, path:str, f
 
 async def process_file(sftp: asyncssh.SFTPClient, host:str, username:str, rules: SnafflerRuleSet, verbose, path, live:Live, error, show_importance):
     try:
+        data = None
         async with await sftp.open(path, errors='ignore') as f:
             data = await f.read()
 
-            if "\r\n" in data:
-                data = data.split("\r\n")
-            else:
-                data = data.split("\n")
+        if not data: return
+        if "\r\n" in data:
+            data = data.split("\r\n")
+        else:
+            data = data.split("\n")
 
-            for line in data:
-                if len(line) > MAX_LINE_CHARACTER: continue
-                a = rules.enum_content(line, 10, 10)
+        for line in data:
+            if len(line) > MAX_LINE_CHARACTER: continue
+            a = rules.enum_content(line, 10, 10)
 
-                if a[0]:
-                    for rule, findings_list in a[1].items():
-                        imp = rule.importance
-                        reg = r"(\d+)⭐"
-                        m = re.match(reg, imp)
-                        if m:
-                            i = m.group(1)
-                            if int(i) >= show_importance:
-                                print_finding(live.console, host, username, rule, path, findings_list)
-                        print_finding(module_console, host, username, rule, path, findings_list)
+            if a[0]:
+                for rule, findings_list in a[1].items():
+                    imp = rule.importance
+                    reg = r"(\d+)⭐"
+                    m = re.match(reg, imp)
+                    if m:
+                        i = m.group(1)
+                        if int(i) >= show_importance:
+                            print_finding(live.console, host, username, rule, path, findings_list)
+                    print_finding(module_console, host, username, rule, path, findings_list)
 
     except Exception as e: 
         if error: live.console.print("Process File Error:", e)
