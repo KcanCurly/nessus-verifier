@@ -28,7 +28,6 @@ from colorama import init, Fore
 MAX_FILE_SIZE_MB = 100
 MAX_LINE_CHARACTER = 300
 console = Console()
-history_lock = multiprocessing.Lock()
 output_lock = multiprocessing.Lock()
 output_file = ""
 output_file_path = ""
@@ -80,17 +79,15 @@ def process_file(sftp: paramiko.SFTPClient, host:str, username:str, rules: Snaff
     except Exception as e:
         if error: console.print("Process File Error:", e)
 
-def process_directory(sftp: paramiko.SFTPClient, host:str, username:str, rules: SnafflerRuleSet, verbose, error, remote_path=".", depth=0):
+def process_directory(sftp: paramiko.SFTPClient, host:str, username:str, rules: SnafflerRuleSet, verbose, error, history_lock, remote_path=".", depth=0):
     try:
         dir = sftp.listdir(remote_path)
         for d in dir:
             try:
-                item_path = f"{remote_path if remote_path != "/" else ""}/{d}"
-                if verbose: console.print(f"Processing {host}:{item_path}")
-                
+                item_path = f"{remote_path if remote_path != "/" else ""}/{d}"                
                 if stat.S_ISDIR(sftp.stat(item_path).st_mode):
                     if not rules.enum_directory(item_path)[0]:continue
-                    if verbose: console.print(f"[D] {item_path}")
+                    if verbose: console.print(f"[D] {host} | {username} | {item_path}")
 
                     process_directory(sftp, host, username, rules, verbose, error, item_path, depth=depth+1)
                 elif stat.S_ISREG(sftp.stat(item_path).st_mode):
@@ -104,16 +101,16 @@ def process_directory(sftp: paramiko.SFTPClient, host:str, username:str, rules: 
 
 
                     enum_file = rules.enum_file(item_path)
-                    if verbose: console.print(f"[F] | Pre-Processing | {item_path}")
+                    if verbose: console.print(f"[F] {host} | {username} | Pre-Processing | {item_path}")
                     if not enum_file[0]:
-                        if verbose: console.print(f"[F] | Discarded by {enum_file[1][0].name} | {item_path}")
+                        if verbose: console.print(f"[F] {host} | {username} | Discarded by {enum_file[1][0].name} | {item_path}")
                         continue
                     file_size = get_file_size_mb(sftp, item_path, error)
                     if file_size > MAX_FILE_SIZE_MB:
-                        if verbose: console.print(f"[F] | File too large: {file_size} MB | {item_path}")
+                        if verbose: console.print(f"[F] {host} | {username} | File too large: {file_size} MB | {item_path}")
                         continue
                     if not can_read_file(sftp, item_path):
-                        if verbose: console.print(f"[F] | Read Failed | {item_path}")
+                        if verbose: console.print(f"[F] {host} | {username} | Read Failed | {item_path}")
                         continue
 
                     """
@@ -124,7 +121,7 @@ def process_directory(sftp: paramiko.SFTPClient, host:str, username:str, rules: 
                     for b,c in enum_file[1].items():
                         print_finding(host, username, b, item_path, c)
 
-                    if verbose: console.print(f"[F] | Processing | {item_path}")
+                    if verbose: console.print(f"[F] {host} | {username} | Processing | {item_path}")
                     process_file(sftp, host, username, rules, verbose, item_path, error)
             except Exception as e:
                 if error: console.print(f"Process Directory Error for: {host} with user {username} for path {remote_path}: {e}")
@@ -137,7 +134,7 @@ async def connect_ssh(hostname, port, username, password):
     """Asynchronously establishes an SSH connection."""
     return await asyncssh.connect(hostname, port=port, username=username, password=password, known_hosts=None, client_keys=None)
 
-def process_host(ip, port, username, password, rules: SnafflerRuleSet, verbose, error):
+def process_host(ip, port, username, password, rules: SnafflerRuleSet, verbose, error, history_lock):
     """Main function to process a single SSH host asynchronously."""
     try:
         client = paramiko.SSHClient()
@@ -145,7 +142,7 @@ def process_host(ip, port, username, password, rules: SnafflerRuleSet, verbose, 
         client.connect(ip, port=int(port),username=username, password=password, timeout=10)
         sftp = client.open_sftp()
         console.print(f"Starting Processing {ip}:{port}")
-        process_directory(sftp, f"{ip}:{port}", username, rules, verbose, error, "/")
+        process_directory(sftp, f"{ip}:{port}", username, rules, verbose, error, history_lock, "/")
         console.print(f"Ending Processing {ip}:{port}")
         client.close()
             
@@ -250,12 +247,13 @@ def main3():
     futures = []
     rules = SnafflerRuleSet.load_default_ruleset()
     with multiprocessing.Manager() as manager:
+        history_lock = manager.Lock()
         with ProcessPoolExecutor(max_workers=args.thread) as executor:
             for entry in get_hosts_from_file(args.file):
                 host, cred = entry.split(" => ")
                 ip, port = host.split(":")
                 username, password = cred.split(":")
-                futures.append(executor.submit(process_host, ip, port, username, password, rules, args.verbose, args.error))
+                futures.append(executor.submit(process_host, ip, port, username, password, rules, args.verbose, args.error, history_lock))
             start_time = time.time()
             for future in futures:
                 future.result()
