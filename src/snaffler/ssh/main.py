@@ -87,7 +87,7 @@ def process_directory(sftp: paramiko.SFTPClient, host:str, username:str, rules: 
                     if not rules.enum_directory(item_path)[0]:continue
                     if verbose: console.print(f"[D] {host} | {username} | {item_path}")
 
-                    process_directory(sftp, host, username, rules, verbose, error, item_path, history_lock, depth=depth+1)
+                    process_directory(sftp, host, username, rules, verbose, error, history_lock, item_path, depth=depth+1)
                 elif stat.S_ISREG(sftp.stat(item_path).st_mode):
                     if item_path == output_file_path: continue
                     """
