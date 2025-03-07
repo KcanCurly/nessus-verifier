@@ -99,19 +99,19 @@ async def process_directory(sftp: asyncssh.SFTPClient, host:str, username:str, r
                 if item_path == output_file_path: continue
                 with history_lock:
                     if item_path in history_dict[host]:
-                        if verbose: live.console.print(f"[F] | Already processed, skipping | {item_path}")
+                        if verbose: live.console.print(f"[F] {host} | {username} | Already processed, skipping | {item_path}")
                         continue
                 enum_file = rules.enum_file(item_path)
-                if verbose: live.console.print(f"[F] | Processing | {item_path}")
+                if verbose: live.console.print(f"[F] {host} | {username} | Processing | {item_path}")
                 if not enum_file[0]:
-                    if verbose: live.console.print(f"[F] | Discarded by {enum_file[1][0].name} | {item_path}")
+                    if verbose: live.console.print(f"[F] {host} | {username} | Discarded by {enum_file[1][0].name} | {item_path}")
                     continue
                 file_size = await get_file_size_mb(sftp, item_path, error, live)
                 if file_size > MAX_FILE_SIZE_MB:
-                    if verbose: live.console.print(f"[F] | File too large: {file_size} MB | {item_path}")
+                    if verbose: live.console.print(f"[F] {host} | {username} | File too large: {file_size} MB | {item_path}")
                     continue
                 if not await can_read_file(sftp, item_path):
-                    if verbose: live.console.print(f"[F] | Read Failed | {item_path}")
+                    if verbose: live.console.print(f"[F] {host} | {username} | Read Failed | {item_path}")
                     continue
                 
                 with history_lock:
