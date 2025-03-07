@@ -76,7 +76,7 @@ def process_file(sftp: paramiko.SFTPClient, host:str, username:str, rules: Snaff
                         # print_finding(module_console, host, username, b, path, c)
 
     except Exception as e:
-        pass
+        print("Process File Error:", e)
         # if error: live.console.print("Process File Error:", e)
 
 def process_directory(sftp: paramiko.SFTPClient, host:str, username:str, rules: SnafflerRuleSet, verbose, error, remote_path=".", depth=0):
@@ -127,7 +127,7 @@ def process_directory(sftp: paramiko.SFTPClient, host:str, username:str, rules: 
                 process_file(sftp, host, username, rules, verbose, item_path, error)
 
     except Exception as e:
-        pass
+        print("Process Directory Error:", e)
         # if error: console.print("Process Directory Error:", e)
     
 
