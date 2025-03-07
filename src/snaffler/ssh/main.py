@@ -258,7 +258,6 @@ def main3():
             host, cred = entry.split(" => ")
             ip, port = host.split(":")
             username, password = cred.split(":")
-            task_id = progress.add_task(f"task", visible=False, modulename="something1")
             futures.append(executor.submit(process_host, ip, port, username, password, rules, args.verbose, args.error))
             
         for future in futures:
