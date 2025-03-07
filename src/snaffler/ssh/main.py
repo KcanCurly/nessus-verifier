@@ -127,7 +127,7 @@ def process_directory(sftp: paramiko.SFTPClient, host:str, username:str, rules: 
                 process_file(sftp, host, username, rules, verbose, item_path, error)
 
     except Exception as e:
-        print("Process Directory Error:", e)
+        print(f"Process Directory Error for: {host} with user {username} for path {remote_path}: {e}")
         # if error: console.print("Process Directory Error:", e)
     
 
