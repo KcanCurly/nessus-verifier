@@ -281,7 +281,7 @@ def main3():
                     ip, port = host.split(":")
                     username, password = cred.split(":")
                     task_id = progress.add_task(f"task", visible=False, modulename="something1")
-                    futures.append(executor.submit(process_host, _progress, task_id, host, port, username, password, rules, args.verbose, progress.console, args.error))
+                    futures.append(executor.submit(process_host, None, None, host, port, username, password, rules, args.verbose, None, args.error))
                     l.append({"a"})
 
 
