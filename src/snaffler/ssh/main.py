@@ -104,7 +104,7 @@ def process_directory(sftp: paramiko.SFTPClient, host:str, username:str, rules: 
 
 
                     enum_file = rules.enum_file(item_path)
-                    if verbose: console.print(f"[F] | Processing | {item_path}")
+                    if verbose: console.print(f"[F] | Pre-Processing | {item_path}")
                     if not enum_file[0]:
                         if verbose: console.print(f"[F] | Discarded by {enum_file[1][0].name} | {item_path}")
                         continue
@@ -124,7 +124,7 @@ def process_directory(sftp: paramiko.SFTPClient, host:str, username:str, rules: 
                     for b,c in enum_file[1].items():
                         print_finding(host, username, b, item_path, c)
 
-                    if verbose: console.print(f"[F] {item_path}")
+                    if verbose: console.print(f"[F] | Processing | {item_path}")
                     process_file(sftp, host, username, rules, verbose, item_path, error)
             except Exception as e:
                 if error: console.print(f"Process Directory Error for: {host} with user {username} for path {remote_path}: {e}")
@@ -144,7 +144,9 @@ def process_host(ip, port, username, password, rules: SnafflerRuleSet, verbose, 
         client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         client.connect(ip, port=int(port),username=username, password=password, timeout=10)
         sftp = client.open_sftp()
+        console.print(f"Starting Processing {ip}:{port}")
         process_directory(sftp, f"{ip}:{port}", username, rules, verbose, error, "/")
+        console.print(f"Ending Processing {ip}:{port}")
         client.close()
             
     except Exception as e:
@@ -242,13 +244,7 @@ def main3():
     parser.add_argument("-v", "--verbose", action="store_true", help="Enable verbose")
     parser.add_argument("-e", "--error", action="store_true", help="Prints errors")
     
-    args = parser.parse_args()
-    overall_progress = get_classic_overall_progress()
-    overall_task_id = overall_progress.add_task("", start=False, modulename="SSH Snaffle")
-    console = Console(force_terminal=True)
-
-    
-    module_console = Console(force_terminal=True, record=True, quiet=True)    
+    args = parser.parse_args()   
     
     output_file = args.output
     futures = []
@@ -266,48 +262,7 @@ def main3():
             end_time = time.time()
             execution_time = end_time - start_time
             print(f"Function took {execution_time:.4f} seconds to execute.")
-    """
-    with overall_progress as progress:
-        futures = []  # keep track of the jobs
-        with multiprocessing.Manager() as manager:
-            # this is the key - we share some state between our 
-            # main process and our worker functions
-            _progress = manager.dict()
-            overall_progress_task = progress.add_task("[green]All jobs progress:", modulename="something")
 
-            with ProcessPoolExecutor(max_workers=args.thread) as executor:
-                for entry in get_hosts_from_file(args.file):
-                    host, cred = entry.split(" => ")
-                    ip, port = host.split(":")
-                    username, password = cred.split(":")
-                    task_id = progress.add_task(f"task", visible=False, modulename="something1")
-                    futures.append(executor.submit(process_host, ip, port, username, password, rules, args.verbose, args.error))
-
-
-                # monitor the progress:
-                while (n_finished := sum([future.done() for future in futures])) < len(
-                    futures
-                ):
-                    progress.update(
-                        overall_progress_task, completed=n_finished, total=len(futures)
-                    )
-                    for task_id, update_data in _progress.items():
-                        latest = update_data["progress"]
-                        total = update_data["total"]
-                        # update the progress bar for this task:
-                        progress.update(
-                            task_id,
-                            completed=latest,
-                            total=total,
-                            visible=latest < total,
-                        )
-
-                # raise any errors:
-                for future in futures:
-                    future.result()
-                    # progress.update(overall_progress_task, advance=1)
-    """
-            
 
 
 
