@@ -138,10 +138,8 @@ async def connect_ssh(hostname, port, username, password):
 
 def process_host(ip, port, username, password, rules: SnafflerRuleSet, verbose, error):
     """Main function to process a single SSH host asynchronously."""
-    init(autoreset=True)
     try:
         client = paramiko.SSHClient()
-        
         client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         client.connect(ip, port=int(port),username=username, password=password, timeout=10)
         sftp = client.open_sftp()
@@ -149,7 +147,7 @@ def process_host(ip, port, username, password, rules: SnafflerRuleSet, verbose, 
         client.close()
             
     except Exception as e:
-        print(f"Error processing {ip}:{port}: {e}")
+        if error: console.print(f"Error processing {ip}:{port}: {e}")
 
 async def main2():
     parser = argparse.ArgumentParser(description="Snaffle via SSH.")
