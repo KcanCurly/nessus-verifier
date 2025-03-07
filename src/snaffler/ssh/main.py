@@ -136,7 +136,6 @@ async def process_host(hostname, port, username, password, rules: SnafflerRuleSe
     """Main function to process a single SSH host asynchronously."""
     async with semaphore:
         try:
-            asyncssh.connect()
             async with await connect_ssh(hostname, port, username, password) as conn:
                 if verbose: live.console.print(f"Connected to {hostname}:{port}")
                 history_dict[f"{hostname}:{port}"] = set()
