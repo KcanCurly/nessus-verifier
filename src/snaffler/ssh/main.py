@@ -181,8 +181,6 @@ async def main2():
 
         with Live(overall_progress, console=console) as live:
             overall_progress.update(overall_task_id, total=len(get_hosts_from_file(args.file)), completed=0)
-            overall_progress.start_task(overall_task_id)
-
             tasks = []
 
             for entry in get_hosts_from_file(args.file):
@@ -190,10 +188,10 @@ async def main2():
                 ip, port = host.split(":")
                 username, password = cred.split(":")
                 tasks.append(asyncio.create_task(process_host(ip, port, username, password, rules, args.verbose, live, args.error, args.show_importance)))
-            
+            overall_progress.start_task(overall_task_id)
             for task in asyncio.as_completed(tasks):  # Process tasks as they finish
                 await task
-                overall_progress.update(overall_task_id, total=len(get_hosts_from_file(args.file)), completed=0)
+                overall_progress.update(overall_task_id, total=len(get_hosts_from_file(args.file)), advance=1)
 
 
 
