@@ -50,7 +50,7 @@ def get_file_size_mb(sftp: paramiko.SFTPClient, path, error):
     """Returns the size of a remote file in MB."""
     try:
         file_size_bytes = sftp.stat(path).st_size
-        return file_size_bytes.size / (1024 * 1024)  # Convert bytes to MB
+        return file_size_bytes / (1024 * 1024)  # Convert bytes to MB
     except Exception as e:
         if error: console.print("Error getting file size:", e)
         return None
