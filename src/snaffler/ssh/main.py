@@ -267,14 +267,7 @@ def main3():
         
     rules = SnafflerRuleSet.load_default_ruleset()
     
-    with rich.progress.Progress(
-        "[progress.description]{task.description}",
-        progress.BarColumn(),
-        "[progress.percentage]{task.percentage:>3.0f}%",
-        progress.TimeRemainingColumn(),
-        progress.TimeElapsedColumn(),
-        refresh_per_second=1,  # bit slower updates
-    ) as progress:
+    with overall_progress as progress:
         futures = []  # keep track of the jobs
         with multiprocessing.Manager() as manager:
             # this is the key - we share some state between our 
