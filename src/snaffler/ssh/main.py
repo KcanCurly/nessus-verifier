@@ -46,13 +46,13 @@ def can_read_file(sftp: paramiko.SFTPClient, path):
     except Exception as e:
         return False
 
-def get_file_size_mb(sftp: paramiko.SFTPClient, path, error, live):
+def get_file_size_mb(sftp: paramiko.SFTPClient, path, error):
     """Returns the size of a remote file in MB."""
     try:
         file_size_bytes = sftp.stat(path).st_size
         return file_size_bytes.size / (1024 * 1024)  # Convert bytes to MB
     except Exception as e:
-        if error: live.console.print("Error getting file size:", e)
+        if error: console.print("Error getting file size:", e)
         return None
 
 def print_finding(host:str, username:str, rule:SnaffleRule, path:str, findings:list[str]):
@@ -81,12 +81,11 @@ def process_file(sftp: paramiko.SFTPClient, host:str, username:str, rules: Snaff
 
 def process_directory(sftp: paramiko.SFTPClient, host:str, username:str, rules: SnafflerRuleSet, verbose, error, remote_path=".", depth=0):
     try:
-        tasks = []
         dir = sftp.listdir(remote_path)
         for d in dir:
             try:
                 item_path = f"{remote_path if remote_path != "/" else ""}/{d}"
-                print(f"Processing {host}:{item_path}")
+                if verbose: console.print(f"Processing {host}:{item_path}")
                 
                 if stat.S_ISDIR(sftp.stat(item_path).st_mode):
                     if not rules.enum_directory(item_path)[0]:continue
@@ -95,12 +94,12 @@ def process_directory(sftp: paramiko.SFTPClient, host:str, username:str, rules: 
                     process_directory(sftp, host, username, rules, verbose, error, item_path, depth=depth+1)
                 elif stat.S_ISREG(sftp.stat(item_path).st_mode):
                     if item_path == output_file_path: continue
-                    """
+
                     with history_lock:
                         if item_path in history_dict[host]:
                             if verbose: console.print(f"[F] | Already processed, skipping | {item_path}")
                             continue
-                    """
+
 
                     enum_file = rules.enum_file(item_path)
                     if verbose: console.print(f"[F] | Processing | {item_path}")
