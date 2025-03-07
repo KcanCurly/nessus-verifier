@@ -273,14 +273,14 @@ def main3():
             # this is the key - we share some state between our 
             # main process and our worker functions
             _progress = manager.dict()
-            overall_progress_task = progress.add_task("[green]All jobs progress:")
+            overall_progress_task = progress.add_task("[green]All jobs progress:", modulename="something")
 
             with ProcessPoolExecutor(max_workers=args.thread) as executor:
                 for entry in get_hosts_from_file(args.file):
                     host, cred = entry.split(" => ")
                     ip, port = host.split(":")
                     username, password = cred.split(":")
-                    task_id = progress.add_task(f"task", visible=False)
+                    task_id = progress.add_task(f"task", visible=False, modulename="something1")
                     futures.append(executor.submit(process_host, _progress, task_id, host, port, username, password, rules, args.verbose, progress.console, args.error))
                     l.append({"a"})
 
