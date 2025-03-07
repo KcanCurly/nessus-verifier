@@ -84,7 +84,7 @@ def process_directory(sftp: paramiko.SFTPClient, host:str, username:str, rules: 
         tasks = []
         dir = sftp.listdir(remote_path)
         for d in dir:
-            item_path = f"{remote_path if remote_path != "/" else ""}/{d}"
+            item_path = f"{remote_path}/{d}"
             
             if stat.S_ISDIR(sftp.stat(item_path).st_mode):
                 if not rules.enum_directory(item_path)[0]:continue
