@@ -27,6 +27,7 @@ setup(
         "stomp.py",
         "pymssql",
         "asyncssh[bcrypt]",
+        "colorama",
     ],
     classifiers=[
         "Programming Language :: Python :: 3",
