@@ -131,7 +131,7 @@ async def connect_ssh(hostname, port, username, password):
     """Asynchronously establishes an SSH connection."""
     return await asyncssh.connect(hostname, port=port, username=username, password=password, known_hosts=None, client_keys=None)
 
-def process_host(progress, taskid, hostname, port, username, password, rules: SnafflerRuleSet, verbose, console:Console, error):
+def process_host(hostname, port, username, password, rules: SnafflerRuleSet, verbose, console:Console, error):
     """Main function to process a single SSH host asynchronously."""
 
     try:
@@ -281,7 +281,7 @@ def main3():
                     ip, port = host.split(":")
                     username, password = cred.split(":")
                     task_id = progress.add_task(f"task", visible=False, modulename="something1")
-                    futures.append(executor.submit(process_host, None, None, host, port, username, password, rules, args.verbose, None, args.error))
+                    futures.append(executor.submit(process_host, ip, port, username, password, rules, args.verbose, progress.console, args.error))
                     l.append({"a"})
 
 
@@ -306,6 +306,7 @@ def main3():
                 # raise any errors:
                 for future in futures:
                     future.result()
+                    progress.update(overall_progress_task, advance=1)
     return
     try:
         with open(output_file, "w") as f:
