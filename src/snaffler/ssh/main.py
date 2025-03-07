@@ -38,8 +38,7 @@ async def get_file_size_mb(sftp, path, error, live):
     """Returns the size of a remote file in MB."""
     try:
         file_stat = await sftp.stat(path)
-        size_mb = file_stat.size / (1024 * 1024)  # Convert bytes to MB
-        return size_mb  # Round to 2 decimal places
+        return file_stat.size / (1024 * 1024)  # Convert bytes to MB
     except Exception as e:
         live.console.print("Error getting file size:", e)
         return None
@@ -135,6 +134,7 @@ async def process_host(hostname, port, username, password, rules: SnafflerRuleSe
     """Main function to process a single SSH host asynchronously."""
     async with semaphore:
         try:
+            asyncssh.connect()
             async with await connect_ssh(hostname, port, username, password) as conn:
                 if verbose: live.console.print(f"Connected to {hostname}:{port}")
                 history_dict[f"{hostname}:{port}"] = set()
@@ -164,25 +164,26 @@ async def main2():
     global output_file, output_file_path, module_console
 
     output_file = args.output
-    with open(output_file, "w") as f:
-        output_file_path = os.path.abspath(f.name)
-        module_console = Console(force_terminal=True, record=True, file=f)    
-        rules = SnafflerRuleSet.load_default_ruleset()
+    try:
+        with open(output_file, "w") as f:
+            output_file_path = os.path.abspath(f.name)
+            module_console = Console(force_terminal=True, record=True, file=f)    
+            rules = SnafflerRuleSet.load_default_ruleset()
 
 
-        with Live(overall_progress, console=console) as live:
-            overall_progress.update(overall_task_id, total=len(get_hosts_from_file(args.file)), completed=0)
-            tasks = []
-
-            for entry in get_hosts_from_file(args.file):
-                host, cred = entry.split(" => ")
-                ip, port = host.split(":")
-                username, password = cred.split(":")
-                tasks.append(asyncio.create_task(process_host(ip, port, username, password, rules, args.verbose, live, args.error, args.show_importance)))
-            overall_progress.start_task(overall_task_id)
-            for task in asyncio.as_completed(tasks):  # Process tasks as they finish
-                await task
-                overall_progress.update(overall_task_id, total=len(get_hosts_from_file(args.file)), advance=1)
+            with Live(overall_progress, console=console) as live:
+                overall_progress.update(overall_task_id, total=len(get_hosts_from_file(args.file)), completed=0)
+                tasks = []
+                for entry in get_hosts_from_file(args.file):
+                    host, cred = entry.split(" => ")
+                    ip, port = host.split(":")
+                    username, password = cred.split(":")
+                    tasks.append(asyncio.create_task(process_host(ip, port, username, password, rules, args.verbose, live, args.error, args.show_importance)))
+                overall_progress.start_task(overall_task_id)
+                for task in asyncio.as_completed(tasks):  # Process tasks as they finish
+                    await task
+                    overall_progress.update(overall_task_id, total=len(get_hosts_from_file(args.file)), advance=1)
+    except Exception as e: print("Yo", e)
 
 def main():
     asyncio.run(main2())
