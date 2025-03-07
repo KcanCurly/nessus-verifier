@@ -1,15 +1,17 @@
 import argparse
 import pprint
+from tabnanny import verbose
 import paramiko
 import stat
 import sys
 import asyncssh
+import rich.progress
 from src.snaffler.customsnaffler.rule import SnaffleRule
 from src.snaffler.customsnaffler.ruleset import SnafflerRuleSet
 from rich.console import Group
 from rich.panel import Panel
 from rich.live import Live
-from rich.progress import Progress, TaskID
+from rich import progress
 from rich.console import Console
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from src.utilities.utilities import get_classic_single_progress, get_classic_overall_progress, get_classic_console, get_hosts_from_file
@@ -17,17 +19,18 @@ import asyncio
 import os
 import multiprocessing
 import threading
+import rich
 from concurrent.futures import ProcessPoolExecutor
 
-# MAX_FILE_SIZE_MB = 100
-# MAX_LINE_CHARACTER = 300
+MAX_FILE_SIZE_MB = 100
+MAX_LINE_CHARACTER = 300
 
-# history_lock = multiprocessing.Lock()
-# output_lock = multiprocessing.Lock()
-# output_file = ""
-# output_file_path = ""
-# module_console = None
-# history_dict = dict[str, set]()
+history_lock = multiprocessing.Lock()
+output_lock = multiprocessing.Lock()
+output_file = ""
+output_file_path = ""
+module_console = None
+history_dict = dict[str, set]()
 
 def can_read_file(sftp: paramiko.SFTPClient, path):
     """Attempts to open a remote file in read mode to check permissions."""
@@ -74,7 +77,7 @@ def process_file(sftp: paramiko.SFTPClient, host:str, username:str, rules: Snaff
     except Exception as e: 
         if error: live.console.print("Process File Error:", e)
 
-def process_directory(sftp: paramiko.SFTPClient, host:str, username:str, rules: SnafflerRuleSet, verbose, live:Live, error, remote_path=".", depth=0):
+def process_directory(sftp: paramiko.SFTPClient, host:str, username:str, rules: SnafflerRuleSet, verbose, console:Console, error, remote_path=".", depth=0):
     try:
         tasks = []
         dir = sftp.listdir(remote_path)
@@ -83,29 +86,29 @@ def process_directory(sftp: paramiko.SFTPClient, host:str, username:str, rules: 
             
             if stat.S_ISDIR(sftp.stat(item_path).st_mode):
                 if not rules.enum_directory(item_path)[0]:continue
-                if verbose: live.console.print(f"[D] {item_path}")
+                if verbose: console.print(f"[D] {item_path}")
 
-                process_directory(sftp, host, username, rules, verbose, live, error, item_path, depth=depth+1)
+                process_directory(sftp, host, username, rules, verbose, console, error, item_path, depth=depth+1)
             elif stat.S_ISREG(sftp.stat(item_path).st_mode):
                 if item_path == output_file_path: continue
                 """
                 with history_lock:
                     if item_path in history_dict[host]:
-                        if verbose: live.console.print(f"[F] | Already processed, skipping | {item_path}")
+                        if verbose: console.print(f"[F] | Already processed, skipping | {item_path}")
                         continue
                 """
 
                 enum_file = rules.enum_file(item_path)
-                if verbose: live.console.print(f"[F] | Processing | {item_path}")
+                if verbose: console.print(f"[F] | Processing | {item_path}")
                 if not enum_file[0]:
-                    if verbose: live.console.print(f"[F] | Discarded by {enum_file[1][0].name} | {item_path}")
+                    if verbose: console.print(f"[F] | Discarded by {enum_file[1][0].name} | {item_path}")
                     continue
-                file_size = get_file_size_mb(sftp, item_path, error, live)
+                file_size = get_file_size_mb(sftp, item_path, error, console)
                 if file_size > MAX_FILE_SIZE_MB:
-                    if verbose: live.console.print(f"[F] | File too large: {file_size} MB | {item_path}")
+                    if verbose: console.print(f"[F] | File too large: {file_size} MB | {item_path}")
                     continue
                 if not can_read_file(sftp, item_path):
-                    if verbose: live.console.print(f"[F] | Read Failed | {item_path}")
+                    if verbose: console.print(f"[F] | Read Failed | {item_path}")
                     continue
 
                 """
@@ -115,31 +118,33 @@ def process_directory(sftp: paramiko.SFTPClient, host:str, username:str, rules: 
 
 
                 for b,c in enum_file[1].items():
-                    print_finding(live.console, host, username, b, item_path, c)
+                    print_finding(console, host, username, b, item_path, c)
                     print_finding(module_console, host, username, b, item_path, c)
-                if verbose: live.console.print(f"[F] {item_path}")
-                process_file(sftp, host, username, rules, verbose, item_path, live, error)
+                if verbose: console.print(f"[F] {item_path}")
+                process_file(sftp, host, username, rules, verbose, item_path, console, error)
 
     except Exception as e:
-        if error: live.console.print("Process Directory Error:", e)
+        if error: console.print("Process Directory Error:", e)
     
 
 async def connect_ssh(hostname, port, username, password):
     """Asynchronously establishes an SSH connection."""
     return await asyncssh.connect(hostname, port=port, username=username, password=password, known_hosts=None, client_keys=None)
 
-async def process_host(hostname, port, username, password, rules: SnafflerRuleSet, verbose, live:Live, error):
+def process_host(progress, taskid, hostname, port, username, password, rules: SnafflerRuleSet, verbose, console:Console, error):
     """Main function to process a single SSH host asynchronously."""
-    async with semaphore:
-        try:
-            async with await connect_ssh(hostname, port, username, password) as conn:
-                if verbose: live.console.print(f"Connected to {hostname}:{port}")
-                history_dict[f"{hostname}:{port}"] = set()
-                sftp = await conn.start_sftp_client()
-                await process_directory(sftp, f"{hostname}:{port}", username, rules, verbose, live, error, "/")
-                
-        except Exception as e:
-            print(f"Error processing {hostname}: {e}")
+
+    try:
+        client = paramiko.SSHClient()
+        
+        client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        client.connect(hostname, port=int(port),username=username, password=password, timeout=10)
+        sftp = client.open_sftp()
+        process_directory(sftp, hostname, username, rules, verbose, console, error, "/")
+        client.close()
+            
+    except Exception as e:
+        print(f"Error processing {hostname}: {e}")
 
 async def main2():
     parser = argparse.ArgumentParser(description="Snaffle via SSH.")
@@ -179,6 +184,7 @@ async def main2():
                 host, cred = entry.split(" => ")
                 ip, port = host.split(":")
                 username, password = cred.split(":")
+                
                 tasks.append(asyncio.create_task(process_host(ip, port, username, password, rules, args.verbose, live, args.error)))
             
             await asyncio.gather(*tasks)  # Wait for all tasks to complete
@@ -249,7 +255,7 @@ def main3():
         username, password = cred.split(":")
         l.append({"a"})
 
-
+    """
     with ProcessPoolExecutor(max_workers=args.thread) as executor:
         print(l)
         print("a")
@@ -257,8 +263,57 @@ def main3():
         print("b")
     for res in results:
         print(res)
-    return
+    """
+        
+    rules = SnafflerRuleSet.load_default_ruleset()
     
+    with rich.progress.Progress(
+        "[progress.description]{task.description}",
+        progress.BarColumn(),
+        "[progress.percentage]{task.percentage:>3.0f}%",
+        progress.TimeRemainingColumn(),
+        progress.TimeElapsedColumn(),
+        refresh_per_second=1,  # bit slower updates
+    ) as progress:
+        futures = []  # keep track of the jobs
+        with multiprocessing.Manager() as manager:
+            # this is the key - we share some state between our 
+            # main process and our worker functions
+            _progress = manager.dict()
+            overall_progress_task = progress.add_task("[green]All jobs progress:")
+
+            with ProcessPoolExecutor(max_workers=args.thread) as executor:
+                for entry in get_hosts_from_file(args.file):
+                    host, cred = entry.split(" => ")
+                    ip, port = host.split(":")
+                    username, password = cred.split(":")
+                    task_id = progress.add_task(f"task", visible=False)
+                    futures.append(executor.submit(process_host, _progress, task_id, host, port, username, password, rules, args.verbose, progress.console, args.error))
+                    l.append({"a"})
+
+
+                # monitor the progress:
+                while (n_finished := sum([future.done() for future in futures])) < len(
+                    futures
+                ):
+                    progress.update(
+                        overall_progress_task, completed=n_finished, total=len(futures)
+                    )
+                    for task_id, update_data in _progress.items():
+                        latest = update_data["progress"]
+                        total = update_data["total"]
+                        # update the progress bar for this task:
+                        progress.update(
+                            task_id,
+                            completed=latest,
+                            total=total,
+                            visible=latest < total,
+                        )
+
+                # raise any errors:
+                for future in futures:
+                    future.result()
+    return
     try:
         with open(output_file, "w") as f:
             output_file_path = os.path.abspath(f.name)
