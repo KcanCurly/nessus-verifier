@@ -251,24 +251,7 @@ def main3():
     module_console = Console(force_terminal=True, record=True, quiet=True)    
     
     output_file = args.output
-    
-    l = []
-    for entry in get_hosts_from_file(args.file):
-        host, cred = entry.split(" => ")
-        ip, port = host.split(":")
-        username, password = cred.split(":")
-        l.append({"a"})
 
-    """
-    with ProcessPoolExecutor(max_workers=args.thread) as executor:
-        print(l)
-        print("a")
-        results = list(executor.map(process_host2, l))
-        print("b")
-    for res in results:
-        print(res)
-    """
-        
     rules = SnafflerRuleSet.load_default_ruleset()
     
     with overall_progress as progress:
@@ -286,7 +269,6 @@ def main3():
                     username, password = cred.split(":")
                     task_id = progress.add_task(f"task", visible=False, modulename="something1")
                     futures.append(executor.submit(process_host, ip, port, username, password, rules, args.verbose, args.error))
-                    l.append({"a"})
 
 
                 # monitor the progress:
@@ -310,34 +292,8 @@ def main3():
                 # raise any errors:
                 for future in futures:
                     future.result()
-                    progress.update(overall_progress_task, advance=1)
-    return
-    try:
-        with open(output_file, "w") as f:
-            output_file_path = os.path.abspath(f.name)
-            module_console = Console(force_terminal=True, record=True, file=f)    
-            rules = SnafflerRuleSet.load_default_ruleset()
+                    # progress.update(overall_progress_task, advance=1)
 
-
-            with Live(overall_progress, console=console) as live:
-                overall_progress.update(overall_task_id, total=len(get_hosts_from_file(args.file)), completed=0)
-                overall_progress.start_task(overall_task_id)
-                l = []
-                for entry in get_hosts_from_file(args.file):
-                    host, cred = entry.split(" => ")
-                    ip, port = host.split(":")
-                    username, password = cred.split(":")
-                    l.append({"hostname": host, "username": username, "password": password, "port": port, "verbose": args.verbose, "error": args.error, "live": live, "rules": rules, "ip": ip, "module_console": module_console, "output_file_path": output_file_path})
-
-
-                with ProcessPoolExecutor(max_workers=args.thread) as executor:
-                    print(l)
-                    print("a")
-                    results = list(executor.map(process_host2, l))
-                    print("b")
-                for res in results:
-                    print(res)
-    except Exception as e: print(f"First {e}")
             
 
 
