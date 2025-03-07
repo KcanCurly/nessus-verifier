@@ -1,5 +1,4 @@
 import argparse
-from ast import For
 import pprint
 from tabnanny import verbose
 import paramiko
@@ -9,7 +8,7 @@ import asyncssh
 import rich.progress
 from src.snaffler.customsnaffler.rule import SnaffleRule
 from src.snaffler.customsnaffler.ruleset import SnafflerRuleSet
-from src.snaffler.customsnaffler.constants import Triage
+
 from rich.console import Group
 from rich.panel import Panel
 from rich.live import Live
@@ -57,19 +56,7 @@ def get_file_size_mb(sftp: paramiko.SFTPClient, path, error, live):
         return None
 
 def print_finding(host:str, username:str, rule:SnaffleRule, path:str, findings:list[str]):
-    color = Fore.GREEN
-    match rule.triage:
-        case Triage.Triage.Green:
-            color = Fore.GREEN
-        case Triage.Triage.Orange1:
-            color = "\033[38;5;214m"
-        case Triage.Triage.Red:
-            color = Fore.RED
-        case Triage.Triage.Blue:
-            color = Fore.BLUE
-        case Triage.Triage.Yellow:
-            color = Fore.YELLOW
-    print(color + f"[{rule.triage.value}]\[{host}]\[{username}]\[{rule.importance}]\[{rule.name}]" + Fore.WHITE + f" | {path} | {findings}")
+    console.print(f"[{rule.triage.value}]\[{host}]\[{username}]\[{rule.importance}]\[{rule.name}][/{rule.triage.value}][white] | {path} | {findings}[/white]")
 
 def process_file(sftp: paramiko.SFTPClient, host:str, username:str, rules: SnafflerRuleSet, verbose, path, error):
     try:
@@ -87,44 +74,45 @@ def process_file(sftp: paramiko.SFTPClient, host:str, username:str, rules: Snaff
 
                 if a[0]:
                     for b,c in a[1].items():
+                        pass
                         print_finding(host, username, b, path, c)
-
     except Exception as e:
-        if error: print("Process File Error:", e)
+        if error: console.print("Process File Error:", e)
 
 def process_directory(sftp: paramiko.SFTPClient, host:str, username:str, rules: SnafflerRuleSet, verbose, error, remote_path=".", depth=0):
     try:
+        tasks = []
         dir = sftp.listdir(remote_path)
         for d in dir:
             try:
                 item_path = f"{remote_path if remote_path != "/" else ""}/{d}"
-                if verbose: print(f"Processing {host}:{item_path}")
+                print(f"Processing {host}:{item_path}")
                 
                 if stat.S_ISDIR(sftp.stat(item_path).st_mode):
                     if not rules.enum_directory(item_path)[0]:continue
-                    # if verbose: console.print(f"[D] {item_path}")
+                    if verbose: console.print(f"[D] {item_path}")
 
                     process_directory(sftp, host, username, rules, verbose, error, item_path, depth=depth+1)
                 elif stat.S_ISREG(sftp.stat(item_path).st_mode):
-                    # if item_path == output_file_path: continue
+                    if item_path == output_file_path: continue
                     """
                     with history_lock:
                         if item_path in history_dict[host]:
-                            if verbose: print(f"[F] | Already processed, skipping | {item_path}")
+                            if verbose: console.print(f"[F] | Already processed, skipping | {item_path}")
                             continue
                     """
 
                     enum_file = rules.enum_file(item_path)
-                    if verbose: print(f"[F] | Processing | {item_path}")
+                    if verbose: console.print(f"[F] | Processing | {item_path}")
                     if not enum_file[0]:
-                        if verbose: print(f"[F] | Discarded by {enum_file[1][0].name} | {item_path}")
+                        if verbose: console.print(f"[F] | Discarded by {enum_file[1][0].name} | {item_path}")
                         continue
                     file_size = get_file_size_mb(sftp, item_path, error)
                     if file_size > MAX_FILE_SIZE_MB:
-                        if verbose: print(f"[F] | File too large: {file_size} MB | {item_path}")
+                        if verbose: console.print(f"[F] | File too large: {file_size} MB | {item_path}")
                         continue
                     if not can_read_file(sftp, item_path):
-                        if verbose: print(f"[F] | Read Failed | {item_path}")
+                        if verbose: console.print(f"[F] | Read Failed | {item_path}")
                         continue
 
                     """
@@ -135,19 +123,22 @@ def process_directory(sftp: paramiko.SFTPClient, host:str, username:str, rules: 
                     for b,c in enum_file[1].items():
                         print_finding(host, username, b, item_path, c)
 
-                    if verbose: print(f"[F] {item_path}")
+                    if verbose: console.print(f"[F] {item_path}")
                     process_file(sftp, host, username, rules, verbose, item_path, error)
             except Exception as e:
-                if error: print(f"Process Directory Error for: {host} with user {username} for path {remote_path}: {e}")
+                if error: console.print(f"Process Directory Error for: {host} with user {username} for path {remote_path}: {e}")
 
     except Exception as e:
-        if error: print(f"Process Directory Error for: {host} with user {username} for path {remote_path}: {e}")
+        if error: console.print(f"Process Directory Error for: {host} with user {username} for path {remote_path}: {e}")
     
+
+async def connect_ssh(hostname, port, username, password):
+    """Asynchronously establishes an SSH connection."""
+    return await asyncssh.connect(hostname, port=port, username=username, password=password, known_hosts=None, client_keys=None)
 
 def process_host(ip, port, username, password, rules: SnafflerRuleSet, verbose, error):
     """Main function to process a single SSH host asynchronously."""
     init(autoreset=True)
-    console.print("[blue]HEHE[/blue]")
     try:
         client = paramiko.SSHClient()
         
