@@ -55,7 +55,7 @@ def get_file_size_mb(sftp: paramiko.SFTPClient, path, error, live):
 def print_finding(console, host:str, username:str, rule:SnaffleRule, path:str, findings:list[str]):
     console.print(f"[{rule.triage.value}]\[{host}]\[{username}]\[{rule.importance}]\[{rule.name}][/{rule.triage.value}][white] | {path} | {findings}[/white]")
 
-def process_file(sftp: paramiko.SFTPClient, host:str, username:str, rules: SnafflerRuleSet, verbose, path, live:Live, error):
+def process_file(sftp: paramiko.SFTPClient, host:str, username:str, rules: SnafflerRuleSet, verbose, path, error):
     try:
         with sftp.open(path) as f:
             data = f.read().decode("utf-8")
@@ -71,13 +71,15 @@ def process_file(sftp: paramiko.SFTPClient, host:str, username:str, rules: Snaff
 
                 if a[0]:
                     for b,c in a[1].items():
-                        print_finding(live.console, host, username, b, path, c)
-                        print_finding(module_console, host, username, b, path, c)
+                        pass
+                        # print_finding(live.console, host, username, b, path, c)
+                        # print_finding(module_console, host, username, b, path, c)
 
-    except Exception as e: 
-        if error: live.console.print("Process File Error:", e)
+    except Exception as e:
+        pass
+        # if error: live.console.print("Process File Error:", e)
 
-def process_directory(sftp: paramiko.SFTPClient, host:str, username:str, rules: SnafflerRuleSet, verbose, console:Console, error, remote_path=".", depth=0):
+def process_directory(sftp: paramiko.SFTPClient, host:str, username:str, rules: SnafflerRuleSet, verbose, error, remote_path=".", depth=0):
     try:
         tasks = []
         dir = sftp.listdir(remote_path)
@@ -86,65 +88,67 @@ def process_directory(sftp: paramiko.SFTPClient, host:str, username:str, rules: 
             
             if stat.S_ISDIR(sftp.stat(item_path).st_mode):
                 if not rules.enum_directory(item_path)[0]:continue
-                if verbose: console.print(f"[D] {item_path}")
+                # if verbose: console.print(f"[D] {item_path}")
 
-                process_directory(sftp, host, username, rules, verbose, console, error, item_path, depth=depth+1)
+                process_directory(sftp, host, username, rules, verbose, error, item_path, depth=depth+1)
             elif stat.S_ISREG(sftp.stat(item_path).st_mode):
                 if item_path == output_file_path: continue
-                """
+
                 with history_lock:
                     if item_path in history_dict[host]:
-                        if verbose: console.print(f"[F] | Already processed, skipping | {item_path}")
+                        # if verbose: console.print(f"[F] | Already processed, skipping | {item_path}")
                         continue
-                """
+
 
                 enum_file = rules.enum_file(item_path)
-                if verbose: console.print(f"[F] | Processing | {item_path}")
+                # if verbose: console.print(f"[F] | Processing | {item_path}")
                 if not enum_file[0]:
-                    if verbose: console.print(f"[F] | Discarded by {enum_file[1][0].name} | {item_path}")
+                    # if verbose: console.print(f"[F] | Discarded by {enum_file[1][0].name} | {item_path}")
                     continue
-                file_size = get_file_size_mb(sftp, item_path, error, console)
+                file_size = get_file_size_mb(sftp, item_path, error)
                 if file_size > MAX_FILE_SIZE_MB:
-                    if verbose: console.print(f"[F] | File too large: {file_size} MB | {item_path}")
+                    # if verbose: console.print(f"[F] | File too large: {file_size} MB | {item_path}")
                     continue
                 if not can_read_file(sftp, item_path):
-                    if verbose: console.print(f"[F] | Read Failed | {item_path}")
+                    # if verbose: console.print(f"[F] | Read Failed | {item_path}")
                     continue
 
-                """
+
                 with history_lock:
                     history_dict[host].add(item_path)
-                """
+
 
 
                 for b,c in enum_file[1].items():
-                    print_finding(console, host, username, b, item_path, c)
-                    print_finding(module_console, host, username, b, item_path, c)
-                if verbose: console.print(f"[F] {item_path}")
-                process_file(sftp, host, username, rules, verbose, item_path, console, error)
+                    pass
+                    # print_finding(console, host, username, b, item_path, c)
+                    # print_finding(module_console, host, username, b, item_path, c)
+                # if verbose: console.print(f"[F] {item_path}")
+                process_file(sftp, host, username, rules, verbose, item_path, error)
 
     except Exception as e:
-        if error: console.print("Process Directory Error:", e)
+        pass
+        # if error: console.print("Process Directory Error:", e)
     
 
 async def connect_ssh(hostname, port, username, password):
     """Asynchronously establishes an SSH connection."""
     return await asyncssh.connect(hostname, port=port, username=username, password=password, known_hosts=None, client_keys=None)
 
-def process_host(hostname, port, username, password, rules: SnafflerRuleSet, verbose, console:Console, error):
+def process_host(ip, port, username, password, rules: SnafflerRuleSet, verbose, error):
     """Main function to process a single SSH host asynchronously."""
 
     try:
         client = paramiko.SSHClient()
         
         client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        client.connect(hostname, port=int(port),username=username, password=password, timeout=10)
+        client.connect(ip, port=int(port),username=username, password=password, timeout=10)
         sftp = client.open_sftp()
-        process_directory(sftp, hostname, username, rules, verbose, console, error, "/")
+        process_directory(sftp, f"{ip}:{port}", username, rules, verbose, error, "/")
         client.close()
             
     except Exception as e:
-        print(f"Error processing {hostname}: {e}")
+        print(f"Error processing {ip}:{port}: {e}")
 
 async def main2():
     parser = argparse.ArgumentParser(description="Snaffle via SSH.")
@@ -281,7 +285,7 @@ def main3():
                     ip, port = host.split(":")
                     username, password = cred.split(":")
                     task_id = progress.add_task(f"task", visible=False, modulename="something1")
-                    futures.append(executor.submit(process_host, ip, port, username, password, rules, args.verbose, progress.console, args.error))
+                    futures.append(executor.submit(process_host, ip, port, username, password, rules, args.verbose, args.error))
                     l.append({"a"})
 
 
