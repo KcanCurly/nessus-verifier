@@ -95,7 +95,7 @@ async def process_file(sftp: asyncssh.SFTPClient, host:str, username:str, rules:
     except Exception as e: 
         if error: live.console.print("Process File Error:", e)
 
-async def process_directory(sftp: asyncssh.SFTPClient, host:str, username:str, rules: SnafflerRuleSet, verbose: bool, live:Live, error: bool, show_importance: int, discarded_dirs:list[str], remote_path=".", depth=0):
+async def process_directory(sftp: asyncssh.SFTPClient, host:str, username:str, rules: SnafflerRuleSet, verbose: bool, live:Live, error: bool, show_importance: int, discarded_dirs:list[str], history_file_lock, history_file_set, remote_path=".", depth=0):
     try:
         global history_dict
         global output_file_path
@@ -111,9 +111,13 @@ async def process_directory(sftp: asyncssh.SFTPClient, host:str, username:str, r
                 if not rules.enum_directory(item_path)[0]:continue
                 if verbose: live.console.print(f"[D] {item_path}")
 
-                await process_directory(sftp, host, username, rules, verbose, live, error, show_importance, discarded_dirs, remote_path=item_path, depth=depth+1)
+                await process_directory(sftp, host, username, rules, verbose, live, error, show_importance, discarded_dirs, history_file_lock, history_file_set, remote_path=item_path, depth=depth+1)
             elif await sftp.isfile(item_path):
                 if item_path == output_file_path: continue
+                async with history_file_lock:
+                    if item_path in history_file_set:
+                        if verbose: live.console.print(f"[F] {host} | {username} | Already Processed, skipping | {item_path}")
+                        continue
 
                 enum_file = rules.enum_file(item_path)
                 if verbose: live.console.print(f"[F] {host} | {username} | Processing | {item_path}")
@@ -128,6 +132,10 @@ async def process_directory(sftp: asyncssh.SFTPClient, host:str, username:str, r
                     if verbose: live.console.print(f"[F] {host} | {username} | Read Failed | {item_path}")
                     continue
                     
+                    
+                async with history_file_lock:
+                    history_file_set.add(item_path)
+
                 for rule, findings_list in enum_file[1].items():
                     imp = rule.importance
                     reg = r"(\d+)⭐"
@@ -143,7 +151,7 @@ async def process_directory(sftp: asyncssh.SFTPClient, host:str, username:str, r
     except Exception as e:
         if error: live.console.print("Process Directory Error:", e)
 
-async def process_host(ip, port, username, password, rules: SnafflerRuleSet, verbose, live:Live, error, show_importance):
+async def process_host(ip, port, username, password, rules: SnafflerRuleSet, verbose, live:Live, error, show_importance, history_file_lock, history_file_set):
     """Main function to process a single SSH host asynchronously."""
     async with semaphore:
         try:
@@ -160,7 +168,7 @@ async def process_host(ip, port, username, password, rules: SnafflerRuleSet, ver
                         
                 sftp = await conn.start_sftp_client()
                 try:
-                    await process_directory(sftp, f"{ip}:{port}", username, rules, verbose, live, error, show_importance, discarded_dirs, remote_path="/", depth=0)
+                    await process_directory(sftp, f"{ip}:{port}", username, rules, verbose, live, error, show_importance, discarded_dirs, history_file_lock, history_file_set,remote_path="/", depth=0)
                 except:
                     if error: print(f"Error2 processing {ip}:{port}: {e}")
                 
@@ -197,15 +205,17 @@ async def main2():
             with Live(overall_progress, console=console) as live:
                 overall_progress.update(overall_task_id, total=len(get_hosts_from_file(args.file)), completed=0)
                 tasks = []
-                #host_lock_dict = dict[str, lock]
+                host_lock_dict = dict[str, asyncio.Semaphore]()
                 host_files_dict = dict[str, set]()
                 for entry in get_hosts_from_file(args.file):
                     host, cred = entry.split(" => ")
                     ip, port = host.split(":")
                     username, password = cred.split(":")
-                    # if host not in host_locks:
+                    if host not in host_lock_dict:
+                        host_lock_dict[host] = asyncio.Semaphore(1)
+                        host_files_dict[host] = set()
                         
-                    tasks.append(asyncio.create_task(process_host(ip, port, username, password, rules, args.verbose, live, args.error, args.show_importance)))
+                    tasks.append(asyncio.create_task(process_host(ip, port, username, password, rules, args.verbose, live, args.error, args.show_importance, host_lock_dict[host], host_files_dict[host])))
                 overall_progress.start_task(overall_task_id)
                 for task in asyncio.as_completed(tasks):  # Process tasks as they finish
                     await task
