@@ -36,7 +36,7 @@ async def get_all_mounts(ssh: asyncssh.SSHClientConnection):
         for line in result.stdout.split("\n"):
             if line:
                 source, fstype, mountpoint = line.split()
-                if fstype.decode() == "cifs":
+                if fstype == "cifs":
                     print(f"CIFS detected: {mountpoint} {source}")
                     mounts.append((source, mountpoint))
     except Exception as e:
