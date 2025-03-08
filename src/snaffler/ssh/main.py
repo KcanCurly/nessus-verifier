@@ -23,6 +23,23 @@ history_dict = dict[str, set]()
 
 semaphore = asyncio.Semaphore(1)
 
+
+async def get_all_mounts(ssh: asyncssh.SSHClientConnection):
+    """
+    Runs findmnt once and retrieves all mounted filesystems.
+    Returns a dictionary: {mountpoint: (source, fstype)}
+    """
+    mounts = {}
+    try:
+        result = await ssh.run("findmnt -n -o SOURCE,FSTYPE,TARGET", check=True)
+        for line in result.stdout.split("\n"):
+            if line:
+                source, fstype, mountpoint = line.split()
+                mounts[mountpoint] = (source, fstype)
+    except:
+        pass
+    return mounts
+
 async def can_read_file(sftp, path):
     """Attempts to open a remote file in read mode to check permissions."""
     try:
@@ -76,7 +93,7 @@ async def process_file(sftp: asyncssh.SFTPClient, host:str, username:str, rules:
     except Exception as e: 
         if error: live.console.print("Process File Error:", e)
 
-async def process_directory(sftp: asyncssh.SFTPClient, host:str, username:str, rules: SnafflerRuleSet, verbose, live:Live, error, show_importance, remote_path=".", depth=0):
+async def process_directory(sftp: asyncssh.SFTPClient, host:str, username:str, rules: SnafflerRuleSet, verbose: bool, live:Live, error: bool, show_importance: int, discarded_dirs:list[str], remote_path=".", depth=0):
     try:
         global history_dict
         global output_file_path
@@ -89,7 +106,7 @@ async def process_directory(sftp: asyncssh.SFTPClient, host:str, username:str, r
                 if not rules.enum_directory(item_path)[0]:continue
                 if verbose: live.console.print(f"[D] {item_path}")
 
-                await process_directory(sftp, host, username, rules, verbose, live, error, show_importance, item_path, depth=depth+1)
+                await process_directory(sftp, host, username, rules, verbose, live, error, show_importance, discarded_dirs, remote_path=item_path, depth=depth+1)
             elif await sftp.isfile(item_path):
                 if item_path == output_file_path: continue
                 with history_lock:
@@ -138,9 +155,11 @@ async def process_host(hostname, port, username, password, rules: SnafflerRuleSe
         try:
             async with await connect_ssh(hostname, port, username, password) as conn:
                 if verbose: live.console.print(f"Connected to {hostname}:{port}")
+                print(await get_all_mounts(conn))
+                return
                 history_dict[f"{hostname}:{port}"] = set()
                 sftp = await conn.start_sftp_client()
-                await process_directory(sftp, f"{hostname}:{port}", username, rules, verbose, live, error, show_importance, "/")
+                await process_directory(sftp, f"{hostname}:{port}", username, rules, verbose, live, error, show_importance, [], remote_path="/", depth=0)
                 
         except Exception as e:
             print(f"Error processing {hostname}: {e}")

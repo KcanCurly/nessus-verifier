@@ -1,0 +1,15 @@
+[[Rule]]
+scope = "File"
+name = "JavaDiscardByFilePathEndsWith"
+action = "Discard"
+category = []
+relay = []
+description = "Skip any further scanning for files with these extensions."
+matchLocation = "FilePath"
+matchLength = 0
+importance = ""
+wordListType = "EndsWith"
+wordList = [
+"jmxremote\\.password\\.template",
+]
+triage = "gray"

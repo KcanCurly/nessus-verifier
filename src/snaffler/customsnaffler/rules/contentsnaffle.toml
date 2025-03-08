@@ -1,6 +1,5 @@
 [[Rule]]
 scope = "Content"
-id = "d4"
 name = "Generic content snaffle"
 action = "Snaffle"
 category = []
@@ -42,7 +41,7 @@ triage = "green"
 [[Rule]]
 scope = "Content"
 id = "d8"
-name = "KeepCertRegexRed"
+name = "ContentPrivateKey"
 action = "Snaffle"
 category = []
 relay = []
@@ -56,7 +55,6 @@ triage = "red"
 
 [[Rule]]
 scope = "Content"
-id = "d10"
 name = "KeepConfigRegexRed"
 action = "Snaffle"
 category = []
@@ -118,7 +116,7 @@ triage = "red"
 [[Rule]]
 scope = "Content"
 id = "d16"
-name = "ContentDatabasesRed"
+name = "ContentDatabaseURIRed"
 action = "Snaffle"
 category = []
 relay = []
@@ -135,11 +133,11 @@ triage = "red"
 [[Rule]]
 scope = "Content"
 id = "d16"
-name = "ContentDatabasesRedDIC"
+name = "ContentDatabaseCLIRedDIC"
 action = "Snaffle"
 category = []
 relay = []
-description = "Match SQL connection strings that appear to use integrated security (so no passwords)."
+description = "Database CLI."
 matchLocation = "FileContentAsString"
 wordListType = "Contains"
 importance = "5⭐"
@@ -155,12 +153,11 @@ triage = "red"
 
 [[Rule]]
 scope = "Content"
-id = "d16"
-name = "ContentDatabasesRedDIC"
+name = "ContentDatabasesCLIRedDIC"
 action = "Snaffle"
 category = []
 relay = []
-description = "Match SQL connection strings that appear to use integrated security (so no passwords)."
+description = "Database CLI."
 matchLocation = "FileContentAsString"
 wordListType = "Contains"
 importance = "5⭐"
@@ -173,15 +170,14 @@ triage = "red"
 
 [[Rule]]
 scope = "Content"
-id = "d16"
-name = "ContentDatabasesYellow"
+name = "ContentDatabaseYellow"
 action = "Snaffle"
 category = []
 relay = []
 description = "Match SQL connection strings that appear to use integrated security (so no passwords)."
 matchLocation = "FileContentAsString"
 wordListType = "Contains"
-importance = "5⭐"
+importance = "3⭐"
 matchLength = 0
 wordList = [
 "couchbase-cli.*--config-path", # COUCHBASE
