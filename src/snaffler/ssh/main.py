@@ -34,7 +34,9 @@ async def get_all_mounts(ssh: asyncssh.SSHClientConnection):
         result = await ssh.run("findmnt -n -o SOURCE,FSTYPE,TARGET", check=True)
         for line in result.stdout.split("\n"):
             if line:
-                source, fstype, mountpoint = line.split()
+                source = line.split()[0]
+                fstype = line.split()[1]
+                mountpoint = "/" + line.split("/")[1]
                 mounts[mountpoint] = (source, fstype)
     except Exception as e:
         print(e)
