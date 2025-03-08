@@ -20,6 +20,7 @@ output_file = ""
 output_file_path = ""
 module_console = None
 history_dict = dict[str, set]()
+mount_dict = set()
 
 semaphore = asyncio.Semaphore(1)
 
@@ -29,13 +30,15 @@ async def get_all_mounts(ssh: asyncssh.SSHClientConnection):
     Runs findmnt once and retrieves all mounted filesystems.
     Returns a dictionary: {mountpoint: (source, fstype)}
     """
-    mounts = {}
+    mounts = []
     try:
         result = await ssh.run("findmnt -r -n -o SOURCE,FSTYPE,TARGET", check=True)
         for line in result.stdout.split("\n"):
             if line:
                 source, fstype, mountpoint = line.split()
-                mounts[mountpoint] = (source, fstype)
+                if fstype.decode() == "cifs":
+                    print(f"CIFS detected: {mountpoint} {source}")
+                    mounts.append((source, mountpoint))
     except Exception as e:
         print(e)
         pass
