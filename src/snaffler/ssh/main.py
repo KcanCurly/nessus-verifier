@@ -36,7 +36,8 @@ async def get_all_mounts(ssh: asyncssh.SSHClientConnection):
             if line:
                 source, fstype, mountpoint = line.split()
                 mounts[mountpoint] = (source, fstype)
-    except:
+    except Exception as e:
+        print(e)
         pass
     return mounts
 
