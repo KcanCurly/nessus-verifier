@@ -14,7 +14,7 @@ import re
 MAX_FILE_SIZE_MB = 100
 MAX_LINE_CHARACTER = 300
 
-history_lock = threading.Lock()
+history_lock = asyncio.Semaphore(1)
 output_lock = threading.Lock()
 output_file = ""
 output_file_path = ""
@@ -197,10 +197,14 @@ async def main2():
             with Live(overall_progress, console=console) as live:
                 overall_progress.update(overall_task_id, total=len(get_hosts_from_file(args.file)), completed=0)
                 tasks = []
+                #host_lock_dict = dict[str, lock]
+                host_files_dict = dict[str, set]()
                 for entry in get_hosts_from_file(args.file):
                     host, cred = entry.split(" => ")
                     ip, port = host.split(":")
                     username, password = cred.split(":")
+                    # if host not in host_locks:
+                        
                     tasks.append(asyncio.create_task(process_host(ip, port, username, password, rules, args.verbose, live, args.error, args.show_importance)))
                 overall_progress.start_task(overall_task_id)
                 for task in asyncio.as_completed(tasks):  # Process tasks as they finish
