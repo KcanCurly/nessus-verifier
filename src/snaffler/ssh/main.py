@@ -151,7 +151,7 @@ async def process_host(ip, port, username, password, rules: SnafflerRuleSet, ver
                 if verbose: live.console.print(f"Connected to {ip}:{port}")
                 mounts = await get_all_mounts(conn, error, verbose, live.console, f"{ip}:{port}", username)
                 discarded_dirs = []
-                with history_lock:
+                async with history_lock:
                     for mount in mounts:
                         if mount[0] in mount_dict:
                             discarded_dirs.append(mount[1])
