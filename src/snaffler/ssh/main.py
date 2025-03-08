@@ -153,20 +153,30 @@ async def connect_ssh(hostname, port, username, password):
     """Asynchronously establishes an SSH connection."""
     return await asyncssh.connect(hostname, port=port, username=username, password=password, known_hosts=None, client_keys=None)
 
-async def process_host(hostname, port, username, password, rules: SnafflerRuleSet, verbose, live:Live, error, show_importance):
+async def process_host(ip, port, username, password, rules: SnafflerRuleSet, verbose, live:Live, error, show_importance):
     """Main function to process a single SSH host asynchronously."""
     async with semaphore:
         try:
-            async with await connect_ssh(hostname, port, username, password) as conn:
-                if verbose: live.console.print(f"Connected to {hostname}:{port}")
-                print(await get_all_mounts(conn))
+            async with await connect_ssh(ip, port, username, password) as conn:
+                if verbose: live.console.print(f"Connected to {ip}:{port}")
+                mounts = await get_all_mounts(conn)
+                discarded_dirs = []
+                with history_lock:
+                    for mount in mounts:
+                        if mount[0] in mount_dict:
+                            discarded_dirs.append(mount[1])
+                            continue
+                        mount_dict.add(mount[0])
+                        
+                    
+                print(f"Discarded dirs for {ip}:{port} for {username}: {discarded_dirs}")
                 return
-                history_dict[f"{hostname}:{port}"] = set()
+                history_dict[f"{ip}:{port}"] = set()
                 sftp = await conn.start_sftp_client()
-                await process_directory(sftp, f"{hostname}:{port}", username, rules, verbose, live, error, show_importance, [], remote_path="/", depth=0)
+                await process_directory(sftp, f"{ip}:{port}", username, rules, verbose, live, error, show_importance, discarded_dirs, remote_path="/", depth=0)
                 
         except Exception as e:
-            print(f"Error processing {hostname}: {e}")
+            if error: print(f"Error processing {ip}:{port}: {e}")
 
 async def main2():
     parser = argparse.ArgumentParser(description="Snaffle via SSH.")
