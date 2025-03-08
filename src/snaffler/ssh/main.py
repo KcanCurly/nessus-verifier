@@ -142,17 +142,12 @@ async def process_directory(sftp: asyncssh.SFTPClient, host:str, username:str, r
 
     except Exception as e:
         if error: live.console.print("Process Directory Error:", e)
-    
-
-async def connect_ssh(hostname, port, username, password):
-    """Asynchronously establishes an SSH connection."""
-    return await asyncssh.connect(hostname, port=port, username=username, password=password, known_hosts=None, client_keys=None)
 
 async def process_host(ip, port, username, password, rules: SnafflerRuleSet, verbose, live:Live, error, show_importance):
     """Main function to process a single SSH host asynchronously."""
     async with semaphore:
         try:
-            async with await asyncssh.connect(ip, port, username, password, known_hosts=None, client_keys=None, ) as conn:
+            async with await asyncssh.connect(ip, port=port, username=username, password=password, known_hosts=None, client_keys=None) as conn:
                 if verbose: live.console.print(f"Connected to {ip}:{port}")
                 mounts = await get_all_mounts(conn, error, verbose, live.console, f"{ip}:{port}", username)
                 discarded_dirs = []
