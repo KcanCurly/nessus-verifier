@@ -25,10 +25,10 @@ mount_dict = set()
 semaphore = asyncio.Semaphore(1)
 
 
-async def get_all_mounts(ssh: asyncssh.SSHClientConnection):
+async def get_all_mounts(ssh: asyncssh.SSHClientConnection, error:bool, verbose:bool, console:Console, host, username):
     """
     Runs findmnt once and retrieves all mounted filesystems.
-    Returns a dictionary: {mountpoint: (source, fstype)}
+    Returns a list: [(source, mountpoint)]
     """
     mounts = []
     try:
@@ -37,11 +37,9 @@ async def get_all_mounts(ssh: asyncssh.SSHClientConnection):
             if line:
                 source, fstype, mountpoint = line.split()
                 if fstype == "cifs":
-                    print(f"CIFS detected: {mountpoint} {source}")
                     mounts.append((source, mountpoint))
     except Exception as e:
-        print(e)
-        pass
+        if error: console.print(f"{host} | {username} | Get All Mounts Failed")
     return mounts
 
 async def can_read_file(sftp, path):
@@ -107,16 +105,16 @@ async def process_directory(sftp: asyncssh.SFTPClient, host:str, username:str, r
             if d.filename == "." or d.filename == "..":continue
             item_path = f"{remote_path if remote_path != "/" else ""}/{d.filename}"
             if await sftp.isdir(item_path):
+                if item_path in discarded_dirs:
+                    if verbose: live.console.print(f"[D] {host} | {username} | Share Discard, skipping | {item_path}")
+                    continue
                 if not rules.enum_directory(item_path)[0]:continue
                 if verbose: live.console.print(f"[D] {item_path}")
 
                 await process_directory(sftp, host, username, rules, verbose, live, error, show_importance, discarded_dirs, remote_path=item_path, depth=depth+1)
             elif await sftp.isfile(item_path):
                 if item_path == output_file_path: continue
-                with history_lock:
-                    if item_path in history_dict[host]:
-                        if verbose: live.console.print(f"[F] {host} | {username} | Already processed, skipping | {item_path}")
-                        continue
+
                 enum_file = rules.enum_file(item_path)
                 if verbose: live.console.print(f"[F] {host} | {username} | Processing | {item_path}")
                 if not enum_file[0]:
@@ -129,9 +127,6 @@ async def process_directory(sftp: asyncssh.SFTPClient, host:str, username:str, r
                 if not await can_read_file(sftp, item_path):
                     if verbose: live.console.print(f"[F] {host} | {username} | Read Failed | {item_path}")
                     continue
-                
-                with history_lock:
-                    history_dict[host].add(item_path)
                     
                 for rule, findings_list in enum_file[1].items():
                     imp = rule.importance
@@ -157,9 +152,9 @@ async def process_host(ip, port, username, password, rules: SnafflerRuleSet, ver
     """Main function to process a single SSH host asynchronously."""
     async with semaphore:
         try:
-            async with await connect_ssh(ip, port, username, password) as conn:
+            async with await asyncssh.connect(ip, port, username, password, known_hosts=None, client_keys=None, ) as conn:
                 if verbose: live.console.print(f"Connected to {ip}:{port}")
-                mounts = await get_all_mounts(conn)
+                mounts = await get_all_mounts(conn, error, verbose, live.console, f"{ip}:{port}", username)
                 discarded_dirs = []
                 with history_lock:
                     for mount in mounts:
@@ -168,12 +163,11 @@ async def process_host(ip, port, username, password, rules: SnafflerRuleSet, ver
                             continue
                         mount_dict.add(mount[0])
                         
-                    
-                print(f"Discarded dirs for {ip}:{port} for {username}: {discarded_dirs}")
-                return
-                history_dict[f"{ip}:{port}"] = set()
                 sftp = await conn.start_sftp_client()
-                await process_directory(sftp, f"{ip}:{port}", username, rules, verbose, live, error, show_importance, discarded_dirs, remote_path="/", depth=0)
+                try:
+                    await process_directory(sftp, f"{ip}:{port}", username, rules, verbose, live, error, show_importance, discarded_dirs, remote_path="/", depth=0)
+                except:
+                    if error: print(f"Error2 processing {ip}:{port}: {e}")
                 
         except Exception as e:
             if error: print(f"Error processing {ip}:{port}: {e}")
