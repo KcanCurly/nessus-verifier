@@ -68,7 +68,7 @@ def print_finding(console, host:str, username:str, rule:SnaffleRule, path:str, f
 async def process_file(sftp: asyncssh.SFTPClient, host:str, username:str, rules: SnafflerRuleSet, verbose, path, live:Live, error, show_importance):
     try:
         data = None
-        async with await sftp.open(path, errors='ignore') as f:
+        async with await sftp.open(path) as f:
             data = await f.read()
 
         if not data: return
