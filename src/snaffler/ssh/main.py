@@ -233,8 +233,8 @@ async def main2():
                     for task in asyncio.as_completed(tasks):  # Process tasks as they finish
                         await task
                         overall_progress.update(overall_task_id, total=len(get_hosts_from_file(args.file)), advance=1)
-                    for thread in running_regex_tasks:
-                        thread.join()
+                for thread in running_regex_tasks:
+                    thread.join()
     except Exception as e: 
         if args.error: 
             print("Main2 error", e)
