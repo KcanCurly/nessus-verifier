@@ -23,8 +23,6 @@ history_dict = dict[str, set]()
 mount_dict = set()
 
 semaphore = asyncio.Semaphore(1)
-running_regex_tasks = []
-
 
 async def get_all_mounts(ssh: asyncssh.SSHClientConnection, error:bool, verbose:bool, console:Console, host, username):
     """
@@ -66,27 +64,6 @@ async def get_file_size_mb(sftp, path, error, live):
 def print_finding(console, host:str, username:str, rule:SnaffleRule, path:str, findings:list[str]):
     console.print(f"[{rule.triage.value}]\[{host}]\[{username}]\[{rule.importance}]\[{rule.name}][/{rule.triage.value}][white] | {path} | {findings}[/white]")
 
-def run_regex(data, host:str, username:str, rules: SnafflerRuleSet, verbose:bool, path:str, live:Live, error:bool, show_importance: int):
-    if "\r\n" in data:
-        data = data.split("\r\n")
-    else:
-        data = data.split("\n")
-
-    for line in data:
-        if len(line) > MAX_LINE_CHARACTER: continue
-        a = rules.enum_content(line, 10, 10)
-
-        if a[0]:
-            for rule, findings_list in a[1].items():
-                imp = rule.importance
-                reg = r"(\d+)⭐"
-                m = re.match(reg, imp)
-                if m:
-                    i = m.group(1)
-                    if int(i) >= show_importance:
-                        print_finding(live.console, host, username, rule, path, findings_list)
-                print_finding(module_console, host, username, rule, path, findings_list)
-
 async def process_file(sftp: asyncssh.SFTPClient, host:str, username:str, rules: SnafflerRuleSet, verbose, path, live:Live, error, show_importance):
     try:
         data = None
@@ -94,12 +71,25 @@ async def process_file(sftp: asyncssh.SFTPClient, host:str, username:str, rules:
             data = await f.read()
 
         if not data: return
-        global running_regex_tasks
-        # Fire-and-forget but track task
-        thread = threading.Thread(target=run_regex, args=(data, host, username, rules, verbose, path, live, error, show_importance))
-        # task = loop.run_in_executor(None, run_regex, data, host, username, rules, verbose, path, live, error, show_importance)
-        running_regex_tasks.append(thread)
-        thread.start()
+        if "\r\n" in data:
+            data = data.split("\r\n")
+        else:
+            data = data.split("\n")
+
+        for line in data:
+            if len(line) > MAX_LINE_CHARACTER: continue
+            a = rules.enum_content(line, 10, 10)
+
+            if a[0]:
+                for rule, findings_list in a[1].items():
+                    imp = rule.importance
+                    reg = r"(\d+)⭐"
+                    m = re.match(reg, imp)
+                    if m:
+                        i = m.group(1)
+                        if int(i) >= show_importance:
+                            print_finding(live.console, host, username, rule, path, findings_list)
+                    print_finding(module_console, host, username, rule, path, findings_list)
 
     except Exception as e: 
         if error: live.console.print("Process File Error:", e)
@@ -109,7 +99,7 @@ async def process_directory(sftp: asyncssh.SFTPClient, host:str, username:str, r
         global history_dict
         global output_file_path
         # tasks = []
-        dir = await sftp.readdir(remote_path)
+        dir = await sftp.listdir(remote_path)
         for d in dir:
             if d.filename == "." or d.filename == "..":continue
             item_path = f"{remote_path if remote_path != "/" else ""}/{d.filename}"
@@ -232,9 +222,7 @@ async def main2():
                     for task in asyncio.as_completed(tasks):  # Process tasks as they finish
                         await task
                         overall_progress.update(overall_task_id, total=len(get_hosts_from_file(args.file)), advance=1)
-                for thread in running_regex_tasks:
-                    print("EYYY")
-                    thread.join()
+
     except Exception as e: 
         if args.error: 
             print("Main2 error", e)
