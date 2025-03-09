@@ -98,8 +98,9 @@ async def process_file(sftp: asyncssh.SFTPClient, host:str, username:str, rules:
         loop = asyncio.get_running_loop()
 
         # Fire-and-forget but track task
-        task = loop.run_in_executor(None, run_regex, data, host, username, rules, verbose, path, live, error, show_importance)
-        running_regex_tasks.add(task)
+        thread = threading.Thread(target=run_regex, args=(data, host, username, rules, verbose, path, live, error, show_importance))
+        # task = loop.run_in_executor(None, run_regex, data, host, username, rules, verbose, path, live, error, show_importance)
+        running_regex_tasks.add(thread)
 
     except Exception as e: 
         if error: live.console.print("Process File Error:", e)
@@ -232,6 +233,8 @@ async def main2():
                     for task in asyncio.as_completed(tasks):  # Process tasks as they finish
                         await task
                         overall_progress.update(overall_task_id, total=len(get_hosts_from_file(args.file)), advance=1)
+                    for thread in running_regex_tasks:
+                        thread.join()
     except Exception as e: 
         if args.error: 
             print("Main2 error", e)
