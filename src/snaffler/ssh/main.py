@@ -3,12 +3,12 @@ import asyncssh
 from src.snaffler.customsnaffler.rule import SnaffleRule
 from src.snaffler.customsnaffler.ruleset import SnafflerRuleSet
 from rich.live import Live
-from rich.progress import Progress, TaskID
 from rich.console import Console
 from src.utilities.utilities import get_classic_overall_progress, get_hosts_from_file
 import asyncio
 import os
 import threading
+import time
 import re
 
 MAX_FILE_SIZE_MB = 100
@@ -204,23 +204,27 @@ async def main2():
 
             with Live(overall_progress, console=console) as live:
                 overall_progress.update(overall_task_id, total=len(get_hosts_from_file(args.file)), completed=0)
-                tasks = []
+                
                 host_lock_dict = dict[str, asyncio.Semaphore]()
                 host_files_dict = dict[str, set]()
-                for entry in get_hosts_from_file(args.file):
-                    host, cred = entry.split(" => ")
-                    ip, port = host.split(":")
-                    username, password = cred.split(":")
-                    if host not in host_lock_dict:
-                        host_lock_dict[host] = asyncio.Semaphore(1)
-                        host_files_dict[host] = set()
-                        
-                    tasks.append(asyncio.create_task(process_host(ip, port, username, password, rules, args.verbose, live, args.error, args.show_importance, host_lock_dict[host], host_files_dict[host])))
-                overall_progress.start_task(overall_task_id)
-                for task in asyncio.as_completed(tasks):  # Process tasks as they finish
-                    await task
-                    overall_progress.update(overall_task_id, total=len(get_hosts_from_file(args.file)), advance=1)
-    except Exception as e: print("Yo", e)
+                async with asyncio.TaskGroup() as tg:
+                    tasks = []
+                    for entry in get_hosts_from_file(args.file):
+                        host, cred = entry.split(" => ")
+                        ip, port = host.split(":")
+                        username, password = cred.split(":")
+                        if host not in host_lock_dict:
+                            host_lock_dict[host] = asyncio.Semaphore(1)
+                            host_files_dict[host] = set()
+                            
+                        tasks.append(tg.create_task(process_host(ip, port, username, password, rules, args.verbose, live, args.error, args.show_importance, host_lock_dict[host], host_files_dict[host])))
+                    overall_progress.start_task(overall_task_id)
+                    for task in asyncio.as_completed(tasks):  # Process tasks as they finish
+                        await task
+                        overall_progress.update(overall_task_id, total=len(get_hosts_from_file(args.file)), advance=1)
+    except Exception as e: 
+        if args.error: 
+            print("Main2 error", e)
 
 def main():
     asyncio.run(main2())
