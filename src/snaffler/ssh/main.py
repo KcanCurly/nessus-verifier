@@ -23,6 +23,7 @@ history_dict = dict[str, set]()
 mount_dict = set()
 
 semaphore = asyncio.Semaphore(1)
+timing = False
 
 async def get_all_mounts(ssh: asyncssh.SSHClientConnection, error:bool, verbose:bool, console:Console, host, username):
     """
@@ -95,6 +96,7 @@ async def process_file(sftp: asyncssh.SFTPClient, host:str, username:str, rules:
         if error: live.console.print("Process File Error:", e)
 
 async def process_directory(sftp: asyncssh.SFTPClient, host:str, username:str, rules: SnafflerRuleSet, verbose: bool, live:Live, error: bool, show_importance: int, discarded_dirs:list[str], history_file_lock, history_file_set, remote_path=".", depth=0):
+    global timing
     try:
         global history_dict
         global output_file_path
@@ -108,9 +110,10 @@ async def process_directory(sftp: asyncssh.SFTPClient, host:str, username:str, r
                     if verbose: live.console.print(f"[D] {host} | {username} | Share Discard, skipping | {item_path}")
                     continue
                 if not rules.enum_directory(item_path)[0]:continue
-                if verbose: live.console.print(f"[D] {item_path}")
-
+                if verbose: live.console.print(f"[D] {host} | {username} | Processing Directory | {item_path}")
+                start = time.perf_counter()
                 await process_directory(sftp, host, username, rules, verbose, live, error, show_importance, discarded_dirs, history_file_lock, history_file_set, remote_path=item_path, depth=depth+1)
+                if timing: print(f"[D] {host} | {username} | Processing Directory | {item_path} | {time.perf_counter() - start:.2f} sec")
             elif await sftp.isfile(item_path):
                 if item_path == output_file_path: continue
                 async with history_file_lock:
@@ -119,7 +122,7 @@ async def process_directory(sftp: asyncssh.SFTPClient, host:str, username:str, r
                         continue
 
                 enum_file = rules.enum_file(item_path)
-                if verbose: live.console.print(f"[F] {host} | {username} | Processing | {item_path}")
+                if verbose: live.console.print(f"[F] {host} | {username} | Processing File | {item_path}")
                 if not enum_file[0]:
                     if verbose: live.console.print(f"[F] {host} | {username} | Discarded by {enum_file[1][0].name} | {item_path}")
                     continue
@@ -145,7 +148,9 @@ async def process_directory(sftp: asyncssh.SFTPClient, host:str, username:str, r
                             print_finding(live.console, host, username, rule, item_path, findings_list)
                     print_finding(module_console, host, username, rule, item_path, findings_list)
                 if verbose: live.console.print(f"[F] {item_path}")
+                start = time.perf_counter()
                 await process_file(sftp, host, username, rules, verbose, item_path, live, error, show_importance)
+                if timing: print(f"[D] {host} | {username} | Processing File | {item_path} | {time.perf_counter() - start:.2f} sec")
 
     except Exception as e:
         if error: live.console.print("Process Directory Error:", e)
@@ -166,10 +171,8 @@ async def process_host(ip, port, username, password, rules: SnafflerRuleSet, ver
                         mount_dict.add(mount[0])
                         
                 sftp = await conn.start_sftp_client()
-                try:
-                    await process_directory(sftp, f"{ip}:{port}", username, rules, verbose, live, error, show_importance, discarded_dirs, history_file_lock, history_file_set,remote_path="/", depth=0)
-                except:
-                    if error: print(f"Error2 processing {ip}:{port}: {e}")
+                await process_directory(sftp, f"{ip}:{port}", username, rules, verbose, live, error, show_importance, discarded_dirs, history_file_lock, history_file_set,remote_path="/", depth=0)
+
                 
         except Exception as e:
             if error: print(f"Error processing {ip}:{port}: {e}")
@@ -181,6 +184,7 @@ async def main2():
     parser.add_argument("--show-importance", type=int, default=0, help="Print only snaffles that is above given importance level, does NOT affect output to file.")
     parser.add_argument("--threads", default=10, type=int, help="Number of threads (Default = 10)")
     parser.add_argument("--timeout", default=5, type=int, help="Timeout in seconds (Default = 5)")
+    parser.add_argument("--timing", action="store_true", help="Print our timings of functions")
     parser.add_argument("-v", "--verbose", action="store_true", help="Enable verbose")
     parser.add_argument("-e", "--error", action="store_true", help="Prints errors")
     
@@ -191,8 +195,9 @@ async def main2():
     global semaphore
     semaphore = asyncio.Semaphore(args.threads)
     
-    global output_file, output_file_path, module_console, running_regex_tasks
+    global output_file, output_file_path, module_console,timing
 
+    timing = args.timing
     output_file = args.output
     try:
         with open(output_file, "w") as f:
@@ -219,7 +224,7 @@ async def main2():
                             
                         tasks.append(tg.create_task(process_host(ip, port, username, password, rules, args.verbose, live, args.error, args.show_importance, host_lock_dict[host], host_files_dict[host])))
                     overall_progress.start_task(overall_task_id)
-                    for task in asyncio.as_completed(tasks):  # Process tasks as they finish
+                    for task in asyncio.as_completed(tasks):
                         await task
                         overall_progress.update(overall_task_id, total=len(get_hosts_from_file(args.file)), advance=1)
 
