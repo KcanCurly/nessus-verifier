@@ -202,7 +202,7 @@ async def main2():
     global semaphore
     semaphore = asyncio.Semaphore(args.threads)
     
-    global output_file, output_file_path, module_console
+    global output_file, output_file_path, module_console, running_regex_tasks
 
     output_file = args.output
     try:
