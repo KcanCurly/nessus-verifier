@@ -21,6 +21,7 @@ output_file_path = ""
 module_console = None
 history_dict = dict[str, set]()
 mount_dict = set()
+importance_reg = r"(\d+)⭐"
 
 semaphore = asyncio.Semaphore(1)
 timing = False
@@ -68,10 +69,12 @@ def print_finding(console, host:str, username:str, rule:SnaffleRule, path:str, f
 async def process_file(sftp: asyncssh.SFTPClient, host:str, username:str, rules: SnafflerRuleSet, verbose, path, live:Live, error, show_importance):
     try:
         data = None
+        start = time.perf_counter()
         async with await sftp.open(path, "r", errors='ignore') as f:
             data = await f.read()
-
+        if timing: print(f"[D] {host} | {username} | Retrieved File | {path} | {time.perf_counter() - start:.2f} sec")
         if not data: return
+        start = time.perf_counter()
         if "\r\n" in data:
             data = data.split("\r\n")
         else:
@@ -84,13 +87,13 @@ async def process_file(sftp: asyncssh.SFTPClient, host:str, username:str, rules:
             if a[0]:
                 for rule, findings_list in a[1].items():
                     imp = rule.importance
-                    reg = r"(\d+)⭐"
-                    m = re.match(reg, imp)
+                    m = re.match(importance_reg, imp)
                     if m:
                         i = m.group(1)
                         if int(i) >= show_importance:
                             print_finding(live.console, host, username, rule, path, findings_list)
                     print_finding(module_console, host, username, rule, path, findings_list)
+        if timing: print(f"[D] {host} | {username} | Processed File | {path} | {time.perf_counter() - start:.2f} sec")
 
     except Exception as e: 
         if error: live.console.print("Process File Error:", e)
@@ -140,8 +143,8 @@ async def process_directory(sftp: asyncssh.SFTPClient, host:str, username:str, r
 
                 for rule, findings_list in enum_file[1].items():
                     imp = rule.importance
-                    reg = r"(\d+)⭐"
-                    m = re.match(reg, imp)
+                    
+                    m = re.match(importance_reg, imp)
                     if m:
                         i = m.group(1)
                         if int(i) >= show_importance:

@@ -1,0 +1,28 @@
+[[Rule]]
+scope = "Directory"
+name = "LinuxDirectoryDiscardSystemDirs"
+action = "Discard"
+category = []
+relay = []
+description = "File paths that will be skipped entirely."
+matchLocation = "FilePath"
+matchLength = 0
+importance = ""
+wordListType = "EndsWith"
+wordList = [
+"\\/bin",
+"\\/boot",
+"\\/dev",
+"\\/etc",
+"\\/lib",
+"\\/lib64",
+"\\/proc",
+"\\/run",
+"\\/usr",
+"\\/var",
+"\\/sbin",
+"\\/sys",
+"\\/opt",
+"\\/home\\/\\w*\\/\\.local\\/bin"
+]
+triage = "gray"
