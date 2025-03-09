@@ -23,7 +23,7 @@ history_dict = dict[str, set]()
 mount_dict = set()
 
 semaphore = asyncio.Semaphore(1)
-running_regex_tasks = set()
+running_regex_tasks = []
 
 
 async def get_all_mounts(ssh: asyncssh.SSHClientConnection, error:bool, verbose:bool, console:Console, host, username):
@@ -98,7 +98,7 @@ async def process_file(sftp: asyncssh.SFTPClient, host:str, username:str, rules:
         # Fire-and-forget but track task
         thread = threading.Thread(target=run_regex, args=(data, host, username, rules, verbose, path, live, error, show_importance))
         # task = loop.run_in_executor(None, run_regex, data, host, username, rules, verbose, path, live, error, show_importance)
-        running_regex_tasks.add(thread)
+        running_regex_tasks.append(thread)
 
     except Exception as e: 
         if error: live.console.print("Process File Error:", e)
