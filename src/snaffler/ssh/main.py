@@ -99,6 +99,7 @@ async def process_file(sftp: asyncssh.SFTPClient, host:str, username:str, rules:
         thread = threading.Thread(target=run_regex, args=(data, host, username, rules, verbose, path, live, error, show_importance))
         # task = loop.run_in_executor(None, run_regex, data, host, username, rules, verbose, path, live, error, show_importance)
         running_regex_tasks.append(thread)
+        print(running_regex_tasks)
 
     except Exception as e: 
         if error: live.console.print("Process File Error:", e)
