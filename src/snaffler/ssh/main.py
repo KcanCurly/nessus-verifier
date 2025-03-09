@@ -207,6 +207,22 @@ async def main2():
                 
                 host_lock_dict = dict[str, asyncio.Semaphore]()
                 host_files_dict = dict[str, set]()
+
+                tasks = []
+                for entry in get_hosts_from_file(args.file):
+                    host, cred = entry.split(" => ")
+                    ip, port = host.split(":")
+                    username, password = cred.split(":")
+                    if host not in host_lock_dict:
+                        host_lock_dict[host] = asyncio.Semaphore(1)
+                        host_files_dict[host] = set()
+                        
+                    tasks.append(asyncio.create_task(process_host(ip, port, username, password, rules, args.verbose, live, args.error, args.show_importance, host_lock_dict[host], host_files_dict[host])))
+                overall_progress.start_task(overall_task_id)
+                for task in asyncio.as_completed(tasks):  # Process tasks as they finish
+                    await task
+                    overall_progress.update(overall_task_id, total=len(get_hosts_from_file(args.file)), advance=1)
+                """
                 async with asyncio.TaskGroup() as tg:
                     tasks = []
                     for entry in get_hosts_from_file(args.file):
@@ -222,6 +238,7 @@ async def main2():
                     for task in asyncio.as_completed(tasks):  # Process tasks as they finish
                         await task
                         overall_progress.update(overall_task_id, total=len(get_hosts_from_file(args.file)), advance=1)
+                """
     except Exception as e: 
         if args.error: 
             print("Main2 error", e)
