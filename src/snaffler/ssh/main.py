@@ -101,8 +101,8 @@ async def process_directory(sftp: asyncssh.SFTPClient, host:str, username:str, r
         # tasks = []
         dir = await sftp.listdir(remote_path)
         for d in dir:
-            if d.filename == "." or d.filename == "..":continue
-            item_path = f"{remote_path if remote_path != "/" else ""}/{d.filename}"
+            if d == "." or d == "..":continue
+            item_path = f"{remote_path if remote_path != "/" else ""}/{d}"
             if await sftp.isdir(item_path):
                 if item_path in discarded_dirs:
                     if verbose: live.console.print(f"[D] {host} | {username} | Share Discard, skipping | {item_path}")
