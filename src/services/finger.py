@@ -7,7 +7,7 @@ import re
 from src.utilities.utilities import get_hosts_from_file
 
 
-def check(directory_path, config, args, hosts):
+def users_nv(hosts, errors, verbose):
     hosts = get_hosts_from_file(hosts)
     ips = [line.split(":")[0] for line in hosts]
     result = ", ".join(ips)
@@ -28,24 +28,18 @@ def check(directory_path, config, args, hosts):
     if len(vuln) > 0:
         print("Finger service user enumeration:")
         for k,v in vuln.items():
-            print(f"{k}:79 - {", ".join(v)}")
+            print(f"    {k}:79 - {", ".join(v)}")
         
+def users_console(args):
+    users_nv(args.file, args.errors, args.verbose)
 
-def main():
-    parser = argparse.ArgumentParser(description="Finger module of nessus-verifier.")
-    parser.add_argument("-d", "--directory", type=str, required=False, help="Directory to process (Default = current directory).")
-    parser.add_argument("-f", "--filename", type=str, required=False, help="File that has host:port information.")
-    parser.add_argument("-c", "--config", type=str, required=False, help="Config file.")
-    parser.add_argument("-v", "--verbose", action="store_true", help="Verbose")
+def helper_parser(commandparser):
+    parser_task1 = commandparser.add_parser("finger")
+    subparsers = parser_task1.add_subparsers(dest="command")
     
+    parser_users = subparsers.add_parser("users", help="Enumerates users")
+    parser_users.add_argument("-f", "--filename", type=str, required=False, help="File that has host:port information.")
+    parser_users.add_argument("-e", "--errors", action="store_true", help="Show Errors")
+    parser_users.add_argument("-v", "--verbose", action="store_true", help="Verbose")
+    parser_users.set_defaults(func=users_console)
     
-    args = parser.parse_args()
-    
-    if not args.config:
-        args.config = os.path.join(Path(__file__).resolve().parent.parent, "nvconfig.config")
-        
-    config = configparser.ConfigParser()
-    config.read(args.config)
-        
-    
-    check(args.directory or os.curdir, config, args, args.filename or "hosts.txt")
