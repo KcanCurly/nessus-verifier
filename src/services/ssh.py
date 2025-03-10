@@ -6,13 +6,12 @@ from rich.live import Live
 from rich.progress import Progress, TaskID
 from rich.console import Console
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from src.services.service import Vuln_Data
 
 cve_dict = {
     
 }
 
-class Audit_Vuln_Data(Vuln_Data):
+class Audit_Vuln_Data():
     def __init__(self, host: str, is_vuln: bool, is_terrapin: bool, vuln_kex: list[str], vuln_mac: list[str], vuln_key: list[str], vuln_cipher):
         self.host = host
         self.is_vuln = is_vuln
@@ -22,7 +21,7 @@ class Audit_Vuln_Data(Vuln_Data):
         self.vuln_key = vuln_key
         self.vuln_cipher = vuln_cipher
 
-class Version_Vuln_Data(Vuln_Data):
+class Version_Vuln_Data():
     def __init__(self, host: str, version: str, protocol: str):
         super.__init__()
         self.host = host

@@ -8,21 +8,20 @@ from rich.live import Live
 from rich.progress import Progress, TaskID
 from rich.console import Console
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from src.services.service import Vuln_Data
 from rich.console import Group
 from rich.panel import Panel
 
-class SMBV1_Vuln_Data(Vuln_Data):
+class SMBV1_Vuln_Data():
     def __init__(self, host: str, is_vuln: bool):
         self.host = host
         self.is_vuln = is_vuln
         
-class Sign_Vuln_Data(Vuln_Data):
+class Sign_Vuln_Data():
     def __init__(self, host: str, is_vuln: bool):
         self.host = host
         self.is_vuln = is_vuln
         
-class NullGuest_Vuln_Data(Vuln_Data):
+class NullGuest_Vuln_Data():
     def __init__(self, host: str, null_files: dict[str, list[str]], guest_files: dict[str, list[str]]):
         self.host = host
         self.null_files = null_files
