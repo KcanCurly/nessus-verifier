@@ -32,7 +32,7 @@ def version_nv(hosts: list[str], output: str, threads: int, timeout: int, verbos
     
 
     with Live(overall_progress, console=console):
-        overall_progress.update(overall_task_id, total=len(l), completed=0)
+        overall_progress.update(overall_task_id, total=len(hosts), completed=0)
         overall_progress.start_task(overall_task_id)
         futures = []
         results: list[Version_Vuln_Data] = []

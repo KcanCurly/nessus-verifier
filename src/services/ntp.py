@@ -1,53 +1,41 @@
-import argparse
-import configparser
-import os
-from pathlib import Path
-import subprocess
-import re
 import socket
 from src.utilities.utilities import get_hosts_from_file
 
-def check(directory_path, config, args, hosts):
-    hosts = get_hosts_from_file(hosts)
+def monlist_nv(hosts, timeout, errors, verbose):
     vuln = []
     
     request = b'\x17\x00\x03\x2a' + b'\x00' * 40
     for host in hosts:
         try:
-            ip = host.split(":")[0]
-            port = host.split(":")[1]
+            ip, port = host.split(":")
             
             with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
-                s.settimeout(10)
+                s.settimeout(timeout)
                 s.sendto(request, (ip, int(port)))
                 data, addr = s.recvfrom(1024)
                 print(f"Received {len(data)} bytes from {addr}")
                 print(data)
                 vuln.append(host)
             
-        except Exception as e: print(e)
+        except Exception as e: 
+            if errors: print(e)
     
     if len(vuln) > 0:
         print("NTP service monlist enabled on hosts:")
         for v in vuln:
-            print(f"\t{v}")
+            print(f"    {v}")
         
+def monlist_console(args):
+    monlist_nv(get_hosts_from_file(args.file), args.timeout, args.errors, args.verbose)
 
-def main():
-    parser = argparse.ArgumentParser(description="NTP module of nessus-verifier.")
-    parser.add_argument("-d", "--directory", type=str, required=False, help="Directory to process (Default = current directory).")
-    parser.add_argument("-f", "--filename", type=str, required=False, help="File that has host:port information.")
-    parser.add_argument("-c", "--config", type=str, required=False, help="Config file.")
-    parser.add_argument("-v", "--verbose", action="store_true", help="Verbose")
+def helper_parse(commandparser):
+    parser_task1 = commandparser.add_parser("ntp")
+    subparsers = parser_task1.add_subparsers(dest="command")
     
-    
-    args = parser.parse_args()
-    
-    if not args.config:
-        args.config = os.path.join(Path(__file__).resolve().parent.parent, "nvconfig.config")
-        
-    config = configparser.ConfigParser()
-    config.read(args.config)
-        
-    
-    check(args.directory or os.curdir, config, args, args.filename or "hosts.txt")
+    parser_version = subparsers.add_parser("monlist", help="Checks if monlist command is enabled")
+    parser_version.add_argument("-f", "--file", type=str, required=True, help="input file name")
+    parser_version.add_argument("--threads", default=10, type=int, help="Number of threads (Default = 10)")
+    parser_version.add_argument("--timeout", default=5, type=int, help="Timeout in seconds (Default = 5)")
+    parser_version.add_argument("-e", "--errors", action="store_true", help="Show Errors")
+    parser_version.add_argument("-v", "--verbose", action="store_true", help="Enable verbose")
+    parser_version.set_defaults(func=monlist_console)
