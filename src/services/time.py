@@ -8,7 +8,7 @@ import os
 from src.utilities.utilities import get_hosts_from_file
 
 
-def check(directory_path, config, verbose, hosts = "hosts.txt"):
+def check(hosts, error: bool, verbose: bool):
     vuln = {}
     hosts = get_hosts_from_file(hosts)
     
@@ -24,7 +24,7 @@ def check(directory_path, config, verbose, hosts = "hosts.txt"):
                 # Receive the 4-byte binary time response
                 data = s.recv(4)
                 if len(data) != 4:
-                    print("Invalid response length.")
+                    if error: print("Invalid response length.")
                     return
                 
                 # Unpack the 4-byte response as an unsigned integer
@@ -45,23 +45,15 @@ def check(directory_path, config, verbose, hosts = "hosts.txt"):
     if len(vuln):
         print("Time protocol detected:")
         for k,v in vuln.items():
-            print(f"\t{k} -> {v}")
+            print(f"    {k} -> {v}")
 
-def main():
-    parser = argparse.ArgumentParser(description="Time Protocol module of nessus-verifier.")
-    parser.add_argument("-d", "--directory", type=str, required=False, help="Directory to process (Default = current directory).")
-    parser.add_argument("-f", "--filename", type=str, required=False, help="File that has host:port information.")
-    parser.add_argument("-c", "--config", type=str, required=False, help="Config file.")
-    parser.add_argument("-v", "--verbose", action="store_true", help="Verbose")
+def helper_parse(commandparser):
+    parser_task1 = commandparser.add_parser(help="Time")
+    parser_task1.add_argument("-f", "--filename", type=str, required=False, help="File that has host:port information (Default = hosts.txt).")
+    parser_task1.add_argument("-e", "--errors", action="store_true", help="Show Errors")
+    parser_task1.add_argument("-v", "--verbose", action="store_true", help="Show Verbose")
+    parser_task1.set_defaults(func=main_args)
     
-    
-    args = parser.parse_args()
-    
-    if not args.config:
-        args.config = os.path.join(Path(__file__).resolve().parent.parent, "nvconfig.config")
-        
-    config = configparser.ConfigParser()
-    config.read(args.config)
-        
-    
-    check(args.directory or os.curdir, config, args.verbose, args.filename or "hosts.txt")
+
+def main_args(args):
+    check(args.filename or "hosts.txt", args.errors, args.verbose)

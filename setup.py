@@ -39,6 +39,7 @@ setup(
             "nv-parse=src.modules.nv_parse:main",
             "nv-solver=src.solvers.solver:main",
             "nv-nmap=src.modules.nv_nmap:main",
+            "nv-service=src.services.nv_services:main",
             "nv-ssh=src.services.ssh:main",
             "nv-ftp=src.services.ftp:main",
             "nv-chargen=src.services.chargen:main",
