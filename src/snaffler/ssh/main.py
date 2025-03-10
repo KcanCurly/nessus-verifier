@@ -37,7 +37,7 @@ async def get_all_mounts(ssh: asyncssh.SSHClientConnection, error:bool, verbose:
         for line in result.stdout.split("\n"):
             if line:
                 source, fstype, mountpoint = line.split()
-                if fstype == "cifs":
+                if fstype == "cifs" or fstype == "nfs4":
                     mounts.append((source, mountpoint))
     except Exception as e:
         if error: console.print(f"{host} | {username} | Get All Mounts Failed")
