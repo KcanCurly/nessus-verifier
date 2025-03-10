@@ -5,11 +5,12 @@ import os
 from pathlib import Path
 import re
 import subprocess
-from src.utilities.utilities import confirm_prompt, control_TLS
+from src.utilities.utilities import confirm_prompt, control_TLS, get_hosts_from_file
 
 
-def userenum(directory_path, config, hosts = "hosts.txt"):
+def userenum_nv(hosts, domain):
     vuln = {}
+    hosts = get_hosts_from_file(hosts)
     def check_enum(smtpp):
         try:
             answer = smtpp.docmd("VRFY", "test")
@@ -35,19 +36,15 @@ def userenum(directory_path, config, hosts = "hosts.txt"):
                 check_enum(smtp)
                 return
 
-            answer = smtpp.docmd("RCPT TO:", f"<a@{config["smtp"]["Domain"]}>")
+            answer = smtpp.docmd("RCPT TO:", f"<a@{domain}>")
             if answer[0] == 250 or "unknown" in answer[1].decode().lower():
                 if host not in vuln:
                     vuln[host] = []
                 vuln[host].append("RCPT")
         except: pass
             
-
-    with open(os.path.join(directory_path, hosts), "r") as file:
-        hosts = [line.strip() for line in file if line.strip()] 
     for host in hosts:
-        ip = host.split(":")[0]
-        port  = host.split(":")[1]
+        ip, port = host.split(":")
         try:
             smtp = smtplib.SMTP(ip, port, timeout=5)
             smtp.helo()
@@ -64,7 +61,7 @@ def userenum(directory_path, config, hosts = "hosts.txt"):
     if len(vuln) > 0:
         print("User Enumeration Was Possible with Given Methods on Hosts:")
         for key, value in vuln.items():
-            print(f"\t{key} - {", ".join(value)}")
+            print(f"     {key} - {", ".join(value)}")
             
 
 def tls(directory_path, config, hosts):
@@ -163,35 +160,20 @@ def open_relay(hosts, confirm, subject, message, client1, client2, in_fake, out_
         print()
         print("Open Relay Test:")
         for key, value in vuln.items():
-            print(f"\t{key}: {", ".join(value)}")
-    
-            
-def check(directory_path, config, confirm, verbose, hosts):
-    if verbose: print("Starting TLS Check")
-    tls_check(directory_path, config, hosts)
-    if verbose: print("\nStarting TLS Version/Cipher/Bit Check")
-    tls(directory_path, config, hosts)
-    if verbose: print("\nStarting Open Relay Test")
-    open_relay(directory_path, config, confirm, hosts)
-    if verbose: print("\nStarting User Enumeration Test")
-    userenum(directory_path, config, hosts)
+            print(f"    {key}: {", ".join(value)}")
 
-def main():
-    parser = argparse.ArgumentParser(description="SMTP module of nessus-verifier.")
-    parser.add_argument("-d", "--directory", type=str, required=False, help="Directory to process (Default = current directory).")
-    parser.add_argument("-f", "--filename", type=str, required=False, help="File that has host:port information.")
-    parser.add_argument("-c", "--config", type=str, required=False, help="Config file.")
-    parser.add_argument("--confirm", action="store_true", help="Verbose")
-    parser.add_argument("-v", "--verbose", action="store_true", help="Verbose")
+def userenum_console(args):
+    userenum_nv(get_hosts_from_file(args.file))
+
+def helper_parse(commandparser):
+    parser_task1 = commandparser.add_parser("smtp")
+    subparsers = parser_task1.add_subparsers(dest="command")
     
+    parser_smbv1 = subparsers.add_parser("userenum", help="Tries to enumerate users with VRFY EXPN and RCPT TO")
+    parser_smbv1.add_argument("-f", "--file", type=str, required=True, help="input file name")
+    parser_smbv1.add_argument("-d", "--domain", type=str, required=True, help="Domain name for RCPT TO")
+    parser_smbv1.add_argument("--threads", default=10, type=int, help="Number of threads (Default = 10)")
+    parser_smbv1.add_argument("--timeout", default=5, type=int, help="Timeout in seconds (Default = 5)")
+    parser_smbv1.add_argument("-v", "--verbose", action="store_true", help="Enable verbose")
+    parser_smbv1.set_defaults(func=userenum_console)
     
-    args = parser.parse_args()
-    
-    if not args.config:
-        args.config = os.path.join(Path(__file__).resolve().parent.parent, "nvconfig.config")
-        
-    config = configparser.ConfigParser()
-    config.read(args.config)
-        
-    
-    check(args.directory or os.curdir, config, args.confirm, args.verbose, args.filename or "hosts.txt")

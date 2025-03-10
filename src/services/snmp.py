@@ -4,9 +4,9 @@ import os
 from pathlib import Path
 import subprocess
 import re
+from src.utilities.utilities import get_hosts_from_file
 
-
-def check(hosts):
+def default_nv(hosts):
     result = ", ".join(hosts)
     vuln = {} 
     command = ["msfconsole", "-q", "-x", f"color false; use auxiliary/scanner/snmp/snmp_login; set RHOSTS {result}; run; exit"]
@@ -26,24 +26,20 @@ def check(hosts):
         for k,v in vuln.items():
             print(k)
             for a in v:
-                print(f"\t{a}")
+                print(f"    {a}")
         
 
-def main():
-    parser = argparse.ArgumentParser(description="SNMP module of nessus-verifier.")
-    parser.add_argument("-d", "--directory", type=str, required=False, help="Directory to process (Default = current directory).")
-    parser.add_argument("-f", "--filename", type=str, required=False, help="File that has host:port information.")
-    parser.add_argument("-c", "--config", type=str, required=False, help="Config file.")
-    parser.add_argument("-v", "--verbose", action="store_true", help="Verbose")
+def default_console(args):
+    default_nv(get_hosts_from_file(args.file))
+
+def helper_parse(commandparser):
+    parser_task1 = commandparser.add_parser("snmp")
+    subparsers = parser_task1.add_subparsers(dest="command")
     
+    parser_smbv1 = subparsers.add_parser("default", help="Checks if easy to guess public/private community string is used")
+    parser_smbv1.add_argument("-f", "--file", type=str, required=True, help="input file name")
+    parser_smbv1.add_argument("--threads", default=10, type=int, help="Number of threads (Default = 10)")
+    parser_smbv1.add_argument("--timeout", default=5, type=int, help="Timeout in seconds (Default = 5)")
+    parser_smbv1.add_argument("-v", "--verbose", action="store_true", help="Enable verbose")
+    parser_smbv1.set_defaults(func=default_console)
     
-    args = parser.parse_args()
-    
-    if not args.config:
-        args.config = os.path.join(Path(__file__).resolve().parent.parent, "nvconfig.config")
-        
-    config = configparser.ConfigParser()
-    config.read(args.config)
-        
-    
-    check(args.filename or "hosts.txt")

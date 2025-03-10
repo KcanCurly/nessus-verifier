@@ -1,4 +1,3 @@
-import argparse
 import subprocess
 import re
 from src.utilities.utilities import get_hosts_from_file
@@ -15,8 +14,6 @@ def enum_nv(l: list[str], output: str = None, verbose: bool = False):
         host_start = r"\[\*\] (.*)\s+ - Using a timeout of"
         zookeeper_version = r"zookeeper.version=(.*),"
         env = r"Environment:"
-        
-        
         host = ""
         
         for line in result.stdout.splitlines():
@@ -42,7 +39,6 @@ def enum_nv(l: list[str], output: str = None, verbose: bool = False):
                     info_vuln[host].append(line)
                     
             except: pass
-        
             
     except:pass
 
@@ -62,24 +58,15 @@ def enum_nv(l: list[str], output: str = None, verbose: bool = False):
                 print(f"    {a}")
         
 
-
-        
-
 def enum_console(args):
     enum_nv(get_hosts_from_file(args.file, False), args.verbose)
     
-
-def main():
-    parser = argparse.ArgumentParser(description="Zookeeper module of nessus-verifier.")
-    subparsers = parser.add_subparsers(dest="command")
+def helper_parse(commandparser):
+    parser_task1 = commandparser.add_parser("zookeeper")
+    subparsers = parser_task1.add_subparsers(dest="command")
     
-    brute_parser = subparsers.add_parser("enum", help="Run enumeration on zookeeper host") # Don't want to have threads because we parse line by line, multiple threads can break the parsing logic
-    brute_parser.add_argument("-f", "--file", type=str, required=False, help="Path to a file containing a list of hosts, each in 'ip:port' format, one per line.")
-    brute_parser.add_argument("-v", "--verbose", action="store_true", help="Enable verbose output")
-    brute_parser.set_defaults(func=enum_console)
-
-    args = parser.parse_args()
-    if hasattr(args, "func"):
-        args.func(args)
-    else:
-        parser.print_help()
+    audit_parser = subparsers.add_parser("enum", help="Run enumeration on zookeeper targets")
+    audit_parser.add_argument("-f", "--file", type=str, required=False, help="Path to a file containing a list of hosts, each in 'ip:port' format, one per line.")
+    audit_parser.add_argument("-v", "--verbose", action="store_true", help="Enable verbose output")
+    audit_parser.set_defaults(func=enum_console)
+    

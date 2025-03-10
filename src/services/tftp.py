@@ -1,18 +1,16 @@
-import argparse
 import subprocess
 import re
 from src.utilities.utilities import get_hosts_from_file, get_classic_console
 import nmap
-import traceback
 
-def brute_nv(l: list[str], output: str = None, threads: int = 10, verbose: bool = False):
+def brute_nv(hosts: list[str], output: str = None, threads: int = 10, verbose: bool = False):
     nmap_file = "/usr/share/nmap/nselib/data/tftplist.txt"
     console = get_classic_console()
     
     nm = nmap.PortScanner()
     if verbose: console.print(f"Starting TFTP Brute, i can't show you progress")
     host2 = []
-    for host in l:
+    for host in hosts:
         try:
             ip = host
 
@@ -25,8 +23,7 @@ def brute_nv(l: list[str], output: str = None, threads: int = 10, verbose: bool 
                     host2.append(host)
                     
         except Exception as e: 
-            print(e)
-            traceback.print_exc()
+            pass
     
     if not host2: 
         if verbose: console.print("None of the ports were accessible")
@@ -57,7 +54,7 @@ def brute_nv(l: list[str], output: str = None, threads: int = 10, verbose: bool 
             vuln[m[1]].add(m[0])
         
             
-    except Exception as e: print(e)
+    except Exception as e: pass
     
     if len(vuln) > 0:
         print("TFTP files were found:")
@@ -79,19 +76,12 @@ def brute_console(args):
     brute_nv(get_hosts_from_file(args.file, False), args.output, args.threads, args.verbose)
     
 
-def main():
-    parser = argparse.ArgumentParser(description="TFTP module of nessus-verifier.")
-    subparsers = parser.add_subparsers(dest="command")
+def helper_parse(commandparser):
+    parser_task1 = commandparser.add_parser("tftp")
+    subparsers = parser_task1.add_subparsers(dest="command")
     
     brute_parser = subparsers.add_parser("brute", help="Run TFTP bruteforce on targets")
     brute_parser.add_argument("-f", "--file", type=str, required=False, help="Path to a file containing a list of hosts, each in 'ip:port' format, one per line.")
-    brute_parser.add_argument("-o", "--output", type=str, required=False, help="Output file, append if file exists.")
     brute_parser.add_argument("--threads", type=int, default=10, help="Threads (Default = 10).")
     brute_parser.add_argument("-v", "--verbose", action="store_true", help="Enable verbose output")
     brute_parser.set_defaults(func=brute_console)
-
-    args = parser.parse_args()
-    if hasattr(args, "func"):
-        args.func(args)
-    else:
-        parser.print_help()

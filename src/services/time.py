@@ -4,10 +4,8 @@ import time
 from src.utilities.utilities import get_hosts_from_file
 
 
-def check(hosts, error: bool, verbose: bool):
-    vuln = {}
-    hosts = get_hosts_from_file(hosts)
-    
+def usage_nv(hosts, error: bool, verbose: bool):
+    vuln = {}    
     for host in hosts:
         ip = host.split(":")[0]
         port = host.split(":")[1]
@@ -43,13 +41,16 @@ def check(hosts, error: bool, verbose: bool):
         for k,v in vuln.items():
             print(f"    {k} -> {v}")
 
+def usage_console(args):
+    usage_nv(get_hosts_from_file(args.file))
+
 def helper_parse(commandparser):
     parser_task1 = commandparser.add_parser("time")
-    parser_task1.add_argument("-f", "--filename", type=str, required=False, help="File that has host:port information (Default = hosts.txt).")
-    parser_task1.add_argument("-e", "--errors", action="store_true", help="Show Errors")
-    parser_task1.add_argument("-v", "--verbose", action="store_true", help="Show Verbose")
-    parser_task1.set_defaults(func=main_args)
+    subparsers = parser_task1.add_subparsers(dest="command")
     
-
-def main_args(args):
-    check(args.filename or "hosts.txt", args.errors, args.verbose)
+    brute_parser = subparsers.add_parser("usage", help="Checks Time protocol usage")
+    brute_parser.add_argument("-f", "--file", type=str, required=False, help="Path to a file containing a list of hosts, each in 'ip:port' format, one per line.")
+    brute_parser.add_argument("--threads", type=int, default=10, help="Threads (Default = 10).")
+    brute_parser.add_argument("-v", "--verbose", action="store_true", help="Enable verbose output")
+    brute_parser.set_defaults(func=usage_console)
+    
