@@ -160,8 +160,8 @@ async def process_directory(sftp: asyncssh.SFTPClient, host:str, username:str, r
 
 async def process_host(ip, port, username, password, rules: SnafflerRuleSet, verbose, live:Live, error, show_importance, history_file_lock, history_file_set):
     """Main function to process a single SSH host asynchronously."""
-    async with semaphore:
-        try:
+    try:
+        async with semaphore:
             async with await asyncssh.connect(ip, port=port, username=username, password=password, known_hosts=None, client_keys=None, keepalive_interval=10) as conn:
                 if verbose: live.console.print(f"Connected to {ip}:{port}")
                 mounts = await get_all_mounts(conn, error, verbose, live.console, f"{ip}:{port}", username)
@@ -177,8 +177,8 @@ async def process_host(ip, port, username, password, rules: SnafflerRuleSet, ver
                 await process_directory(sftp, f"{ip}:{port}", username, rules, verbose, live, error, show_importance, discarded_dirs, history_file_lock, history_file_set,remote_path="/", depth=0)
 
                 
-        except Exception as e:
-            if error: print(f"Error processing {ip}:{port}: {e}")
+    except Exception as e:
+        if error: print(f"Error processing {ip}:{port}: {e}")
 
 async def main2():
     parser = argparse.ArgumentParser(description="Snaffle via SSH.")
