@@ -22,7 +22,7 @@ def version_single(console: Console, host: str, output: str, timeout: int, verbo
         return Version_Vuln_Data(host, version)
     except:return
 
-def version_nv(l: list[str], output: str, threads: int, timeout: int, verbose: bool ):
+def version_nv(hosts: list[str], output: str, threads: int, timeout: int, verbose: bool ):
     versions = {}
     
     overall_progress = get_classic_overall_progress()
@@ -37,7 +37,7 @@ def version_nv(l: list[str], output: str, threads: int, timeout: int, verbose: b
         futures = []
         results: list[Version_Vuln_Data] = []
         with ThreadPoolExecutor(threads) as executor:
-            for host in l:
+            for host in hosts:
                 future = executor.submit(version_single, console, host, output, timeout, verbose)
                 futures.append(future)
             for a in as_completed(futures):

@@ -74,7 +74,7 @@ creds = [
 "PlcmSpIp:PlcmSpIp",
 ]
 
-def brute_nv(hosts, creds, errors, verbose):
+def brute_nv(hosts: list[str], creds: list[str], errors, verbose):
     for host in hosts:
         try:
             ip = host.split(":")[0]
@@ -146,9 +146,7 @@ def anon_nv(hosts, errors, verbose):
 def tls(hosts):
     control_TLS(hosts, "--starttls-ftp")
 
-def brute_nv(hosts, credential_file, threads, errors, verbose):
-    hosts = get_hosts_from_file(hosts)
-    creds = get_hosts_from_file(credential_file)
+def brute_nv(hosts: list[str], creds: list[str], threads, errors, verbose):
     with ThreadPoolExecutor(threads) as executor:
         executor.map(lambda host: brute_nv(host, creds, errors, verbose), hosts)
         
@@ -193,10 +191,10 @@ def ssl(hosts):
         
             
 def anon_console(args):
-    anon_nv(args.file, args.errors, args.verbose)
+    anon_nv(get_hosts_from_file(args.file), args.errors, args.verbose)
     
 def brute_console(args):
-    brute_nv(args.file, args.credential_file, args.threads, args.errors, args.verbose)
+    brute_nv(get_hosts_from_file(args.file), get_hosts_from_file(args.credential_file), args.threads, args.errors, args.verbose)
 
 def helper_parse(commandparser):
     parser_task1 = commandparser.add_parser("ftp")

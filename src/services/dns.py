@@ -113,9 +113,9 @@ def tls(directory_path, config, args, hosts):
         for key, value in weak_versions.items():
             print(f"\t{key} - {", ".join(value)}")
 
-def malicious_nv(hosts, domains, errors, verbose):
+def malicious_nv(hosts: list[str], domains, errors, verbose):
     vuln = []
-    hosts = get_hosts_from_file(hosts)
+
     for host in hosts:
         ip = host.split(":")[0]
         port = host.split(":")[1]
@@ -134,11 +134,8 @@ def malicious_nv(hosts, domains, errors, verbose):
         for v in vuln:
             print(f"    {v}")
     
-def zone_transfer_nv(hosts, errors, verbose):
+def zone_transfer_nv(hosts: list[str], errors, verbose):
     vuln = []
-
-    hosts = get_hosts_from_file(hosts)
-
     for host in hosts:
         ip = host.split(":")[0]
         port = host.split(":")[1]
@@ -168,10 +165,8 @@ def zone_transfer_nv(hosts, errors, verbose):
 
 
 
-def dnssec_nv(hosts, errors, verbose):
+def dnssec_nv(hosts: list[str], errors, verbose):
     vuln = []
-    hosts = get_hosts_from_file(hosts)
-
     for host in hosts:
         ip = host.split(":")[0]
         port = host.split(":")[1]
@@ -198,7 +193,7 @@ def dnssec_nv(hosts, errors, verbose):
 
 
 
-def add_txt_record_nv(hosts, txt_record_name, txt_record_value, error, verbose):
+def add_txt_record_nv(hosts: list[str], txt_record_name, txt_record_value, error, verbose):
     vuln = []
     hosts = get_hosts_from_file(hosts)
 
@@ -239,9 +234,9 @@ def add_txt_record_nv(hosts, txt_record_name, txt_record_value, error, verbose):
             print(f"    {v}")
 
 
-def cachepoison_nv(hosts, errors, verbose):
+def cachepoison_nv(hosts: list[str], errors, verbose):
     vuln = []
-    hosts = get_hosts_from_file(hosts)
+
     for host in hosts:
         try:
             ip = host.split(":")[0]
@@ -269,9 +264,9 @@ def cachepoison_nv(hosts, errors, verbose):
         for v in vuln:
             print(f"    {v}")
 
-def any_check_nv(hosts, errors, verbose):
+def any_check_nv(hosts: list[str], errors, verbose):
     vuln = []
-    hosts = get_hosts_from_file(hosts)
+
     for host in hosts:
         try:
             ip = host.split(":")[0]
@@ -293,9 +288,8 @@ def any_check_nv(hosts, errors, verbose):
         for v in vuln:
             print(f"    {v}")
 
-def recursion_nv(hosts, errors, verbose):
+def recursion_nv(hosts: list[str], errors, verbose):
     vuln = []
-    hosts = get_hosts_from_file(hosts)
 
     for host in hosts:
         ip = host.split(":")[0]
@@ -323,25 +317,25 @@ def recursion_nv(hosts, errors, verbose):
             print(f"    {v}")
             
 def zone_transfer_console(args):
-    zone_transfer_nv(args.file, args.errors, args.verbose)
+    zone_transfer_nv(get_hosts_from_file(args.file), args.errors, args.verbose)
 
 def add_txt_record_console(args):
-    add_txt_record_nv(args.file, args.name, args.value, args.errors, args.verbose)
+    add_txt_record_nv(get_hosts_from_file(args.file), args.name, args.value, args.errors, args.verbose)
     
 def any_check_console(args):
-    any_check_nv(args.file, args.errors, args.verbose)
+    any_check_nv(get_hosts_from_file(args.file), args.errors, args.verbose)
     
 def recursion_console(args):
-    recursion_nv(args.file, args.errors, args.verbose)
+    recursion_nv(get_hosts_from_file(args.file), args.errors, args.verbose)
     
 def cachepoison_console(args):
-    cachepoison_nv(args.file, args.errors, args.verbose)
+    cachepoison_nv(get_hosts_from_file(args.file), args.errors, args.verbose)
     
 def dnssec_console(args):
-    dnssec_nv(args.file, args.errors, args.verbose)
+    dnssec_nv(get_hosts_from_file(args.file), args.errors, args.verbose)
     
 def malicious_console(args):
-    malicious_nv(args.file, args.domains, args.errors, args.verbose)
+    malicious_nv(get_hosts_from_file(args.file), args.domains, args.errors, args.verbose)
 
 def helper_parse(commandparser):
     parser_task1 = commandparser.add_parser("dns")

@@ -2,8 +2,7 @@ import imaplib
 import ssl
 from src.utilities.utilities import get_hosts_from_file
 
-def tls_nv(hosts, errors, verbose):
-    hosts = get_hosts_from_file(hosts)
+def tls_nv(hosts: list[str], errors, verbose):
     tls_enabled = []
     vuln = []
     tls_not_forced = []
@@ -40,7 +39,7 @@ def tls_nv(hosts, errors, verbose):
         
 
 def tls_console(args):
-    tls_nv(args.file, args.errors, args.verbose)
+    tls_nv(get_hosts_from_file(args.file), args.errors, args.verbose)
 
 def helper_parse(commandparser):    
     parser_task1 = commandparser.add_parser("imap")

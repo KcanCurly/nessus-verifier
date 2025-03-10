@@ -2,7 +2,7 @@ import subprocess
 import re
 from src.utilities.utilities import get_hosts_from_file
 
-def users_nv(hosts, ports, errors, verbose):
+def users_nv(hosts: list[str], ports: list[str], errors, verbose):
     hosts = get_hosts_from_file(hosts)
     ips = [line.split(":")[0] for line in hosts]
     result = ", ".join(ips)

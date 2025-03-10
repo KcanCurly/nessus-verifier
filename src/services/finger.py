@@ -1,14 +1,9 @@
-import argparse
-import configparser
-import os
-from pathlib import Path
 import subprocess
 import re
 from src.utilities.utilities import get_hosts_from_file
 
 
-def users_nv(hosts, errors, verbose):
-    hosts = get_hosts_from_file(hosts)
+def users_nv(hosts: list[str], errors, verbose):
     ips = [line.split(":")[0] for line in hosts]
     result = ", ".join(ips)
     vuln = {}
@@ -31,7 +26,7 @@ def users_nv(hosts, errors, verbose):
             print(f"    {k}:79 - {", ".join(v)}")
         
 def users_console(args):
-    users_nv(args.file, args.errors, args.verbose)
+    users_nv(get_hosts_from_file(args.file), args.errors, args.verbose)
 
 def helper_parser(commandparser):
     parser_task1 = commandparser.add_parser("finger")
