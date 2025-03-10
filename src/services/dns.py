@@ -128,7 +128,7 @@ def malicious_nv(hosts, domains, errors, verbose):
         for malicious_domain in domains:
             try:
                 answer = resolver.resolve(malicious_domain, "A")  # Query for A record
-                print(answer)
+                print(answer.__dict__)
     
             except Exception as e:
                 if errors: print("Error:", e)
