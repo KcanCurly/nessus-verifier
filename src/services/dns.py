@@ -348,7 +348,7 @@ def malicious_console(args):
     malicious_nv(args.file, args.domains, args.errors, args.verbose)
 
 def helper_parse(commandparser):
-    parser_task1 = commandparser.add_parser(help="DNS")
+    parser_task1 = commandparser.add_parser("DNS")
     subparsers = parser_task1.add_subparsers(dest="command")
     
     parser_addtxtrecord = subparsers.add_parser("txt", help="Checks if we can add a txt record")

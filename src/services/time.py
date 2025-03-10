@@ -44,7 +44,7 @@ def check(hosts, error: bool, verbose: bool):
             print(f"    {k} -> {v}")
 
 def helper_parse(commandparser):
-    parser_task1 = commandparser.add_parser(help="Time")
+    parser_task1 = commandparser.add_parser("Time")
     parser_task1.add_argument("-f", "--filename", type=str, required=False, help="File that has host:port information (Default = hosts.txt).")
     parser_task1.add_argument("-e", "--errors", action="store_true", help="Show Errors")
     parser_task1.add_argument("-v", "--verbose", action="store_true", help="Show Verbose")
