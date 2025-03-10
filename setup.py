@@ -47,7 +47,6 @@ setup(
             "nv-ms-exchange=src.services.ms_exchange:main",
             "nv-tftp=src.services.tftp:main",
             "nv-ntp=src.services.ntp:main",
-            "nv-imap=src.services.imap:main",
             "nv-rpc=src.services.rpc:main",
             "nv-snmp=src.services.snmp:main",
             "nv-ldap=src.services.ldap:main",
