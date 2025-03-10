@@ -8,12 +8,11 @@ from rich.live import Live
 from rich.progress import Progress, TaskID
 from rich.console import Console
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from src.services.service import Vuln_Data
 from rich.console import Group
 from rich.panel import Panel
 import requests
 
-class Version_Vuln_Data(Vuln_Data):
+class Version_Vuln_Data():
     def __init__(self, host: str, version: str):
         self.host = host
         self.version = version

@@ -1,8 +1,7 @@
 import argparse
-
 import subprocess
 import re
-from src.utilities.utilities import get_hosts_from_file, get_classic_console
+from src.utilities.utilities import get_hosts_from_file
 
 def enum_nv(l: list[str], output: str = None, verbose: bool = False):
     versions = {}
