@@ -119,7 +119,7 @@ def tls(directory_path, config, args, hosts):
 
 def malicious_nv(hosts, domains, errors, verbose):
     vuln = []
-    
+    hosts = get_hosts_from_file(hosts)
     for host in hosts:
         ip = host.split(":")[0]
         port = host.split(":")[1]
