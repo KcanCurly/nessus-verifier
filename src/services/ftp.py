@@ -198,7 +198,7 @@ def anon_console(args):
 def brute_console(args):
     brute_nv(args.file, args.credential_file, args.threads, args.errors, args.verbose)
 
-def helper_parser(commandparser):
+def helper_parse(commandparser):
     parser_task1 = commandparser.add_parser("ftp")
     subparsers = parser_task1.add_subparsers(dest="command")
     
