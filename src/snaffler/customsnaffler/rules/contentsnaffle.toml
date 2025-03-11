@@ -35,8 +35,47 @@ notWordList = [
 "pass( |-)?thru",
 "pass( |-)?through",
 "keyword",
+"processselectedkeys",
+"author",
+"bypass",
+"\\$pass",
+"authent",
+"passed",
+"credit",
 ]
 triage = "green"
+
+[[Rule]]
+scope = "Content"
+name = "ContentGenericContainsRed"
+action = "Snaffle"
+category = []
+relay = []
+description = "Pick these up."
+matchLocation = "FileContentAsString"
+matchLength = 0
+importance = "5⭐"
+wordListType = "Contains"
+wordList = [
+"ldap_user_password",
+]
+triage = "red"
+
+[[Rule]]
+scope = "Content"
+name = "ContentGenericExactRed"
+action = "Snaffle"
+category = []
+relay = []
+description = "Pick these up."
+matchLocation = "FileContentAsString"
+matchLength = 0
+importance = "5⭐"
+wordListType = "Exact"
+wordList = [
+"password ?(:|=|=>) ?\\S+",
+]
+triage = "red"
 
 [[Rule]]
 scope = "Content"

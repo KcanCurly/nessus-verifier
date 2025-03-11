@@ -8,7 +8,7 @@ description = "File paths that will be skipped entirely."
 matchLocation = "FilePath"
 matchLength = 0
 importance = ""
-wordListType = "EndsWith"
+wordListType = "StartsWith"
 wordList = [
 "\\/bin",
 "\\/boot",
@@ -23,6 +23,8 @@ wordList = [
 "\\/sbin",
 "\\/sys",
 "\\/opt",
-"\\/home\\/\\w*\\/\\.local\\/bin"
+"\\/home\\/\\w*\\/\\.local\\/bin",
+"\\/share\\/man",
+"\\/sw"
 ]
 triage = "gray"

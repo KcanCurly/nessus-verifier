@@ -1,0 +1,15 @@
+[[Rule]]
+scope = "Directory"
+name = "JavascriptDirectoryDiscard"
+action = "Discard"
+category = []
+relay = []
+description = "Skip any further scanning for files with these extensions."
+matchLocation = "FileExtension"
+matchLength = 0
+importance = ""
+wordListType = "EndsWith"
+wordList = [
+"\\/js\\/libs?",
+]
+triage = "gray"

@@ -1,36 +1,6 @@
 [[Rule]]
 scope = "Directory"
 id = "d1"
-name = "DiscardLinuxSystemDirs"
-action = "Discard"
-category = []
-relay = []
-description = "File paths that will be skipped entirely."
-matchLocation = "FilePath"
-matchLength = 0
-importance = ""
-wordListType = "StartsWith"
-wordList = [
-"\\/bin",
-"\\/boot",
-"\\/dev",
-"\\/etc",
-"\\/lib",
-"\\/lib64",
-"\\/proc",
-"\\/run",
-"\\/usr",
-"\\/var",
-"\\/sbin",
-"\\/sys",
-"\\/opt",
-"\\/sw"
-]
-triage = "gray"
-
-[[Rule]]
-scope = "Directory"
-id = "d1"
 name = "DiscardLinuxSystemDirs2"
 action = "Discard"
 category = []
