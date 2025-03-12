@@ -11,5 +11,6 @@ importance = ""
 wordListType = "EndsWith"
 wordList = [
 "\\/js\\/libs?",
+"\\/classes\\/i18n"
 ]
 triage = "gray"

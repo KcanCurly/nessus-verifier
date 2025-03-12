@@ -26,6 +26,9 @@ importance_reg = r"(\d+)⭐"
 semaphore = asyncio.Semaphore(1)
 timing = False
 
+ip_user_lock = asyncio.Semaphore(1)
+ip_user = dict[str, list[str]]()
+
 async def get_all_mounts(ssh: asyncssh.SSHClientConnection, error:bool, verbose:bool, console:Console, host, username):
     """
     Runs findmnt once and retrieves all mounted filesystems.

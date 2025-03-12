@@ -10,18 +10,18 @@ matchLength = 0
 importance = "1⭐"
 wordListType = "Contains"
 wordList = [
-"password",
-"passwd",
-"pass",
-"pwd",
-"credential",
-"cred",
-"(s|ş)ifre",
-"parola",
-"secret",
-"token",
-"key",
-"auth",
+"( |_|-)password",
+"( |_|-)passwd",
+"( |_|-)pass",
+"( |_|-)pwd",
+"( |_|-)credential",
+"( |_|-)cred",
+"( |_|-)(s|ş)ifre",
+"( |_|-)parola",
+"( |_|-)secret",
+"( |_|-)token",
+"( |_|-)key",
+"( |_|-)auth",
 ]
 notWordList = [
 "reauth",
@@ -42,6 +42,7 @@ notWordList = [
 "authent",
 "passed",
 "credit",
+"propertykey"
 ]
 triage = "green"
 

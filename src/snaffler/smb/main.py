@@ -11,6 +11,10 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 import os
 import threading
 
+dirs_to_skip = [
+    "IPC$",
+]
+
 MAX_FILE_SIZE_MB = 100
 MAX_LINE_CHARACTER = 300
 output_lock = threading.Lock()
@@ -123,6 +127,7 @@ def process_host(target, username, password, rules, verbose, live, error):
         
         for share in conn.listShares():
             try:
+                if share['shi1_netname'][:-1] in dirs_to_skip: continue
                 history_dict[f"{target}{share['shi1_netname'][:-1]}"] = set()
                 list_files_recursively(conn, share['shi1_netname'][:-1], rules, target, username, error, verbose, live)
             except Exception as e:

@@ -1,0 +1,15 @@
+[[Rule]]
+scope = "Directory"
+name = "CodeDirectoryDiscard"
+action = "Discard"
+category = []
+relay = []
+description = "Skip any further scanning for directories with these names."
+matchLocation = "FilePath"
+matchLength = 0
+importance = ""
+wordListType = "EndsWith"
+wordList = [
+"\\/src\\/tests?",
+]
+triage = "gray"

@@ -1,0 +1,18 @@
+[[Rule]]
+scope = "Directory"
+name = "PythonDirectoryDiscard"
+action = "Discard"
+category = []
+relay = []
+description = "Skip any further scanning for directories with these names."
+matchLocation = "FilePath"
+matchLength = 0
+importance = ""
+wordListType = "EndsWith"
+wordList = [
+"\\/src\\/pip",
+"\\/build\\/lib\\/\\S+\\/tests?",
+"\\/pip\\S+\\/\\S+\\/tests",
+"\\/python\\S+\\/libs?",
+]
+triage = "gray"

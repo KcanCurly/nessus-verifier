@@ -1,0 +1,33 @@
+[[Rule]]
+scope = "Directory"
+name = "ApplicationsDirectoryDiscard"
+action = "Discard"
+category = []
+relay = []
+description = "Skip any further scanning for directories with these names."
+matchLocation = "FilePath"
+matchLength = 0
+importance = ""
+wordListType = "EndsWith"
+wordList = [
+"\\/man",
+"\\/manual",
+"\\/docs?",
+]
+triage = "gray"
+
+[[Rule]]
+scope = "Directory"
+name = "ApplicationsDirectoryDiscardContains"
+action = "Discard"
+category = []
+relay = []
+description = "Skip any further scanning for directories with these names."
+matchLocation = "FilePath"
+matchLength = 0
+importance = ""
+wordListType = "Contains"
+wordList = [
+"\\/uninstall",
+]
+triage = "gray"

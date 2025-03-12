@@ -11,5 +11,6 @@ importance = ""
 wordListType = "Exact"
 wordList = [
 "\\.class",
+"\\.jar",
 ]
 triage = "gray"
