@@ -11,5 +11,6 @@ importance = ""
 wordListType = "Contains"
 wordList = [
 "\\/perl\\/man",
+"\\/perl\\/lib",
 ]
 triage = "gray"
