@@ -1,6 +1,6 @@
 - name: IGNORE
   id: -1
-  plugin-ids: [142960, 10114, 34850, 51192, 12085, 11213, 98048, 136929, 57582, 24244, 10759, 12224, 18391, 44135]
+  plugin-ids: [142960, 10114, 34850, 51192, 12085, 11213, 98048, 136929, 57582, 24244, 10759, 12224, 18391, 44135, 85582, 42057, 26194, 47831]
   # 142960 - HSTS Missing From HTTPS Server (RFC 6797)
   # 10114 - ICMP Timestamp Request Remote Date Disclosure
   # 34850 - Web Server Uses Basic Authentication Without HTTPS
@@ -15,6 +15,10 @@
   # 12224 - Web Server Load Balancer Detection
   # 18391 - SMTP Server Non-standard Port Detection
   # 44135 - Web Server Generic Cookie Injection
+  # 85582 - Web Application Potentially Vulnerable to Clickjacking
+  # 42057 - Web Server Allows Password Auto-Completion
+  # 26194 - Web Server Transmits Cleartext Credentials
+  # 47831 - CGI Generic XSS (comprehensive test)
 
 - name: Actionables
   id: 0
@@ -1066,7 +1070,7 @@
    181418, 701157, 701171, 9309, 4209, 1997, 9310, 701165, 701162, 6300, 701161, 701169, 9312,
     701164, 701159, 9055, 701160, 4598, 701167, 1986, 701166, 9308, 701156, 3751, 701163, 1994, 
     1990, 1988, 4459, 1991, 3205, 9311, 701158, 3787, 700019, 9507, 9855, 1989, 1992, 8050, 
-    8051, 1985, 8169]
+    8051, 1985, 8169, 216475]
   # 17700 - OpenSSH < 2.1.0 /dev/random Check Failure
   # 17839 - OpenSSH < 2.1.1p3 Format String Privilege Escalation
   # 44074 - Portable OpenSSH < 3.8p1 Multiple Vulnerabilities
@@ -1168,6 +1172,7 @@
   # 8051 - OpenSSH v6.2 / v6.3 Remote Memory Corruption Vulnerability
   # 1985 - OpenSSH < 2.3.2 SSHv2 Public Key Authentication Bypass
   # 8169 - OpenSSH < 6.6 Multiple Remote Restriction Bypass Vulnerability
+  # 216475 - OpenSSH < 9.9p2 DoS
   
 - name: NFS
   id: 15
