@@ -1,8 +1,9 @@
 import argparse
-from src.solvers import grafana, php, python, tls, kibana, elastic, mongo, oracle, smb, ssh, snmp, tomcat, apache, nginx, vmware, openssh, smtp_relay, mssql, idrac, ipmi, terminal, cleartext, ibmwebsphere, obsolete_protocols, postgresql, nopasswddb
+from src.solvers import grafana, php, python, tls, kibana, elastic, mongo, oracle, smb, ssh, snmp, tomcat, apache, nginx, vmware, openssh, smtp_relay, mssql, idrac, ipmi, terminal, cleartext, ibmwebsphere, obsolete_protocols, postgresql, nopasswddb, actionables
 from src.modules.vuln_parse import GroupNessusScanOutput
 
 solver_dict = {
+    0: actionables,
     1: tls,
     # 2: smtp_relay,
     3: ssh,

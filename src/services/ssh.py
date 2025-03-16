@@ -1,18 +1,15 @@
 import subprocess
-import argparse
 import re
 from src.utilities.utilities import get_hosts_from_file, get_classic_overall_progress, get_classic_console
 from rich.live import Live
-from rich.progress import Progress, TaskID
 from rich.console import Console
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from src.services.service import Vuln_Data
 
 cve_dict = {
     
 }
 
-class Audit_Vuln_Data(Vuln_Data):
+class Audit_Vuln_Data():
     def __init__(self, host: str, is_vuln: bool, is_terrapin: bool, vuln_kex: list[str], vuln_mac: list[str], vuln_key: list[str], vuln_cipher):
         self.host = host
         self.is_vuln = is_vuln
@@ -22,163 +19,14 @@ class Audit_Vuln_Data(Vuln_Data):
         self.vuln_key = vuln_key
         self.vuln_cipher = vuln_cipher
 
-class Version_Vuln_Data(Vuln_Data):
+class Version_Vuln_Data():
     def __init__(self, host: str, version: str, protocol: str):
         super.__init__()
         self.host = host
         self.version = version
         self.protocol = protocol
-
-main_creds = [
-"root:calvin",
-"root:root",
-"root:toor",
-"administrator:password",
-"NetLinx:password",
-"administrator:Amx1234!",
-"amx:password",
-"amx:Amx1234!",
-"admin:1988",
-"admin:admin",
-"Administrator:Vision2",
-"cisco:cisco",
-"c-comatic:xrtwk318",
-"root:qwasyx21",
-"admin:insecure",
-"pi:raspberry",
-"user:user",
-"root:default",
-"root:leostream",
-"leo:leo",
-"localadmin:localadmin",
-"fwupgrade:fwupgrade",
-"root:rootpasswd",
-"admin:password",
-"root:timeserver",
-"admin:motorola",
-"cloudera:cloudera",
-"root:p@ck3tf3nc3",
-"apc:apc",
-"device:apc",
-"eurek:eurek",
-"netscreen:netscreen",
-"admin:avocent",
-"root:linux",
-"sconsole:12345",
-"root:5up",
-"cirros:cubswin:)",
-"root:uClinux",
-"root:alpine",
-"root:dottie",
-"root:arcsight",
-"root:unitrends1",
-"vagrant:vagrant",
-"root:vagrant",
-"m202:m202",
-"demo:fai",
-"root:fai",
-"root:ceadmin",
-"maint:password",
-"root:palosanto",
-"root:ubuntu1404",
-"root:cubox-i",
-"debian:debian",
-"root:debian",
-"root:xoa",
-"root:sipwise",
-"debian:temppwd",
-"root:sixaola",
-"debian:sixaola",
-"myshake:shakeme",
-"stackato:stackato",
-"root:screencast",
-"root:stxadmin",
-"root:nosoup4u",
-"root:indigo",
-"root:video",
-"default:video",
-"default:",
-"ftp:video",
-"nexthink:123456",
-"ubnt:ubnt",
-"root:ubnt",
-"sansforensics:forensics",
-"elk_user:forensics",
-"osboxes:osboxes.org",
-"root:osboxes.org",
-"sans:training",
-"user:password",
-"misp:Password1234",
-"hxeadm:HXEHana1",
-"acitoolkit:acitoolkit",
-"osbash:osbash",
-"enisa:enisa",
-"geosolutions:Geos",
-"pyimagesearch:deeplearning",
-"root:NM1$88",
-"remnux:malware",
-"hunter:hunter",
-"plexuser:rasplex",
-"root:openelec",
-"root:rasplex",
-"root:plex",
-"root:openmediavault",
-"root:ys123456",
-"root:libreelec",
-"openhabian:openhabian",
-"admin:ManagementConsole2015",
-"public:publicpass",
-"admin:hipchat",
-"nao:nao",
-"support:symantec",
-"root:max2play",
-"admin:pfsense",
-"root:root01",
-"root:nas4free",
-"USERID:PASSW0RD",
-"Administrator:p@ssw0rd",
-"root:freenas",
-"root:cxlinux",
-"admin:symbol",
-"admin:Symbol",
-"admin:superuser",
-"admin:admin123",
-"root:D13HH[",
-"root:blackarch",
-"root:dasdec1",
-"root:7ujMko0admin",
-"root:7ujMko0vizxv",
-"root:Zte521",
-"root:zlxx.",
-"root:compass",
-"hacker:compass",
-"samurai:samurai",
-"ubuntu:ubuntu",
-"root:openvpnas",
-"misp:Password1234",
-"root:wazuh",
-"student:password123",
-"root:roottoor",
-"centos:reverse",
-"root:reverse",
-"zyfwp:PrOw!aN_fXp",
-"manage:!manage",
-"monitor:!monitor",
-"oracle:oracle",
-"admin:changeme",
-"root:changeme",
-"admin:welcome1",
-"lpar2rrd:xorux4you",
-"admin:YourPaSsWoRd",
-"apcsetup:apcsetup",
-"admin:service.",
-"admin:admin01",
-"linuxadmin:linuxadmin",
-"rwa:rwa",
-]
-
         
-def audit_single(progress: Progress, task_id: TaskID, console: Console, host: str, output: str, timeout: int, verbose: bool) -> Audit_Vuln_Data:
+def audit_single(console: Console, host: str, output: str, timeout: int, verbose: bool) -> Audit_Vuln_Data:
     vuln_kex = []
     vuln_mac = []
     vuln_key = []
@@ -209,14 +57,12 @@ def audit_single(progress: Progress, task_id: TaskID, console: Console, host: st
 
         if verbose: console.print(f"Successfully processed {host}: {"Terrapin," if is_terrapin else ""} {str(len(vuln_kex))} KEX, {str(len(vuln_mac))} MAC, {str(len(vuln_key))} HOST-KEY, {str(len(vuln_cipher))} CIPHER")
         
-        progress.update(task_id, advance=1)
         return Audit_Vuln_Data(host, is_vul, is_terrapin, vuln_kex, vuln_mac, vuln_key, vuln_cipher)
     except Exception as e:
-        if verbose: console.log(f"Error on {host}: {e}")
-        progress.update(task_id, advance=1)
-        return Audit_Vuln_Data(host, False, None, None, None, None, None)
+        pass
+    return Audit_Vuln_Data(host, False, None, None, None, None, None)
 
-def audit_nv(l: list[str], output: str = None, threads: int = 10, timeout: int = 3, verbose: bool = False):
+def audit_nv(hosts: list[str], output: str = None, threads: int = 10, timeout: int = 3, verbose: bool = False):
     overall_progress = get_classic_overall_progress()
     overall_task_id = overall_progress.add_task("", start=False, modulename="SSH Audit")
     console = get_classic_console(force_terminal=True)
@@ -230,16 +76,17 @@ def audit_nv(l: list[str], output: str = None, threads: int = 10, timeout: int =
     
 
     with Live(overall_progress, console=console):
-        overall_progress.update(overall_task_id, total=len(l), completed=0)
+        overall_progress.update(overall_task_id, total=len(hosts), completed=0)
         overall_progress.start_task(overall_task_id)
         futures = []
         results: list[Audit_Vuln_Data] = []
         with ThreadPoolExecutor(threads) as executor:
-            for host in l:
-                future = executor.submit(audit_single, overall_progress, overall_task_id, console, host, output, timeout, verbose)
+            for host in hosts:
+                future = executor.submit(audit_single, console, host, output, timeout, verbose)
                 futures.append(future)
             for a in as_completed(futures):
                 results.append(a.result())
+                overall_progress.update(overall_task_id, advance=1)
                 
     for r in results:
         if r.is_vuln:
@@ -326,8 +173,8 @@ def audit_nv(l: list[str], output: str = None, threads: int = 10, timeout: int =
 def audit_console(args):
     audit_nv(get_hosts_from_file(args.file), args.output, args.threads, args.timeout, args.verbose)
 
-def version_single(progress: Progress, console: Console, task_id: TaskID, host: str, output: str, timeout: int, verbose: bool) -> Version_Vuln_Data:
-    ip, port = host.split(":", 1)
+def version_single(console: Console, host: str, output: str, timeout: int, verbose: bool) -> Version_Vuln_Data:
+    ip, port = host.split(":")
     
     protocol_pattern = r"Remote protocol version (.*),"
     software_pattern = r"remote software version (.*)"
@@ -354,14 +201,12 @@ def version_single(progress: Progress, console: Console, task_id: TaskID, host: 
                 version = version.split(" ")[0]
 
         if verbose: console.print(f"Successfully processed {host}: {f"Version: {version}," if version else "No version found,"} {f"Protocol: {protocol}" if protocol else "No protocol found"}")
-        progress.update(task_id, advance=1)
         return Version_Vuln_Data(host, version, protocol)
     except Exception as e:
-        progress.update(task_id, advance=1)
-        if verbose: console.log(f"Error on {host}: {e}")
-        return Version_Vuln_Data(host, version, protocol)
+        pass
+    return Version_Vuln_Data(host, version, protocol)
 
-def version_nv(l: list[str], output: str = None, threads: int = 10, timeout: int = 3, verbose: bool = False):
+def version_nv(hosts: list[str], output: str = None, threads: int = 10, timeout: int = 3, verbose: bool = False):
     overall_progress = get_classic_overall_progress()
     overall_task_id = overall_progress.add_task("", start=False, modulename="SSH Version")
     console = get_classic_console(force_terminal=True)
@@ -370,13 +215,13 @@ def version_nv(l: list[str], output: str = None, threads: int = 10, timeout: int
     versions = {}
     
     with Live(overall_progress, console=console):
-        overall_progress.update(overall_task_id, total=len(l), completed= 0)
+        overall_progress.update(overall_task_id, total=len(hosts), completed= 0)
         overall_progress.start_task(overall_task_id)
         futures = []
         results: list[Version_Vuln_Data] = []
         with ThreadPoolExecutor(threads) as executor:
-            for host in l:
-                future = executor.submit(version_single, overall_progress, console, overall_task_id, host, output, timeout, verbose)
+            for host in hosts:
+                future = executor.submit(version_single, console, host, output, timeout, verbose)
                 futures.append(future)
             for a in as_completed(futures):
                 results.append(a.result())
@@ -417,21 +262,9 @@ def version_nv(l: list[str], output: str = None, threads: int = 10, timeout: int
 def version_console(args):
     version_nv(get_hosts_from_file(args.file), args.output, args.threads, args.timeout, args.verbose)
     
-def all_console(args):
-    audit_console(args)
-    version_console(args)
-
-def main():
-    parser = argparse.ArgumentParser(description="SSH module of nessus-verifier.")
-    subparsers = parser.add_subparsers(dest="command")
-    
-    all_parser = subparsers.add_parser("all", help="Run all related subcommands")
-    all_parser.add_argument("-f", "--file", type=str, required=False, help="Path to a file containing a list of hosts, each in 'ip:port' format, one per line.")
-    all_parser.add_argument("-o", "--output", type=str, required=False, help="Output file, append if file exists.")
-    all_parser.add_argument("--timeout", type=int, default=3, help="Timeout (Default = 3).")
-    all_parser.add_argument("--threads", type=int, default=10, help="Threads (Default = 10).")
-    all_parser.add_argument("-v", "--verbose", action="store_true", help="Enable verbose output")
-    all_parser.set_defaults(func=all_console)
+def helper_parse(commandparser):
+    parser_task1 = commandparser.add_parser("ssh")
+    subparsers = parser_task1.add_subparsers(dest="command")
     
     audit_parser = subparsers.add_parser("audit", help="Run ssh-audit on targets")
     audit_parser.add_argument("-f", "--file", type=str, required=False, help="Path to a file containing a list of hosts, each in 'ip:port' format, one per line.")
@@ -448,10 +281,4 @@ def main():
     version_parser.add_argument("--threads", type=int, default=10, help="Threads (Default = 10).")
     version_parser.add_argument("-v", "--verbose", action="store_true", help="Enable verbose output")
     version_parser.set_defaults(func=version_console)
-
-    args = parser.parse_args()
-    if hasattr(args, "func"):
-        args.func(args)
-    else:
-        parser.print_help()
     

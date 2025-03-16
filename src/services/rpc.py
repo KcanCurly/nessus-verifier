@@ -1,10 +1,4 @@
-import argparse
-import configparser
-import os
-from pathlib import Path
 import subprocess
-import re
-import socket
 from src.utilities.utilities import get_hosts_from_file
 
 pipes = [
@@ -21,20 +15,14 @@ pipes = [
     "FSRVP:fss_get_sup_version",
     ]
 
-def check(directory_path, config, args, hosts):
-    hosts = get_hosts_from_file(hosts)
+def anon_nv(hosts: list[str]):
     vuln = {}
-    
     for host in hosts:
 
-        ip = host.split(":")[0]
-        port = host.split(":")[1]
-        
+        ip, port = host.split(":")
         for pipe in pipes:
-            name = pipe.split(":")[0]
-            cmd = pipe.split(":")[1]
+            name, cmd = pipe.split(":")
             try:
-        
                 command = ["rpcclient", "-N", "-U", "","-c", cmd, ip]
                 result = subprocess.run(command, text=True, capture_output=True)
                 
@@ -47,24 +35,19 @@ def check(directory_path, config, args, hosts):
     if len(vuln) > 0:
         print("Anonymous RPC pipes detected:")
         for k,v in vuln.items():
-            print(f"{k} - {", ".join(v)}")
+            print(f"    {k} - {", ".join(v)}")
         
-
-def main():
-    parser = argparse.ArgumentParser(description="RPC module of nessus-verifier.")
-    parser.add_argument("-d", "--directory", type=str, required=False, help="Directory to process (Default = current directory).")
-    parser.add_argument("-f", "--filename", type=str, required=False, help="File that has host:port information.")
-    parser.add_argument("-c", "--config", type=str, required=False, help="Config file.")
-    parser.add_argument("-v", "--verbose", action="store_true", help="Verbose")
-    
-    
-    args = parser.parse_args()
-    
-    if not args.config:
-        args.config = os.path.join(Path(__file__).resolve().parent.parent, "nvconfig.config")
+def anon_console(args):
+    anon_nv(get_hosts_from_file(args.file))
         
-    config = configparser.ConfigParser()
-    config.read(args.config)
-        
+def helper_parse(commandparser):
+    parser_task1 = commandparser.add_parser("rpc")
+    subparsers = parser_task1.add_subparsers(dest="command")
     
-    check(args.directory or os.curdir, config, args, args.filename or "hosts.txt")
+    parser_default = subparsers.add_parser("anonymous", help="Check if anonymous rpc calls are possible")
+    parser_default.add_argument("-f", "--file", type=str, required=True, help="input file name")
+    parser_default.add_argument("--threads", default=10, type=int, help="Number of threads (Default = 10)")
+    parser_default.add_argument("--timeout", default=5, type=int, help="Timeout in seconds (Default = 5)")
+    parser_default.add_argument("-e", "--errors", action="store_true", help="Show Errors")
+    parser_default.add_argument("-v", "--verbose", action="store_true", help="Enable verbose")
+    parser_default.set_defaults(func=anon_console)

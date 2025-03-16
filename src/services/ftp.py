@@ -2,8 +2,6 @@ from ftplib import FTP
 from ftplib import Error
 from ftplib import error_perm
 from ftplib import FTP_TLS
-import argparse
-import os
 from concurrent.futures import ThreadPoolExecutor
 from src.utilities.utilities import confirm_prompt, control_TLS, get_hosts_from_file
 
@@ -76,27 +74,14 @@ creds = [
 "PlcmSpIp:PlcmSpIp",
 ]
 
-def bruteforce(args, hosts):
+def brute_nv(hosts: list[str], creds: list[str], errors, verbose):
     for host in hosts:
-        print(host)
         try:
             ip = host.split(":")[0]
             port  = int(host.split(":")[1])
-
-            if args.creds:
-                with open(args.creds, "r") as file:
-                    c1 = [line.strip() for line in file if line.strip()] 
-                
-                creds = [*creds, *c1]
-            elif args.overwrite_creds:
-                with open(args.creds, "r") as file:
-                    c2 = [line.strip() for line in file if line.strip()] 
-                creds = c2
-            
             
             for cred in creds:
-                username = cred.split(":")[0]
-                password = cred.split(":")[1]
+                username, password = cred.split(":")
                 try:
                     ftp = FTP()
                     ftp.connect(ip, port, timeout=10)
@@ -112,17 +97,21 @@ def bruteforce(args, hosts):
                             if "230" in l:
                                 print(f"[+] {host} => {username}:{password}")
                         except error_perm as ee:
+                            if errors: print("Error:", ee)
                             continue
                         except Error as eee:
+                            if errors: print("Error:", eee)
                             continue
-        except Exception as e: print(e)
+        except Exception as e: 
+            if errors: print("Error:", e)
         
-def anon(hosts):
+def anon_nv(hosts, errors, verbose):
     anon = []
+    hosts = get_hosts_from_file(hosts)
     for host in hosts:
         try:
             ip = host.split(":")[0]
-            port  = int(host.split(":")[1])
+            port = int(host.split(":")[1])
 
             ftp = FTP()
             ftp.connect(ip, port, timeout=10)
@@ -132,18 +121,21 @@ def anon(hosts):
                     anon.append(host)
 
             except Error as e:
-                if "must use encryption" in str(e):
-                    ftp = FTP_TLS()
-                    ftp.connect(ip, port, timeout=10)
-                    try:
-                        l = ftp.login()
-                        if "230" in l:
-                            anon.append(host)
-                    except error_perm as ee:
-                        continue
-                    except Error as eee:
-                        continue
-        except Exception as e: pass
+                ftp = FTP_TLS()
+                ftp.connect(ip, port, timeout=10)
+                try:
+                    l = ftp.login()
+                    if "230" in l:
+                        anon.append(host)
+                except error_perm as ee:
+                    if errors: print("Error:", ee)
+                    continue
+                except Error as eee:
+                    if errors: print("Error:", eee)
+                    continue
+
+        except Exception as e:
+            if errors: print("Error:", e)
                     
                     
     if len(anon) > 0:
@@ -154,12 +146,9 @@ def anon(hosts):
 def tls(hosts):
     control_TLS(hosts, "--starttls-ftp")
 
-def brute(args, hosts):
-    threads = 10
-    
-    print("Trying default credentials, this can take time.")
+def brute_nv(hosts: list[str], creds: list[str], threads, errors, verbose):
     with ThreadPoolExecutor(threads) as executor:
-        executor.map(lambda host: bruteforce(args, host), hosts)
+        executor.map(lambda host: brute_nv(host, creds, errors, verbose), hosts)
         
 def ssl(hosts):
     dict = {}
@@ -200,31 +189,28 @@ def ssl(hosts):
         for key, value in dict.items():
             print(f"    {key} - {", ".join(value)}")
         
-
-def check(args, hosts):
-    h = get_hosts_from_file(hosts)
-        
-        
-    # Anon
-
-    # anon(hosts)
-
-    # Check TLS
-
-    #tls(hosts)
             
-    # bruteforce
-
-    if not confirm_prompt("Do you wish to continue for brute force?"): return   
-    brute(args, h)
-            
-
-def main():
-    parser = argparse.ArgumentParser(description="FTP module of nessus-verifier.")
-    parser.add_argument("-f", "--filename", type=str, required=True, help="File that has host:port information.")
-    parser.add_argument("--creds", type=str, required=False, help="Additional cred file to try.")
-    parser.add_argument("--overwrite-creds", type=str, required=False, help="Overwrite default cred file with this file.")
+def anon_console(args):
+    anon_nv(get_hosts_from_file(args.file), args.errors, args.verbose)
     
-    args = parser.parse_args()
+def brute_console(args):
+    brute_nv(get_hosts_from_file(args.file), get_hosts_from_file(args.credential_file), args.threads, args.errors, args.verbose)
+
+def helper_parse(commandparser):
+    parser_task1 = commandparser.add_parser("ftp")
+    subparsers = parser_task1.add_subparsers(dest="command")
     
-    check(args, args.filename)
+    parser_anon = subparsers.add_parser("anonymous", help="Checks if anonymous login is possible")
+    parser_anon.add_argument("-f", "--file", type=str, required=True, help="input file name")
+    parser_anon.add_argument("-e", "--errors", action="store_true", help="Show Errors")
+    parser_anon.add_argument("-v", "--verbose", action="store_true", help="Show Verbose")
+    parser_anon.set_defaults(func=anon_console)
+    
+    parser_brute = subparsers.add_parser("brute", help="Bruteforce ftp login")
+    parser_brute.add_argument("-f", "--file", type=str, required=True, help="input file name")
+    parser_brute.add_argument("-cf", "--credential-file", type=str, required=True, help="credential file seperated by new line, user:pass on each line")
+    parser_brute.add_argument("-t", "--threads", type=int, default=10, help="Amount of threads (Default = 10).")
+    parser_brute.add_argument("-e", "--errors", action="store_true", help="Show Errors")
+    parser_brute.add_argument("-v", "--verbose", action="store_true", help="Show Verbose")
+    parser_brute.set_defaults(func=brute_console)
+    

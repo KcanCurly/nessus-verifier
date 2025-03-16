@@ -88,7 +88,7 @@ class GroupNessusScanOutput:
     
     def add_host(self, name, id, host) -> bool:
         if id in self.plugin_ids:
-            self.hosts.append(host)
+            if host not in self.hosts: self.hosts.append(host)
             if name not in self.sub_hosts:
                 self.sub_hosts[name] = []
             self.sub_hosts[name].append(host)
@@ -178,7 +178,7 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
             print(a.name, file=f)
             for h in a.hosts:
                 print(f"    {h}", file=f)
-            if len(a.sub_hosts.items()) == 1: continue
+            # if len(a.sub_hosts.items()) == 1: continue
             print(file=f)
             for key,value in a.sub_hosts.items():
                 print(f"    {key}", file=f)

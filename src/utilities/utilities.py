@@ -4,7 +4,7 @@ import re
 import ssl
 import socket
 import requests
-from src.modules.vuln_parse import GroupNessusScanOutput
+from src.modules.nv_parse import GroupNessusScanOutput
 from src.utilities import logger
 from rich.progress import TextColumn, Progress, BarColumn, TimeElapsedColumn, SpinnerColumn
 from rich.console import Console

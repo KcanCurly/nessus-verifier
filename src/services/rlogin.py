@@ -2,10 +2,6 @@ import argparse
 import configparser
 import os
 from pathlib import Path
-import subprocess
-import re
-from impacket.smb import SMB
-from impacket.smbconnection import SMBConnection
 from src.utilities.utilities import get_hosts_from_file
 
 def check(directory_path, hosts):

@@ -158,25 +158,23 @@ cves = {
     
 }
 
-def host_name_exposure(directory_path, config, verbose, hosts = "hosts.txt"):
-    hosts = get_hosts_from_file(hosts)
-    l = []
+def hostname_nv(hosts: list[str]):
+    vuln = []
     for host in hosts:
         try:
             url = f"https://{host}"
             autodiscovery_url = url + "/autodiscover/autodiscover.json"
             response = requests.get(autodiscovery_url, verify=False, timeout=5)
-            l.append(f"{host} - {response.headers.get("x-calculatedbetarget")}")
+            vuln.append(f"{host} - {response.headers.get("x-calculatedbetarget")}")
         except: continue
     
-    if len(l) > 0:
+    if len(vuln) > 0:
         print("Hostname Exposure:\n")
-        for a in l:
-            print(f"\t{a}")
+        for a in vuln:
+            print(f"    {a}")
 
-def version_check(directory_path, config, verbose, hosts = "hosts.txt"):
+def version_nv(hosts: list[str]):
     d = {}
-    hosts = get_hosts_from_file(hosts)
     for host in hosts:
         try:
             url = f"https://{host}"
@@ -218,32 +216,32 @@ def version_check(directory_path, config, verbose, hosts = "hosts.txt"):
         except: continue
         
     if len(d) > 0:
-        print("\n\nExchange Server information:\n")
+        print("Exchange Server information:")
         for key, value in d.items():
             print(f"{key}:")
             for v in value:
-                print(f"\t{v}")
-    
+                print(f"    {v}")
 
-def check(directory_path, config, verbose, hosts = "hosts.txt"):
-    host_name_exposure(directory_path, config, verbose, hosts)
-    version_check(directory_path, config, verbose, hosts)
+def version_console(args):
+    version_nv(get_hosts_from_file(args.file))
 
-def main():
-    parser = argparse.ArgumentParser(description="Microsoft Exchange application module of nessus-verifier.")
-    parser.add_argument("-d", "--directory", type=str, required=False, help="Directory to process (Default = current directory).")
-    parser.add_argument("-f", "--filename", type=str, required=False, help="File that has host:port information.")
-    parser.add_argument("-c", "--config", type=str, required=False, help="Config file.")
-    parser.add_argument("-v", "--verbose", action="store_true", help="Verbose")
+def hostname_console(args):
+    hostname_nv(get_hosts_from_file(args.file))
+
+def helper_parse(commandparser):    
+    parser_task1 = commandparser.add_parser("ms-exchange")
+    subparsers = parser_task1.add_subparsers(dest="command")
     
+    parser_version = subparsers.add_parser("version", help="Checks version")
+    parser_version.add_argument("-f", "--file", type=str, required=True, help="input file name")
+    parser_version.add_argument("--threads", default=10, type=int, help="Number of threads (Default = 10)")
+    parser_version.add_argument("--timeout", default=5, type=int, help="Timeout in seconds (Default = 5)")
+    parser_version.add_argument("-v", "--verbose", action="store_true", help="Enable verbose")
+    parser_version.set_defaults(func=version_console)
     
-    args = parser.parse_args()
-    
-    if not args.config:
-        args.config = os.path.join(Path(__file__).resolve().parent.parent, "nvconfig.config")
-        
-    config = configparser.ConfigParser()
-    config.read(args.config)
-        
-    
-    check(args.directory or os.curdir, config, args.verbose, args.filename or "hosts.txt")
+    parser_unauth = subparsers.add_parser("hostname", help="Checks for hostname exposure")
+    parser_unauth.add_argument("-f", "--file", type=str, required=True, help="input file name")
+    parser_unauth.add_argument("--threads", default=10, type=int, help="Number of threads (Default = 10)")
+    parser_unauth.add_argument("--timeout", default=5, type=int, help="Timeout in seconds (Default = 5)")
+    parser_unauth.add_argument("-v", "--verbose", action="store_true", help="Enable verbose")
+    parser_unauth.set_defaults(func=hostname_console)

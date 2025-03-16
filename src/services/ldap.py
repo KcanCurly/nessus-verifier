@@ -1,13 +1,8 @@
-import argparse
-import configparser
-import os
-from pathlib import Path
 import subprocess
 from src.utilities.utilities import get_hosts_from_file
 
 
-def check(directory_path, config, args, hosts):
-    hosts = get_hosts_from_file(hosts)
+def anon_nv(hosts: list[str], errors, verbose):
     vuln = []
     
     for host in hosts:
@@ -24,24 +19,21 @@ def check(directory_path, config, args, hosts):
     if len(vuln) > 0:
         print("LDAP anonymous access were found:")
         for v in vuln:
-            print(f"\t{v}")
+            print(f"    {v}")
         
 
-def main():
-    parser = argparse.ArgumentParser(description="LDAP module of nessus-verifier.")
-    parser.add_argument("-d", "--directory", type=str, required=False, help="Directory to process (Default = current directory).")
-    parser.add_argument("-f", "--filename", type=str, required=False, help="File that has host:port information.")
-    parser.add_argument("-c", "--config", type=str, required=False, help="Config file.")
-    parser.add_argument("-v", "--verbose", action="store_true", help="Verbose")
+def anon_console(args):
+    anon_nv(get_hosts_from_file(args.file), args.errors, args.verbose)
+
+def helper_parse(commandparser):    
+    parser_task1 = commandparser.add_parser("ldap")
+    subparsers = parser_task1.add_subparsers(dest="command")
     
-    
-    args = parser.parse_args()
-    
-    if not args.config:
-        args.config = os.path.join(Path(__file__).resolve().parent.parent, "nvconfig.config")
-        
-    config = configparser.ConfigParser()
-    config.read(args.config)
-        
-    
-    check(args.directory or os.curdir, config, args, args.filename or "hosts.txt")
+    parser_tls = subparsers.add_parser("anonymous", help="Checks anonymous access")
+    parser_tls.add_argument("-f", "--file", type=str, required=True, help="input file name")
+    parser_tls.add_argument("--threads", default=10, type=int, help="Number of threads (Default = 10)")
+    parser_tls.add_argument("--timeout", default=5, type=int, help="Timeout in seconds (Default = 5)")
+    parser_tls.add_argument("-e", "--errors", action="store_true", help="Show Errors")
+    parser_tls.add_argument("-v", "--verbose", action="store_true", help="Show Verbose")
+    parser_tls.set_defaults(func=anon_console)
+

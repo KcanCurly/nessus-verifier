@@ -1,9 +1,5 @@
-import argparse
-import os
-from pathlib import Path
 import dns.query
 import dns.message
-import configparser
 import subprocess
 import dns.rcode
 import dns.resolver
@@ -117,141 +113,130 @@ def tls(directory_path, config, args, hosts):
         for key, value in weak_versions.items():
             print(f"\t{key} - {", ".join(value)}")
 
-def malware(directory_path, config, args, hosts):
+def malicious_nv(hosts: list[str], domains, errors, verbose):
     vuln = []
-    hosts = get_hosts_from_file(hosts)
-    malicious_domain = "accounts.googleaccesspoint.com"
+
     for host in hosts:
         ip = host.split(":")[0]
         port = host.split(":")[1]
-        
-        command = ["dig", f"@{ip}", "example.com"]
-        result = subprocess.run(command, text=True, capture_output=True)
-        if "recursion requested but not available" not in result.stdout:
-            # We were able to resolve example.com, now we try known malware website
-            command = ["dig", f"@{ip}", malicious_domain]
-            result = subprocess.run(command, text=True, capture_output=True)
-            if "recursion requested but not available" in result.stdout or \
-                "status: NXDOMAIN" in result.stdout or \
-                    "ANSWER: 0" in result.stdout:
-                        continue
-            else: vuln.append(host)
-            
+        resolver = dns.resolver.Resolver()
+        resolver.nameservers = [ip]  # Set the specific DNS server
+        for malicious_domain in domains:
+            try:
+                answer = resolver.resolve(malicious_domain, "A")  # Query for A record
+                print(answer.__dict__)
+    
+            except Exception as e:
+                if errors: print("Error:", e)
+
     if len(vuln) > 0:
         print(f"Host(s) that were able to resolve malicious domain '{malicious_domain}':")
         for v in vuln:
-            print(f"\t{v}")
+            print(f"    {v}")
     
-def zone_transfer_single():
-    pass
-    
-def zone_transfer_nv():
-    pass    
-    
-def zone_transfer_console(args):
-    pass
-
-
-def dnsrecon(directory_path, config, args, hosts):
-    axfr_vuln = []
-    dnssec_vuln = []
-    recursion_vuln = []
-    hosts = get_hosts_from_file(hosts)
-    last_ip = ""
-    last_port = ""
-    last_domain = ""
-    domain_name_pattern = r"PTR\s(.*?)\s+"
+def zone_transfer_nv(hosts: list[str], errors, verbose):
+    vuln = []
     for host in hosts:
         ip = host.split(":")[0]
         port = host.split(":")[1]
-        domain = args.domain
+
         # If we don't have domain, we first need to get domain from ptr record
         if not domain:
             domain = find_domain_name(ip)
-            if not domain: break
+            if not domain:
+                if errors: print("Couldn't found domain of the ip")
+                continue
 
         try:
             command = ["dnsrecon", "-n", ip, "-a", "-d", domain]
             result = subprocess.run(command, capture_output=True, text=True)
             if "Zone Transfer was successful" in result.stdout:
-                last_ip = ip
-                last_domain = domain
-                axfr_vuln.append(host)
+                vuln.append(host)
                 
-            if "DNSSEC is not configured" in result.stdout:
-                dnssec_vuln.append(host)
-                
-            if "Recursion enabled on" in result.stdout:
-                recursion_vuln.append(host)
-        except Exception as e: print("dnsrecond axfr failed: ", e)
-        
-    """
-    if len(dnssec_vuln) > 0:
-        print("\nDNSSEC is NOT configured on Hosts:")
-        for v in dnssec_vuln:
-            print(f"\t{v}")
-    """
-    
-    if len(dnssec_vuln) > 0:
-        print("\nRecursion is ENABLED on Hosts:")
-        for v in dnssec_vuln:
-            print(f"\t{v}")
-            
-    if len(axfr_vuln) > 0:
-        print("\nZone Transfer Was Successful on Hosts:")
-        for v in axfr_vuln:
-            print(f"\t{v}")
-            
-        print("Printing last one as an example")
-        print(f"Running command: dnsrecon -n {last_ip} -t axfr -d {last_domain}")
-        command = ["dnsrecon", "-n", last_ip, "-t", "axfr", "-d", last_domain]
-        subprocess.run(command)
 
-def update(directory_path, config, args, hosts):
+        except Exception as e: 
+            if errors: print("Error: ", e)
+            
+    if len(vuln) > 0:
+        print("Zone Transfer Was Successful on Hosts:")
+        for v in vuln:
+            print(f"    {v}") 
+    
+
+
+
+def dnssec_nv(hosts: list[str], errors, verbose):
+    vuln = []
+    for host in hosts:
+        ip = host.split(":")[0]
+        port = host.split(":")[1]
+        # If we don't have domain, we first need to get domain from ptr record
+        if not domain:
+            domain = find_domain_name(ip)
+            if not domain:
+                if errors: print("Couldn't found domain of the ip")
+                continue
+
+        try:
+            command = ["dnsrecon", "-n", ip, "-d", domain]
+            result = subprocess.run(command, capture_output=True, text=True)
+            if "DNSSEC is not configured" in result.stdout:
+                vuln.append(host)
+                
+        except Exception as e: 
+            if errors: print("Error:", e)
+        
+    if len(vuln) > 0:
+        print("DNSSEC is NOT configured on Hosts:")
+        for v in vuln:
+            print(f"    {v}")
+
+
+
+def add_txt_record_nv(hosts: list[str], txt_record_name, txt_record_value, error, verbose):
     vuln = []
     hosts = get_hosts_from_file(hosts)
-    txt_record_name = "NV-TEST"
-    txt_record_value = "Nessus-verifier-test"
+
     for host in hosts:
         ip = host.split(":")[0]
         port = host.split(":")[1]
         
         # If we don't have domain, we first need to get domain from ptr record
-        if not args.domain:
-            try:
-                reverse_name = dns.reversename.from_address(ip)
-                
-                # Perform the PTR query
-                resolver = dns.resolver.Resolver()
-                resolver.nameservers = [ip]
-                resolver.port = int(port)  # Specify the port for the resolver
-                
-                answers = resolver.resolve(reverse_name, 'PTR')
-                
-                for rdata in answers:
-                    domain = rdata.to_text()
-                    parts = domain.split('.')
-                    domain = '.'.join(parts[-3:])
-            except Exception as e:
-                print("Error: ", e)
-                continue
+        try:
+            reverse_name = dns.reversename.from_address(ip)
+            
+            # Perform the PTR query
+            resolver = dns.resolver.Resolver()
+            resolver.nameservers = [ip]
+            resolver.port = int(port)  # Specify the port for the resolver
+            
+            answers = resolver.resolve(reverse_name, 'PTR')
+            
+            for rdata in answers:
+                domain = rdata.to_text()
+                parts = domain.split('.')
+                domain = '.'.join(parts[-3:])
+        except Exception as e:
+            if error: print("Error: ", e)
+            continue
         try:
             u = dns.update.Update(domain)
             u.add(txt_record_name, 3600, "TXT", txt_record_value)
             r = dns.query.tcp(u, ip, port=int(port))
             if dns.rcode.to_text(r.rcode()) == "NOERROR":
                 vuln.append(host)
-        except Exception as e: pass #print("Error: ", e)
+        except Exception as e:
+            if error: print("Error: ", e)
         
     if len(vuln) > 0:
         print(f"'TXT' record named {txt_record_name} was added with value of '{txt_record_value}' on hosts:")
         for v in vuln:
-            print(f"\t{v}")
+            print(f"    {v}")
 
 
-def cachepoison(directory_path, config, args, hosts):
+def cachepoison_nv(hosts: list[str], errors, verbose):
     vuln = []
-    hosts = get_hosts_from_file(hosts)
+
     for host in hosts:
         try:
             ip = host.split(":")[0]
@@ -269,17 +254,19 @@ def cachepoison(directory_path, config, args, hosts):
                     if answer2:
                         answer2 = int(answer2.group(1))
                         if answer == answer2:
-                            vuln.append(host)   
-        except: pass
+                            vuln.append(host)
+        except Exception as e:
+            if errors:
+                print("Error:", e)
         
     if len(vuln) > 0:
         print("Cache poison vulnerability detected on hosts:")
         for v in vuln:
-            print(f"\t{v}")
+            print(f"    {v}")
 
-def any(directory_path, config, args, hosts):
+def any_check_nv(hosts: list[str], errors, verbose):
     vuln = []
-    hosts = get_hosts_from_file(hosts)
+
     for host in hosts:
         try:
             ip = host.split(":")[0]
@@ -293,39 +280,109 @@ def any(directory_path, config, args, hosts):
                 if answer > 0:
                     vuln.append(host)
             
-        except Exception as e: print("ANY function error: ", e)    
-    
-                
+        except Exception as e: 
+            if errors: print("ANY function error: ", e)    
+                    
     if len(vuln) > 0:
         print("Hosts that answered to 'ANY' query:")
         for v in vuln:
-            print(f"\t{v}")
-        
+            print(f"    {v}")
 
-def check(directory_path, config, args, hosts):
-    dnsrecon(directory_path, config, args, hosts)
-    update(directory_path, config, args, hosts)
-    tls(directory_path, config, args, hosts)
-    malware(directory_path, config, args, hosts)
-    cachepoison(directory_path, config, args, hosts)
-    any(directory_path, config, args, hosts)
+def recursion_nv(hosts: list[str], errors, verbose):
+    vuln = []
 
-def main():
-    parser = argparse.ArgumentParser(description="DNS module of nessus-verifier.")
-    parser.add_argument("-d", "--directory", type=str, required=False, help="Directory to process (Default = current directory).")
-    parser.add_argument("-f", "--filename", type=str, required=False, help="File that has host:port information.")
-    parser.add_argument("-c", "--config", type=str, required=False, help="Config file.")
-    parser.add_argument("--domain", type=str, required=False, help="Config file.")
-    parser.add_argument("-v", "--verbose", action="store_true", help="Verbose")
+    for host in hosts:
+        ip = host.split(":")[0]
+        port = host.split(":")[1]
+
+        # If we don't have domain, we first need to get domain from ptr record
+        if not domain:
+            domain = find_domain_name(ip)
+            if not domain: 
+                if errors: print("Couldn't found domain of the ip")
+                continue
+
+        try:
+            command = ["dnsrecon", "-n", ip, "-d", domain]
+            result = subprocess.run(command, capture_output=True, text=True)
+            if "Recursion enabled on" in result.stdout:
+                vuln.append(host)
+        except Exception as e:
+            if errors: print("Error:", e)
+
     
+    if len(vuln) > 0:
+        print("Recursion is ENABLED on Hosts:")
+        for v in vuln:
+            print(f"    {v}")
+            
+def zone_transfer_console(args):
+    zone_transfer_nv(get_hosts_from_file(args.file), args.errors, args.verbose)
+
+def add_txt_record_console(args):
+    add_txt_record_nv(get_hosts_from_file(args.file), args.name, args.value, args.errors, args.verbose)
     
-    args = parser.parse_args()
+def any_check_console(args):
+    any_check_nv(get_hosts_from_file(args.file), args.errors, args.verbose)
     
-    if not args.config:
-        args.config = os.path.join(Path(__file__).resolve().parent.parent, "nvconfig.config")
-        
-    config = configparser.ConfigParser()
-    config.read(args.config)
-        
+def recursion_console(args):
+    recursion_nv(get_hosts_from_file(args.file), args.errors, args.verbose)
     
-    check(args.directory or os.curdir, config, args, args.filename or "hosts.txt")
+def cachepoison_console(args):
+    cachepoison_nv(get_hosts_from_file(args.file), args.errors, args.verbose)
+    
+def dnssec_console(args):
+    dnssec_nv(get_hosts_from_file(args.file), args.errors, args.verbose)
+    
+def malicious_console(args):
+    malicious_nv(get_hosts_from_file(args.file), args.domains, args.errors, args.verbose)
+
+def helper_parse(commandparser):
+    parser_task1 = commandparser.add_parser("dns")
+    subparsers = parser_task1.add_subparsers(dest="command")
+    
+    parser_addtxtrecord = subparsers.add_parser("txt", help="Checks if we can add a txt record")
+    parser_addtxtrecord.add_argument("-f", "--file", type=str, required=True, help="input file name")
+    parser_addtxtrecord.add_argument("-n", "--name", type=str, default="NV-TEST", help="TXT Record name to be added (Default = NV-TEST).")
+    parser_addtxtrecord.add_argument("-nv", "--value", type=str, default="NV-TEST", help="TXT Record name to be added (Default = Nessus-verifier-test).")
+    parser_addtxtrecord.add_argument("-e", "--errors", action="store_true", help="Show Errors")
+    parser_addtxtrecord.add_argument("-v", "--verbose", action="store_true", help="Show Verbose")
+    parser_addtxtrecord.set_defaults(func=add_txt_record_console)
+    
+    parser_any = subparsers.add_parser("any", help="Checks ANY query")
+    parser_any.add_argument("-f", "--file", type=str, required=True, help="input file name")
+    parser_any.add_argument("-e", "--errors", action="store_true", help="Show Errors")
+    parser_any.add_argument("-v", "--verbose", action="store_true", help="Enable verbose")
+    parser_any.set_defaults(func=any_check_console)
+    
+    parser_recursion = subparsers.add_parser("recursion", help="Checks if recursion is enabled")
+    parser_recursion.add_argument("-f", "--file", type=str, required=True, help="input file name")
+    parser_recursion.add_argument("-e", "--errors", action="store_true", help="Show Errors")
+    parser_recursion.add_argument("-v", "--verbose", action="store_true", help="Enable verbose")
+    parser_recursion.set_defaults(func=recursion_console)
+    
+    parser_cacheposion = subparsers.add_parser("cacheposion", help="Checks if cache can be posioned")
+    parser_cacheposion.add_argument("-f", "--file", type=str, required=True, help="input file name")
+    parser_cacheposion.add_argument("-e", "--errors", action="store_true", help="Show Errors")
+    parser_cacheposion.add_argument("-v", "--verbose", action="store_true", help="Enable verbose")
+    parser_cacheposion.set_defaults(func=cachepoison_console)
+    
+    parser_axfr = subparsers.add_parser("axfr", help="Checks if zone transfer is possible")
+    parser_axfr.add_argument("-f", "--file", type=str, required=True, help="input file name")
+    parser_axfr.add_argument("-e", "--errors", action="store_true", help="Show Errors")
+    parser_axfr.add_argument("-v", "--verbose", action="store_true", help="Enable verbose")
+    parser_axfr.set_defaults(func=zone_transfer_console)
+    
+    parser_dnssec = subparsers.add_parser("dnssec", help="Checks if dnssec is enabled")
+    parser_dnssec.add_argument("-f", "--file", type=str, required=True, help="input file name")
+    parser_dnssec.add_argument("-e", "--errors", action="store_true", help="Show Errors")
+    parser_dnssec.add_argument("-v", "--verbose", action="store_true", help="Enable verbose")
+    parser_dnssec.set_defaults(func=dnssec_console)
+    
+    parser_dnssec = subparsers.add_parser("malicious", help="Checks if malicious domain can be resolved")
+    parser_dnssec.add_argument("-f", "--file", type=str, required=True, help="input file name")
+    parser_dnssec.add_argument("--domains", nargs="+", default=["accounts.googleaccesspoint.com", "86-adm.one", "pvkxculusei.xyz"], help="List of malicious domains seperated by space")
+    parser_dnssec.add_argument("-e", "--errors", action="store_true", help="Show Errors")
+    parser_dnssec.add_argument("-v", "--verbose", action="store_true", help="Enable verbose")
+    parser_dnssec.set_defaults(func=malicious_console)
+    

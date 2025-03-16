@@ -1,16 +1,8 @@
-import argparse
-import configparser
-import os
-from pathlib import Path
-import subprocess
-import re
 import imaplib
-import socket
 import ssl
 from src.utilities.utilities import get_hosts_from_file
 
-def check(directory_path, config, args, hosts):
-    hosts = get_hosts_from_file(hosts)
+def tls_nv(hosts: list[str], errors, verbose):
     tls_enabled = []
     vuln = []
     tls_not_forced = []
@@ -38,29 +30,25 @@ def check(directory_path, config, args, hosts):
     if len(vuln) > 0:
         print("TLS NOT enabled on hosts:")
         for v in vuln:
-            print(f"\t{v}")
+            print(f"    {v}")
     
     if len(tls_not_forced) > 0:
         print("TLS is enabled but NOT forced on hosts:")
         for v in tls_not_forced:
-            print(f"\t{v}")
+            print(f"    {v}")
         
 
-def main():
-    parser = argparse.ArgumentParser(description="IMAP module of nessus-verifier.")
-    parser.add_argument("-d", "--directory", type=str, required=False, help="Directory to process (Default = current directory).")
-    parser.add_argument("-f", "--filename", type=str, required=False, help="File that has host:port information.")
-    parser.add_argument("-c", "--config", type=str, required=False, help="Config file.")
-    parser.add_argument("-v", "--verbose", action="store_true", help="Verbose")
+def tls_console(args):
+    tls_nv(get_hosts_from_file(args.file), args.errors, args.verbose)
+
+def helper_parse(commandparser):    
+    parser_task1 = commandparser.add_parser("imap")
+    subparsers = parser_task1.add_subparsers(dest="command")
     
-    
-    args = parser.parse_args()
-    
-    if not args.config:
-        args.config = os.path.join(Path(__file__).resolve().parent.parent, "nvconfig.config")
-        
-    config = configparser.ConfigParser()
-    config.read(args.config)
-        
-    
-    check(args.directory or os.curdir, config, args, args.filename or "hosts.txt")
+    parser_tls = subparsers.add_parser("tls", help="Checks idrac version")
+    parser_tls.add_argument("-f", "--file", type=str, required=True, help="input file name")
+    parser_tls.add_argument("--threads", default=10, type=int, help="Number of threads (Default = 10)")
+    parser_tls.add_argument("--timeout", default=5, type=int, help="Timeout in seconds (Default = 5)")
+    parser_tls.add_argument("-e", "--errors", action="store_true", help="Show Errors")
+    parser_tls.add_argument("-v", "--verbose", action="store_true", help="Show Verbose")
+    parser_tls.set_defaults(func=tls_console)
