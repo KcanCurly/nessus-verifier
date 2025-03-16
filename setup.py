@@ -40,8 +40,6 @@ setup(
             "nv-solver=src.solvers.solver:main",
             "nv-nmap=src.modules.nv_nmap:main",
             "nv-service=src.services.nv_services:main",
-            "nv-snaffler-ssh=src.snaffler.ssh.main:main",
-            "nv-snaffler-smb=src.snaffler.smb.main:main",
         ],
     },
 )
