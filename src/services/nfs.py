@@ -16,9 +16,9 @@ def list_nv(hosts: list[str], errors = False, verbose = False):
             for line in result.stdout.splitlines():
                 c = ["nfs-ls", f"nfs://{ip}{line.split()[0]}"]
                 result = subprocess.run(c, text=True, capture_output=True)
-                vuln[host][line] = []
+                vuln[host][line.split()[0]] = []
                 for line1 in result.stdout.splitlines():
-                    vuln[host][line].append(line1.rsplit(" ", 1)[1])
+                    vuln[host][line.split()[0]].append(line1.rsplit(" ", 1)[1])
                 
                 
         except Exception as e: 
