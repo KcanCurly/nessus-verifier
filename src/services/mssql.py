@@ -76,14 +76,14 @@ def version_nv(hosts: list[str], output: str = None, threads: int = 10, timeout:
     nm = nmap.PortScanner()
     for host in hosts:
         try:
-            ip = host.split(":")[0]
-            port = host.split(":")[1]
+            ip, port = host.split(":")
+
             nm.scan(ip, port, arguments=f'--script ms-sql-info')
             
             if ip in nm.all_hosts():
                 nmap_host = nm[ip]
-                if 'tcp' in nmap_host and 1433 in nmap_host['tcp']:
-                    tcp_info = nmap_host['tcp'][1433]
+                if 'tcp' in nmap_host and int(port) in nmap_host['tcp']:
+                    tcp_info = nmap_host['tcp'][int(port)]
                     if 'script' in tcp_info and 'ms-sql-info' in tcp_info['script']:
                         # Extract the ms-sql-info output
                         ms_sql_info = tcp_info['script']['ms-sql-info']
