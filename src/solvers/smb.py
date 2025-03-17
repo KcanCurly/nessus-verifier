@@ -31,6 +31,8 @@ def solve(args, is_all = False):
         with open(args.list_file, 'r') as f:
             hosts = [line.strip() for line in f]
     
-    smb.nullguest_nv(hosts)
+    if args.file:
+        hosts = scan.sub_hosts.get("SMB Signing not required", [])
+
     smb.sign_nv(hosts)
             
