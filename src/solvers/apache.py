@@ -51,6 +51,7 @@ def solve(args, is_all = False):
 
     
     if len(versions) > 0:
+        versions = dict(sorted(versions.items(), reverse=True))
         print("Detected Apache Versions:")
         for key, value in versions.items():
             print(f"{key}:")
