@@ -21,7 +21,6 @@ class Audit_Vuln_Data():
 
 class Version_Vuln_Data():
     def __init__(self, host: str, version: str, protocol: str):
-        super.__init__()
         self.host = host
         self.version = version
         self.protocol = protocol

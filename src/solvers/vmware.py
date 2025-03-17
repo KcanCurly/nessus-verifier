@@ -56,4 +56,4 @@ def solve(args, is_all = False):
         for key, value in versions.items():
             print(f"{key}:")
             for v in value:
-                print(f"\t{v}")
+                print(f"    {v}")
