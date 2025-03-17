@@ -29,8 +29,10 @@ def list_nv(hosts: list[str], errors = False, verbose = False):
         for k,v in vuln.items():
             if len(v) == 0: continue
             print(k)
-            for value in v:
-                print(f"    {value}")
+            for z, values in v.items():
+                print(f"    {z}:")
+                for n in values:
+                    print(f"        {n}")
 
         
 
