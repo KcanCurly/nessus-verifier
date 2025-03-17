@@ -1,7 +1,7 @@
 import subprocess
 from src.utilities.utilities import get_hosts_from_file
 
-showmount_cmd = ["showmount", "-e", "-H", "--no-headers"]
+showmount_cmd = ["showmount", "-e", "--no-headers"]
 nfsls_cmd = ["nfs-ls", "nfs://"]
 
 def list_nv(hosts: list[str], errors = False, verbose = False):
