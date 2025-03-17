@@ -110,6 +110,7 @@ def version_nv(hosts: list[str]):
 
     
     if len(versions) > 0:
+        versions = dict(sorted(versions.items(), reverse=True))
         print("Detected MSSQL Versions:")
         for key, value in versions.items():
             print(f"{key}:")
