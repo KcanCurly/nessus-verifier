@@ -38,5 +38,5 @@ def solve(args, is_all = False):
 
     if args.file:
         hosts = scan.sub_hosts.get("Network Time Protocol Daemon (ntpd) monlist Command Enabled DoS", [])
-    ntp.mode6_nv(hosts)
+    ntp.monlist_nv(hosts)
     
