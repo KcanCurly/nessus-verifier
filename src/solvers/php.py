@@ -1,8 +1,11 @@
 from src.utilities.utilities import find_scan, get_header_from_url
 from src.modules.nv_parse import GroupNessusScanOutput
 from src.utilities import logger
+import re
 
 code = 21
+
+r = r"PHP\/(\d+\.\d+\.\d+)"
 
 def get_default_config():
     return """
@@ -34,17 +37,29 @@ def solve(args, is_all = False):
     
     for host in hosts:
         try:
-            version = get_header_from_url(host, "X-Powered-By", args.verbose)
-            if version:
-                if version not in versions:
-                    versions[version] = set()
-                versions[version].add(host)            
+            powered_by = get_header_from_url(host, "X-Powered-By")
+            m = re.search(r, powered_by)
+            if m:
+                ver = m.group(0)
+                if ver not in versions:
+                    versions[ver] = set()
+                versions[ver].add(host)      
+            else:
+                server = get_header_from_url(host, "Server")
+                m = re.search(r, server)
+                if m:
+                    ver = m.group(0)
+                    if ver not in versions:
+                        versions[ver] = set()
+                    versions[ver].add(host)      
+                      
         except Exception as e: print(e)
 
     
     if len(versions) > 0:
+        versions = dict(sorted(versions.items(), reverse=True))
         print("Detected PHP versions:")
         for key, value in versions.items():
             print(f"{key}:")
             for v in value:
-                print(f"\t{v}")
+                print(f"    {v}")
