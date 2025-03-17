@@ -1,6 +1,9 @@
 from src.utilities.utilities import get_hosts_from_file
 import nmap
 
+def is_empty_or_spaces(s):
+    return s.strip() == ""
+
 def mode6_nv(hosts, errors = False, verbose = False):
     vuln = {}
     nm = nmap.PortScanner()
@@ -21,8 +24,8 @@ def mode6_nv(hosts, errors = False, verbose = False):
         print("NTP Mode 6 Data:")
         for key, value in vuln.items():
             print(f"{key}:")
-            for i, v in enumerate(value):
-                if i == 0: continue
+            for v in value:
+                if is_empty_or_spaces(v): continue
                 print(f"    {v}")
                 
 
@@ -46,8 +49,8 @@ def monlist_nv(hosts, errors = False, verbose = False):
         print("NTP monlist Data:")
         for key, value in vuln.items():
             print(f"{key}:")
-            for i, v in enumerate(value):
-                if i == 0: continue
+            for v in value:
+                if is_empty_or_spaces(v): continue
                 print(f"    {v}")
         
 def monlist_console(args):
