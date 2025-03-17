@@ -35,17 +35,14 @@ def solve(args, is_all = False):
     elif args.list_file:
         with open(args.list_file, 'r') as f:
             hosts = [line.strip() for line in f]
-    snmp.default_nv(hosts, args.verbose)
-            
 
-def default_nv(hosts, verbose=False):
     hosts = [entry.split(":")[0] for entry in hosts]
     result = ", ".join(hosts)
     vuln = []
     command = ["msfconsole", "-q", "-x", f"color false; use auxiliary/scanner/msmq/cve_2023_21554_queuejumper; set RHOSTS {result}; run; exit"]
     try:
         result = subprocess.run(command, text=True, capture_output=True)
-        if verbose:
+        if args.verbose:
             print("stdout:", result.stdout)
             print("stderr:", result.stderr)
         pattern = r"\[\+\] (.*)\s+ - MSMQ vulnerable to CVE-2023-21554"
@@ -59,17 +56,3 @@ def default_nv(hosts, verbose=False):
         print("Vulnerable to CVE-2023-21554 (QueueJumper):")
         for v in vuln:
             print(v)
-        
-
-def default_console(args):
-    default_nv(get_hosts_from_file(args.file), args.verbose)
-
-def helper_parse(commandparser):
-    parser_task1 = commandparser.add_parser("snmp")
-    subparsers = parser_task1.add_subparsers(dest="command")
-    
-    parser_smbv1 = subparsers.add_parser("default", help="Checks if easy to guess public/private community string is used")
-    parser_smbv1.add_argument("-f", "--file", type=str, required=True, help="input file name")
-    parser_smbv1.add_argument("-v", "--verbose", action="store_true", help="Enable verbose")
-    parser_smbv1.set_defaults(func=default_console)
-    
