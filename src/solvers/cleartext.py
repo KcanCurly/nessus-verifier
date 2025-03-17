@@ -69,7 +69,7 @@ def solve_telnet(hosts):
                 if ip in nm.all_hosts():
                     nmap_host = nm[ip]
                     if nmap_host['tcp'][int(port)]['name'].lower() == 'telnet':
-                        vuln.append(f"{host} - {nmap_host['tcp'][int(port)].get("version", "Not found")}")
+                        vuln.append(f"{host} - {nmap_host['tcp'][int(port)].get("version", "Service not found")}")
                         
             except: pass
         
