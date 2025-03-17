@@ -49,7 +49,6 @@ def solve(args, is_all = False):
 
             m = re.search(r1, resp.text, re.MULTILINE)
             if m:
-                print("found")
                 version = m.group(0)
                 version = "Apache Tomcat/" + version
                 if version not in versions:
