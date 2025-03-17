@@ -36,8 +36,7 @@ def solve(args, is_all = False):
             hosts = [line.strip() for line in f]
     
     r = r"<title>Apache Tomcat\/(.*)<\/title>"
-    r1 = r"Apache Tomcat\/(\\d+\\.\\d+\\.\\d+)"
-    r2 = r"Apache Tomcat\/(\d+)"
+    r1 = r"Apache Tomcat\/(\d+\.\d+\.\d+)"
 
     for host in hosts:
         try:
@@ -48,7 +47,7 @@ def solve(args, is_all = False):
                     resp = requests.get(f"http://{host}", allow_redirects=True, verify=False)
                 except: continue
 
-            m = re.search(r2, resp.text, re.MULTILINE)
+            m = re.search(r1, resp.text, re.MULTILINE)
             if m:
                 print("found")
                 version = m.group(0)
