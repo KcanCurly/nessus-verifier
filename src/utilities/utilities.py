@@ -156,7 +156,7 @@ def get_header_from_url(host, header, verbose=0) -> str | None:
         l.v3(f"Failed to get header {header} from {host}: {e}")
         return None
 
-    return resp.headers.get(header)
+    return resp.headers.get(header, "None")
 
 def get_classic_single_progress():
     text_column1 = TextColumn("{task.fields[host]}", table_column=Column(ratio=1), style= "bold")
