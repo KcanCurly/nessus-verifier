@@ -30,7 +30,7 @@ def default_nv(hosts):
         
 
 def default_console(args):
-    default_nv(get_hosts_from_file(args.file))
+    default_nv(get_hosts_from_file(args.file, False))
 
 def helper_parse(commandparser):
     parser_task1 = commandparser.add_parser("snmp")
@@ -38,8 +38,6 @@ def helper_parse(commandparser):
     
     parser_smbv1 = subparsers.add_parser("default", help="Checks if easy to guess public/private community string is used")
     parser_smbv1.add_argument("-f", "--file", type=str, required=True, help="input file name")
-    parser_smbv1.add_argument("--threads", default=10, type=int, help="Number of threads (Default = 10)")
-    parser_smbv1.add_argument("--timeout", default=5, type=int, help="Timeout in seconds (Default = 5)")
     parser_smbv1.add_argument("-v", "--verbose", action="store_true", help="Enable verbose")
     parser_smbv1.set_defaults(func=default_console)
     
