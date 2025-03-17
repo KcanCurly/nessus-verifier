@@ -37,7 +37,7 @@ def solve(args, is_all = False):
     
     r = r"<title>Apache Tomcat\/(.*)<\/title>"
     r1 = r"Apache Tomcat\/(\\d+\\.\\d+\\.\\d+)"
-    r2 = r"Apache Tomcat\/(\\d+)"
+    r2 = r"Apache Tomcat\/(\d+)"
 
     for host in hosts:
         try:
