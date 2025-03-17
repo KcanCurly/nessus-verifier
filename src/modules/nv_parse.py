@@ -95,6 +95,10 @@ class GroupNessusScanOutput:
             return True
         return False
     
+    @classmethod
+    def from_json(cls, data):
+        return cls(**data)
+    
 class NessusScanOutput:
     def __init__(self, plugin_id, name, description, severity, host_port, output, cve):
         self.plugin_id = plugin_id
