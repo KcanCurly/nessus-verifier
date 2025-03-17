@@ -36,7 +36,7 @@ def solve(args, is_all = False):
             hosts = [line.strip() for line in f]
     
     r = r"<title>Apache Tomcat\/(.*)<\/title>"
-    r1 = r"Apache Tomcat\/(\\d\\.\\d\\.\\d\\d)"
+    r1 = r"Apache Tomcat\/(\\d+\\.\\d+\\.\\d+)"
 
     for host in hosts:
         try:
