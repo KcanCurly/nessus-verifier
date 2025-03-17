@@ -70,7 +70,7 @@ def post_console(args):
     post_nv(get_hosts_from_file(args.file), args.username, args.password)
 
 
-def version_nv(hosts: list[str], output: str = None, threads: int = 10, timeout: int = 3, verbose: bool = False, disable_visual_on_complete: bool = False):
+def version_nv(hosts: list[str]):
     versions = {}
     
     nm = nmap.PortScanner()
