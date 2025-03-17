@@ -7,6 +7,7 @@ import re
 from src.utilities.utilities import get_hosts_from_file
 
 def default_nv(hosts, verbose=False):
+    hosts = [entry.split(":")[0] for entry in hosts]
     result = ", ".join(hosts)
     vuln = {} 
     command = ["msfconsole", "-q", "-x", f"color false; use auxiliary/scanner/snmp/snmp_login; set RHOSTS {result}; run; exit"]
@@ -33,7 +34,7 @@ def default_nv(hosts, verbose=False):
         
 
 def default_console(args):
-    default_nv(get_hosts_from_file(args.file, False), args.verbose)
+    default_nv(get_hosts_from_file(args.file), args.verbose)
 
 def helper_parse(commandparser):
     parser_task1 = commandparser.add_parser("snmp")
