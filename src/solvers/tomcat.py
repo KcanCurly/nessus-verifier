@@ -46,7 +46,7 @@ def solve(args, is_all = False):
                 try:
                     resp = requests.get(f"http://{host}", allow_redirects=True, verify=False)
                 except: continue
-            
+            print(resp.text)
             m = re.search(r1, resp.text)
             if m:
                 version = m.group(1)
