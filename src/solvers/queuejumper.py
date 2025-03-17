@@ -48,7 +48,7 @@ def solve(args, is_all = False):
         pattern = r"\[\+\] (.*)\s+ - MSMQ vulnerable to CVE-2023-21554"
         matches = re.findall(pattern, result.stdout)
         for m in matches:
-            vuln.append(f"{m.group(1)}")
+            vuln.append(m)
                 
     except Exception:pass
     
