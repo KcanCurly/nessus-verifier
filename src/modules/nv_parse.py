@@ -79,12 +79,12 @@ def save_urls(urls):
     
     
 class GroupNessusScanOutput:
-    def __init__(self, id, plugin_ids, name):
+    def __init__(self, id, plugin_ids, hosts, sub_hosts, name):
         self.id = id
         self.name = name
         self.plugin_ids = plugin_ids
-        self.hosts = []
-        self.sub_hosts = {}
+        self.hosts = hosts
+        self.sub_hosts = sub_hosts
     
     def add_host(self, name, id, host) -> bool:
         if id in self.plugin_ids:
@@ -150,7 +150,7 @@ def group_up(l: list[NessusScanOutput]):
         
     available_id = -1
     for rule in rule_data:
-        r = GroupNessusScanOutput(rule['id'], rule['plugin-ids'], rule['name'])
+        r = GroupNessusScanOutput(rule['id'], rule['plugin-ids'], [], {}, rule['name'])
         rules.append(r)
         available_id = available_id + 1
 
