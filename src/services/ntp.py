@@ -20,7 +20,7 @@ def mode6_nv(hosts, errors = False, verbose = False):
     if len(vuln) > 0:
         print("NTP Mode 6 Enabled Hosts:")
         for key, value in vuln.items():
-            print(f"{key}:")
+            print(f"{key}")
         print("NTP Mode 6 Data:")
         for key, value in vuln.items():
             print(f"{key}:")
@@ -45,7 +45,7 @@ def monlist_nv(hosts, errors = False, verbose = False):
     if len(vuln) > 0:
         print("NTP monlist Enabled Hosts:")
         for key, value in vuln.items():
-            print(f"{key}:")
+            print(f"{key}")
         print("NTP monlist Data:")
         for key, value in vuln.items():
             print(f"{key}:")
