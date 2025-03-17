@@ -57,22 +57,19 @@ def solve_amqp(scan: GroupNessusScanOutput):
                 print(f"{key}: {value}")
     except: pass
 
-def solve_telnet(scan: GroupNessusScanOutput):
+def solve_telnet(hosts):
     try:
-        hosts = scan.sub_hosts.get("42263")
-        if not hosts: return
         vuln = []   
         nm = nmap.PortScanner()
         for host in hosts:
             try:
-                ip = host.split(":")[0]
-                port = host.split(":")[1]
+                ip, port = host.split(":")
                 nm.scan(ip, port, arguments=f'-sV')
                 
                 if ip in nm.all_hosts():
                     nmap_host = nm[ip]
-                    if  nmap_host['tcp'][int(port)]['name'].lower() == 'telnet':
-                            vuln.append(host)
+                    if nmap_host['tcp'][int(port)]['name'].lower() == 'telnet':
+                        vuln.append(f"{host} - {nmap_host['tcp'][int(port)].get("version", "Not found")}")
                         
             except: pass
         
@@ -138,15 +135,10 @@ def solve(args, is_all = False):
         if not args.ignore_fail: print("No id found in json file")
         return
     
-    if args.config:
-        with open(args.config, "rb") as f:
-            data = tomllib.load(f)
-    
+    if args.file:
+        hosts = scan.sub_hosts.get("Unencrypted Telnet Server", [])
 
-    solve_amqp(scan)
-    solve_telnet(scan)
-    solve_basic_http(scan)
-    solve_ftp(scan)
+    solve_telnet(hosts)
 
     
     """
@@ -172,7 +164,3 @@ def solve(args, is_all = False):
             except Exception as e: print(e)
     except Exception as e: print(e)
     """
-    # Basic Authentication Without HTTPS
-
-    
-    # FTP Supports Cleartext Authentication
