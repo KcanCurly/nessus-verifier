@@ -30,5 +30,5 @@ def solve(args, is_all = False):
     elif args.list_file:
         with open(args.list_file, 'r') as f:
             hosts = [line.strip() for line in f]
-    snmp.check(hosts)
+    snmp.default_nv(hosts)
             
