@@ -6,12 +6,15 @@ import subprocess
 import re
 from src.utilities.utilities import get_hosts_from_file
 
-def default_nv(hosts):
+def default_nv(hosts, verbose=False):
     result = ", ".join(hosts)
     vuln = {} 
     command = ["msfconsole", "-q", "-x", f"color false; use auxiliary/scanner/snmp/snmp_login; set RHOSTS {result}; run; exit"]
     try:
         result = subprocess.run(command, text=True, capture_output=True)
+        if verbose:
+            print("stdout:", result.stdout)
+            print("stderr:", result.stderr)
         pattern = r"\[\+\] (.*) - Login Successful: (.*);"
         matches = re.findall(pattern, result.stdout)
         for m in matches:
@@ -30,7 +33,7 @@ def default_nv(hosts):
         
 
 def default_console(args):
-    default_nv(get_hosts_from_file(args.file, False))
+    default_nv(get_hosts_from_file(args.file, False), args.verbose)
 
 def helper_parse(commandparser):
     parser_task1 = commandparser.add_parser("snmp")

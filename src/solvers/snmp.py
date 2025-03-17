@@ -15,6 +15,7 @@ def helper_parse(subparser):
     group = parser_task1.add_mutually_exclusive_group(required=True)
     group.add_argument("-f", "--file", type=str, help="JSON file")
     group.add_argument("-lf", "--list-file", type=str, help="List file")
+    parser_task1.add_argument("-v", "--verbose", action="store_true", help="Enable verbose")
     parser_task1.set_defaults(func=solve)    
 
 def solve(args, is_all = False):
@@ -30,5 +31,5 @@ def solve(args, is_all = False):
     elif args.list_file:
         with open(args.list_file, 'r') as f:
             hosts = [line.strip() for line in f]
-    snmp.default_nv(hosts)
+    snmp.default_nv(hosts, args.verbose)
             
