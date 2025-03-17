@@ -49,7 +49,7 @@ def solve(args, is_all = False):
             print(resp.text)
             m = re.search(r1, resp.text)
             if m:
-                version = m.group(1)
+                version = m.group(0)
                 version = "Apache Tomcat/" + version
                 if version not in versions:
                     versions[version] = set()
