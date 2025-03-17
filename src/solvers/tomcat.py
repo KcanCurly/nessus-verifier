@@ -35,7 +35,8 @@ def solve(args, is_all = False):
         with open(args.list_file, 'r') as f:
             hosts = [line.strip() for line in f]
     
-    r = r"<title>Apache Tomcat/(.*)</title>"
+    r = r"<title>Apache Tomcat\/(.*)<\/title>"
+    r1 = r"Apache Tomcat\/(\\d\\.\\d\\.\\d\\d)"
 
     for host in hosts:
         try:
@@ -46,13 +47,14 @@ def solve(args, is_all = False):
                     resp = requests.get(f"http://{host}", allow_redirects=True, verify=False)
                 except: continue
             
-            m = re.search(r, resp.text)
+            m = re.search(r1, resp.text)
             if m:
                 version = m.group(1)
                 version = "Apache Tomcat/" + version
                 if version not in versions:
                     versions[version] = set()
                 versions[version].add(host)
+
                 
             
         except Exception as e: print(f"Error for {host}:", e)
