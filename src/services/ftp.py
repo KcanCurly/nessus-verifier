@@ -105,7 +105,7 @@ def brute_nv(hosts: list[str], creds: list[str], errors, verbose):
         except Exception as e: 
             if errors: print("Error:", e)
         
-def anon_nv(hosts, errors, verbose):
+def anon_nv(hosts, errors = False, verbose = False):
     anon = []
     hosts = get_hosts_from_file(hosts)
     for host in hosts:
