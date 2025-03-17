@@ -1,5 +1,5 @@
 import argparse
-from src.solvers import grafana, php, python, tls, kibana, elastic, mongo, oracle, smb, ssh, snmp, tomcat, apache, nginx, vmware, openssh, smtp_relay, mssql, idrac, ipmi, terminal, cleartext, ibmwebsphere, obsolete_protocols, postgresql, nopasswddb, actionables, ftp
+from src.solvers import grafana, php, python, tls, kibana, elastic, mongo, oracle, smb, ssh, snmp, tomcat, apache, nginx, vmware, openssh, smtp_relay, mssql, idrac, ipmi, terminal, cleartext, ibmwebsphere, obsolete_protocols, postgresql, nopasswddb, actionables, ftp, ntp
 from src.modules.nv_parse import GroupNessusScanOutput
 
 solver_dict = {
@@ -7,7 +7,7 @@ solver_dict = {
     1: tls,
     # 2: smtp_relay,
     3: ssh,
-    # 4: ntp
+    4: ntp,
     5: smb,
     6: snmp,
     7: cleartext,
