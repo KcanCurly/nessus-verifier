@@ -12,8 +12,7 @@ def mode6_nv(hosts, errors = False, verbose = False):
                 vuln[host] = []
                 ntp_script = nm[result]["udp"][123].get("script", {})
                 for key, value in ntp_script.items():
-                    if "ntp" in key: continue
-                    vuln[host].append(f"{key}: {value}")
+                    vuln[host].append(f"{value}")
                     
     if len(vuln) > 0:
         print("NTP Mode 6 Scanner:")
@@ -34,8 +33,7 @@ def monlist_nv(hosts, errors = False, verbose = False):
                 vuln[host] = []
                 ntp_script = nm[result]["udp"][123].get("script", {})
                 for key, value in ntp_script.items():
-                    if "ntp" in key: continue
-                    vuln[host].append(f"{key}: {value}")
+                    vuln[host].append(f"{value}")
                     
     if len(vuln) > 0:
         print("NTP monlist Enabled:")
