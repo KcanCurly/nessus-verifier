@@ -15,10 +15,14 @@ def mode6_nv(hosts, errors = False, verbose = False):
                     vuln[host].append(f"{value}")
                     
     if len(vuln) > 0:
-        print("NTP Mode 6 Scanner:")
+        print("NTP Mode 6 Enabled Hosts:")
         for key, value in vuln.items():
             print(f"{key}:")
-            for v in value:
+        print("NTP Mode 6 Data:")
+        for key, value in vuln.items():
+            print(f"{key}:")
+            for i, v in enumerate(value):
+                if i == 0: continue
                 print(f"    {v}")
                 
 
@@ -36,10 +40,14 @@ def monlist_nv(hosts, errors = False, verbose = False):
                     vuln[host].append(f"{value}")
                     
     if len(vuln) > 0:
-        print("NTP monlist Enabled:")
+        print("NTP monlist Enabled Hosts:")
         for key, value in vuln.items():
             print(f"{key}:")
-            for v in value:
+        print("NTP monlist Data:")
+        for key, value in vuln.items():
+            print(f"{key}:")
+            for i, v in enumerate(value):
+                if i == 0: continue
                 print(f"    {v}")
         
 def monlist_console(args):
