@@ -11,10 +11,14 @@ def list_nv(hosts: list[str], errors = False, verbose = False):
         try:
             ip, port = host.split(":")
             result = subprocess.run(showmount_cmd + [ip], text=True, capture_output=True)
+            print(result.stdout)
+            print(result.stderr)
             vuln[host] = []
             for line in result.stdout.splitlines():
                 c = ["nfs-ls", f"nfs://{ip}{line.split()[0]}"]
                 result = subprocess.run(c, text=True, capture_output=True)
+                print(result.stdout)
+                print(result.stderr)
                 for line1 in result.stdout.splitlines():
                     vuln[host].append(line1)
                 
