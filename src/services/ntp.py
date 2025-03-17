@@ -8,9 +8,9 @@ def mode6_nv(hosts, errors = False, verbose = False):
         ip, port = host.split(":")
         nm.scan(hosts=ip, ports=port, arguments="--script=ntp-info -sU")
         for result in nm.all_hosts():
-            if "udp" in nm[host] and 123 in nm[host]["udp"]:
+            if "udp" in nm[result] and 123 in nm[result]["udp"]:
                 vuln[host] = []
-                ntp_script = nm[host]["udp"][123].get("script", {})
+                ntp_script = nm[result]["udp"][123].get("script", {})
                 for key, value in ntp_script.items():
                     vuln[host].append(f"{key}: {value}")
                     
@@ -29,9 +29,9 @@ def monlist_nv(hosts, errors = False, verbose = False):
         ip, port = host.split(":")
         nm.scan(hosts=ip, ports=port, arguments="--script=ntp-monlist -sU")
         for result in nm.all_hosts():
-            if "udp" in nm[host] and 123 in nm[host]["udp"]:
+            if "udp" in nm[result] and 123 in nm[result]["udp"]:
                 vuln[host] = []
-                ntp_script = nm[host]["udp"][123].get("script", {})
+                ntp_script = nm[result]["udp"][123].get("script", {})
                 for key, value in ntp_script.items():
                     vuln[host].append(f"{key}: {value}")
                     
