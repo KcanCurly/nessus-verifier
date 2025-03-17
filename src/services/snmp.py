@@ -1,7 +1,3 @@
-import argparse
-import configparser
-import os
-from pathlib import Path
 import subprocess
 import re
 from src.utilities.utilities import get_hosts_from_file
@@ -16,12 +12,12 @@ def default_nv(hosts, verbose=False):
         if verbose:
             print("stdout:", result.stdout)
             print("stderr:", result.stderr)
-        pattern = r"\[\+\] (.*) - Login Successful: (.*);"
+        pattern = r"\[\+\] (.*) - Login Successful: (.*);.*: (.*)"
         matches = re.findall(pattern, result.stdout)
         for m in matches:
             if m[0] not in vuln:
                 vuln[m[0]] = []
-            vuln[m[0]].append(f"{m[1]}")
+            vuln[m[0]].append(f"{m[1]} - {m[2]}")
                 
     except Exception:pass
     
