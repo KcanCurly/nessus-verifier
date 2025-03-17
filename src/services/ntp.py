@@ -1,7 +1,7 @@
 from src.utilities.utilities import get_hosts_from_file
 import nmap
 
-def mode6_nv(hosts, timeout, errors, verbose):
+def mode6_nv(hosts, errors = False, verbose = False):
     vuln = {}
     nm = nmap.PortScanner()
     for host in hosts:
@@ -22,7 +22,7 @@ def mode6_nv(hosts, timeout, errors, verbose):
                 print(f"    {v}")
                 
 
-def monlist_nv(hosts, timeout, errors, verbose):
+def monlist_nv(hosts, errors = False, verbose = False):
     vuln = {}
     nm = nmap.PortScanner()
     for host in hosts:
@@ -43,10 +43,10 @@ def monlist_nv(hosts, timeout, errors, verbose):
                 print(f"    {v}")
         
 def monlist_console(args):
-    monlist_nv(get_hosts_from_file(args.file), args.timeout, args.errors, args.verbose)
+    monlist_nv(get_hosts_from_file(args.file), args.errors, args.verbose)
     
 def mode6_console(args):
-    mode6_nv(get_hosts_from_file(args.file), args.timeout, args.errors, args.verbose)
+    mode6_nv(get_hosts_from_file(args.file), args.errors, args.verbose)
     
 
 def helper_parse(commandparser):
