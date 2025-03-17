@@ -53,10 +53,7 @@ def solve(args, is_all = False):
                 version = "Apache Tomcat/" + version
                 if version not in versions:
                     versions[version] = set()
-                versions[version].add(host)
-            else: print("not found")
-
-                
+                versions[version].add(host)                
             
         except Exception as e: print(f"Error for {host}:", e)
 
