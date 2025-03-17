@@ -58,26 +58,26 @@ def solve_amqp(scan: GroupNessusScanOutput):
     except: pass
 
 def solve_telnet(hosts):
-    try:
-        vuln = []   
-        nm = nmap.PortScanner()
-        for host in hosts:
-            try:
-                ip, port = host.split(":")
-                nm.scan(ip, port, arguments=f'-sV')
-                
-                if ip in nm.all_hosts():
-                    nmap_host = nm[ip]
-                    if nmap_host['tcp'][int(port)]['name'].lower() == 'telnet':
-                        vuln.append(f"{host} - {nmap_host['tcp'][int(port)].get("version", "Service not found")}")
-                        
-            except: pass
-        
-        if len(vuln) > 0:
-            print("Unencrypted Telnet Detected:")
-            for value in vuln:
-                print(f"{value}")
-    except: pass
+
+    vuln = []   
+    nm = nmap.PortScanner()
+    for host in hosts:
+        try:
+            ip, port = host.split(":")
+            nm.scan(ip, port, arguments=f'-sV')
+            
+            if ip in nm.all_hosts():
+                nmap_host = nm[ip]
+                if nmap_host['tcp'][int(port)]['name'].lower() == 'telnet':
+                    vuln.append(f"{host} - {nmap_host['tcp'][int(port)].get("product", "Service not found")}")
+                    
+        except Exception as e : print(e)
+    
+    if len(vuln) > 0:
+        print("Unencrypted Telnet Detected:")
+        for value in vuln:
+            print(f"{value}")
+
 
 def solve_basic_http(scan: GroupNessusScanOutput):
     try:
