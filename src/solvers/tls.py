@@ -4,17 +4,16 @@ import ssl
 import socket
 import tomllib
 from src.utilities.utilities import find_scan, get_classic_single_progress, get_classic_overall_progress, get_classic_console
-from src.modules.vuln_parse import GroupNessusScanOutput
+from src.modules.nv_parse import GroupNessusScanOutput
 from src.utilities import logger
 from rich.live import Live
 from rich.progress import Progress, TaskID
 from rich.console import Console
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from src.services.service import Vuln_Data
 from rich.console import Group
 from rich.panel import Panel
 
-class TLS_Vuln_Data(Vuln_Data):
+class TLS_Vuln_Data():
     def __init__(self, host: str, weak_versions: list[str], weak_ciphers: list[str], weak_bits: list[str], is_wrong_hostname: bool, is_cert_expired: str):
         self.host = host
         self.weak_versions = weak_versions

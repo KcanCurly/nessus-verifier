@@ -1,7 +1,5 @@
-from operator import le
-from src.solvers import elastic
-from src.utilities.utilities import find_scan, get_header_from_url
-from src.modules.vuln_parse import GroupNessusScanOutput
+from src.utilities.utilities import find_scan
+from src.modules.nv_parse import GroupNessusScanOutput
 from src.utilities import logger
 from src.services import mongodb, postgresql
 import requests

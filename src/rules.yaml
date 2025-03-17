@@ -1793,3 +1793,8 @@
   id: 30
   plugin-ids: [10483]
   # 10483 - PostgreSQL Default Unpassworded Account
+
+- name: FTP
+  id: 31
+  plugin-ids: [10079]
+  # 10079 - Anonymous FTP Enabled

@@ -1,6 +1,6 @@
 import requests
 from src.utilities.utilities import find_scan
-from src.modules.vuln_parse import GroupNessusScanOutput
+from src.modules.nv_parse import GroupNessusScanOutput
 from src.utilities import logger
 
 code = 25

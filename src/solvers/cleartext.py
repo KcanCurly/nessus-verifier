@@ -2,7 +2,7 @@ from ftplib import FTP
 from ftplib import error_perm
 import tomllib
 from src.utilities.utilities import find_scan
-from src.modules.vuln_parse import GroupNessusScanOutput
+from src.modules.nv_parse import GroupNessusScanOutput
 from src.utilities import logger
 import nmap
 import requests

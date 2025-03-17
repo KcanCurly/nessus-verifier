@@ -1,19 +1,6 @@
-import argparse
-import subprocess
 import re
-from impacket.smbconnection import SMBConnection
-from src.utilities.utilities import get_hosts_from_file
-from smb import SMBConnection as pysmbconn
-from src.utilities.utilities import get_classic_single_progress, get_classic_overall_progress, get_classic_console, get_hosts_from_file
-from rich.live import Live
-from rich.progress import Progress, TaskID
-from rich.console import Console
-from concurrent.futures import ThreadPoolExecutor, as_completed
-from src.services.service import Vuln_Data
-from rich.console import Group
-from rich.panel import Panel
 from src.utilities.utilities import find_scan
-from src.modules.vuln_parse import GroupNessusScanOutput
+from src.modules.nv_parse import GroupNessusScanOutput
 from src.utilities import logger
 import requests
 

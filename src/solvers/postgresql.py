@@ -1,11 +1,7 @@
-import subprocess
-import re
 from src.utilities.utilities import find_scan
-from src.modules.vuln_parse import GroupNessusScanOutput
+from src.modules.nv_parse import GroupNessusScanOutput
 from src.services.postgresql import unpassworded_nv
 from src.utilities import logger
-import psycopg
-import os
 
 code = 30
 
