@@ -29,6 +29,12 @@ def solve(args, is_all = False):
         print("metasploit: use exploit/multi/http/solr_velocity_rce")
         for host in hosts:
             print(host)
+            
+    hosts = scan.sub_hosts.get("VMware vCenter Server Virtual SAN Health Check plug-in RCE (CVE-2021-21985) (direct check)", [])
+    if len(hosts) > 0:
+        print("metasploit: use exploit/linux/http/vmware_vcenter_vsan_health_rce")
+        for host in hosts:
+            print(host)
         
 
 def helper_parse(subparser):

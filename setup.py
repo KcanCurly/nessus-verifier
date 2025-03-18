@@ -40,6 +40,7 @@ setup(
             "nv-parse=src.modules.nv_parse:main",
             "nv-solver=src.solvers.solver:main",
             "nv-nmap=src.modules.nv_nmap:main",
+            "nv-nuclei=src.modules.nv_nuclei:main",
             "nv-service=src.services.nv_services:main",
         ],
     },
