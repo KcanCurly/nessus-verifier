@@ -10,7 +10,7 @@ def version_nv(file, port):
     except Exception as e: print(e)
 
 def version_console(args):
-    version_nv(args.file)
+    version_nv(args.file, args.port)
 
 def helper_parse(commandparser):
     parser_task1 = commandparser.add_parser("asteriks")
