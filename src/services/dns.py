@@ -117,8 +117,8 @@ def malicious_nv(hosts: list[str], domains, errors, verbose):
     vuln = []
 
     for host in hosts:
-        ip = host.split(":")[0]
-        port = host.split(":")[1]
+        ip, port = host.split(":")
+
         resolver = dns.resolver.Resolver()
         resolver.nameservers = [ip]  # Set the specific DNS server
         for malicious_domain in domains:
@@ -137,15 +137,13 @@ def malicious_nv(hosts: list[str], domains, errors, verbose):
 def zone_transfer_nv(hosts: list[str], errors, verbose):
     vuln = []
     for host in hosts:
-        ip = host.split(":")[0]
-        port = host.split(":")[1]
+        ip, port = host.split(":")
 
         # If we don't have domain, we first need to get domain from ptr record
+        domain = find_domain_name(ip)
         if not domain:
-            domain = find_domain_name(ip)
-            if not domain:
-                if errors: print("Couldn't found domain of the ip")
-                continue
+            if errors: print("Couldn't found domain of the ip")
+            continue
 
         try:
             command = ["dnsrecon", "-n", ip, "-a", "-d", domain]
@@ -168,14 +166,14 @@ def zone_transfer_nv(hosts: list[str], errors, verbose):
 def dnssec_nv(hosts: list[str], errors, verbose):
     vuln = []
     for host in hosts:
-        ip = host.split(":")[0]
-        port = host.split(":")[1]
+        ip, port = host.split(":")
+
         # If we don't have domain, we first need to get domain from ptr record
+
+        domain = find_domain_name(ip)
         if not domain:
-            domain = find_domain_name(ip)
-            if not domain:
-                if errors: print("Couldn't found domain of the ip")
-                continue
+            if errors: print("Couldn't found domain of the ip")
+            continue
 
         try:
             command = ["dnsrecon", "-n", ip, "-d", domain]
