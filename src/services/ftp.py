@@ -2,8 +2,8 @@ from ftplib import FTP
 from ftplib import Error
 from ftplib import error_perm
 from ftplib import FTP_TLS
-from concurrent.futures import ThreadPoolExecutor
-from src.utilities.utilities import confirm_prompt, control_TLS, get_hosts_from_file
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from src.utilities.utilities import control_TLS, get_hosts_from_file
 
 creds = [
 "anonymous:anonymous",
@@ -146,9 +146,12 @@ def tls(hosts):
     control_TLS(hosts, "--starttls-ftp")
 
 def brute_nv(hosts: list[str], creds: list[str], threads, errors, verbose):
+    futures = []
     with ThreadPoolExecutor(threads) as executor:
         for host in hosts:
-            executor.submit(brute_nv, host, creds, errors, verbose)
+            futures.append(executor.submit(brute_nv, host, creds, errors, verbose))
+        for a in as_completed(futures):
+            print(1)
         
 def ssl(hosts):
     dict = {}
