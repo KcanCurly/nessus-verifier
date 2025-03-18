@@ -8,7 +8,7 @@ To install:
 
 ```
 cd ~
-sudo apt install -y sslscan sshpass ssh-audit dnsutils dnsrecon metasploit-framework ident-user-enum smbclient samba samba-common-bin tnscmd10g libnfs-utils cpanminus git pipx libpq5 libpq-dev
+sudo apt install -y sslscan sshpass ssh-audit dnsutils dnsrecon metasploit-framework ident-user-enum smbclient samba samba-common-bin tnscmd10g libnfs-utils cpanminus git pipx libpq5 libpq-dev sippts
 pipx install git+https://github.com/KcanCurly/nessus-verifier
 pipx install git+https://github.com/KcanCurly/ssh-whirl
 sudo cpanm --notest Encoding::BER
