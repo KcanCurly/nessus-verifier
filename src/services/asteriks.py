@@ -12,7 +12,7 @@ def version_nv(file, port):
 def version_console(args):
     version_nv(args.file)
 
-def main(commandparser):
+def helper_parse(commandparser):
     parser_task1 = commandparser.add_parser("asteriks")
     subparsers = parser_task1.add_subparsers(dest="command")
     
