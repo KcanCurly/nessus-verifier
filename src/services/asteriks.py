@@ -3,9 +3,12 @@ import subprocess
 def version_nv(file, port):
     command = ["sippts", "scan", "-f", file, "-r", port, "-p", "all", "-o", "nv-asteriks-data"]
     try:
-        subprocess.run(command, text=True)
-        with open("nv-asteriks-data") as f:
-            print(f.read())
+        result = subprocess.run(command, text=True, capture_output=True)
+        print("O", result.stdout)
+        print("E", result.stderr)
+        
+        #with open("nv-asteriks-data") as f:
+        #    print(f.read())
 
     except Exception as e: print(e)
 
