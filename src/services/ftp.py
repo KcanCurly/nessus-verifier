@@ -146,7 +146,7 @@ def anon_nv(hosts, errors = False, verbose = False):
 def tls(hosts):
     control_TLS(hosts, "--starttls-ftp")
 
-def brute_nv(hosts: list[str], creds: list[str], threads, errors, verbose):
+def brute_nv_thread(hosts: list[str], creds: list[str], threads, errors, verbose):
     futures = []
     with ThreadPoolExecutor(threads) as executor:
         for host in hosts:
@@ -197,7 +197,7 @@ def anon_console(args):
     anon_nv(get_hosts_from_file(args.file), args.errors, args.verbose)
     
 def brute_console(args):
-    brute_nv(get_hosts_from_file(args.file), get_hosts_from_file(args.credential_file), args.threads, args.errors, args.verbose)
+    brute_nv_thread(get_hosts_from_file(args.file), get_hosts_from_file(args.credential_file), args.threads, args.errors, args.verbose)
 
 def helper_parse(commandparser):
     parser_task1 = commandparser.add_parser("ftp")
