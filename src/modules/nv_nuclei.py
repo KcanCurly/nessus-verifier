@@ -11,7 +11,7 @@ def process(hosts):
         print("CVE-2019-9670:")
         print("msf - use exploit/linux/http/zimbra_xxe_rce")
         for a in z:
-            print(a.rsplit("", 1)[1])
+            print(a.rsplit(" ", 1)[1])
             
     z = []
     for host in hosts:
@@ -21,7 +21,7 @@ def process(hosts):
         print("CVE-2021-21985:")
         print("msf - use exploit/linux/http/vmware_vcenter_vsan_health_rce")
         for a in z:
-            print(a.rsplit("", 1)[1])
+            print(a.rsplit(" ", 1)[1])
 
         
         
