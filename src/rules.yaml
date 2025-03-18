@@ -1792,8 +1792,9 @@
 
 - name: PostgreSQL
   id: 30
-  plugin-ids: [10483]
+  plugin-ids: [10483, 104031]
   # 10483 - PostgreSQL Default Unpassworded Account
+  # 104031 - PostgreSQL Empty Password Handling Remote Authentication Bypass
 
 - name: FTP
   id: 31

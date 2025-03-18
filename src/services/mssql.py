@@ -6,7 +6,6 @@ def connect_to_server(ip, username, password, database, port, domain, login_time
     try:
         conn = pymssql.connect(ip, username, password, database, port=port, login_timeout=login_timeout)
     except Exception as e:
-        print(e)
         try:
             conn = pymssql.connect(
                 host=ip,
@@ -15,17 +14,19 @@ def connect_to_server(ip, username, password, database, port, domain, login_time
                 database=database
             )      
         except Exception as e:
-             print(e)
              return None
     return conn
 
-def post_nv(hosts: list[str], username: str, password: str, domain: str):
+def post_nv(hosts: list[str], username: str, password: str, domain: str, error:bool = False):
     for host in hosts:
         try:
             ip, port = host.split(":")
 
             # Connect to SQL Server
             conn = connect_to_server(ip, username, password, "master", port, domain, login_timeout=10)
+            if not conn: 
+                if error: print("Couldn't connect to", host)
+                continue
             cursor = conn.cursor()
 
             try:
@@ -64,21 +65,26 @@ def post_nv(hosts: list[str], username: str, password: str, domain: str):
                                             print("    Row:", row)
                                     else:
                                         print("    No data available")
-                                except Exception as e: print(f"Row Error: {host}: {e}")
+                                except Exception as e: 
+                                    if error: print(f"Row Error: {host}: {e}")
 
 
-                            except Exception as e: print(f"Column Error: {host}: {e}")
+                            except Exception as e: 
+                                if error: print(f"Column Error: {host}: {e}")
                             
 
-                    except Exception as e: print(f"Table Error: {host}: {e}")
+                    except Exception as e: 
+                        if error: print(f"Table Error: {host}: {e}")
                     # Switch to the database
 
-            except: pass
+            except Exception as e:
+                if error: print(f"Database Error: {host}: {e}")
 
 
             # Close connection
             conn.close()
-        except Exception as e: print(f"Error for {host}: {e}")
+        except Exception as e: 
+            if error: print(f"Error for {host}: {e}")
 
 
         
