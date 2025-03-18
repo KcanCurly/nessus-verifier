@@ -2,14 +2,30 @@ from src.utilities.utilities import get_hosts_from_file
 import pymssql
 import nmap
 
-def post_nv(hosts: list[str], username: str, password: str, output: str = None, threads: int = 10, timeout: int = 3, verbose: bool = False):
+def connect_to_server(ip, username, password, database, port, domain, login_timeout = 10):
+    try:
+        conn = pymssql.connect(ip, username, password, database, port=port, login_timeout=login_timeout)
+    except Exception as e:
+        print(e)
+        try:
+            conn = pymssql.connect(
+                host=ip,
+                user=f'{domain}\\{username}',
+                password=password,
+                database=database
+            )      
+        except Exception as e:
+             print(e)
+             return None
+    return conn
+
+def post_nv(hosts: list[str], username: str, password: str, domain: str):
     for host in hosts:
         try:
-            ip = host.split(":")[0]
-            port = host.split(":")[1]
+            ip, port = host.split(":")
 
             # Connect to SQL Server
-            conn = pymssql.connect(ip, username, password, "master", port=port, login_timeout=10)
+            conn = connect_to_server(ip, username, password, "master", port, domain, login_timeout=10)
             cursor = conn.cursor()
 
             try:
@@ -67,7 +83,7 @@ def post_nv(hosts: list[str], username: str, password: str, output: str = None, 
 
         
 def post_console(args):
-    post_nv(get_hosts_from_file(args.file), args.username, args.password)
+    post_nv(get_hosts_from_file(args.file), args.username, args.password, args.domain)
 
 
 def version_nv(hosts: list[str]):
@@ -135,6 +151,7 @@ def helper_parse(commandparser):
     parser_post.add_argument("-f", "--file", type=str, required=True, help="input file name")
     parser_post.add_argument("-u", "--username", type=str, required=True, help="Username")
     parser_post.add_argument("-p", "--password", type=str, required=True, help="Password")
+    parser_post.add_argument("-d", "--domain", type=str, required=False, help="Domain for windows authentication")
     parser_post.add_argument("--threads", default=10, type=int, help="Number of threads (Default = 10)")
     parser_post.add_argument("--timeout", default=5, type=int, help="Timeout in seconds (Default = 5)")
     parser_post.add_argument("-v", "--verbose", action="store_true", help="Enable verbose")
