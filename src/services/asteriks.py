@@ -4,11 +4,9 @@ def version_nv(file, port):
     command = ["sippts", "scan", "-f", file, "-r", port, "-p", "all", "-o", "nv-asteriks-data"]
     try:
         result = subprocess.run(command, text=True, capture_output=True)
-        print("O", result.stdout)
-        print("E", result.stderr)
         
-        #with open("nv-asteriks-data") as f:
-        #    print(f.read())
+        with open("nv-asteriks-data") as f:
+            print(f.read())
 
     except Exception as e: print(e)
 
@@ -21,5 +19,5 @@ def helper_parse(commandparser):
     
     parser_version = subparsers.add_parser("version", help="Checks Asteriks version")
     parser_version.add_argument("-f", "--file", type=str, required=True, help="input file name")
-    parser_version.add_argument("-p", "--port", type=str, default="", help="sippts port argument (Default = 5030-5080)")
+    parser_version.add_argument("-p", "--port", type=str, default="5030-5080", help="sippts port argument (Default = 5030-5080)")
     parser_version.set_defaults(func=version_console)
