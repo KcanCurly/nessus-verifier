@@ -1,5 +1,5 @@
 import argparse
-from src.services import dns, finger, ftp, ident, ldap, mongodb, ms_exchange, mssql, smb, ssh, snmp, nfs, rpc, smtp, snmp, tftp, time, mssql, idrac, zookeeper, postgresql, asteriks
+from src.services import asterisk, dns, finger, ftp, ident, ldap, mongodb, ms_exchange, mssql, smb, ssh, snmp, nfs, rpc, smtp, snmp, tftp, time, mssql, idrac, zookeeper, postgresql
 
 service_list = [
     dns,
@@ -22,7 +22,7 @@ service_list = [
     time,
     zookeeper,
     postgresql,
-    asteriks,
+    asterisk,
 ]
 
 
