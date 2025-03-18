@@ -195,12 +195,10 @@ def dnssec_nv(hosts: list[str], errors, verbose):
 
 def add_txt_record_nv(hosts: list[str], txt_record_name, txt_record_value, error, verbose):
     vuln = []
-    hosts = get_hosts_from_file(hosts)
 
     for host in hosts:
-        ip = host.split(":")[0]
-        port = host.split(":")[1]
-        
+        ip, port = host.split(":")
+
         # If we don't have domain, we first need to get domain from ptr record
         try:
             reverse_name = dns.reversename.from_address(ip)
