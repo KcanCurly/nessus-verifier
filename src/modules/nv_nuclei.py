@@ -13,6 +13,7 @@ def process(hosts):
         for a in z:
             print(a.rsplit("", 1)[1])
             
+    z = []
     for host in hosts:
         if "CVE-2021-21985" in host:
             z.append(host)
