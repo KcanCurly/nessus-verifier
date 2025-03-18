@@ -3,7 +3,7 @@ import re
 from src.utilities.utilities import get_hosts_from_file, get_classic_console
 import nmap
 
-def brute_nv(hosts: list[str], output: str = None, threads: int = 10, verbose: bool = False):
+def brute_nv(hosts: list[str], threads: int = 10, verbose: bool = False):
     nmap_file = "/usr/share/nmap/nselib/data/tftplist.txt"
     console = get_classic_console()
     
@@ -73,7 +73,7 @@ def brute_nv(hosts: list[str], output: str = None, threads: int = 10, verbose: b
         
 
 def brute_console(args):
-    brute_nv(get_hosts_from_file(args.file, False), args.output, args.threads, args.verbose)
+    brute_nv(get_hosts_from_file(args.file, False), args.threads, args.verbose)
     
 
 def helper_parse(commandparser):
