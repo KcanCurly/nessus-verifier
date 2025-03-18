@@ -290,15 +290,13 @@ def recursion_nv(hosts: list[str], errors, verbose):
     vuln = []
 
     for host in hosts:
-        ip = host.split(":")[0]
-        port = host.split(":")[1]
+        ip, port = host.split(":")
 
         # If we don't have domain, we first need to get domain from ptr record
-        if not domain:
-            domain = find_domain_name(ip)
-            if not domain: 
-                if errors: print("Couldn't found domain of the ip")
-                continue
+        domain = find_domain_name(ip)
+        if not domain: 
+            if errors: print("Couldn't found domain of the ip")
+            continue
 
         try:
             command = ["dnsrecon", "-n", ip, "-d", domain]
