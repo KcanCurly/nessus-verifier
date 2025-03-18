@@ -31,4 +31,4 @@ def main():
 
     args = parser.parse_args()
     
-    process(args.file, args.output if args.output else "")
+    process(args.file)
