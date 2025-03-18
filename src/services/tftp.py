@@ -6,34 +6,12 @@ import nmap
 def brute_nv(hosts: list[str], threads: int = 10, verbose: bool = False):
     nmap_file = "/usr/share/nmap/nselib/data/tftplist.txt"
     console = get_classic_console()
-    
-    nm = nmap.PortScanner()
-    if verbose: console.print(f"Starting TFTP Brute, i can't show you progress")
-    host2 = []
-    for host in hosts:
-        try:
-            ip = host
 
-            nm.scan(ip, "69", arguments=f'-sV -sU')
-            
-            if ip in nm.all_hosts():
-                nmap_host = nm[ip]
-                print(nmap_host['udp'][69]['name'].lower())
-                if 'tftp' in nmap_host['udp'][69]['name'].lower():
-                    host2.append(host)
-                    
-        except Exception as e: 
-            pass
-    
-    if not host2: 
-        if verbose: console.print("None of the ports were accessible")
-        return
-    
-    result = ", ".join(host2)
+    result = ", ".join(hosts)
     
     vuln = {}
     try:
-        command = ["msfconsole", "-q", "-x", f"color false; use auxiliary/scanner/tftp/tftpbrute; set RHOSTS {result}; set THREADS {str(threads)}; run; exit"]
+        command = ["msfconsole", "-q", "-x", f"color false; use auxiliary/scanner/tftp/tftpbrute; set RHOSTS {result}; set THREADS {str(threads)}; set ConnectTimeout 10; run; exit"]
         result = subprocess.run(command, text=True, capture_output=True)
         pattern = r"\[\+\] Found (.*) on (.*)\s+"
         matches = re.findall(pattern, result.stdout)
@@ -43,7 +21,7 @@ def brute_nv(hosts: list[str], threads: int = 10, verbose: bool = False):
                 vuln[m[1]] = set()
             vuln[m[1]].add(m[0])
             
-        command = ["msfconsole", "-q", "-x", f"color false; use auxiliary/scanner/tftp/tftpbrute; set RHOSTS {result}; set DICTIONARY {nmap_file}; set THREADS {str(threads)}; run; exit"]
+        command = ["msfconsole", "-q", "-x", f"color false; use auxiliary/scanner/tftp/tftpbrute; set RHOSTS {result}; set DICTIONARY {nmap_file}; set THREADS {str(threads)}; set ConnectTimeout 10; run; exit"]
         result = subprocess.run(command, text=True, capture_output=True)
         pattern = r"\[\+\] Found (.*) on (.*)\s+"
         matches = re.findall(pattern, result.stdout)
@@ -59,17 +37,11 @@ def brute_nv(hosts: list[str], threads: int = 10, verbose: bool = False):
     if len(vuln) > 0:
         print("TFTP files were found:")
         for k,v in vuln.items():
-            print(f"{k}:69:")
+            print(f"{k}:")
             for a in v:
                 print(f"    {a}")
         
-        if output:
-            with open(output, "a") as file:
-                print("TFTP files were found:", file=file)
-                for k,v in vuln.items():
-                    print(f"{k}:69:", file=file)
-                    for a in v:
-                        print(f"    {a}", file=file)
+
         
 
 def brute_console(args):
