@@ -28,6 +28,7 @@ setup(
         "pymssql",
         "asyncssh[bcrypt]",
         "colorama",
+        "pymysql",
     ],
     classifiers=[
         "Programming Language :: Python :: 3",

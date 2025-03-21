@@ -158,8 +158,6 @@ def helper_parse(commandparser):
     parser_post.add_argument("-u", "--username", type=str, required=True, help="Username")
     parser_post.add_argument("-p", "--password", type=str, required=True, help="Password")
     parser_post.add_argument("-d", "--domain", type=str, required=False, help="Domain for windows authentication")
-    parser_post.add_argument("--threads", default=10, type=int, help="Number of threads (Default = 10)")
-    parser_post.add_argument("--timeout", default=5, type=int, help="Timeout in seconds (Default = 5)")
     parser_post.add_argument("-e", "--errors", action="store_true", help="Enable errors")
     parser_post.add_argument("-v", "--verbose", action="store_true", help="Enable verbose")
     parser_post.set_defaults(func=post_console)
