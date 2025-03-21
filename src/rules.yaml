@@ -2104,3 +2104,10 @@
   id: 34
   plugin-ids: [140770]
   # 140770 - HP iLO 3 < 1.93 / HP iLO 4 < 2.75 / HP iLO Superdome 4 < 1.64 / HP iLO 5 < 2.18 / HP Moonshot/Edgeline iLO 5 < 2.30 Ripple20 Multiple vulnerabilities
+
+- name: Jenkins
+  id: 35
+  plugin-ids: [193426, 208098, 205143]
+  # 193426 - Jenkins LTS < 2.440.3 / Jenkins weekly < 2.452
+  # 208098 - Jenkins LTS < 2.462.3 / Jenkins weekly < 2.479 Multiple Vulnerabilities
+  # 205143 - Jenkins LTS < 2.452.4 / Jenkins weekly < 2.471 Multiple Vulnerabilities
