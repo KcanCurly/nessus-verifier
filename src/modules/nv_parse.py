@@ -164,7 +164,7 @@ def group_up(l: list[NessusScanOutput]):
         
         # No rule in rules.yaml so we make its own rule if its not on info severity
         if not found and n.severity != "0":
-            new_rule = GroupNessusScanOutput(available_id, [n.plugin_id], n.name)
+            new_rule = GroupNessusScanOutput(available_id, [n.plugin_id], [], {}, n.name)
             new_rule.add_host(n.name, n.plugin_id, n.host_port)
             rules.append(new_rule)
             available_id = available_id + 1
