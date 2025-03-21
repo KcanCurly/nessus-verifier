@@ -64,7 +64,7 @@ json_output: list[GroupNessusScanOutput] = []
 def main():
     # Create the main parser
     parser = argparse.ArgumentParser(description="Nessus identified vulnerabilities solver.")
-    parser.add_argument("-c", "--config", type=str, default="nv-config.toml", help="Config file (default: nv-config.toml).")
+    parser.add_argument("-c", "--config", type=str, required=False, default="nv-config.toml", help="Config file (default: nv-config.toml).")
     parser.add_argument("-v", "--verbose", action="count", default=0, help="Increase verbosity level (-v, -vv, -vvv, -vvvv, -vvvvvv)")
     parser.add_argument("--debug", action="store_true", help="Enable debug mode")
     subparsers = parser.add_subparsers(dest="command", help="Available subcommands")
@@ -74,7 +74,7 @@ def main():
     parser_config.set_defaults(func=create_config_file)
 
     parser_all = subparsers.add_parser("all", help="Runs all solvers from json file")
-    parser_all.add_argument("-f", "--file", type=str, default="output.ndjson", help="json file name (Default = output.ndjson)")
+    parser_all.add_argument("-f", "--file", type=str, required=False, default="output.ndjson", help="json file name (Default = output.ndjson)")
     parser_all.set_defaults(func=all_solver)
     parser_all.set_defaults(ignore_fail=True)
 
