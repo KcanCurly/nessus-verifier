@@ -47,8 +47,9 @@ def fetch_all_databases_and_tables(host, username, password):
         print(f"Error: {err}")
 
     finally:
-        if cursor: cursor.close()
-        if conn: conn.close()
+        if conn:
+            cursor.close()
+            conn.close()
 
 def post_nv(hosts: list[str], username: str, password: str, error:bool = False):
     for host in hosts:
