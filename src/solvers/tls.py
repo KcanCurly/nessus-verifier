@@ -31,7 +31,7 @@ allow_white_ciphers = true
 """
 
 def helper_parse(subparser):
-    parser_task1 = subparser.add_parser(str(code), help="TLS Misconfigurations (Version and Ciphers)")
+    parser_task1 = subparser.add_parser(str(code), help="TLS Misconfigurations")
     group = parser_task1.add_mutually_exclusive_group(required=True)
     group.add_argument("-f", "--file", type=str, help="JSON file")
     group.add_argument("-lf", "--list-file", type=str, help="List file")
@@ -39,7 +39,7 @@ def helper_parse(subparser):
     parser_task1.set_defaults(func=solve)
     
 
-def tls_single(single_progress: Progress, single_task_id: TaskID, console: Console, host: str, allow_white_ciphers: bool, output: str, timeout: int, verbose: bool):
+def tls_single(console: Console, host: str, allow_white_ciphers: bool, timeout: int, verbose: bool):
     try:
         ip = host.split(":")[0]
         port  = host.split(":")[1]
@@ -52,18 +52,13 @@ def tls_single(single_progress: Progress, single_task_id: TaskID, console: Conso
         is_wrong_host = False
         is_cert_expired = ""
         
-        single_progress.start_task(single_task_id)
-        single_progress.update(single_task_id, status="Running")
-        
         command = ["sslscan", "--no-fallback", "--no-renegotiation", "--no-group", "--no-heartbleed", "--iana-names", f"--connect-timeout={timeout}", host]
         result = subprocess.run(command, text=True, capture_output=True)
         
         # Fail conditions
         if "Connection refused" in result.stderr:
-            single_progress.update(single_task_id, status=f"[red]Command Failed: Connection Refused[/red]", advance=1)
             return TLS_Vuln_Data(host, weak_versions, weak_ciphers, weak_bits, is_wrong_host, is_cert_expired)
         if "enabled" not in result.stdout:
-            single_progress.update(single_task_id, status=f"[red]Command Failed: No SSL detected[/red]", advance=1)
             return TLS_Vuln_Data(host, weak_versions, weak_ciphers, weak_bits, is_wrong_host, is_cert_expired)
 
         expired_match = re.search(expired_cert_re, result.stdout)
@@ -126,7 +121,7 @@ def tls_single(single_progress: Progress, single_task_id: TaskID, console: Conso
                             if host not in weak_bits:
                                 weak_bits[host] = set()
                             weak_bits[host].add(re.sub(r'^\x1b\[[0-9;]*m', '', bit) + "->" + re.sub(r'^\x1b\[[0-9;]*m', '', cipher))
-    except Exception as e: single_progress.update(single_task_id, status=f"[red]Failed: {e}[/red]", advance=1)
+    except Exception as e: pass
                    
     
     try:
@@ -139,10 +134,9 @@ def tls_single(single_progress: Progress, single_task_id: TaskID, console: Conso
             is_wrong_host = True
     except Exception: pass
     
-    single_progress.update(single_task_id, status="[green]Successfully processed[/green]", advance=1)
     return TLS_Vuln_Data(host, weak_versions, weak_ciphers, weak_bits, is_wrong_host, is_cert_expired)
 
-def tls_nv(l: list[str], allow_white_ciphers: bool, output: str = None, threads: int = 10, timeout: int = 3, verbose: bool = False, disable_visual_on_complete: bool = False, only_show_progress: bool = False):
+def tls_nv(l: list[str], allow_white_ciphers: bool, threads: int = 10, timeout: int = 3, verbose: bool = False):
     weak_versions = {}
     weak_ciphers = {}
     weak_bits = {}
@@ -150,24 +144,18 @@ def tls_nv(l: list[str], allow_white_ciphers: bool, output: str = None, threads:
     expired_cert_hosts = []
     
     overall_progress = get_classic_overall_progress()
-    single_progress = get_classic_single_progress()
     overall_task_id = overall_progress.add_task("", start=False, modulename="TLS Misconfigurations")
     console = get_classic_console(force_terminal=True)
-    
-    progress_group = Group(
-        Panel(single_progress, title="TLS Misconfigurations", expand=False),
-        overall_progress,
-    ) if not only_show_progress else Group(overall_progress)
-    
-    with Live(progress_group, console=console):
+
+    with Live(overall_progress, console=console):
         overall_progress.update(overall_task_id, total=len(l), completed=0)
         overall_progress.start_task(overall_task_id)
         futures = []
         results: list[TLS_Vuln_Data] = []
         with ThreadPoolExecutor(threads) as executor:
             for host in l:
-                single_task_id = single_progress.add_task("single", start=False, host=host, status="status", total=1)
-                future = executor.submit(tls_single, single_progress, single_task_id, console, host, allow_white_ciphers, output, timeout, verbose)
+
+                future = executor.submit(tls_single, console, host, allow_white_ciphers, timeout, verbose)
                 futures.append(future)
             for a in as_completed(futures):
                 overall_progress.update(overall_task_id, advance=1)
@@ -232,4 +220,4 @@ def solve(args, is_all = False):
             data = tomllib.load(f)
             args.allow_white_ciphers = data[str(code)]["allow_white_ciphers"]
         
-    tls_nv(hosts, args.allow_white_ciphers, disable_visual_on_complete=args.disable_visual_on_complete, only_show_progress=args.only_show_progress)
+    tls_nv(hosts, args.allow_white_ciphers)
