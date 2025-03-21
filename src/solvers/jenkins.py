@@ -22,12 +22,12 @@ class Version_Vuln_Data():
 def version_single(host: str, timeout: int, verbose: bool):
     try:
         try:
-            resp = requests.get(f"https://{host}/json/login_session", allow_redirects=True, verify=False, timeout=timeout)
+            resp = requests.get(f"https://{host}", allow_redirects=True, verify=False, timeout=timeout)
         except:
             try:
-                resp = requests.get(f"http://{host}/json/login_session", allow_redirects=True, verify=False, timeout=timeout)
+                resp = requests.get(f"http://{host}", allow_redirects=True, verify=False, timeout=timeout)
             except: return
-        print(resp.text)
+
         m = re.search(r, resp.text)
         if m: return  Version_Vuln_Data(host, m.group(0))
 
