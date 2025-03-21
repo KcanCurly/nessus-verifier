@@ -5,11 +5,13 @@ import pymysql
 def fetch_all_databases_and_tables(host, username, password):
     """Connects to MySQL, iterates over all databases, retrieves tables, and prints the first 10 rows."""
     try:
+        ip, port = host.split(":")
         # Connect to MySQL without selecting a database initially
         conn = pymysql.connect(
-            host=host,
+            host=ip,
             user=username,
-            password=password
+            password=password,
+            port=int(port)
         )
         cursor = conn.cursor()
 
@@ -47,9 +49,10 @@ def fetch_all_databases_and_tables(host, username, password):
         print(f"Error: {err}")
 
     finally:
-        if conn:
+        if cursor is not None:
             cursor.close()
-            conn.close()
+            if conn.is_connected():
+                conn.close()
 
 def post_nv(hosts: list[str], username: str, password: str, error:bool = False):
     for host in hosts:
