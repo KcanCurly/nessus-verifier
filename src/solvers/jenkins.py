@@ -12,7 +12,7 @@ def get_default_config():
 ["35"]
 """
 
-r = r"Jenkins-Version: \S+"
+r = r"Jenkins-Version: (\S+)"
 
 class Version_Vuln_Data():
     def __init__(self, host: str, version: str):
@@ -29,7 +29,7 @@ def version_single(host: str, timeout: int, verbose: bool):
             except: return
 
         m = re.search(r, resp.text)
-        if m: return  Version_Vuln_Data(host, m.group(0))
+        if m: return  Version_Vuln_Data(host, m.group(1))
 
     except:return
 
