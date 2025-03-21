@@ -161,7 +161,10 @@
   5996, 6623, 6832, 6333, 700682, 700672, 5327, 5882, 6624, 5791, 700684, 700690, 700711, 5816, 
   6644, 5794, 5795, 6334, 5790, 6331, 800623, 800618, 800604, 800598, 800625, 800595, 4621, 800610, 800630, 
   800596, 800600, 800630, 800599, 800621, 800619, 800627, 800784, 800626, 800611, 800597, 800608, 
-  800622, 800602, 800617, 800609, 800612, 800783, 800620, 800605, 800606, 201848, 213078, 232528]
+  800622, 800602, 800617, 800609, 800612, 800783, 800620, 800605, 800606, 201848, 213078, 232528, 211503,
+  186366]
+  # 186366 - Apache Tomcat 10.1.0.M1 < 10.1.16
+  # 211503 - Apache Tomcat 9.0.92 < 9.0.96 multiple vulnerabilities
   # 232528 - Apache Tomcat 9.0.0.M1 < 9.0.99
   # 171342 - Apache Tomcat SEoL (8.0.x)
   # 178943 - Apache Tomcat SEoL (8.5.x)
@@ -667,7 +670,8 @@
   800590, 800584, 800562, 800583, 800578, 800961, 801383, 800558, 800559, 801401, 700509, 1625, 2254, 
   3112, 2276, 9486, 9908, 2309, 8937, 8165, 9394, 8970, 1443, 4712, 1489, 5111, 2173, 4579, 3360, 5196, 
   4385, 5356, 3358, 1498, 5615, 8343, 1498, 2175, 1497, 6302, 6550, 6793, 6942, 6062, 800571, 6021, 
-  800582, 6576, 2290, 8587, 800555, 6700, 6701, 800568, 84959, 122060, 121355, 123642]
+  800582, 6576, 2290, 8587, 800555, 6700, 6701, 800568, 84959, 122060, 121355, 123642, 153586]
+  # 153586 - Apache >= 2.4.30 < 2.4.49 mod_proxy_uwsgi
   # 123642 - Apache 2.4.x < 2.4.39 Multiple Vulnerabilities
   # 121355 - Apache 2.4.x < 2.4.38 Multiple Vulnerabilities
   # 122060 - Apache 2.4.x < 2.4.33 Multiple Vulnerabilities
@@ -1800,3 +1804,303 @@
   id: 31
   plugin-ids: [10079]
   # 10079 - Anonymous FTP Enabled
+
+- name: OpenSSL
+  id: 32
+  plugin-ids: [182308, 200200, 152782, 171079, 201084, 160477, 125641, 162420, 158974, 209149, 157228, 181288, 
+  144047, 162721, 121385, 173260, 192965, 184811, 178475, 148125, 128116, 148402, 121384, 132725, 128115, 128117, 
+  157231, 121383, 200206, 146591, 158975, 160480, 158973, 144053, 132726, 162418, 146374, 125642, 162419, 156100, 
+  162720, 152780, 201081, 201086, 201085, 201081, 201086, 173267, 173268, 160473, 17767, 209151, 209152, 182213, 
+  183890, 183891, 93815, 90888, 90891, 88529, 73404, 56996, 80567, 80568, 78552, 64533, 51919, 58565, 58799, 17748, 
+  17749, 105292, 97328, 96873, 200205, 73403, 200198, 84636, 84637, 209150, 178476, 200193, 200203, 200204, 17745, 
+  17746, 17760, 57459, 77086, 77087, 58801, 84153, 135919, 84151, 17752, 96874, 109945, 162673, 166047, 87222, 45359, 
+  17763, 182305, 182320, 182259, 178477, 181290, 185160, 187783, 17754, 17757, 17762, 17764, 17768, 197189, 77088, 
+  78553, 197189, 200208, 200212, 201082, 57711, 57712, 17756, 82030, 82033, 93814, 166773, 122504, 192974, 192967, 
+  200194, 209153, 209154, 182210, 178478, 71857, 84152, 58564, 59076, 59077, 104408, 104409, 64532, 64534, 64620, 
+  17751, 17755, 17761, 17770, 200192, 200199, 200201, 201087, 112119, 89081, 93787, 71856, 84154, 171080, 17798, 
+  93816, 74364, 87219, 87220, 90890, 82031, 82032, 200196, 17766, 46801, 209151, 209152, 182220, 182319, 184812, 
+  185161, 17753, 17759, 200197, 200202, 200207, 112120, 59078, 80566, 56162, 90889, 45039, 57460, 93786, 94963, 
+  78554, 168829, 105291, 173263, 74363, 71856, 200196, 17766, 46801, 17707, 181289, 9626, 4221, 8663, 3755, 5487,
+  5559, 2183, 9628, 700523, 5782, 5358, 8663, 6868, 4521, 9971, 9465, 9800, 9463, 801060, 5358, 8791, 9934, 6400, 6400,
+   9465, 9800, 9463, 6288, 8617, 5720, 9627, 8661, 9933, 801053, 9466, 8253, 9390, 6022, 9461, 8662, 11060, 12110, 8064, 
+   801056, 801057, 801062, 801936, 801056, 9625, 11267, 11267, 801061, 9128, 801619, 801059, 801064, 801938, 801067,
+    801054, 801052, 801935, 801065, 801963, 801055, ]
+  # 182308 - OpenSSL SEoL (1.1.1.x)
+  # 200200 - OpenSSL 1.1.1 < 1.1.1e Vulnerability
+  # 152782 - OpenSSL 1.1.1 < 1.1.1l Multiple Vulnerabilities
+  # 171079 - OpenSSL 1.1.1 < 1.1.1t Multiple Vulnerabilities
+  # 201084 - OpenSSL 1.1.1 < 1.1.1za Vulnerability
+  # 160477 - OpenSSL 1.1.1 < 1.1.1o Vulnerability
+  # 125641 - OpenSSL 1.1.1 < 1.1.1c Vulnerability
+  # 162420 - OpenSSL 1.1.1 < 1.1.1p Vulnerability
+  # 158974 - OpenSSL 1.1.1 < 1.1.1n Vulnerability
+  # 209149 - OpenSSL 1.1.1 < 1.1.1zb Vulnerability
+  # 157228 - OpenSSL 1.1.1 < 1.1.1m Vulnerability
+  # 181288 - OpenSSL 1.1.1 < 1.1.1w Vulnerability
+  # 144047 - OpenSSL 1.1.1 < 1.1.1i Vulnerability
+  # 162721 - OpenSSL 1.1.1 < 1.1.1q Vulnerability
+  # 121385 - OpenSSL 1.1.1 < 1.1.1a Multiple Vulnerabilities
+  # 173260 - OpenSSL 1.1.1 < 1.1.1u Multiple Vulnerabilities
+  # 192965 - OpenSSL 1.1.1 < 1.1.1y Multiple Vulnerabilities
+  # 184811 - OpenSSL 1.1.1 < 1.1.1x Multiple Vulnerabilities
+  # 178475 - OpenSSL 1.1.1 < 1.1.1v Multiple Vulnerabilities
+  # 148125 - OpenSSL 1.1.1 < 1.1.1k Multiple Vulnerabilities
+  # 128116 - OpenSSL 1.1.1 < 1.1.1d Multiple Vulnerabilities
+  # 148402 - OpenSSL 1.1.1 < 1.1.1j Multiple Vulnerabilities
+  # 121384 - OpenSSL 1.1.0 < 1.1.0j Multiple Vulnerabilities
+  # 132725 - OpenSSL 1.1.1 < 1.1.1e-dev Procedure Overflow Vulnerability
+  # 128115 - OpenSSL 1.0.2 < 1.0.2t Multiple Vulnerabilities
+  # 128117 - OpenSSL 1.1.0 < 1.1.0l Multiple Vulnerabilities
+  # 157231 - OpenSSL 1.0.2 < 1.0.2zc-dev Vulnerability
+  # 121383 - OpenSSL 1.0.2 < 1.0.2q Multiple Vulnerabilities
+  # 200206 - OpenSSL 1.0.2 < 1.0.2zc Vulnerability
+  # 146591 - OpenSSL 1.0.2 < 1.0.2y Multiple Vulnerabilities
+  # 158975 - OpenSSL 3.0.0 < 3.0.2 Vulnerability
+  # 160480 - OpenSSL 1.0.2 < 1.0.2ze Vulnerability
+  # 158973 - OpenSSL 1.0.2 < 1.0.2zd Vulnerability
+  # 144053 - OpenSSL 1.0.2 < 1.0.2x Vulnerability
+  # 132726 - OpenSSL 1.0.2 < 1.0.2u Vulnerability
+  # 162418 - OpenSSL 3.0.0 < 3.0.4 Vulnerability
+  # 146374 - OpenSSL 1.0.2 < 1.0.2w Vulnerability
+  # 125642 - OpenSSL 1.1.0 < 1.1.0k Vulnerability
+  # 162419 - OpenSSL 1.0.2 < 1.0.2zf Vulnerability
+  # 156100 - OpenSSL 3.0.0 < 3.0.1 Multiple Vulnerabilities
+  # 162720 - OpenSSL 3.0.0 < 3.0.5 Multiple Vulnerabilities
+  # 152780 - OpenSSL 1.0.2 < 1.0.2za Vulnerability
+  # 201081 - OpenSSL 3.2.0 < 3.2.3 Vulnerability
+  # 201086 - OpenSSL 1.0.2 < 1.0.2zk Vulnerability
+  # 201085 - OpenSSL 3.0.0 < 3.0.15 Vulnerability
+  # 201081 - OpenSSL 3.2.0 < 3.2.3 Vulnerability
+  # 201086 - OpenSSL 1.0.2 < 1.0.2zk Vulnerability
+  # 173267 - OpenSSL 3.1.0 < 3.1.1 Multiple Vulnerabilities
+  # 173268 - OpenSSL 1.0.2 < 1.0.2zh Multiple Vulnerabilities
+  # 160473 - OpenSSL 3.0.0 < 3.0.3 Multiple Vulnerabilities
+  # 17767 - OpenSSL < 0.9.8p / 1.0.0e Double Free Vulnerability
+  # 209151 - OpenSSL 3.3.0 < 3.3.3 Vulnerability
+  # 209152 - OpenSSL 1.0.2 < 1.0.2zl Vulnerability
+  # 182213 - OpenSSL SEoL (1.0.1.x)
+  # 183890 - OpenSSL 3.1.0 < 3.1.4 Vulnerability
+  # 183891 - OpenSSL 3.0.0 < 3.0.12 Multiple Vulnerabilities
+  # 93815 - OpenSSL 1.0.2 < 1.0.2i Multiple Vulnerabilities
+  # 90888 - OpenSSL 1.0.1 < 1.0.1o Vulnerability
+  # 90891 - OpenSSL 1.0.2 < 1.0.2h Multiple Vulnerabilities
+  # 88529 - OpenSSL 1.0.1 < 1.0.1r Vulnerability
+  # 73404 - OpenSSL 1.0.1 < 1.0.1g Multiple Vulnerabilities
+  # 56996 - OpenSSL 0.9.8f < 0.9.8h Multiple Vulnerabilities
+  # 80567 - OpenSSL 1.0.0 < 1.0.0p Multiple Vulnerabilities
+  # 80568 - OpenSSL 1.0.1 < 1.0.1k Multiple Vulnerabilities
+  # 78552 - OpenSSL 0.9.8 < 0.9.8zc Multiple Vulnerabilities
+  # 64533 - OpenSSL 1.0.0 < 1.0.0k Multiple Vulnerabilities
+  # 51919 - OpenSSL 1.0.0 < 1.0.0d Vulnerability
+  # 58565 - OpenSSL 1.0.0 < 1.0.0h Vulnerability
+  # 58799 - OpenSSL 0.9.8 < 0.9.8v Vulnerability
+  # 17748 - OpenSSL 0.9.6 < 0.9.6k Multiple Vulnerabilities
+  # 17749 - OpenSSL 0.9.6k < 0.9.6l Vulnerability
+  # 105292 - OpenSSL 1.1.0 < 1.1.0h Multiple Vulnerabilities
+  # 97328 - OpenSSL 1.1.0 < 1.1.0e Vulnerability
+  # 96873 - OpenSSL 1.0.2 < 1.0.2k Multiple Vulnerabilities
+  # 200205 - OpenSSL 0.9.7 < 0.9.7l Multiple Vulnerabilities
+  # 73403 - OpenSSL 1.0.0 < 1.0.0m Multiple Vulnerabilities
+  # 200198 - OpenSSL 0.9.6c < 0.9.6m Vulnerability
+  # 84636 - OpenSSL 1.0.1 < 1.0.1p Multiple Vulnerabilities
+  # 84637 - OpenSSL 1.0.2 < 1.0.2d Multiple Vulnerabilities
+  # 209150 - OpenSSL 3.0.0 < 3.0.16 Vulnerability
+  # 178476 - OpenSSL 1.0.2 < 1.0.2zi Multiple Vulnerabilities
+  # 200193 - OpenSSL 0.9.8h < 0.9.8r Vulnerability
+  # 200203 - OpenSSL 0.9.6 < 0.9.6d Vulnerability
+  # 200204 - OpenSSL 0.9.8 < 0.9.8q Vulnerability
+  # 17745 - OpenSSL < 0.9.6b Predictable Random Generator
+  # 17746 - OpenSSL 0.9.6 < 0.9.6e Multiple Vulnerabilities
+  # 17760 - OpenSSL 0.9.8 < 0.9.8f Multiple Vulnerabilities
+  # 57459 - OpenSSL 0.9.8 < 0.9.8s Multiple Vulnerabilities
+  # 77086 - OpenSSL 0.9.8 < 0.9.8zb Multiple Vulnerabilities
+  # 77087 - OpenSSL 1.0.0 < 1.0.0n Multiple Vulnerabilities
+  # 58801 - OpenSSL 1.0.1 < 1.0.1a Vulnerability
+  # 84153 - OpenSSL 1.0.1 < 1.0.1n Multiple Vulnerabilities
+  # 135919 - OpenSSL 1.1.1d < 1.1.1g Vulnerability
+  # 84151 - OpenSSL 0.9.8 < 0.9.8zg Multiple Vulnerabilities
+  # 17752 - OpenSSL < 0.9.7-beta3 Buffer Overflow
+  # 96874 - OpenSSL 1.1.0 < 1.1.0d Multiple Vulnerabilities
+  # 109945 - OpenSSL 1.0.2b < 1.0.2o Vulnerability
+  # 162673 - OpenSSL 3.0.4 < 3.0.5-dev Vulnerability
+  # 166047 - OpenSSL 3.0.0 < 3.0.6 Vulnerability
+  # 87222 - OpenSSL 1.0.2 < 1.0.2e Multiple Vulnerabilities
+  # 45359 - OpenSSL 0.9.8 < 0.9.8n Multiple Vulnerabilities
+  # 17763 - OpenSSL 0.9.8 < 0.9.8k Multiple Vulnerabilities
+  # 182305 - OpenSSL SEoL (1.0.0.x)
+  # 182320 - OpenSSL SEoL (3.0.x)
+  # 182259 - OpenSSL SEoL (1.0.2.x)
+  # 178477 - OpenSSL 3.1.0 < 3.1.2 Multiple Vulnerabilities
+  # 181290 - OpenSSL 3.1.0 < 3.1.3 Vulnerability
+  # 185160 - OpenSSL 3.0.0 < 3.0.13 Multiple Vulnerabilities
+  # 187783 - OpenSSL 3.2.0 < 3.2.1 Multiple Vulnerabilities
+  # 17754 - OpenSSL 0.9.7 < 0.9.7f Vulnerability
+  # 17757 - OpenSSL < 0.9.7l / 0.9.8d Multiple Vulnerabilities
+  # 17762 - OpenSSL 0.9.8 < 0.9.8j Vulnerability
+  # 17764 - OpenSSL < 0.9.8k Signature Repudiation
+  # 17768 - OpenSSL 1.0.0 < 1.0.0-beta2 DoS
+  # 197189 - OpenSSL 3.3.0 < 3.3.1 Multiple Vulnerabilities
+  # 77088 - OpenSSL 1.0.1 < 1.0.1i Multiple Vulnerabilities
+  # 78553 - OpenSSL 1.0.0 < 1.0.0o Multiple Vulnerabilities
+  # 197189 - OpenSSL 3.3.0 < 3.3.1 Multiple Vulnerabilities
+  # 200208 - OpenSSL 0.9.8 < 0.9.8a Vulnerability
+  # 200212 - OpenSSL 0.9.7 < 0.9.7h Vulnerability
+  # 201082 - OpenSSL 3.1.0 < 3.1.7 Vulnerability
+  # 57711 - OpenSSL 0.9.8s < 0.9.8t Vulnerability
+  # 57712 - OpenSSL 1.0.0f < 1.0.0g Vulnerability
+  # 17756 - OpenSSL < 0.9.7k / 0.9.8c PKCS Padding RSA Signature Forgery Vulnerability
+  # 82030 - OpenSSL 0.9.8 < 0.9.8zf Multiple Vulnerabilities
+  # 82033 - OpenSSL 1.0.2 < 1.0.2a Multiple Vulnerabilities
+  # 93814 - OpenSSL 1.0.1 < 1.0.1u Multiple Vulnerabilities
+  # 166773 - OpenSSL 3.0.0 < 3.0.7 Multiple Vulnerabilities
+  # 122504 - OpenSSL 1.0.2 < 1.0.2r Vulnerability
+  # 192974 - OpenSSL 3.1.0 < 3.1.6 Multiple Vulnerabilities
+  # 192967 - OpenSSL 3.2.0 < 3.2.2 Multiple Vulnerabilities
+  # 200194 - OpenSSL 1.0.0 < 1.0.0b Vulnerability
+  # 209153 - OpenSSL 3.2.0 < 3.2.4 Vulnerability
+  # 209154 - OpenSSL 3.1.0 < 3.1.8 Vulnerability
+  # 182210 - OpenSSL SEoL (3.1.x)
+  # 178478 - OpenSSL 3.0.0 < 3.0.10 Multiple Vulnerabilities
+  # 71857 - OpenSSL 1.0.1 < 1.0.1f Multiple Vulnerabilities
+  # 84152 - OpenSSL 1.0.0 < 1.0.0s Multiple Vulnerabilities
+  # 58564 - OpenSSL 0.9.8 < 0.9.8u Vulnerability
+  # 59076 - OpenSSL 0.9.8 < 0.9.8x Vulnerability
+  # 59077 - OpenSSL 1.0.0 < 1.0.0j Vulnerability
+  # 104408 - OpenSSL 1.0.2 < 1.0.2m Multiple Vulnerabilities
+  # 104409 - OpenSSL 1.1.0 < 1.1.0g Multiple Vulnerabilities
+  # 64532 - OpenSSL 0.9.8 < 0.9.8y Multiple Vulnerabilities
+  # 64534 - OpenSSL 1.0.1 < 1.0.1d Multiple Vulnerabilities
+  # 64620 - OpenSSL 1.0.1 < 1.0.1e Information Disclosure
+  # 17751 - OpenSSL 0.9.6 CA Basic Constraints Validation Vulnerability
+  # 17755 - OpenSSL < 0.9.7h / 0.9.8a Protocol Version Rollback
+  # 17761 - OpenSSL 0.9.8 < 0.9.8i Vulnerability
+  # 17770 - OpenSSL < vA.00.09.07l on HP-UX Local Denial of Service
+  # 200192 - OpenSSL 0.9.8v < 0.9.8w Vulnerability
+  # 200199 - OpenSSL 0.9.7 < 0.9.7b Multiple Vulnerabilities
+  # 200201 - OpenSSL 0.9.6 < 0.9.6j Multiple Vulnerabilities
+  # 201087 - OpenSSL 3.3.0 < 3.3.2 Vulnerability
+  # 112119 - OpenSSL 1.0.2 < 1.0.2p Multiple Vulnerabilities
+  # 89081 - OpenSSL 1.0.1 < 1.0.1s Multiple Vulnerabilities
+  # 93787 - OpenSSL 1.1.0a < 1.1.0b Vulnerability
+  # 71856 - OpenSSL 1.0.0 < 1.0.0l Vulnerability
+  # 84154 - OpenSSL 1.0.2 < 1.0.2b Multiple Vulnerabilities
+  # 171080 - OpenSSL 1.0.2 < 1.0.2zg Multiple Vulnerabilities
+  # 17798 - OpenSSL < 0.9.2b Session Reuse
+  # 93816 - OpenSSL 1.1.0 < 1.1.0a Multiple Vulnerabilities
+  # 74364 - OpenSSL 1.0.1 < 1.0.1h Multiple Vulnerabilities
+  # 87219 - OpenSSL 0.9.8 < 0.9.8zh Vulnerability
+  # 87220 - OpenSSL 1.0.0 < 1.0.0t Multiple Vulnerabilities
+  # 90890 - OpenSSL 1.0.1 < 1.0.1t Multiple Vulnerabilities
+  # 82031 - OpenSSL 1.0.0 < 1.0.0r Multiple Vulnerabilities
+  # 82032 - OpenSSL 1.0.1 < 1.0.1m Multiple Vulnerabilities
+  # 200196 - OpenSSL 0.9.7 < 0.9.7d Multiple Vulnerabilities
+  # 17766 - OpenSSL < 0.9.8p / 1.0.0b Buffer Overflow
+  # 46801 - OpenSSL 1.0.0 < 1.0.0a Multiple Vulnerabilities
+  # 209151 - OpenSSL 3.3.0 < 3.3.3 Vulnerability
+  # 209152 - OpenSSL 1.0.2 < 1.0.2zl Vulnerability
+  # 182220 - OpenSSL SEoL (<= 0.9.8.x)
+  # 182319 - OpenSSL SEoL (1.1.0.x)
+  # 184812 - OpenSSL 1.0.2 < 1.0.2zj Multiple Vulnerabilities
+  # 185161 - OpenSSL 3.1.0 < 3.1.5 Multiple Vulnerabilities
+  # 17753 - OpenSSL 0.9.7 < 0.9.7c Multiple Vulnerabilities
+  # 17759 - OpenSSL < 0.9.8 Weak Default Configuration
+  # 200197 - OpenSSL 0.9.8 < 0.9.8d Multiple Vulnerabilities
+  # 200202 - OpenSSL 0.9.7 < 0.9.7a Vulnerability
+  # 200207 - OpenSSL 0.9.6 < 0.9.6i Vulnerability
+  # 112120 - OpenSSL 1.1.0 < 1.1.0i Multiple Vulnerabilities
+  # 59078 - OpenSSL 1.0.1 < 1.0.1c Vulnerability
+  # 80566 - OpenSSL 0.9.8 < 0.9.8zd Multiple Vulnerabilities
+  # 56162 - OpenSSL 1.0.0 < 1.0.0e Multiple Vulnerabilities
+  # 90889 - OpenSSL 1.0.2 < 1.0.2c Vulnerability
+  # 45039 - OpenSSL 0.9.8 < 0.9.8m Multiple Vulnerabilities
+  # 57460 - OpenSSL 1.0.0 < 1.0.0f Multiple Vulnerabilities
+  # 93786 - OpenSSL 1.0.2i < 1.0.2j Vulnerability
+  # 94963 - OpenSSL 1.1.0 < 1.1.0c Multiple Vulnerabilities
+  # 78554 - OpenSSL 1.0.1 < 1.0.1j Multiple Vulnerabilities
+  # 168829 - OpenSSL 3.0.0 < 3.0.8 Multiple Vulnerabilities
+  # 105291 - OpenSSL 1.0.2 < 1.0.2n Multiple Vulnerabilities
+  # 173263 - OpenSSL 3.0.0 < 3.0.9 Multiple Vulnerabilities
+  # 74363 - OpenSSL 0.9.8 < 0.9.8za Multiple Vulnerabilities
+  # 71856 - OpenSSL 1.0.0 < 1.0.0l Vulnerability
+  # 200196 - OpenSSL 0.9.7 < 0.9.7d Multiple Vulnerabilities
+  # 17766 - OpenSSL < 0.9.8p / 1.0.0b Buffer Overflow
+  # 46801 - OpenSSL 1.0.0 < 1.0.0a Multiple Vulnerabilities
+  # 17707 - OpenSSL < 0.9.5a /dev/random Check Failure
+  # 181289 - OpenSSL 3.0.0 < 3.0.11 Vulnerability
+  # 9626 - OpenSSL < 1.1.0a Multiple Vulnerabilities
+  # 4221 - OpenSSL < 0.9.8f Multiple Vulnerabilities
+  # 8663 - OpenSSL <= 0.9.8f DoS
+  # 3755 - OpenSSL < 0.9.7l / 0.9.8d Multiple Vulnerabilities
+  # 5487 - OpenSSL < 0.9.8n Multiple Vulnerabilities
+  # 5559 - OpenSSL < 0.9.8o / 1.0.0a Multiple Vulnerabilities
+  # 2183 - OpenSSL < 0.9.6m / 0.9.7d Multiple DoS
+  # 9628 - OpenSSL 1.1.0 < 1.1.0b Multiple Vulnerabilities
+  # 700523 - OpenSSL 1.0.x < 1.0.2n DoS
+  # 5782 - OpenSSL < 0.9.8r / 1.0.0d OCSP Stapling DoS
+  # 5358 - OpenSSL < 0.9.8m Multiple Vulnerabilities
+  # 8663 - OpenSSL <= 0.9.8f DoS
+  # 6868 - OpenSSL < 0.9.8y / 1.0.1d / 1.0.0k Multiple Vulnerabilities
+  # 4521 - OpenSSL < 0.9.8h Multiple Vulnerabilities
+  # 9971 - OpenSSL 1.1.0 < 1.1.0e DoS
+  # 9465 - OpenSSL 1.0.2 < 1.0.2f Information Disclosure
+  # 9800 - OpenSSL 1.1.0 < 1.1.0c Multiple Vulnerabilities
+  # 9463 - OpenSSL 1.0.2 < 1.0.2e Multiple Vulnerabilities
+  # 801060 - OpenSSL < 0.9.8n Multiple Vulnerabilities
+  # 5358 - OpenSSL < 0.9.8m Multiple Vulnerabilities
+  # 8791 - OpenSSL 0.9.8 < 0.9.8zg / 1.0.0 < 1.0.0s Multiple Vulnerabilities
+  # 9934 - OpenSSL 1.0.2 < 1.0.2k Multiple Vulnerabilities
+  # 6400 - OpenSSL 0.9.8 < 0.9.8u / 1.0.0 < 1.0.0h Multiple Vulnerabilities
+  # 6400 - OpenSSL 0.9.8 < 0.9.8u / 1.0.0 < 1.0.0h Multiple Vulnerabilities
+  # 9465 - OpenSSL 1.0.2 < 1.0.2f Information Disclosure
+  # 9800 - OpenSSL 1.1.0 < 1.1.0c Multiple Vulnerabilities
+  # 9463 - OpenSSL 1.0.2 < 1.0.2e Multiple Vulnerabilities
+  # 6288 - OpenSSL 0.9.8s / 1.0.0f DTLS DoS
+  # 8617 - OpenSSL < 1.0.1k / < 1.0.0p / < 0.9.8zd Multiple Vulnerabilities
+  # 5720 - OpenSSL < 0.9.8q / 1.0.0c Multiple Vulnerabilities
+  # 9627 - OpenSSL 1.0.2 < 1.0.2j Multiple DoS
+  # 8661 - OpenSSL 1.0.2 < 1.0.2a Multiple Vulnerabilities
+  # 9933 - OpenSSL 1.1.0 < 1.1.0d Multiple Vulnerabilities
+  # 801053 - OpenSSL < 0.9.8r / 1.0.0d OCSP Stapling Denial of Service
+  # 9466 - OpenSSL 1.0.1 < 1.0.1s / 1.0.2 < 1.0.2g RCE
+  # 8253 - OpenSSL < 0.9.8za / < 1.0.0m / < 1.0.1h Multiple Vulnerabilities
+  # 9390 - OpenSSL 1.0.1 < 1.0.1t / 1.0.2 < 1.0.2h Multiple Vulnerabilities
+  # 6022 - OpenSSL 1.x < 1.0.0e Multiple Vulnerabilities
+  # 9461 - OpenSSL 0.9.x < 0.9.6 MitM (Crosswalk)
+  # 8662 - OpenSSL 0.9.8 < 0.9.8zf / 1.0.0 < 1.0.0r / 1.0.1 < 1.0.1m Multiple Vulnerabilities
+  # 11060 - OpenSSL < 0.9.6e / 0.9.7b3 Multiple Remote Vulnerabilities
+  # 12110 - OpenSSL < 0.9.6m / 0.9.7d Multiple Remote DoS
+  # 8064 - OpenSSL < 0.9.8x / < 1.0.0j / < 1.0.1c Remote Denial of Service Vulnerability
+  # 801056 - OpenSSL < 0.9.8f Multiple Vulnerabilities
+  # 801057 - OpenSSL < 0.9.8o / 1.0.0a Multiple Vulnerabilities
+  # 801062 - OpenSSL < 0.9.7l / 0.9.8d Multiple Vulnerabilities
+  # 801936 - OpenSSL < 0.9.8zd / 1.0.0p / 1.0.1k Key Decryption Vulnerability
+  # 801056 - OpenSSL < 0.9.8f Multiple Vulnerabilities
+  # 9625 - OpenSSL 1.0.1 < 1.0.1u / 1.0.2 < 1.0.2i Multiple Vulnerabilities
+  # 11267 - OpenSSL < 0.9.6j / 0.9.7b Multiple Vulnerabilities
+  # 11267 - OpenSSL < 0.9.6j / 0.9.7b Multiple Vulnerabilities
+  # 801061 - OpenSSL < 0.9.8h Multiple Vulnerabilities
+  # 9128 - OpenSSL 1.0.1 < 1.0.1s / 1.0.2 < 1.0.2g Multiple Vulnerabilities (DROWN)
+  # 801619 - OpenSSL < 0.9.8za / < 1.0.0m / < 1.0.1h Multiple Vulnerabilities
+  # 801059 - OpenSSL 0.9.8 < 0.9.8s / 1.x < 1.0.0f Multiple Vulnerabilities
+  # 801064 - OpenSSL < 0.9.8m Multiple Vulnerabilities
+  # 801938 - OpenSSL < 0.9.8za / 1.0.0m / 1.0.1h Integer Underflow Vulnerability
+  # 801067 - OpenSSL 0.9.8 < 0.9.8u / 1.0.0 < 1.0.0h Multiple Vulnerabilities
+  # 801054 - OpenSSL 0.9.8s / 1.0.0f DTLS Denial of Service
+  # 801052 - OpenSSL < 0.9.8y / 1.0.1d / 1.0.0k Multiple Vulnerabilities
+  # 801935 - OpenSSL < 1.0.2a Multiple Vulnerabilities
+  # 801065 - OpenSSL 1.x < 1.0.0e Multiple Vulnerabilities
+  # 801963 - OpenSSL 1.0.1 < 1.0.1s / 1.0.2 < 1.0.2g Multiple Vulnerabilities (DROWN)
+  # 801055 - OpenSSL < 0.9.8q / 1.0.0c Multiple Vulnerabilities
+
+- name: Web/CGI Generic
+  id: 33
+  plugin-ids: [10815, 44136, 39466, 49067]
+  # 10815 - Web Server Generic XSS
+  # 44136 - CGI Generic Cookie Injection Scripting
+  # 39466 - CGI Generic XSS (quick test)
+  # 49067 - CGI Generic HTML Injections (quick test)
+
+- name: HP iLO
+  id: 34
+  plugin-ids: [140770]
+  # 140770 - HP iLO 3 < 1.93 / HP iLO 4 < 2.75 / HP iLO Superdome 4 < 1.64 / HP iLO 5 < 2.18 / HP Moonshot/Edgeline iLO 5 < 2.30 Ripple20 Multiple vulnerabilities

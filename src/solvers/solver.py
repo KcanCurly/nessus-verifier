@@ -1,5 +1,6 @@
 import argparse
-from src.solvers import grafana, php, python, tls, kibana, elastic, mongo, oracle, smb, ssh, snmp, tomcat, apache, nginx, vmware, openssh, smtp_relay, mssql, idrac, ipmi, terminal, cleartext, ibmwebsphere, obsolete_protocols, postgresql, nopasswddb, actionables, ftp, ntp, nfs, queuejumper
+from src.solvers import grafana, hpilo, openssl, php, python, tls, kibana, elastic, mongo, oracle, smb, ssh, snmp, tomcat, apache, nginx, vmware, openssh, smtp_relay, mssql, idrac, ipmi, terminal, cleartext, ibmwebsphere, obsolete_protocols, postgresql, nopasswddb, actionables, ftp, ntp, nfs, queuejumper, \
+    openssl, webcgi_generic
 from src.modules.nv_parse import GroupNessusScanOutput
 
 solver_dict = {
@@ -35,6 +36,9 @@ solver_dict = {
     29: ibmwebsphere,
     30: postgresql,
     31: ftp,
+    32: openssl,
+    # 33: webcgi_generic,
+    34: hpilo, 
 }
 
 def all_solver(args):

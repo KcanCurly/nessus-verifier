@@ -9,7 +9,7 @@ args = parser.parse_args()
 l = []
 
 for page in range(1, args.pages+1):
-    url = f'https://www.tenable.com/plugins/search?q=MongoDB&sort=&page={page}'
+    url = f'https://www.tenable.com/plugins/search?q=OpenSSL+%221.1.1%22+%3C+%221.1.1%22&sort=&page={page}'
     response = requests.get(url)
     # Check if the request was successful
     if response.status_code == 200:

