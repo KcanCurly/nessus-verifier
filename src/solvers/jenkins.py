@@ -27,6 +27,7 @@ def version_single(host: str, timeout: int, verbose: bool):
             try:
                 resp = requests.get(f"http://{host}/json/login_session", allow_redirects=True, verify=False, timeout=timeout)
             except: return
+        print(resp.text)
         m = re.search(r, resp.text)
         if m: return  Version_Vuln_Data(host, m.group(0))
 
