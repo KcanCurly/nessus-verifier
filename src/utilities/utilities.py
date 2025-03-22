@@ -204,9 +204,9 @@ def add_default_parser_arguments(parser, add_target_argument = True):
     
 def get_url_response(url, timeout=5):
     try:
-        return requests.get(url, allow_redirects=True, verify=False, timeout=timeout)
+        return requests.get(f"http://{url}", allow_redirects=True, verify=False, timeout=timeout)
     except:
         try:
-            return requests.get(url, allow_redirects=True, verify=False, timeout=timeout)
+            return requests.get(f"https://{url}", allow_redirects=True, verify=False, timeout=timeout)
         except Exception as e:
             return None
