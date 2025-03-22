@@ -3,7 +3,7 @@ import re
 import ssl
 import socket
 import tomllib
-from src.utilities.utilities import find_scan, get_classic_single_progress, get_classic_overall_progress, get_classic_console
+from src.utilities.utilities import find_scan, get_classic_single_progress, get_classic_overall_progress, get_classic_console, get_default_context_execution
 from src.modules.nv_parse import GroupNessusScanOutput
 from src.utilities import logger
 from rich.live import Live
@@ -39,7 +39,7 @@ def helper_parse(subparser):
     parser_task1.set_defaults(func=solve)
     
 
-def tls_single(console: Console, host: str, allow_white_ciphers: bool, timeout: int, verbose: bool):
+def tls_single(host: str, allow_white_ciphers: bool, timeout: int, verbose: bool):
     try:
         ip = host.split(":")[0]
         port  = host.split(":")[1]
@@ -136,13 +136,16 @@ def tls_single(console: Console, host: str, allow_white_ciphers: bool, timeout: 
     
     return TLS_Vuln_Data(host, weak_versions, weak_ciphers, weak_bits, is_wrong_host, is_cert_expired)
 
-def tls_nv(l: list[str], allow_white_ciphers: bool, threads: int = 10, timeout: int = 3, verbose: bool = False):
+def tls_nv(hosts: list[str], allow_white_ciphers: bool, threads: int = 10, timeout: int = 3, verbose: bool = False):
     weak_versions = {}
     weak_ciphers = {}
     weak_bits = {}
     wrong_hosts = []
     expired_cert_hosts = []
-    
+    results: list[TLS_Vuln_Data] = get_default_context_execution("TLS Misconfigurations", threads, hosts, (tls_single, allow_white_ciphers, timeout, verbose))
+
+        
+    """
     overall_progress = get_classic_overall_progress()
     overall_task_id = overall_progress.add_task("", start=False, modulename="TLS Misconfigurations")
     console = get_classic_console(force_terminal=True)
@@ -151,7 +154,7 @@ def tls_nv(l: list[str], allow_white_ciphers: bool, threads: int = 10, timeout: 
         overall_progress.update(overall_task_id, total=len(l), completed=0)
         overall_progress.start_task(overall_task_id)
         futures = []
-        results: list[TLS_Vuln_Data] = []
+        
         with ThreadPoolExecutor(threads) as executor:
             for host in l:
 
@@ -160,6 +163,7 @@ def tls_nv(l: list[str], allow_white_ciphers: bool, threads: int = 10, timeout: 
             for a in as_completed(futures):
                 overall_progress.update(overall_task_id, advance=1)
                 results.append(a.result())
+    """
     for r in results:
         if not r: continue
         weak_versions.update(r.weak_versions)

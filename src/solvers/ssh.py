@@ -27,6 +27,7 @@ def solve(args, is_all = False):
             if not args.ignore_fail: print("No id found in json file")
             return
         hosts = scan.hosts
+        
     elif args.list_file:
         with open(args.list_file, 'r') as f:
             hosts = [line.strip() for line in f]

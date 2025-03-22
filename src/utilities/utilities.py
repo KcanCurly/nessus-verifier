@@ -9,6 +9,9 @@ from src.utilities import logger
 from rich.progress import TextColumn, Progress, BarColumn, TimeElapsedColumn, SpinnerColumn
 from rich.console import Console
 from rich.table import Column
+import contextlib
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from rich.live import Live
 
 def savetofile(path, message, mode = "a+"):
     with open(path, mode) as f:
@@ -138,7 +141,7 @@ def find_scan(file_path: str, target_id: int):
     with open(file_path, "r") as file:
         for line in file:
             g = GroupNessusScanOutput.from_json(json.loads(line))
-            if g.id == target_id: return g
+            if g.id == target_id and not len(g.hosts) == 0: return g
     return None  # If not found
 
 
@@ -169,3 +172,21 @@ def get_classic_overall_progress():
 
 def get_classic_console(force_terminal = False):
     return Console(force_terminal=force_terminal)
+
+def get_default_context_execution(module_name, threads, hosts, args):
+    overall_progress = get_classic_overall_progress()
+    overall_task_id = overall_progress.add_task("", start=False, modulename=module_name)
+    futures = []
+    results = []
+    """A reusable context manager to handle file, Live display, and thread execution."""
+    with Live(overall_progress) as live, ThreadPoolExecutor(threads) as executor:
+        overall_progress.update(overall_task_id, total=len(hosts), completed=0)
+        for host in hosts:
+            modified_args = (args[0], host) + args[1:]
+            future = executor.submit(*modified_args)
+            futures.append(future)
+        for a in as_completed(futures):
+            overall_progress.update(overall_task_id, advance=1)
+            results.append(a.result())
+            
+    return results

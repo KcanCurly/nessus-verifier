@@ -6,7 +6,7 @@ def default_nv(hosts, verbose=False):
     hosts = [entry.split(":")[0] for entry in hosts]
     result = ", ".join(hosts)
     vuln = {} 
-    command = ["msfconsole", "-q", "-x", f"color false; use auxiliary/scanner/snmp/snmp_login; set RHOSTS {result}; run; exit"]
+    command = ["msfconsole", "-q", "-x", f"color false; use auxiliary/scanner/snmp/snmp_login; set RHOSTS {result}; set ConnectTimeout 10; run; exit"]
     try:
         result = subprocess.run(command, text=True, capture_output=True)
         if verbose:
