@@ -44,8 +44,6 @@ solver_dict = {
 }
 
 def all_solver(args):
-    i
-    os.path.exists()
     for k,v in solver_dict.items():
         v.solve(args, is_all=True)
             

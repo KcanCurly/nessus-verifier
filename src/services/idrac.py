@@ -1,48 +1,31 @@
-from src.utilities.utilities import get_classic_overall_progress, get_classic_console, get_hosts_from_file
+from src.utilities.utilities import get_classic_overall_progress, get_classic_console, get_hosts_from_file, add_default_parser_arguments, get_default_context_execution
 from rich.live import Live
 from rich.console import Console
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import requests
 
-class Version_Vuln_Data():
+class iDRAC_Version_Vuln_Data():
     def __init__(self, host: str, version: str):
         self.host = host
         self.version = version
 
-def version_single(console: Console, host: str, output: str, timeout: int, verbose: bool):
+def version_single(host: str, timeout = 3, errors = False, verbose = False):
     try:
+        resp = requests.get(f"https://{host}/sysmgmt/2015/bmc/info", allow_redirects=True, verify=False, timeout=timeout)
+    except:
         try:
-            resp = requests.get(f"https://{host}/sysmgmt/2015/bmc/info", allow_redirects=True, verify=False, timeout=timeout)
-        except:
-            try:
-                resp = requests.get(f"http://{host}/sysmgmt/2015/bmc/info", allow_redirects=True, verify=False, timeout=timeout)
-            except: return
-        
-        version = resp.json()["Attributes"]["FwVer"]
-        return Version_Vuln_Data(host, version)
-    except:return
+            resp = requests.get(f"http://{host}/sysmgmt/2015/bmc/info", allow_redirects=True, verify=False, timeout=timeout)
+        except Exception as e:
+            if errors: print(e)
+            return
+    
+    version = resp.json()["Attributes"]["FwVer"]
+    return iDRAC_Version_Vuln_Data(host, version)
 
-def version_nv(hosts: list[str], output: str, threads: int, timeout: int, verbose: bool ):
+
+def version_nv(hosts: list[str], threads = 10, timeout = 3, errors = False, verbose = False):
+    results: list[iDRAC_Version_Vuln_Data] = get_default_context_execution("iDRAC Version", threads, hosts, (version_single, timeout, errors, verbose))
     versions = {}
-    
-    overall_progress = get_classic_overall_progress()
-
-    overall_task_id = overall_progress.add_task("", start=False, modulename="IDRAC Version")
-    console = get_classic_console(force_terminal=True)
-    
-
-    with Live(overall_progress, console=console):
-        overall_progress.update(overall_task_id, total=len(hosts), completed=0)
-        overall_progress.start_task(overall_task_id)
-        futures = []
-        results: list[Version_Vuln_Data] = []
-        with ThreadPoolExecutor(threads) as executor:
-            for host in hosts:
-                future = executor.submit(version_single, console, host, output, timeout, verbose)
-                futures.append(future)
-            for a in as_completed(futures):
-                overall_progress.update(overall_task_id, advance=1)
-                results.append(a.result())
                 
     for r in results:
         if not r: continue
@@ -58,17 +41,12 @@ def version_nv(hosts: list[str], output: str, threads: int, timeout: int, verbos
                 print(f"    {v}")
 
 def version_console(args):
-    version_nv(get_hosts_from_file(args.file), threads=args.threads, timeout=args.timeout, verbose=args.verbose)
+    version_nv(get_hosts_from_file(args.file), args.threads, args.timeout, args.errors, args.verbose)
 
-    
 def helper_parse(commandparser):    
     parser_task1 = commandparser.add_parser("idrac")
     subparsers = parser_task1.add_subparsers(dest="command")
     
     parser_version = subparsers.add_parser("version", help="Checks idrac version")
-    parser_version.add_argument("-f", "--file", type=str, required=True, help="input file name")
-    parser_version.add_argument("--threads", default=10, type=int, help="Number of threads (Default = 10)")
-    parser_version.add_argument("--timeout", default=5, type=int, help="Timeout in seconds (Default = 5)")
-    parser_version.add_argument("-e", "--errors", action="store_true", help="Show Errors")
-    parser_version.add_argument("-v", "--verbose", action="store_true", help="Show Verbose")
+    add_default_parser_arguments(parser_version)
     parser_version.set_defaults(func=version_console)

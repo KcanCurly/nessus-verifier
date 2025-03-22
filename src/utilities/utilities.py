@@ -9,18 +9,20 @@ from src.utilities import logger
 from rich.progress import TextColumn, Progress, BarColumn, TimeElapsedColumn, SpinnerColumn
 from rich.console import Console
 from rich.table import Column
-import contextlib
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from rich.live import Live
+import os
 
 def savetofile(path, message, mode = "a+"):
     with open(path, mode) as f:
         f.write(message)
         
 def get_hosts_from_file(name, get_ports = True):
-    with open(name, "r") as file:
-        if get_ports: return list(set(line.strip() for line in file)) 
-        else: return list(set(line.strip().split(":")[0] for line in file)) 
+    if os.path.isfile(name):
+        with open(name, "r") as file:
+            if get_ports: return list(set(line.strip() for line in file)) 
+            else: return list(set(line.strip().split(":")[0] for line in file)) 
+    else: return list(set(name.split())) 
     
 def confirm_prompt(prompt="Are you sure?", suppress = False):
     extra = " [y/N]: " if not suppress else ""
@@ -176,17 +178,27 @@ def get_classic_console(force_terminal = False):
 def get_default_context_execution(module_name, threads, hosts, args):
     overall_progress = get_classic_overall_progress()
     overall_task_id = overall_progress.add_task("", start=False, modulename=module_name)
+    
     futures = []
     results = []
     """A reusable context manager to handle file, Live display, and thread execution."""
     with Live(overall_progress) as live, ThreadPoolExecutor(threads) as executor:
         overall_progress.update(overall_task_id, total=len(hosts), completed=0)
+        overall_progress.start_task(overall_task_id)
         for host in hosts:
             modified_args = (args[0], host) + args[1:]
             future = executor.submit(*modified_args)
             futures.append(future)
         for a in as_completed(futures):
             overall_progress.update(overall_task_id, advance=1)
-            results.append(a.result())
+            if a.result(): results.append(a.result())
             
     return results
+
+def add_default_parser_arguments(parser, add_target_argument = True):
+    if add_target_argument: parser.add_argument("target", type=str, help="File name or targets seperated by space")
+    parser.add_argument("--threads", type=int, default=10, help="Amount of threads (Default = 10).")
+    parser.add_argument("--timeout", type=int, default=5, help="Amount of timeout (Default = 5).")
+    parser.add_argument("-e", "--errors", action="store_true", help="Show Errors")
+    parser.add_argument("-v", "--verbose", action="store_true", help="Show Verbose")
+    

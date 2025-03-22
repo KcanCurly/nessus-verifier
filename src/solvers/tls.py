@@ -144,26 +144,6 @@ def tls_nv(hosts: list[str], allow_white_ciphers: bool, threads: int = 10, timeo
     expired_cert_hosts = []
     results: list[TLS_Vuln_Data] = get_default_context_execution("TLS Misconfigurations", threads, hosts, (tls_single, allow_white_ciphers, timeout, verbose))
 
-        
-    """
-    overall_progress = get_classic_overall_progress()
-    overall_task_id = overall_progress.add_task("", start=False, modulename="TLS Misconfigurations")
-    console = get_classic_console(force_terminal=True)
-
-    with Live(overall_progress, console=console):
-        overall_progress.update(overall_task_id, total=len(l), completed=0)
-        overall_progress.start_task(overall_task_id)
-        futures = []
-        
-        with ThreadPoolExecutor(threads) as executor:
-            for host in l:
-
-                future = executor.submit(tls_single, console, host, allow_white_ciphers, timeout, verbose)
-                futures.append(future)
-            for a in as_completed(futures):
-                overall_progress.update(overall_task_id, advance=1)
-                results.append(a.result())
-    """
     for r in results:
         if not r: continue
         weak_versions.update(r.weak_versions)
