@@ -202,3 +202,11 @@ def add_default_parser_arguments(parser, add_target_argument = True):
     parser.add_argument("-e", "--errors", action="store_true", help="Show Errors")
     parser.add_argument("-v", "--verbose", action="store_true", help="Show Verbose")
     
+def get_url_response(url, timeout=5):
+    try:
+        return requests.get(url, allow_redirects=True, verify=False, timeout=timeout)
+    except:
+        try:
+            return requests.get(url, allow_redirects=True, verify=False, timeout=timeout)
+        except Exception as e:
+            return None

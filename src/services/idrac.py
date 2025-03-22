@@ -1,7 +1,4 @@
-from src.utilities.utilities import get_classic_overall_progress, get_classic_console, get_hosts_from_file, add_default_parser_arguments, get_default_context_execution
-from rich.live import Live
-from rich.console import Console
-from concurrent.futures import ThreadPoolExecutor, as_completed
+from src.utilities.utilities import get_hosts_from_file, add_default_parser_arguments, get_default_context_execution, get_url_response
 import requests
 
 class iDRAC_Version_Vuln_Data():
@@ -11,34 +8,22 @@ class iDRAC_Version_Vuln_Data():
         self.version = version
 
 def version_single(host: str, timeout = 3, errors = False, verbose = False):
-    try:
-        resp = requests.get(f"https://{host}/sysmgmt/2015/bmc/info", allow_redirects=True, verify=False, timeout=timeout)
-        version = resp.json()["Attributes"]["FwVer"]
-        return iDRAC_Version_Vuln_Data(host, "9", version)
-    except:
-        try:
-            resp = requests.get(f"http://{host}/sysmgmt/2015/bmc/info", allow_redirects=True, verify=False, timeout=timeout)
-            version = resp.json()["Attributes"]["FwVer"]
-            return iDRAC_Version_Vuln_Data(host, "9", version)
-        except Exception as e:
-            if errors: print(f"Not idrac 9: {host}")
-    try:
-        resp = requests.get(f"https://{host}/session?aimGetProp=fwVersion", allow_redirects=True, verify=False, timeout=timeout)
+    resp = get_url_response(f"https://{host}/sysmgmt/2015/bmc/info", timeout)
+    if not resp:
+        resp = get_url_response(f"http://{host}/session?aimGetProp=fwVersion", timeout)
+        if not resp: return
         version = resp.json()["aimGetProp"]["fwVersion"]
-        return iDRAC_Version_Vuln_Data(host, "7", version)
-    except:
-        try:
-            resp = requests.get(f"http://{host}/session?aimGetProp=fwVersion", allow_redirects=True, verify=False, timeout=timeout)
-            version = resp.json()["aimGetProp"]["fwVersion"]
-            return iDRAC_Version_Vuln_Data(host, "7", version)
-        except Exception as e:
-            if errors: print(f"Not idrac 7: {host}")
-
+        resp = requests.get(f"https://{host}/login.html", allow_redirects=True, verify=False, timeout=timeout)
+        if "iDRAC7" in resp.text: return iDRAC_Version_Vuln_Data(host, "7", version)
+        if "iDRAC8" in resp.text: return iDRAC_Version_Vuln_Data(host, "8", version)
+        return iDRAC_Version_Vuln_Data(host, "N/A", version)
 
 def version_nv(hosts: list[str], threads = 10, timeout = 3, errors = False, verbose = False):
     results: list[iDRAC_Version_Vuln_Data] = get_default_context_execution("iDRAC Version", threads, hosts, (version_single, timeout, errors, verbose))
     versions_9 = {}
+    versions_8 = {}
     versions_7 = {}
+    versions_unknown = {}
                 
     for r in results:
         if not r: continue
@@ -46,10 +31,18 @@ def version_nv(hosts: list[str], threads = 10, timeout = 3, errors = False, verb
             if r.version not in versions_9:
                 versions_9[r.version] = set()
             versions_9[r.version].add(r.host)
-        if r.main_version == "7":
+        elif r.main_version == "8":
+            if r.version not in versions_8:
+                versions_8[r.version] = set()
+            versions_8[r.version].add(r.host)
+        elif r.main_version == "7":
             if r.version not in versions_7:
                 versions_7[r.version] = set()
             versions_7[r.version].add(r.host)
+        else:
+            if r.version not in versions_unknown:
+                versions_unknown[r.version] = set()
+            versions_unknown[r.version].add(r.host)
 
     if len(versions_9) > 0:
         print("Detected iDRAC 9 versions:")
@@ -58,9 +51,23 @@ def version_nv(hosts: list[str], threads = 10, timeout = 3, errors = False, verb
             for v in value:
                 print(f"    {v}")
                 
+    if len(versions_8) > 0:
+        print("Detected iDRAC 8 versions:")
+        for key, value in versions_8.items():
+            print(f"{key}:")
+            for v in value:
+                print(f"    {v}")
+                
     if len(versions_7) > 0:
         print("Detected iDRAC 7 versions:")
         for key, value in versions_7.items():
+            print(f"{key}:")
+            for v in value:
+                print(f"    {v}")
+                
+    if len(versions_unknown) > 0:
+        print("Detected iDRAC versions:")
+        for key, value in versions_unknown.items():
             print(f"{key}:")
             for v in value:
                 print(f"    {v}")
