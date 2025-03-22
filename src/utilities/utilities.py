@@ -204,7 +204,9 @@ def add_default_parser_arguments(parser, add_target_argument = True):
     
 def get_url_response(url, timeout=5):
     try:
-        return requests.get(f"http://{url}", allow_redirects=True, verify=False, timeout=timeout)
+        resp = requests.get(f"http://{url}", allow_redirects=True, verify=False, timeout=timeout)
+        if "You're speaking plain HTTP to an SSL-enabled server port": raise()
+        return resp
     except:
         try:
             return requests.get(f"https://{url}", allow_redirects=True, verify=False, timeout=timeout)
