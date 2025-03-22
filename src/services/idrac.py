@@ -13,6 +13,7 @@ def version_single(host: str, timeout = 3, errors = False, verbose = False):
         if resp.status_code >= 400:
             resp = get_url_response(f"{host}/session?aimGetProp=fwVersion", timeout)
             if resp.status_code not in [200]: return
+            print(resp.text)
             version = resp.json()["aimGetProp"]["fwVersion"]
             resp = get_url_response(f"{host}/login.html", timeout)
             if "iDRAC7" in resp.text: return iDRAC_Version_Vuln_Data(host, "7", version)
