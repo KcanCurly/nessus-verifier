@@ -14,11 +14,10 @@ def version_single(host: str, timeout = 3, errors = False, verbose = False):
             resp = get_url_response(f"http://{host}/session?aimGetProp=fwVersion", timeout)
             if resp.status_code not in [200]: return
             version = resp.json()["aimGetProp"]["fwVersion"]
-            resp = get_url_response(f"https://{host}/login.html", allow_redirects=True, verify=False, timeout=timeout)
-            if resp:
-                if "iDRAC7" in resp.text: return iDRAC_Version_Vuln_Data(host, "7", version)
-                if "iDRAC8" in resp.text: return iDRAC_Version_Vuln_Data(host, "8", version)
-            return iDRAC_Version_Vuln_Data(host, "N/A", version)
+            resp = get_url_response(f"https://{host}/login.html", timeout)
+            if "iDRAC7" in resp.text: return iDRAC_Version_Vuln_Data(host, "7", version)
+            elif "iDRAC8" in resp.text: return iDRAC_Version_Vuln_Data(host, "8", version)
+            else: return iDRAC_Version_Vuln_Data(host, "N/A", version)
         version = resp.json()["Attributes"]["FwVer"]
         return iDRAC_Version_Vuln_Data(host, "9", version)
     except Exception as e:
