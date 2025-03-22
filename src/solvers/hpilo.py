@@ -1,8 +1,5 @@
-from src.utilities.utilities import find_scan
+from src.utilities.utilities import Version_Vuln_Data, find_scan, get_url_response, get_default_context_execution, add_default_parser_arguments, add_default_solver_parser_arguments
 from src.modules.nv_parse import GroupNessusScanOutput
-from src.utilities import logger
-from concurrent.futures import ThreadPoolExecutor, as_completed
-import requests
 
 code = 34
 
@@ -11,44 +8,24 @@ def get_default_config():
 ["34"]
 """
 
-class Version_Vuln_Data():
-    def __init__(self, host: str, version: str):
-        self.host = host
-        self.version = version
-
-def version_single(host: str, timeout: int, verbose: bool):
+def solve_version_single(host, timeout, errors, verbose):
     try:
-        try:
-            resp = requests.get(f"https://{host}/json/login_session", allow_redirects=True, verify=False, timeout=timeout)
-        except:
-            try:
-                resp = requests.get(f"http://{host}/json/login_session", allow_redirects=True, verify=False, timeout=timeout)
-            except: return
-        
+        resp = get_url_response(f"{host}/json/login_session")        
         big_version = resp.json()["moniker"]["PRODGEN"]
         version = resp.json()["version"]
         return Version_Vuln_Data(host, f"{big_version} - {version}")
-    except:return
+    except Exception as e:
+        if errors: print(f"Error for {host}: {e}")
 
-def version_nv(hosts: list[str], threads: int, timeout: int, verbose: bool ):
+def solve_version(hosts: list[str], threads: int, timeout: int, errors, verbose: bool):
     versions = {}
-    futures = []
-    results: list[Version_Vuln_Data] = []
+    results: list[Version_Vuln_Data] = get_default_context_execution("HP iLO Version", threads, hosts, (solve_version_single, timeout, errors, verbose))
 
-    with ThreadPoolExecutor(threads) as executor:
-        for host in hosts:
-            future = executor.submit(version_single, host, timeout, verbose)
-            futures.append(future)
-        for a in as_completed(futures):
-
-            results.append(a.result())
-                
     for r in results:
-        if not r: continue
         if r.version not in versions:
             versions[r.version] = set()
         versions[r.version].add(r.host)
-
+    
     if len(versions) > 0:
         print("Detected HP iLO versions:")
         versions = dict(sorted(versions.items(), reverse=True))
@@ -59,7 +36,6 @@ def version_nv(hosts: list[str], threads: int, timeout: int, verbose: bool ):
                 
 
 def solve(args, is_all = False):
-    l= logger.setup_logging(args.verbose)
     hosts = []
     if args.file:
         scan: GroupNessusScanOutput = find_scan(args.file, code)
@@ -72,14 +48,10 @@ def solve(args, is_all = False):
         with open(args.list_file, 'r') as f:
             hosts = [line.strip() for line in f]
     
-    version_nv(hosts, args.threads, args.timeout, args.verbose)
+    solve_version(hosts, args.threads, args.timeout, args.errors, args.verbose)
     
 def helper_parse(subparser):
     parser_task1 = subparser.add_parser(str(code), help="HP iLO")
-    group = parser_task1.add_mutually_exclusive_group(required=True)
-    group.add_argument("-f", "--file", type=str, help="JSON file")
-    group.add_argument("-lf", "--list-file", type=str, help="List file")
-    parser_task1.add_argument("--threads", default=10, type=int, help="Number of threads (Default = 10)")
-    parser_task1.add_argument("--timeout", default=5, type=int, help="Timeout in seconds (Default = 5)")
-    parser_task1.add_argument("-v", "--verbose", action="store_true", help="Enable verbose")
+    add_default_solver_parser_arguments(parser_task1)
+    add_default_parser_arguments(parser_task1, False)
     parser_task1.set_defaults(func=solve) 

@@ -2,7 +2,7 @@ import argparse
 from src.solvers import grafana, openssl, php, python, tls, kibana, elastic, mongo, oracle, smb, ssh, snmp, tomcat, apache, nginx, vmware, openssh, smtp_relay, mssql, idrac, ipmi, terminal, cleartext, ibmwebsphere, obsolete_protocols, postgresql, nopasswddb, actionables, ftp, ntp, nfs, queuejumper, \
     openssl, webcgi_generic, hpilo, jenkins
 from src.modules.nv_parse import GroupNessusScanOutput
-import os
+from src.utilities.utilities import add_default_parser_arguments 
 
 solver_dict = {
     0: actionables,
@@ -52,11 +52,7 @@ def create_config_file(args):
     s = ""
     for k,v in solver_dict.items():
         s += v.get_default_config()
-    z = """
-["1"]
-allow_white_ciphers = true
-"""
-    
+            
     with open(args.output, "w") as f:
         f.write(s)
 
@@ -65,9 +61,6 @@ json_output: list[GroupNessusScanOutput] = []
 def main():
     # Create the main parser
     parser = argparse.ArgumentParser(description="Nessus identified vulnerabilities solver.")
-    
-    parser.add_argument("-v", "--verbose", action="count", default=0, help="Increase verbosity level (-v, -vv, -vvv, -vvvv, -vvvvvv)")
-    parser.add_argument("--debug", action="store_true", help="Enable debug mode")
     subparsers = parser.add_subparsers(dest="command", help="Available subcommands")
     
     parser_config = subparsers.add_parser("create-config-file", help="Creates config file")
@@ -77,8 +70,7 @@ def main():
     parser_all = subparsers.add_parser("all", help="Runs all solvers from json file")
     parser_all.add_argument("-f", "--file", type=str, default="output.ndjson", help="json file name (Default = output.ndjson)")
     parser_all.add_argument("-c", "--config", type=str, default="nv-config.toml", help="Config file (default: nv-config.toml).")
-    parser_all.add_argument("--threads", type=int, default=10, help="Amounts of threads to use (Default = 10)")
-    parser_all.add_argument("--timeout", type=int, default=5, help="Timeout (Default = 5)")
+    add_default_parser_arguments(parser_all, False)
     parser_all.set_defaults(func=all_solver)
     parser_all.set_defaults(ignore_fail=True)
 

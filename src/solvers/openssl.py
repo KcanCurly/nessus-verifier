@@ -1,11 +1,10 @@
-from src.utilities.utilities import find_scan, get_header_from_url
+from src.utilities.utilities import Version_Vuln_Data, find_scan, get_header_from_url, add_default_solver_parser_arguments, add_default_parser_arguments, get_default_context_execution
 from src.modules.nv_parse import GroupNessusScanOutput
-from src.utilities import logger
 import re
 
 code = 32
 
-r = r"OpenSSL\/(\S+)"
+version_regex = r"OpenSSL\/(\S+)"
 
 def get_default_config():
     return """
@@ -14,15 +13,37 @@ def get_default_config():
 
 def helper_parse(subparser):
     parser_task1 = subparser.add_parser(str(code), help="OpenSSL")
-    group = parser_task1.add_mutually_exclusive_group(required=True)
-    group.add_argument("-f", "--file", type=str, help="JSON file")
-    group.add_argument("-lf", "--list-file", type=str, help="List file")
+    add_default_solver_parser_arguments(parser_task1)
+    add_default_parser_arguments(parser_task1, False)
     parser_task1.set_defaults(func=solve) 
 
+def solve_version(hosts, threads, timeout, errors, verbose):
+    results: list[Version_Vuln_Data] = get_default_context_execution("OpenSSL Version", threads, hosts, (solve_version_single, timeout, errors, verbose))
+    for r in results:
+        if r.version not in versions:
+            versions[r.version] = set()
+        versions[r.version].add(r.host)
+
+    if len(versions) > 0:
+        versions = dict(sorted(versions.items(), reverse=True))
+        print("Detected OpenSSL versions:")
+        for key, value in versions.items():
+            print(f"{key}:")
+            for v in value:
+                print(f"    {v}")
+                
+def solve_version_single(host, timeout, errors, verbose):
+    try:
+        header = get_header_from_url(host, "Server", timeout, errors, verbose)
+        if header:
+            m = re.search(version_regex, header)
+            if m:
+                return Version_Vuln_Data(host, m.group(0))
+
+    except Exception as e:
+        if errors: print(f"Error for {host}: {e}")
+
 def solve(args, is_all = False):
-    versions = {}
-    
-    l= logger.setup_logging(args.verbose)
     hosts = []
     if args.file:
         scan: GroupNessusScanOutput = find_scan(args.file, code)
@@ -34,23 +55,4 @@ def solve(args, is_all = False):
     elif args.list_file:
         with open(args.list_file, 'r') as f:
             hosts = [line.strip() for line in f]
-    
-    for host in hosts:
-        try:
-            server = get_header_from_url(host, "Server")
-            m = re.search(r, server)
-            if m:
-                ver = m.group(0)
-                if ver not in versions:
-                    versions[ver] = set()
-                versions[ver].add(host)      
-        except Exception as e: print(e)
-
-    
-    if len(versions) > 0:
-        versions = dict(sorted(versions.items(), reverse=True))
-        print("Detected OpenSSL versions:")
-        for key, value in versions.items():
-            print(f"{key}:")
-            for v in value:
-                print(f"    {v}")
+    solve_version(hosts, args.threads, args.timeout, args.errors, args.verbose)

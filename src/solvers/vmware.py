@@ -1,6 +1,5 @@
-from src.utilities.utilities import find_scan
+from src.utilities.utilities import find_scan, add_default_solver_parser_arguments, add_default_parser_arguments
 from src.modules.nv_parse import GroupNessusScanOutput
-from src.utilities import logger
 import re
 import subprocess
 
@@ -13,15 +12,13 @@ def get_default_config():
 
 def helper_parse(subparser):
     parser_task1 = subparser.add_parser(str(code), help="VMWare Product Versions")
-    group = parser_task1.add_mutually_exclusive_group(required=True)
-    group.add_argument("-f", "--file", type=str, help="JSON file")
-    group.add_argument("-lf", "--list-file", type=str, help="List file")
+    add_default_solver_parser_arguments(parser_task1)
+    add_default_parser_arguments(parser_task1, False)
     parser_task1.set_defaults(func=solve)
 
 def solve(args, is_all = False):
     versions = {}
-    
-    l= logger.setup_logging(args.verbose)
+
     hosts = []
     if args.file:
         scan: GroupNessusScanOutput = find_scan(args.file, code)
@@ -38,7 +35,7 @@ def solve(args, is_all = False):
     
 
     result = ", ".join(h.split(":")[0] for h in hosts)
-    command = ["msfconsole", "-q", "-x", f"color false; use auxiliary/scanner/vmware/esx_fingerprint; set RHOSTS {result}; run; exit"]
+    command = ["msfconsole", "-q", "-x", f"color false; use auxiliary/scanner/vmware/esx_fingerprint; set RHOSTS {result}; set ConnectTimeout {args.timeout}; run; exit"]
     try:
         result = subprocess.run(command, text=True, capture_output=True)
         
@@ -48,7 +45,8 @@ def solve(args, is_all = False):
                 versions[m[1]] = []
             versions[m[1]].append(f"{m[0]}")
                 
-    except Exception:pass
+    except Exception as e:
+        if args.errors : print(e)
 
     
     if len(versions) > 0:

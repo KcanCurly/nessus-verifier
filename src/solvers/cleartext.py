@@ -1,9 +1,7 @@
 from ftplib import FTP
 from ftplib import error_perm
-import tomllib
-from src.utilities.utilities import find_scan
+from src.utilities.utilities import find_scan, add_default_parser_arguments, get_default_context_execution, add_default_solver_parser_arguments
 from src.modules.nv_parse import GroupNessusScanOutput
-from src.utilities import logger
 import nmap
 import requests
 
@@ -14,121 +12,110 @@ def get_default_config():
 ["7"]
 """
 
+class AMQP_Vuln_Data():
+    def __init__(self, host: str, mechanisms: str):
+        self.host = host
+        self.mechanisms = mechanisms
+
 def helper_parse(subparser):
     parser_task1 = subparser.add_parser(str(code), help="Cleartext Protocol Detected")
-    group = parser_task1.add_mutually_exclusive_group(required=True)
-    group.add_argument("-f", "--file", type=str, help="JSON file")
-    group.add_argument("-lf", "--list-file", type=str, help="List file")
+    add_default_solver_parser_arguments(parser_task1)
+    add_default_parser_arguments(parser_task1, False)
     parser_task1.set_defaults(func=solve)
    
-def solve_amqp(scan: GroupNessusScanOutput):
+def solver_amqp_single(host, timeout, errors, verbose):
     try:
-        hosts = scan.sub_hosts.get("87733")
-        if not hosts: return
-        vuln = {}    
         nm = nmap.PortScanner()
-        for host in hosts:
-            try:
-                ip = host.split(":")[0]
-                port = host.split(":")[1]
-                nm.scan(ip, port, arguments=f'--script amqp-info')
-                
-                if ip in nm.all_hosts():
-                    nmap_host = nm[ip]
-                    if 'tcp' in nmap_host and int(port) in nmap_host['tcp']:
-                        tcp_info = nmap_host['tcp'][int(port)]
-                        if 'script' in tcp_info and 'amqp-info' in tcp_info['script']:
-
-                            amqpinfo = tcp_info['script']['amqp-info']
-
-                            mech = None
-
-                            for line in amqpinfo.splitlines():
-                                if "mechanisms:" in line:
-                                    mech = line.split(":")[1].strip()
-                            if mech:
-                                vuln[host] = mech
-
-            except Exception as e: pass #print(e)
+        ip, port = host.split(":")
+        nm.scan(ip, port, arguments=f'--script amqp-info')
         
-        if len(vuln) > 0:
-            print("AMQP Plain Authentication Mechanism Detected:")
-            for key, value in vuln.items():
-                print(f"{key}: {value}")
-    except: pass
-
-def solve_telnet(hosts):
-
-    vuln = []   
-    nm = nmap.PortScanner()
-    for host in hosts:
-        try:
-            ip, port = host.split(":")
-            nm.scan(ip, port, arguments=f'-sV')
-            
-            if ip in nm.all_hosts():
-                nmap_host = nm[ip]
-                if nmap_host['tcp'][int(port)]['name'].lower() == 'telnet':
-                    vuln.append(f"{host} - {nmap_host['tcp'][int(port)].get("product", "Service not found")}")
-                    
-        except Exception as e : print(e)
+        if ip in nm.all_hosts():
+            nmap_host = nm[ip]
+            if 'tcp' in nmap_host and int(port) in nmap_host['tcp']:
+                tcp_info = nmap_host['tcp'][int(port)]
+                if 'script' in tcp_info and 'amqp-info' in tcp_info['script']:
+                    amqpinfo = tcp_info['script']['amqp-info']
+                    for line in amqpinfo.splitlines():
+                        if "mechanisms:" in line:
+                            mech = line.split(":")[1].strip()
+                            return AMQP_Vuln_Data(host, mech)
+                                    
+    except Exception as e:
+        if errors: print(f"Error for {host}: {e}")
+   
+def solve_amqp(hosts, threads, timeout, errors, verbose):
+    results: list[AMQP_Vuln_Data] = get_default_context_execution("Cleartext Protocol Detected - AMQP Cleartext Authentication", threads, hosts, (solver_amqp_single, timeout, errors, verbose))
     
-    if len(vuln) > 0:
+    if len(results) > 0:
+        print("AMQP Cleartext Authentication Detected:")
+        for r in results:
+            print(f"{r.host} - {r.mechanisms}")    
+
+def solve_telnet_single(host, timeout, errors, verbose):
+    try:
+        nm = nmap.PortScanner()
+        ip, port = host.split(":")
+        nm.scan(ip, port, arguments=f'-sV')
+        
+        if ip in nm.all_hosts():
+            nmap_host = nm[ip]
+            if 'telnet' in nmap_host['tcp'][int(port)]['name'].lower():
+                product = nmap_host['tcp'][int(port)].get("product", "Service not found")
+                return f"{host}{f" - {product}" if product else ""}"
+    except Exception as e:
+        if errors: print(f"Error for {host}: {e}")
+
+def solve_telnet(hosts, threads, timeout, errors, verbose):
+    results = get_default_context_execution("Cleartext Protocol Detected - Unencrypted Telnet Detected", threads, hosts, (solve_telnet_single, timeout, errors, verbose))
+    
+    if len(results) > 0:
         print("Unencrypted Telnet Detected:")
-        for value in vuln:
+        for value in results:
             print(f"{value}")
 
 
-def solve_basic_http(scan: GroupNessusScanOutput):
+def solve_basic_http_single(host, timeout, errors, verbose):
     try:
-        hosts = scan.sub_hosts.get("98615")
-        if not hosts: return
-        vuln = []
-        for host in hosts:
-            ip = host.split(":")[0]
-            port  = host.split(":")[1]
-            try:
-                response = requests.get(f"http://{host}", timeout=5)
-                if response.status_code == 401 and "WWW-Authenticate" in response.headers:
-                    vuln.append(host)
+        response = requests.get(f"http://{host}", timeout=timeout)
+        if response.status_code == 401 and "WWW-Authenticate" in response.headers:
+            return host
 
-            except: pass
-            
-        if len(vuln) > 0:
-            print("Basic Authentication Without HTTPS Detected:")
-            for value in vuln:
-                print(f"{value}")
-    except: pass
+    except Exception as e:
+        if errors: print(f"Error for {host}: {e}")
 
-def solve_ftp(scan: GroupNessusScanOutput):
+def solve_basic_http(hosts, threads, timeout, errors, verbose):
+    results = get_default_context_execution("Cleartext Protocol Detected - Basic Authentication Without HTTPS", threads, hosts, (solve_basic_http_single, timeout, errors, verbose))
+    if len(results) > 0:
+        print("Basic Authentication Without HTTPS Detected:")
+        for value in results:
+            print(f"{value}")
+
+def solve_ftp_single(host, timeout, errors, verbose):
     try:
-        hosts = scan.sub_hosts.get("34324")
-        if not hosts: return
-        vuln = []
-        for host in hosts:
-            ip = host.split(":")[0]
-            port  = int(host.split(":")[1])
+        ip, port = host.split(":")
+        ftp = FTP()
+        ftp.connect(ip, int(port), timeout=timeout)
+        try:
+            l = ftp.login()
+            if "230" in l:
+                return host
 
-            ftp = FTP()
-            ftp.connect(ip, port)
-            try:
-                l = ftp.login()
-                if "230" in l:
-                    vuln.append(host)
+        except error_perm as e:
+            if "530" in str(e):
+                return host
+        except Exception: pass
+    except Exception as e:
+        if errors: print(f"Error for {host}: {e}")
 
-            except error_perm as e:
-                if "530" in str(e):
-                    vuln.append(host)
-            except Exception: pass
-                
-        if len(vuln) > 0:
-            print("FTP Supports Cleartext Authentication:")
-            for value in vuln:
-                print(f"{value}")
-    except: pass
+def solve_ftp(hosts, threads, timeout, errors, verbose):
+    results = get_default_context_execution("Cleartext Protocol Detected - Basic Authentication Without HTTPS", threads, hosts, (solve_ftp_single, timeout, errors, verbose))
+    
+    if len(results) > 0:
+        print("FTP Supporting Cleartext Authentication Detected:")
+        for value in results:
+            print(f"{value}")
 
 def solve(args, is_all = False):
-    l= logger.setup_logging(args.verbose)
     scan: GroupNessusScanOutput = find_scan(args.file, code)
     if not scan: 
         if is_all: return
@@ -137,8 +124,14 @@ def solve(args, is_all = False):
     
     if args.file:
         hosts = scan.sub_hosts.get("Unencrypted Telnet Server", [])
-
-    solve_telnet(hosts)
+        solve_telnet(hosts, args.threads, args.timeout, args.errors, args.verbose)
+        hosts = scan.sub_hosts.get("Basic Authentication Without HTTPS", [])
+        solve_basic_http(hosts, args.threads, args.timeout, args.errors, args.verbose)
+        hosts = scan.sub_hosts.get("AMQP Cleartext Authentication", [])
+        solve_amqp(hosts, args.threads, args.timeout, args.errors, args.verbose)
+        hosts = scan.sub_hosts.get("FTP Supports Cleartext Authentication", [])
+        solve_ftp(hosts, args.threads, args.timeout, args.errors, args.verbose)
+    
 
     
     """

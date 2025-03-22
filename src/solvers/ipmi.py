@@ -1,6 +1,5 @@
-from src.utilities.utilities import find_scan
+from src.utilities.utilities import find_scan, add_default_solver_parser_arguments, add_default_parser_arguments
 from src.modules.nv_parse import GroupNessusScanOutput
-from src.utilities import logger
 import subprocess
 import re
 
@@ -10,19 +9,20 @@ def get_default_config():
     return """
 ["20"]
 """
+r = r"[+] (.*) - IPMI - Hash found: (.*)"
+r1 =  r"[+] (.*) - IPMI - Hash for user '(.*)' matches password '(.*)'"
 
 def helper_parse(subparser):
     parser_task1 = subparser.add_parser(str(code), help="IPMI")
-    group = parser_task1.add_mutually_exclusive_group(required=True)
-    group.add_argument("-f", "--file", type=str, help="JSON file")
-    group.add_argument("-lf", "--list-file", type=str, help="List file")
+    add_default_solver_parser_arguments(parser_task1)
+    add_default_parser_arguments(parser_task1, False)
     parser_task1.set_defaults(func=solve) 
 
 def solve(args, is_all = False):
+    print("Running metasploit ipmi dumphashes module, there will be no progression bar")
     hashes = {}
     creds = {}
     
-    l= logger.setup_logging(args.verbose)
     hosts = []
     if args.file:
         scan: GroupNessusScanOutput = find_scan(args.file, code)
@@ -35,12 +35,8 @@ def solve(args, is_all = False):
         with open(args.list_file, 'r') as f:
             hosts = [line.strip() for line in f]
     
-    
-    r = r"[+] (.*) - IPMI - Hash found: (.*)"
-    r1 =  r"[+] (.*) - IPMI - Hash for user '(.*)' matches password '(.*)'"
-
     result = ", ".join(h.split(":")[0] for h in hosts)
-    command = ["msfconsole", "-q", "-x", f"color false; use auxiliary/scanner/ipmi/ipmi_dumphashes; set RHOSTS {result}; run; exit"]
+    command = ["msfconsole", "-q", "-x", f"color false; use auxiliary/scanner/ipmi/ipmi_dumphashes; set RHOSTS {result}; set ConnectTimeout {args.timeout}; run; exit"]
     try:
         result = subprocess.run(command, text=True, capture_output=True)
         
@@ -65,11 +61,11 @@ def solve(args, is_all = False):
         for key, value in hashes.items():
             print(f"{key}:")
             for v in value:
-                print(f"\t{v}")
+                print(f"    {v}")
 
     if len(creds) > 0:
         print("IPMI Creds found:")
         for key, value in creds.items():
             print(f"{key}:")
             for v in value:
-                print(f"\t{v}")
+                print(f"    {v}")

@@ -3,7 +3,7 @@ import re
 from src.utilities.utilities import get_hosts_from_file, add_default_parser_arguments
 
 def users_nv(hosts: list[str], ports: list[str], errors, verbose):
-    print("Running metasploit Ident service module, there will be no progression bar")
+    print("Running ident-user-enum command, there will be no progression bar")
     vuln = {}
     try:
         for ip in hosts:

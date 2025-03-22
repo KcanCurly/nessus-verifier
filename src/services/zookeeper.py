@@ -3,6 +3,7 @@ import re
 from src.utilities.utilities import get_hosts_from_file
 
 def enum_nv(l: list[str], output: str = None, verbose: bool = False):
+    print("Running metasploit zookeepr info disclosure module, there will be no progression bar")
     versions = {}
     info_vuln: dict[str: list[str]] = {}
 

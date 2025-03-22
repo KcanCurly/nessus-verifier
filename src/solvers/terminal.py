@@ -1,8 +1,7 @@
 import subprocess
 import re
-from src.utilities.utilities import find_scan
+from src.utilities.utilities import find_scan, add_default_solver_parser_arguments, add_default_parser_arguments
 from src.modules.nv_parse import GroupNessusScanOutput
-from src.utilities import logger
 import os
 
 code = 8
@@ -14,14 +13,14 @@ def get_default_config():
 
 def helper_parse(subparser):
     parser_task1 = subparser.add_parser(str(code), help="Terminal Services Misconfigurations")
-    group = parser_task1.add_mutually_exclusive_group(required=True)
-    group.add_argument("-f", "--file", type=str, help="JSON file")
-    group.add_argument("-lf", "--list-file", type=str, help="List file")
+    add_default_solver_parser_arguments(parser_task1)
+    add_default_parser_arguments(parser_task1, False)
     parser_task1.set_defaults(func=solve)
     
+issue_re = r"\[-\] (.*) has issue (.*)"
 
 def solve(args, is_all = False):
-    l= logger.setup_logging(args.verbose)
+
     hosts = []
     if args.file:
         scan: GroupNessusScanOutput = find_scan(args.file, code)
@@ -36,8 +35,8 @@ def solve(args, is_all = False):
     
     vuln = {}
     
-    issue_re = r"\[-\] (.*) has issue (.*)"
-            
+    
+    print("Running rdp-sec-check.pl, there will be no progression bar")
     for host in hosts:
         try:
             p = os.path.join(os.path.expanduser("~"), "rdp-sec-check", "rdp-sec-check.pl")

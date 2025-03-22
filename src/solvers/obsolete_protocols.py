@@ -1,6 +1,5 @@
-from src.utilities.utilities import find_scan
+from src.utilities.utilities import find_scan, add_default_solver_parser_arguments, add_default_parser_arguments
 from src.modules.nv_parse import GroupNessusScanOutput
-from src.utilities import logger
 import nmap
 
 code = 18
@@ -12,13 +11,11 @@ def get_default_config():
 
 def helper_parse(subparser):
     parser_task1 = subparser.add_parser(str(code), help="Obsolete Protocols")
-    group = parser_task1.add_mutually_exclusive_group(required=True)
-    group.add_argument("-f", "--file", type=str, help="JSON file")
-    group.add_argument("-lf", "--list-file", type=str, help="List file")
+    add_default_solver_parser_arguments(parser_task1)
+    add_default_parser_arguments(parser_task1, False)
     parser_task1.set_defaults(func=solve)
 
 def solve(args, is_all = False):
-    l= logger.setup_logging(args.verbose)
     hosts = []
     if args.file:
         scan: GroupNessusScanOutput = find_scan(args.file, code)
@@ -41,8 +38,7 @@ def solve(args, is_all = False):
     nm = nmap.PortScanner()
     for host in hosts:
         try:
-            ip = host.split(":")[0]
-            port = host.split(":")[1]
+            ip, port = host.split(":")
             nm.scan(ip, port, arguments=f'-sV')
             
             if ip in nm.all_hosts():

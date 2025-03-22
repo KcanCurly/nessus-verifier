@@ -13,6 +13,11 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from rich.live import Live
 import os
 
+class Version_Vuln_Data():
+    def __init__(self, host: str, version: str):
+        self.host = host
+        self.version = version
+
 def savetofile(path, message, mode = "a+"):
     with open(path, mode) as f:
         f.write(message)
@@ -147,20 +152,9 @@ def find_scan(file_path: str, target_id: int):
     return None  # If not found
 
 
-def get_header_from_url(host, header, verbose=0) -> str | None:
-    l= logger.setup_logging(verbose)
-    try:
-        resp = requests.get(f"https://{host}", allow_redirects=True, verify=False)
-    except Exception:
-        try:
-            resp = requests.get(f"http://{host}", allow_redirects=True, verify=False)
-        except Exception as e: 
-            l.v3(f"Failed to get header {header} from {host}: {e}")
-            return None
-    except Exception as e: 
-        l.v3(f"Failed to get header {header} from {host}: {e}")
-        return None
-
+def get_header_from_url(host, header, timeout = 5, errors = False, verbose = False) -> str | None:
+    resp = get_url_response(host, timeout=timeout)
+    if not resp: return None
     return resp.headers.get(header, "None")
 
 def get_classic_single_progress():
@@ -176,6 +170,7 @@ def get_classic_console(force_terminal = False):
     return Console(force_terminal=force_terminal)
 
 def get_default_context_execution(module_name, threads, hosts, args):
+    if not hosts: return
     overall_progress = get_classic_overall_progress()
     overall_task_id = overall_progress.add_task("", start=False, modulename=module_name)
     
@@ -201,6 +196,11 @@ def add_default_parser_arguments(parser, add_target_argument = True):
     parser.add_argument("--timeout", type=int, default=5, help="Amount of timeout (Default = 5).")
     parser.add_argument("-e", "--errors", action="store_true", help="Show Errors")
     parser.add_argument("-v", "--verbose", action="store_true", help="Show Verbose")
+
+def add_default_solver_parser_arguments(parser):
+    group = parser.add_mutually_exclusive_group(required=True)
+    group.add_argument("-f", "--file", type=str, help="JSON file")
+    group.add_argument("-lf", "--list-file", type=str, help="List file")
     
 def get_url_response(url, timeout=5, redirect = True):
     try:
@@ -212,3 +212,5 @@ def get_url_response(url, timeout=5, redirect = True):
             return requests.get(f"https://{url}", allow_redirects=redirect, verify=False, timeout=timeout)
         except Exception as e:
             return None
+        
+        

@@ -3,15 +3,8 @@ import re
 import ssl
 import socket
 import tomllib
-from src.utilities.utilities import find_scan, get_classic_single_progress, get_classic_overall_progress, get_classic_console, get_default_context_execution
+from src.utilities.utilities import find_scan, add_default_solver_parser_arguments, add_default_parser_arguments, get_default_context_execution
 from src.modules.nv_parse import GroupNessusScanOutput
-from src.utilities import logger
-from rich.live import Live
-from rich.progress import Progress, TaskID
-from rich.console import Console
-from concurrent.futures import ThreadPoolExecutor, as_completed
-from rich.console import Group
-from rich.panel import Panel
 
 class TLS_Vuln_Data():
     def __init__(self, host: str, weak_versions: list[str], weak_ciphers: list[str], weak_bits: list[str], is_wrong_hostname: bool, is_cert_expired: str):
@@ -32,17 +25,15 @@ allow_white_ciphers = true
 
 def helper_parse(subparser):
     parser_task1 = subparser.add_parser(str(code), help="TLS Misconfigurations")
-    group = parser_task1.add_mutually_exclusive_group(required=True)
-    group.add_argument("-f", "--file", type=str, help="JSON file")
-    group.add_argument("-lf", "--list-file", type=str, help="List file")
+    add_default_solver_parser_arguments(parser_task1)
     parser_task1.add_argument("--allow-white-ciphers", action="store_true", required=False, help="White named ciphers are fine from sslscan output")
+    add_default_parser_arguments(parser_task1, False)
     parser_task1.set_defaults(func=solve)
     
 
 def tls_single(host: str, allow_white_ciphers: bool, timeout: int, verbose: bool):
     try:
-        ip = host.split(":")[0]
-        port  = host.split(":")[1]
+        ip, port = host.split(":")
         
         expired_cert_re = r"Not valid after:\s+\x1b\[31m(.*)\x1b\[0m"
         
@@ -186,7 +177,6 @@ def tls_nv(hosts: list[str], allow_white_ciphers: bool, threads: int = 10, timeo
     
 
 def solve(args, is_all = False):
-    l= logger.setup_logging(args.verbose)
     hosts = []
     if args.file:
         scan: GroupNessusScanOutput = find_scan(args.file, code)

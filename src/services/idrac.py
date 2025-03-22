@@ -1,5 +1,4 @@
 from src.utilities.utilities import get_hosts_from_file, add_default_parser_arguments, get_default_context_execution, get_url_response
-import requests
 
 class iDRAC_Version_Vuln_Data():
     def __init__(self, host: str, main_version:str, version: str):

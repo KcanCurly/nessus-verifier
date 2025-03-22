@@ -1,6 +1,5 @@
-from src.utilities.utilities import find_scan, get_header_from_url
+from src.utilities.utilities import Version_Vuln_Data, find_scan, get_header_from_url, add_default_solver_parser_arguments, add_default_parser_arguments, get_default_context_execution
 from src.modules.nv_parse import GroupNessusScanOutput
-from src.utilities import logger
 import re
 
 code = 23
@@ -12,15 +11,43 @@ def get_default_config():
 
 def helper_parse(subparser):
     parser_task1 = subparser.add_parser(str(code), help="Python Unsupported Version")
-    group = parser_task1.add_mutually_exclusive_group(required=True)
-    group.add_argument("-f", "--file", type=str, help="JSON file")
-    group.add_argument("-lf", "--list-file", type=str, help="List file")
+    add_default_solver_parser_arguments(parser_task1)
+    add_default_parser_arguments(parser_task1, False)
     parser_task1.set_defaults(func=solve) 
+
+r = r"Python/(.*)"
+
+def solve_version_single(host, timeout, errors, verbose):
+    try:
+        header = get_header_from_url(host, "Server", timeout=timeout)
+        if header:
+            m = re.search(r, header)
+            if m:
+                m = m.group(1)
+                if " " in m:
+                    m = m.split()[0]
+                m = "Python " + m
+                return Version_Vuln_Data(host, m)
+    except Exception as e: 
+        if errors: print(f"Error for {host}: {e}")
+
+def solve_version(hosts, threads, timeout, errors, verbose):
+    results: list[Version_Vuln_Data] = get_default_context_execution("Python Version", threads, hosts, (solve_version_single, timeout, errors, verbose))
+    for r in results:
+        if r.version not in versions:
+            versions[r.version] = set()
+        versions[r.version].add(r.host)
+
+    if len(versions) > 0:
+        versions = dict(sorted(versions.items(), reverse=True))
+        print("Detected Python versions:")
+        for key, value in versions.items():
+            print(f"{key}:")
+            for v in value:
+                print(f"    {v}")
 
 def solve(args, is_all = False):
     versions = {}
-    
-    l= logger.setup_logging(args.verbose)
     hosts = []
     if args.file:
         scan: GroupNessusScanOutput = find_scan(args.file, code)
@@ -33,25 +60,4 @@ def solve(args, is_all = False):
         with open(args.list_file, 'r') as f:
             hosts = [line.strip() for line in f]
     
-    r = r"Python/(.*)"
-    
-    for host in hosts:
-        header = get_header_from_url(host, "Server")
-        if header:
-            m = re.search(r, header)
-            if m:
-                m = m.group(1)
-                if " " in m:
-                    m = m.split()[0]
-                m = "Python " + m
-                if m not in versions:
-                    versions[m] = set()
-                versions[m].add(host)
-
-    
-    if len(versions) > 0:
-        print("Detected Python Versions:")
-        for key, value in versions.items():
-            print(f"{key}:")
-            for v in value:
-                print(f"\t{v}")
+    solve_version(hosts, args.threads, args.timeout, args.errors, args.verbose)
