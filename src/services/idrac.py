@@ -9,16 +9,16 @@ class iDRAC_Version_Vuln_Data():
 
 def version_single(host: str, timeout = 3, errors = False, verbose = False):
     try:
-        resp = get_url_response(f"{host}/sysmgmt/2015/bmc/info", timeout)
+        resp = get_url_response(f"{host}/sysmgmt/2015/bmc/info", timeout, False)
         print(f"{host} - {resp.status_code}")
         if resp.status_code >= 400:
             print("ZZ")
-            resp = get_url_response(f"{host}/session?aimGetProp=fwVersion", timeout)
+            resp = get_url_response(f"{host}/session?aimGetProp=fwVersion", timeout, False)
             print(resp.text)
             if resp.status_code not in [200]: return
             print(resp.text)
             version = resp.json()["aimGetProp"]["fwVersion"]
-            resp = get_url_response(f"{host}/login.html", timeout)
+            resp = get_url_response(f"{host}/login.html", timeout, False)
             if "iDRAC7" in resp.text: return iDRAC_Version_Vuln_Data(host, "7", version)
             elif "iDRAC8" in resp.text: return iDRAC_Version_Vuln_Data(host, "8", version)
             else: return iDRAC_Version_Vuln_Data(host, "N/A", version)

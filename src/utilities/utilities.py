@@ -202,13 +202,13 @@ def add_default_parser_arguments(parser, add_target_argument = True):
     parser.add_argument("-e", "--errors", action="store_true", help="Show Errors")
     parser.add_argument("-v", "--verbose", action="store_true", help="Show Verbose")
     
-def get_url_response(url, timeout=5):
+def get_url_response(url, timeout=5, redirect = True):
     try:
-        resp = requests.get(f"http://{url}", allow_redirects=True, verify=False, timeout=timeout)
-        if "You're speaking plain HTTP to an SSL-enabled server port" in resp.text: return requests.get(f"https://{url}", allow_redirects=True, verify=False, timeout=timeout)
+        resp = requests.get(f"http://{url}", allow_redirects=redirect, verify=False, timeout=timeout)
+        if "You're speaking plain HTTP to an SSL-enabled server port" in resp.text: return requests.get(f"https://{url}", allow_redirects=redirect, verify=False, timeout=timeout)
         return resp
     except:
         try:
-            return requests.get(f"https://{url}", allow_redirects=True, verify=False, timeout=timeout)
+            return requests.get(f"https://{url}", allow_redirects=redirect, verify=False, timeout=timeout)
         except Exception as e:
             return None
