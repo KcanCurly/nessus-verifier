@@ -10,7 +10,7 @@ class iDRAC_Version_Vuln_Data():
 def version_single(host: str, timeout = 3, errors = False, verbose = False):
     try:
         resp = get_url_response(f"{host}/sysmgmt/2015/bmc/info", timeout)
-        print(resp.text)
+        print(f"{host} - {resp.status_code}")
         if resp.status_code >= 400:
             print("ZZ")
             resp = get_url_response(f"{host}/session?aimGetProp=fwVersion", timeout)
