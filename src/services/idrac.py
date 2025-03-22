@@ -13,10 +13,13 @@ def version_single(host: str, timeout = 3, errors = False, verbose = False):
         resp = get_url_response(f"http://{host}/session?aimGetProp=fwVersion", timeout)
         if not resp: return
         version = resp.json()["aimGetProp"]["fwVersion"]
-        resp = requests.get(f"https://{host}/login.html", allow_redirects=True, verify=False, timeout=timeout)
-        if "iDRAC7" in resp.text: return iDRAC_Version_Vuln_Data(host, "7", version)
-        if "iDRAC8" in resp.text: return iDRAC_Version_Vuln_Data(host, "8", version)
+        resp = get_url_response(f"https://{host}/login.html", allow_redirects=True, verify=False, timeout=timeout)
+        if resp:
+            if "iDRAC7" in resp.text: return iDRAC_Version_Vuln_Data(host, "7", version)
+            if "iDRAC8" in resp.text: return iDRAC_Version_Vuln_Data(host, "8", version)
         return iDRAC_Version_Vuln_Data(host, "N/A", version)
+    version = resp.json()["Attributes"]["FwVer"]
+    return iDRAC_Version_Vuln_Data(host, "9", version)
 
 def version_nv(hosts: list[str], threads = 10, timeout = 3, errors = False, verbose = False):
     results: list[iDRAC_Version_Vuln_Data] = get_default_context_execution("iDRAC Version", threads, hosts, (version_single, timeout, errors, verbose))
