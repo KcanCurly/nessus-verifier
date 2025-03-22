@@ -140,10 +140,10 @@ def ssl_check(hosts):
         
             
 def anon_console(args):
-    anon_nv(get_hosts_from_file(args.file), args.errors, args.verbose)
+    anon_nv(get_hosts_from_file(args.target), args.errors, args.verbose)
     
 def brute_console(args):
-    brute_nv(get_hosts_from_file(args.file), get_hosts_from_file(args.credential_file), args.threads, args.timeout, args.errors, args.verbose)
+    brute_nv(get_hosts_from_file(args.target), get_hosts_from_file(args.credential_file), args.threads, args.timeout, args.errors, args.verbose)
 
 def helper_parse(commandparser):
     parser_task1 = commandparser.add_parser("ftp")
@@ -155,7 +155,7 @@ def helper_parse(commandparser):
     
     parser_brute = subparsers.add_parser("brute", help="Bruteforce ftp login")
     parser_brute.add_argument("target", type=str, help="File name or targets seperated by space")
-    parser_brute.add_argument("-cf", "--credential-file", type=str, required=True, help="credential file seperated by new line, user:pass on each line")
+    parser_brute.add_argument("credential-file", type=str, help="File name or targets seperated by space, user:pass on each line")
     add_default_parser_arguments(parser_brute, False)
     parser_brute.set_defaults(func=brute_console)
     

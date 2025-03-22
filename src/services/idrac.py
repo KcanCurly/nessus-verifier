@@ -41,7 +41,7 @@ def version_nv(hosts: list[str], threads = 10, timeout = 3, errors = False, verb
                 print(f"    {v}")
 
 def version_console(args):
-    version_nv(get_hosts_from_file(args.file), args.threads, args.timeout, args.errors, args.verbose)
+    version_nv(get_hosts_from_file(args.target), args.threads, args.timeout, args.errors, args.verbose)
 
 def helper_parse(commandparser):    
     parser_task1 = commandparser.add_parser("idrac")
