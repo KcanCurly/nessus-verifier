@@ -11,7 +11,7 @@ def version_single(host: str, timeout = 3, errors = False, verbose = False):
     try:
         resp = get_url_response(f"{host}/sysmgmt/2015/bmc/info", timeout, False)
         print(f"{host} - {resp.status_code}")
-        if resp.status_code >= 400:
+        if resp.status_code >= 300:
             print("ZZ")
             resp = get_url_response(f"{host}/session?aimGetProp=fwVersion", timeout, False)
             print(resp.text)
