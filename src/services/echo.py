@@ -14,7 +14,7 @@ def usage_single(host, timeout, errors, verbose):
         response = b""  # Use bytes to handle binary data safely
         while True:
             chunk = s.recv(1024)  # Read in 1024-byte chunks
-            if not chunk:  # If empty, connection is closed
+            if len(chunk) < 1:  # If empty, connection is closed
                 break
             response += chunk  # Append to response
 
