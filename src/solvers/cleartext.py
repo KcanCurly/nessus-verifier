@@ -1,6 +1,7 @@
 from ftplib import FTP
 from ftplib import error_perm
 from src.utilities.utilities import find_scan, add_default_parser_arguments, get_default_context_execution, add_default_solver_parser_arguments
+from src.services.telnet import version_nv
 from src.modules.nv_parse import GroupNessusScanOutput
 import nmap
 import requests
@@ -49,30 +50,7 @@ def solve_amqp(hosts, threads, timeout, errors, verbose):
     if len(results) > 0:
         print("AMQP Cleartext Authentication Detected:")
         for r in results:
-            print(f"{r.host} - {r.mechanisms}")    
-
-def solve_telnet_single(host, timeout, errors, verbose):
-    try:
-        nm = nmap.PortScanner()
-        ip, port = host.split(":")
-        nm.scan(ip, port, arguments=f'-sV')
-        
-        if ip in nm.all_hosts():
-            nmap_host = nm[ip]
-            if 'telnet' in nmap_host['tcp'][int(port)]['name'].lower():
-                product = nmap_host['tcp'][int(port)].get("product", "Service not found")
-                return f"{host}{f" - {product}" if product else ""}"
-    except Exception as e:
-        if errors: print(f"Error for {host}: {e}")
-
-def solve_telnet(hosts, threads, timeout, errors, verbose):
-    results = get_default_context_execution("Cleartext Protocol Detected - Unencrypted Telnet Detected", threads, hosts, (solve_telnet_single, timeout, errors, verbose))
-    
-    if len(results) > 0:
-        print("Unencrypted Telnet Detected:")
-        for value in results:
-            print(f"{value}")
-
+            print(f"{r.host} - {r.mechanisms}")
 
 def solve_basic_http_single(host, timeout, errors, verbose):
     try:
@@ -124,7 +102,7 @@ def solve(args, is_all = False):
     
     if args.file:
         hosts = scan.sub_hosts.get("Unencrypted Telnet Server", [])
-        solve_telnet(hosts, args.threads, args.timeout, args.errors, args.verbose)
+        version_nv(hosts, args.threads, args.timeout, args.errors, args.verbose)
         hosts = scan.sub_hosts.get("Basic Authentication Without HTTPS", [])
         solve_basic_http(hosts, args.threads, args.timeout, args.errors, args.verbose)
         hosts = scan.sub_hosts.get("AMQP Cleartext Authentication", [])

@@ -8,9 +8,8 @@ To install:
 
 ```
 cd ~
-sudo apt install -y sslscan sshpass ssh-audit dnsutils dnsrecon metasploit-framework ident-user-enum smbclient samba samba-common-bin tnscmd10g libnfs-utils cpanminus git pipx libpq5 libpq-dev sippts
+sudo apt install -y sslscan sshpass ssh-audit dnsutils dnsrecon nmap metasploit-framework ident-user-enum smbclient samba samba-common-bin tnscmd10g libnfs-utils cpanminus git pipx libpq5 libpq-dev sippts
 pipx install git+https://github.com/KcanCurly/nessus-verifier
-pipx install git+https://github.com/KcanCurly/ssh-whirl
 sudo cpanm --notest Encoding::BER
 git clone https://github.com/CiscoCXSecurity/rdp-sec-check
 ```
@@ -24,18 +23,6 @@ nv-solver all -f output.ndjson
 
 ## Implemented Applications
 
-* Echo
-  * Simply checks usage and prints out the hosts
-* Discard
-  * Simply checks usage and prints out the hosts
-* Systat
-  * Simply checks usage and prints out the hosts
-* Daytime
-  * Simply checks usage and prints out the hosts
-* QOTD
-  * Simply checks usage and prints out the hosts
-* CHARGEN
-  * Simply checks usage and prints out the hosts
 * FTP
   * Check Anonymous access
   * Check common/default credentials
@@ -45,8 +32,6 @@ nv-solver all -f output.ndjson
   * Check common/default credentials
   * Check hostkey/kex/mac/ciphers and protocol version
   * Check software version and (FUTURE) print CVEs related to those version
-* Telnet
-  * Simply checks usage and prints out the hosts
 * SMTP
   * Checks if TLS is enforced
   * If TLS is used check TSL/SSL versions and ciphers and bits
@@ -107,7 +92,7 @@ nv-solver all -f output.ndjson
 * Nginx
 * VMWare Products
 * OpenSSH
-* NFS (TODO)
+* NFS
 * MSSQL
 * mDNS (TODO)
 * Obsolete Protocols (TODO)
@@ -121,3 +106,10 @@ nv-solver all -f output.ndjson
 * MongoDB
 * Oracle Database
 * QueueJumper
+* IBM WebSphere
+* PostgreSQL
+* FTP
+* OpenSSL
+* Web/CGI Generic
+* HP iLO
+* Jenkins

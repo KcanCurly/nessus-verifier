@@ -1,16 +1,16 @@
 import subprocess
 import re
-from src.utilities.utilities import get_hosts_from_file
+from src.utilities.utilities import get_hosts_from_file, add_default_parser_arguments
 
-def enum_nv(l: list[str], output: str = None, verbose: bool = False):
-    print("Running metasploit zookeepr info disclosure module, there will be no progression bar")
+def enum_nv(hosts, timeout, errors, verbose):
+    print("Running metasploit zookeeper info disclosure module with forcing 1 thread, there will be no progression bar")
     versions = {}
     info_vuln: dict[str: list[str]] = {}
 
-    result = ", ".join(l)
+    result = ", ".join(hosts)
 
     try:
-        command = ["msfconsole", "-q", "-x", f"color false; use auxiliary/gather/zookeeper_info_disclosure; set RHOSTS {result}; run; exit"]
+        command = ["msfconsole", "-q", "-x", f"color false; use auxiliary/gather/zookeeper_info_disclosure; set RHOSTS {result}; set ConnectTimeout {timeout}; run; exit"]
         result = subprocess.run(command, text=True, capture_output=True)
         host_start = r"\[\*\] (.*)\s+ - Using a timeout of"
         zookeeper_version = r"zookeeper.version=(.*),"
@@ -41,7 +41,8 @@ def enum_nv(l: list[str], output: str = None, verbose: bool = False):
                     
             except: pass
             
-    except:pass
+    except Exception as e:
+        if errors: print(e)
 
     if len(versions) > 0:
         versions = dict(sorted(versions.items(), reverse=True))
@@ -60,14 +61,13 @@ def enum_nv(l: list[str], output: str = None, verbose: bool = False):
         
 
 def enum_console(args):
-    enum_nv(get_hosts_from_file(args.file, False), args.verbose)
+    enum_nv(get_hosts_from_file(args.target, False), args.threads, args.timeout, args.errors, args.verbose)
     
 def helper_parse(commandparser):
     parser_task1 = commandparser.add_parser("zookeeper")
     subparsers = parser_task1.add_subparsers(dest="command")
     
-    audit_parser = subparsers.add_parser("enum", help="Run enumeration on zookeeper targets")
-    audit_parser.add_argument("-f", "--file", type=str, required=False, help="Path to a file containing a list of hosts, each in 'ip:port' format, one per line.")
-    audit_parser.add_argument("-v", "--verbose", action="store_true", help="Enable verbose output")
-    audit_parser.set_defaults(func=enum_console)
+    parser_enum = subparsers.add_parser("enum", help="Run enumeration on zookeeper targets")
+    add_default_parser_arguments(parser_enum)
+    parser_enum.set_defaults(func=enum_console)
     

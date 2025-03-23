@@ -35,7 +35,7 @@ def solve(args, is_all = False):
     
 
     result = ", ".join(h.split(":")[0] for h in hosts)
-    command = ["msfconsole", "-q", "-x", f"color false; use auxiliary/scanner/vmware/esx_fingerprint; set RHOSTS {result}; set ConnectTimeout {args.timeout}; run; exit"]
+    command = ["msfconsole", "-q", "-x", f"color false; use auxiliary/scanner/vmware/esx_fingerprint; set RHOSTS {result}; set ConnectTimeout {args.timeout}; set THREADS {args.threads}; run; exit"]
     try:
         result = subprocess.run(command, text=True, capture_output=True)
         
