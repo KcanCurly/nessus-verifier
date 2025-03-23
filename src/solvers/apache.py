@@ -69,7 +69,7 @@ def solve_version(hosts, threads, timeout, errors, verbose):
         print("Detected Apache Versions:")
         for key, value in versions.items():
             cves = get_cves(key)
-            print(f"{key} ({", ".join(cves)}):")
+            print(f"Apache/{key} ({", ".join(cves)}):")
             for v in value:
                 print(f"    {v}")
                 
@@ -82,7 +82,6 @@ def solve_version_single(host, timeout, errors, verbose):
                 m = m.group(1)
                 if " " in m:
                     m = m.split()[0]
-                m = "Apache " + m
                 return Version_Vuln_Data(host, m)
 
     except Exception as e:
