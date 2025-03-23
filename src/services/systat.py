@@ -87,6 +87,6 @@ def helper_parse(commandparser):
     add_default_parser_arguments(parser_usage)
     parser_usage.set_defaults(func=usage_console)
     
-    parser_usage = subparsers.add_parser("banner", help="Banner Grab")
-    add_default_parser_arguments(parser_usage)
-    parser_usage.set_defaults(func=banner_console)
+    parser_banner = subparsers.add_parser("banner", help="Banner Grab")
+    add_default_parser_arguments(parser_banner)
+    parser_banner.set_defaults(func=banner_console)
