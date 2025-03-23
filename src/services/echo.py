@@ -38,7 +38,7 @@ def usage_nv(hosts, threads, timeout, errors, verbose):
 def usage_console(args):
     usage_nv(get_hosts_from_file(args.target), args.threads, args.timeout, args.errors, args.verbose)
 
-def main(commandparser):
+def helper_parser(commandparser):
     parser_task1 = commandparser.add_parser("echo")
     subparsers = parser_task1.add_subparsers(dest="command")
     
