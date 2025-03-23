@@ -67,6 +67,8 @@ def usage_single(host, timeout, errors, verbose):
         
         if "Proto" in response and "Local Address" in response and "State" in response: return host
     except Exception as e:
+        response = response.decode(errors="ignore")
+        if "Local Address" in response and "Proto" in response and "State" in response: return host
         if errors: print(f"Error for {host}: {e}")
         
 def usage_nv(hosts, threads, timeout, errors, verbose):
@@ -89,6 +91,6 @@ def helper_parse(commandparser):
     add_default_parser_arguments(parser_usage)
     parser_usage.set_defaults(func=usage_console)
     
-    parser_usage = subparsers.add_parser("banner", help="Banner Grab")
-    add_default_parser_arguments(parser_usage)
-    parser_usage.set_defaults(func=banner_console)
+    parser_banner = subparsers.add_parser("banner", help="Banner Grab")
+    add_default_parser_arguments(parser_banner)
+    parser_banner.set_defaults(func=banner_console)
