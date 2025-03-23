@@ -25,6 +25,8 @@ def usage_single(host, timeout, errors, verbose):
         
         if response == "pentest": return host
     except Exception as e:
+        response = response.decode(errors="ignore")
+        if response == "pentest": return host
         if errors: print(f"Error for {host}: {e}")
         
 def usage_nv(hosts, threads, timeout, errors, verbose):
