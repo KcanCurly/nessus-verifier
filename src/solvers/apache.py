@@ -19,8 +19,8 @@ def get_cves(version):
         "count": "false",
         "is_key": "false",
         "sort_by_epss": "true",
-        "skip": 0,
-        "limit": 10,
+        "skip": "0",
+        "limit": "10",
     }
     resp = requests.get(f'https://cvedb.shodan.io/cves', data=params)
     resp_json = resp.json()
