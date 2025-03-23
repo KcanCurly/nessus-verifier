@@ -214,19 +214,22 @@ def get_url_response(url, timeout=5, redirect = True):
             return None
         
 def get_cves(cpe, sort_by_epss = True, limit = 10):        
-    params = {
-        "cpe23": cpe,
-        "count": "false",
-        "is_key": "false",
-        "sort_by_epss": sort_by_epss,
-        "skip": "0",
-        "limit": limit,
-    }
-    resp = requests.get(f'https://cvedb.shodan.io/cves', params=params)
-    print(resp.url)
-    resp_json = resp.json()
-    cves = resp_json["cves"]
-    cve_ids = []
-    for c in cves:
-        cve_ids.append(c["cve_id"])
-    return cve_ids
+    try:
+        params = {
+            "cpe23": cpe,
+            "count": "false",
+            "is_key": "false",
+            "sort_by_epss": sort_by_epss,
+            "skip": "0",
+            "limit": limit,
+        }
+        resp = requests.get(f'https://cvedb.shodan.io/cves', params=params)
+        print(resp.url)
+        resp_json = resp.json()
+        cves = resp_json["cves"]
+        cve_ids = []
+        for c in cves:
+            cve_ids.append(c["cve_id"])
+        return cve_ids
+    except Exception as e: return []
+    
