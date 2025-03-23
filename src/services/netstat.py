@@ -23,7 +23,7 @@ def banner_single(host, timeout, errors, verbose):
         # Close the connection
         s.close()
         
-        if "USER" in response and "PID" in response and "COMMAND" in response: return Version_Vuln_Data(host, response)
+        if "Local Address" in response and "Proto" in response and "State" in response: return Version_Vuln_Data(host, response)
     except Exception as e:
         if errors: print(f"Error for {host}: {e}")
         
