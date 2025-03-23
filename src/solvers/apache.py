@@ -58,6 +58,7 @@ def solve(args, is_all = False):
 
                 
 def solve_version(hosts, threads, timeout, errors, verbose):
+    versions = {}
     results: list[Version_Vuln_Data] = get_default_context_execution("Apache Version", threads, hosts, (solve_version_single, timeout, errors, verbose))
     for r in results:
         if r.version not in versions:
