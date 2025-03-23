@@ -10,10 +10,8 @@ def get_default_config():
 ["11"]
 """
 
-cpe = "cpe:2.3:a:apache:tomcat:<version>:*:*:*:*:*:*:*"
-
 def get_cves(version):
-    cpe = f"cpe:2.3:a:apache:tomcat:{version}"
+    cpe = f"cpe:2.3:a:apache:http_server:{version}"
     params = {
         "cpe23": cpe,
         "count": "false",
