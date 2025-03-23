@@ -23,15 +23,15 @@ def banner_single(host, timeout, errors, verbose):
         # Close the connection
         s.close()
         
-        if "USER" in response and "PID" in response and "COMMAND" in response: return Version_Vuln_Data(host, response)
+        return Version_Vuln_Data(host, response)
     except Exception as e:
         if errors: print(f"Error for {host}: {e}")
         
 def banner_nv(hosts, threads, timeout, errors, verbose):
-    results: list[Version_Vuln_Data] = get_default_context_execution("Systat Banner Grab", threads, hosts, (banner_single, timeout, errors, verbose))
+    results: list[Version_Vuln_Data] = get_default_context_execution("QOTD Banner Grab", threads, hosts, (banner_single, timeout, errors, verbose))
 
     if len(results) > 0:
-        print("Systat Banners:")
+        print("QOTD Banners:")
         for r in results:
             print("=================================")
             print(r.host)
@@ -63,7 +63,7 @@ def usage_single(host, timeout, errors, verbose):
         # Close the connection
         s.close()
         
-        if "USER" in response and "PID" in response and "COMMAND" in response: return host
+        return host
     except Exception as e:
         if errors: print(f"Error for {host}: {e}")
         

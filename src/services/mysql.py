@@ -1,4 +1,4 @@
-from src.utilities.utilities import get_hosts_from_file
+from src.utilities.utilities import Version_Vuln_Data, get_hosts_from_file, add_default_parser_arguments, get_default_context_execution
 import nmap
 import pymysql
 
@@ -54,81 +54,81 @@ def fetch_all_databases_and_tables(host, username, password):
         if cursor: cursor.close()
         if conn: conn.close()
 
-def post_nv(hosts: list[str], username: str, password: str, error:bool = False):
+def post_nv(hosts, username, password, threads, timeout, errors, verbose):
     for host in hosts:
         fetch_all_databases_and_tables(host, username, password)
 
 
         
 def post_console(args):
-    post_nv(get_hosts_from_file(args.file), args.username, args.password, args.errors)
+    post_nv(get_hosts_from_file(args.target), args.username, args.password, args.threads, args.timeout, args.errors, args.verbose)
 
+def version_single(host, timeout, errors, verbose):
+    try:
+        nm = nmap.PortScanner()
+        ip, port = host.split(":")
 
-def version_nv(hosts: list[str]):
+        nm.scan(ip, port, arguments=f'--script ms-sql-info')
+        
+        if ip in nm.all_hosts():
+            nmap_host = nm[ip]
+            if 'tcp' in nmap_host and int(port) in nmap_host['tcp']:
+                tcp_info = nmap_host['tcp'][int(port)]
+                if 'script' in tcp_info and 'ms-sql-info' in tcp_info['script']:
+                    # Extract the ms-sql-info output
+                    ms_sql_info = tcp_info['script']['ms-sql-info']
+
+                    # Parse the output to get product name and version
+                    product_name = None
+                    version_number = None
+
+                    # Look for product and version in the output
+                    for line in ms_sql_info.splitlines():
+                        if "Product:" in line:
+                            product_name = line.split(":")[1].strip()
+                        if "number:" in line:
+                            version_number = line.split(":")[1].strip()
+
+                    # Print the results
+                    if product_name and version_number:
+                        z = product_name + " " + version_number
+                        return Version_Vuln_Data(host, z)
+
+    except Exception as e:
+        if errors: print(f"Error for {host}: {e}")
+
+def version_nv(hosts, threads, timeout, errors, verbose):
     versions = {}
+    results: list[Version_Vuln_Data] = get_default_context_execution("Mysql Version", threads, hosts, (version_single, timeout, errors, verbose))
     
-    nm = nmap.PortScanner()
-    for host in hosts:
-        try:
-            ip, port = host.split(":")
-
-            nm.scan(ip, port, arguments=f'--script ms-sql-info')
-            
-            if ip in nm.all_hosts():
-                nmap_host = nm[ip]
-                if 'tcp' in nmap_host and int(port) in nmap_host['tcp']:
-                    tcp_info = nmap_host['tcp'][int(port)]
-                    if 'script' in tcp_info and 'ms-sql-info' in tcp_info['script']:
-                        # Extract the ms-sql-info output
-                        ms_sql_info = tcp_info['script']['ms-sql-info']
-
-                        # Parse the output to get product name and version
-                        product_name = None
-                        version_number = None
-
-                        # Look for product and version in the output
-                        for line in ms_sql_info.splitlines():
-                            if "Product:" in line:
-                                product_name = line.split(":")[1].strip()
-                            if "number:" in line:
-                                version_number = line.split(":")[1].strip()
-
-                        # Print the results
-                        if product_name and version_number:
-                            z = product_name + " " + version_number
-                            if z not in versions:
-                                versions[z] = set()
-                            versions[z].add(host)
-        except Exception as e: pass #print(e)
-
+    for r in results:
+        if r.version not in versions:
+            versions[r.version] = []
+        versions[r.version].append(r.host)
 
     
     if len(versions) > 0:
         versions = dict(sorted(versions.items(), reverse=True))
-        print("Detected MSSQL Versions:")
+        print("Detected Mysql Versions:")
         for key, value in versions.items():
             print(f"{key}:")
             for v in value:
                 print(f"    {v}")
 
 def version_console(args):
-    version_nv(get_hosts_from_file(args.file))
+    version_nv(get_hosts_from_file(args.target), args.threads, args.timeout, args.errors, args.verbose)
 
 def helper_parse(commandparser):
     parser_task1 = commandparser.add_parser("mysql")
     subparsers = parser_task1.add_subparsers(dest="command")
     
     parser_version = subparsers.add_parser("version", help="Checks version")
-    parser_version.add_argument("-f", "--file", type=str, required=True, help="input file name")
-    parser_version.add_argument("--threads", default=10, type=int, help="Number of threads (Default = 10)")
-    parser_version.add_argument("--timeout", default=5, type=int, help="Timeout in seconds (Default = 5)")
-    parser_version.add_argument("-v", "--verbose", action="store_true", help="Enable verbose")
+    add_default_parser_arguments(parser_version)
     parser_version.set_defaults(func=version_console)
     
     parser_post = subparsers.add_parser("post", help="Post Exploit")
-    parser_post.add_argument("-f", "--file", type=str, required=True, help="input file name")
-    parser_post.add_argument("-u", "--username", type=str, required=True, help="Username")
-    parser_post.add_argument("-p", "--password", type=str, required=True, help="Password")
-    parser_post.add_argument("-e", "--errors", action="store_true", help="Enable errors")
-    parser_post.add_argument("-v", "--verbose", action="store_true", help="Enable verbose")
+    parser_post.add_argument("target", type=str, help="File name or targets seperated by space")
+    parser_post.add_argument("username", type=str, help="Username")
+    parser_post.add_argument("password", type=str, help="Password")
+    add_default_parser_arguments(parser_post, False)
     parser_post.set_defaults(func=post_console)
