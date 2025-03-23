@@ -68,10 +68,10 @@ def usage_single(host, timeout, errors, verbose):
         if errors: print(f"Error for {host}: {e}")
         
 def usage_nv(hosts, threads, timeout, errors, verbose):
-    results = get_default_context_execution("Systat Usage", threads, hosts, (usage_single, timeout, errors, verbose))
+    results = get_default_context_execution("QOTD Usage", threads, hosts, (usage_single, timeout, errors, verbose))
     
     if len(results) > 0:
-        print("Systat Usage Detected:")
+        print("QOTD Usage Detected:")
         for value in results:
             print(f"{value}")
     
