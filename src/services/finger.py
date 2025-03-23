@@ -28,7 +28,7 @@ def users_nv(hosts: list[str], errors, verbose):
 def users_console(args):
     users_nv(get_hosts_from_file(args.target), args.threads, args.timeout, args.errors, args.verbose)
 
-def helper_parser(commandparser):
+def helper_parse(commandparser):
     parser_task1 = commandparser.add_parser("finger")
     subparsers = parser_task1.add_subparsers(dest="command")
     
