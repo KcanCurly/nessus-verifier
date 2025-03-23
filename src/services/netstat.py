@@ -13,7 +13,7 @@ def banner_single(host, timeout, errors, verbose):
 
         response = b""  # Use bytes to handle binary data safely
         while True:
-            chunk = s.recv(1024)  # Read in 1024-byte chunks
+            chunk = s.recv(4096)  # Read in 1024-byte chunks
             if not chunk:  # If empty, connection is closed
                 break
             response += chunk  # Append to response
@@ -25,6 +25,7 @@ def banner_single(host, timeout, errors, verbose):
         
         if "Local Address" in response and "Proto" in response and "State" in response: return Version_Vuln_Data(host, response)
     except Exception as e:
+        if "Local Address" in response and "Proto" in response and "State" in response: return Version_Vuln_Data(host, response)
         if errors: print(f"Error for {host}: {e}")
         
 def banner_nv(hosts, threads, timeout, errors, verbose):
