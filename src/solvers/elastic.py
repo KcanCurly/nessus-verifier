@@ -11,7 +11,7 @@ def get_default_config():
 def helper_parse(subparser):
     parser_task1 = subparser.add_parser(str(code), help="Elasticsearch")
     add_default_solver_parser_arguments(parser_task1)
-    add_default_parser_arguments(parser_task1)
+    add_default_parser_arguments(parser_task1, False)
     parser_task1.set_defaults(func=solve) 
 
 def solve_version_single(host, timeout, errors, verbose):
