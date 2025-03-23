@@ -1,6 +1,7 @@
 from src.utilities.utilities import Version_Vuln_Data, find_scan, get_header_from_url, add_default_parser_arguments, get_default_context_execution, add_default_solver_parser_arguments
 from src.modules.nv_parse import GroupNessusScanOutput
 import re
+import requests
 
 code = 11
 
@@ -8,6 +9,29 @@ def get_default_config():
     return """
 ["11"]
 """
+
+cpe = "cpe:2.3:a:apache:tomcat:<version>:*:*:*:*:*:*:*"
+
+def get_cves(version):
+    cpe = f"cpe:2.3:a:apache:tomcat:{version}"
+    params = {
+        "cpe23": cpe,
+        "count": "false",
+        "is_key": "false",
+        "sort_by_epss": "true",
+        "skip": 0,
+        "limit": 10,
+    }
+    resp = requests.get(f'https://cvedb.shodan.io/cves', data=params)
+    resp_json = resp.json()
+    cves = resp_json["cves"]
+    cve_ids = []
+    for c in cves:
+        cve_ids.append(c["cve_id"])
+    return c
+
+    
+    
 
 def helper_parse(subparser):
     parser_task1 = subparser.add_parser(str(code), help="Apache")
@@ -44,7 +68,8 @@ def solve_version(hosts, threads, timeout, errors, verbose):
         versions = dict(sorted(versions.items(), reverse=True))
         print("Detected Apache Versions:")
         for key, value in versions.items():
-            print(f"{key}:")
+            cves = get_cves(key)
+            print(f"{key} ({", ".join(cves)}):")
             for v in value:
                 print(f"    {v}")
                 
