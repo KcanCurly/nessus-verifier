@@ -23,6 +23,7 @@ def get_cves(version):
         "limit": "10",
     }
     resp = requests.get(f'https://cvedb.shodan.io/cves', data=params)
+    print(resp.url)
     resp_json = resp.json()
     cves = resp_json["cves"]
     cve_ids = []
