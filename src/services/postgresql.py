@@ -131,7 +131,7 @@ def helper_parse(commandparser):
     parser_task1 = commandparser.add_parser("psql")
     subparsers = parser_task1.add_subparsers(dest="command")
     
-    parser_default = subparsers.add_parser("default-password", help="Checks if default password is used")
+    parser_default = subparsers.add_parser("default", help="Checks if default/empty password is used")
     add_default_parser_arguments(parser_default)
     parser_default.set_defaults(func=unpassworded_console)
     

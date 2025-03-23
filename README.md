@@ -22,11 +22,18 @@ nv-solver all -f output.ndjson
 ```
 
 ## Implemented Applications
+* QOTD
+  * Checks usage
+  * Bannger grab
+* Netstat
+  * Checks usage
+  * Bannger grab
 * Systat
   * Checks usage
   * Bannger grab
 * Telnet
   * Checks usage and product version
+  * Bannger grab
 * FTP
   * Check Anonymous access
   * Check common/default credentials

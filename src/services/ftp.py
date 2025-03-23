@@ -15,7 +15,7 @@ class FTP_Brute_Vuln_Data():
         self.is_TLS = is_TLS
         self.creds = creds
 
-def brute_single(host, creds: list[str], timeout = 3, errors = False, verbose = False):
+def brute_single(host, creds, timeout, errors, verbose):
     vuln = FTP_Brute_Vuln_Data(host, False, [])
 
     ip, port = host.split(":")
@@ -51,7 +51,7 @@ def brute_single(host, creds: list[str], timeout = 3, errors = False, verbose = 
     if len(vuln.creds) > 0: return vuln
     return None
    
-def anon_single(host, timeout = 10, errors = False, verbose = False):
+def anon_single(host, timeout, errors, verbose):
         try:
             ip, port = host.split(":")
 
@@ -79,7 +79,7 @@ def anon_single(host, timeout = 10, errors = False, verbose = False):
             
         return None
         
-def anon_nv(hosts, threads = 10, timeout = 5, errors = False, verbose = False):
+def anon_nv(hosts, threads, timeout, errors, verbose):
     results: list[FTP_Anon_Vuln_Data] = get_default_context_execution("FTP Anon", threads, hosts, (anon_single, timeout, errors, verbose))
                     
     if len(results) > 0:
@@ -90,7 +90,7 @@ def anon_nv(hosts, threads = 10, timeout = 5, errors = False, verbose = False):
 def tls(hosts):
     control_TLS(hosts, "--starttls-ftp")
 
-def brute_nv(hosts: list[str], creds: list[str], threads, timeout, errors, verbose):
+def brute_nv(hosts, creds, threads, timeout, errors, verbose):
     results: list[FTP_Brute_Vuln_Data] = get_default_context_execution("FTP Brute", threads, hosts, (brute_single, creds, timeout, errors, verbose))
     
     if len(results) > 0:
@@ -140,7 +140,7 @@ def ssl_check(hosts):
         
             
 def anon_console(args):
-    anon_nv(get_hosts_from_file(args.target), args.errors, args.verbose)
+    anon_nv(get_hosts_from_file(args.target), args.threads, args.timeout, args.errors, args.verbose)
     
 def brute_console(args):
     brute_nv(get_hosts_from_file(args.target), get_hosts_from_file(args.credential_file), args.threads, args.timeout, args.errors, args.verbose)

@@ -6,7 +6,7 @@ class iDRAC_Version_Vuln_Data():
         self.main_version = main_version
         self.version = version
 
-def version_single(host: str, timeout = 3, errors = False, verbose = False):
+def version_single(host, timeout, errors, verbose):
     try:
         resp = get_url_response(f"{host}/sysmgmt/2015/bmc/info", timeout, False)
         if resp.status_code >= 300:
@@ -20,7 +20,7 @@ def version_single(host: str, timeout = 3, errors = False, verbose = False):
         version = resp.json()["Attributes"]["FwVer"]
         return iDRAC_Version_Vuln_Data(host, "9", version)
     except Exception as e:
-        if errors: print(f"Error for {host} - {e}")
+        if errors: print(f"Error for {host}: {e}")
 
 def version_nv(hosts: list[str], threads = 10, timeout = 3, errors = False, verbose = False):
     results: list[iDRAC_Version_Vuln_Data] = get_default_context_execution("iDRAC Version", threads, hosts, (version_single, timeout, errors, verbose))

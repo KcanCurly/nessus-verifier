@@ -1,6 +1,6 @@
 import subprocess
 import re
-from src.utilities.utilities import get_hosts_from_file
+from src.utilities.utilities import get_hosts_from_file, get_default_context_execution, add_default_parser_arguments
 
 
 def users_nv(hosts: list[str], errors, verbose):
@@ -26,15 +26,13 @@ def users_nv(hosts: list[str], errors, verbose):
             print(f"    {k}:79 - {", ".join(v)}")
         
 def users_console(args):
-    users_nv(get_hosts_from_file(args.file), args.errors, args.verbose)
+    users_nv(get_hosts_from_file(args.target), args.threads, args.timeout, args.errors, args.verbose)
 
 def helper_parser(commandparser):
     parser_task1 = commandparser.add_parser("finger")
     subparsers = parser_task1.add_subparsers(dest="command")
     
-    parser_users = subparsers.add_parser("users", help="Enumerates users")
-    parser_users.add_argument("-f", "--filename", type=str, required=False, help="File that has host:port information.")
-    parser_users.add_argument("-e", "--errors", action="store_true", help="Show Errors")
-    parser_users.add_argument("-v", "--verbose", action="store_true", help="Verbose")
+    parser_users = subparsers.add_parser("userenum", help="Enumerates users")
+    add_default_parser_arguments(parser_users)
     parser_users.set_defaults(func=users_console)
     

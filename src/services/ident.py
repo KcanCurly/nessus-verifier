@@ -2,7 +2,7 @@ import subprocess
 import re
 from src.utilities.utilities import get_hosts_from_file, add_default_parser_arguments
 
-def users_nv(hosts: list[str], ports: list[str], errors, verbose):
+def users_nv(hosts, ports, timeout, errors, verbose):
     print("Running ident-user-enum command, there will be no progression bar")
     vuln = {}
     try:
@@ -27,7 +27,7 @@ def users_nv(hosts: list[str], ports: list[str], errors, verbose):
         
 
 def users_console(args):
-    users_nv(get_hosts_from_file(args.target, False), args.ports, args.errors, args.verbose)
+    users_nv(get_hosts_from_file(args.target, False), args.ports, args.timeout, args.errors, args.verbose)
 
 def helper_parse(commandparser):
     parser_task1 = commandparser.add_parser("ident")
