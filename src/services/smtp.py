@@ -1,14 +1,9 @@
-import argparse
 import smtplib
-import configparser
 import os
-from pathlib import Path
-import re
-import subprocess
-from src.utilities.utilities import confirm_prompt, control_TLS, get_hosts_from_file
+from src.utilities.utilities import confirm_prompt, control_TLS, get_hosts_from_file, add_default_parser_arguments
 
 
-def userenum_nv(hosts, domain):
+def userenum_nv(hosts, domain, threads, timeout, errors, verbose):
     vuln = {}
     hosts = get_hosts_from_file(hosts)
     def check_enum(smtpp):
@@ -18,7 +13,8 @@ def userenum_nv(hosts, domain):
                 if host not in vuln:
                     vuln[host] = []
                 vuln[host].append("VRFY")
-        except: pass
+        except Exception as e:
+            if errors: print(f"Error: {e}")
         
         try:
             answer = smtpp.docmd("EXPN", "test")
@@ -26,12 +22,13 @@ def userenum_nv(hosts, domain):
                 if host not in vuln:
                     vuln[host] = []
                 vuln[host].append("EXPN")
-        except: pass
+        except Exception as e:
+            if errors: print(f"Error: {e}")
         
         try:
             answer = smtpp.docmd("MAIL FROM:", "test@test.com")
             if "STARTTLS" in answer[1].decode():
-                smtp = smtplib.SMTP(ip, port, timeout=5)
+                smtp = smtplib.SMTP(ip, port, timeout=timeout)
                 smtp.starttls()
                 check_enum(smtp)
                 return
@@ -41,23 +38,23 @@ def userenum_nv(hosts, domain):
                 if host not in vuln:
                     vuln[host] = []
                 vuln[host].append("RCPT")
-        except: pass
+        except Exception as e:
+            if errors: print(f"Error: {e}")
             
     for host in hosts:
         ip, port = host.split(":")
         try:
-            smtp = smtplib.SMTP(ip, port, timeout=5)
+            smtp = smtplib.SMTP(ip, port, timeout=timeout)
             smtp.helo()
             check_enum(smtp)
-        except smtplib.SMTPServerDisconnected as t: # It could be that server requires TLS/SSL so we need to connect again with TLS
+        except Exception as e: # It could be that server requires TLS/SSL so we need to connect again with TLS
             try:
-                smtp = smtplib.SMTP_SSL(ip, port, timeout=5)
+                smtp = smtplib.SMTP_SSL(ip, port, timeout=timeout)
                 smtp.helo()
                 check_enum(smtp)
-            except: pass
-        except: pass
-                
-    
+            except Exception as e:
+                if errors: print(f"Error: {e}")
+
     if len(vuln) > 0:
         print("User Enumeration Was Possible with Given Methods on Hosts:")
         for key, value in vuln.items():
@@ -163,17 +160,15 @@ def open_relay(hosts, confirm, subject, message, client1, client2, in_fake, out_
             print(f"    {key}: {", ".join(value)}")
 
 def userenum_console(args):
-    userenum_nv(get_hosts_from_file(args.file))
+    userenum_nv(get_hosts_from_file(args.target), args.domain, args.threads, args.timeout, args.errors, args.verbose)
 
 def helper_parse(commandparser):
     parser_task1 = commandparser.add_parser("smtp")
     subparsers = parser_task1.add_subparsers(dest="command")
     
-    parser_smbv1 = subparsers.add_parser("userenum", help="Tries to enumerate users with VRFY EXPN and RCPT TO")
-    parser_smbv1.add_argument("-f", "--file", type=str, required=True, help="input file name")
-    parser_smbv1.add_argument("-d", "--domain", type=str, required=True, help="Domain name for RCPT TO")
-    parser_smbv1.add_argument("--threads", default=10, type=int, help="Number of threads (Default = 10)")
-    parser_smbv1.add_argument("--timeout", default=5, type=int, help="Timeout in seconds (Default = 5)")
-    parser_smbv1.add_argument("-v", "--verbose", action="store_true", help="Enable verbose")
-    parser_smbv1.set_defaults(func=userenum_console)
+    parser_userenum = subparsers.add_parser("userenum", help="Tries to enumerate users with VRFY EXPN and RCPT TO")
+    parser_userenum.add_argument("target", type=str, help="File name or targets seperated by space")
+    parser_userenum.add_argument("domain", type=str, help="Domain name for RCPT TO")
+    add_default_parser_arguments(parser_userenum, False)
+    parser_userenum.set_defaults(func=userenum_console)
     
