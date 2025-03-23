@@ -1206,7 +1206,7 @@
 
 - name: Obsolete Protocols
   id: 18
-  plugin-ids: [10061, 10198, 11367, 10052, 10043, 1904, 1905]
+  plugin-ids: [10061, 10198, 11367, 10052, 10043, 1904, 1905, 10275]
   # 10061 - Echo Service Detection
   # 10198 - Quote of the Day (QOTD) Service Detection
   # 11367 - Discard Service Detection
@@ -1214,6 +1214,7 @@
   # 10043 - Chargen UDP Service Remote DoS
   # 1904 - Chargen Server Detection
   # 1905 - Chargen Server Detection (UDP)
+  # 10275 - Systat Service Remote Information Disclosure
 
 - name: iDRAC
   id: 19

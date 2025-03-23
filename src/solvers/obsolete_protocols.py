@@ -34,6 +34,7 @@ def solve(args, is_all = False):
     vuln_daytime = []
     vuln_qotd = []
     vuln_chargen = []
+    vuln_systat = []
 
     nm = nmap.PortScanner()
     for host in hosts:
@@ -45,16 +46,19 @@ def solve(args, is_all = False):
                 nmap_host = nm[ip]
                 print(nmap_host)
                 if nmap_host.has_tcp(int(port)) and nmap_host['tcp'][int(port)]['state'] == 'open':
-                    if nmap_host['tcp'][int(port)]['name'].lower() == 'echo':
+                    n = nmap_host['tcp'][int(port)]['name'].lower()
+                    if 'echo' in n:
                         vuln_echo.append(host)
-                    elif nmap_host['tcp'][int(port)]['name'].lower() == 'discard':
+                    elif 'discard' in n:
                         vuln_discard.append(host)
-                    elif nmap_host['tcp'][int(port)]['name'].lower() == 'daytime':
+                    elif 'daytime' in n:
                         vuln_daytime.append(host)
-                    elif nmap_host['tcp'][int(port)]['name'].lower() == 'qotd':
+                    elif 'qotd' in n:
                         vuln_qotd.append(host)
-                    elif nmap_host['tcp'][int(port)]['name'].lower() == 'chargen':
+                    elif 'chargen' in n:
                         vuln_chargen.append(host)
+                    elif 'systat' in n:
+                        vuln_systat.append(host)
                                     
         except:pass
     
@@ -81,4 +85,9 @@ def solve(args, is_all = False):
     if len(vuln_chargen) > 0:
         print("Chargen Protocol Detected:")
         for value in vuln_chargen:
+            print(f"{value}")
+            
+    if len(vuln_systat) > 0:
+        print("Systat Protocol Detected:")
+        for value in vuln_systat:
             print(f"{value}")
