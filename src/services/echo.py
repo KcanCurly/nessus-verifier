@@ -10,7 +10,7 @@ def usage_single(host, timeout, errors, verbose):
         
         # Connect to Systat service
         s.connect((ip, int(port)))
-        s.sendall("pentest")
+        s.sendall(b"pentest")
         response = b""  # Use bytes to handle binary data safely
         while True:
             chunk = s.recv(1024)  # Read in 1024-byte chunks
