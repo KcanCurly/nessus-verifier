@@ -1,4 +1,4 @@
-from src.utilities.utilities import Version_Vuln_Data, find_scan, get_header_from_url, add_default_parser_arguments, get_default_context_execution, add_default_solver_parser_arguments
+from src.utilities.utilities import Version_Vuln_Data, find_scan, get_header_from_url, add_default_parser_arguments, get_default_context_execution, add_default_solver_parser_arguments, get_cves
 from src.modules.nv_parse import GroupNessusScanOutput
 import re
 import requests
@@ -9,29 +9,7 @@ def get_default_config():
     return """
 ["11"]
 """
-
-def get_cves(version):
-    cpe = f"cpe:2.3:a:apache:http_server:{version}"
-    params = {
-        "cpe23": cpe,
-        "count": "false",
-        "is_key": "false",
-        "sort_by_epss": "true",
-        "skip": "0",
-        "limit": "10",
-    }
-    resp = requests.get(f'https://cvedb.shodan.io/cves', params=params)
-    print(resp.url)
-    resp_json = resp.json()
-    cves = resp_json["cves"]
-    cve_ids = []
-    for c in cves:
-        cve_ids.append(c["cve_id"])
-    return cve_ids
-
     
-    
-
 def helper_parse(subparser):
     parser_task1 = subparser.add_parser(str(code), help="Apache")
     add_default_solver_parser_arguments(parser_task1)
@@ -68,7 +46,7 @@ def solve_version(hosts, threads, timeout, errors, verbose):
         versions = dict(sorted(versions.items(), reverse=True))
         print("Detected Apache Versions:")
         for key, value in versions.items():
-            cves = get_cves(key)
+            cves = get_cves(f"cpe:2.3:a:apache:http_server:{key}")
             print(f"Apache/{key} ({", ".join(cves)}):")
             for v in value:
                 print(f"    {v}")
