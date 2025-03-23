@@ -23,7 +23,7 @@ def banner_single(host, timeout, errors, verbose):
         # Close the connection
         s.close()
         year = response.split()[-1]
-        if 1000 < year < 9999: return Version_Vuln_Data(host, response)
+        if 1000 < int(year) < 9999: return Version_Vuln_Data(host, response)
     except Exception as e:
         if errors: print(f"Error for {host}: {e}")
         
@@ -63,11 +63,11 @@ def usage_single(host, timeout, errors, verbose):
         # Close the connection
         s.close()
         year = response.split()[-1]
-        if 1000 < int(year) < 9999: return Version_Vuln_Data(host, response)
+        if 1000 < int(year) < 9999: return host
     except Exception as e:
         response = response.decode(errors="ignore")
         year = response.split()[-1]
-        if 1000 < year < 9999: return Version_Vuln_Data(host, response)
+        if 1000 < year < 9999: return host
         if errors: print(f"Error for {host}: {e}")
         
 def usage_nv(hosts, threads, timeout, errors, verbose):
