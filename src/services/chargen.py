@@ -11,7 +11,7 @@ def banner_single(host, timeout, errors, verbose):
         # Connect to Systat service
         s.connect((ip, int(port)))
 
-        response = s.recv(1024)  # Use bytes to handle binary data safely
+        response = s.recv(256)  # Use bytes to handle binary data safely
         response = response.decode(errors="ignore")
 
         # Close the connection
@@ -44,7 +44,7 @@ def usage_single(host, timeout, errors, verbose):
         # Connect to Systat service
         s.connect((ip, int(port)))
 
-        response = s.recv(1024)  # Use bytes to handle binary data safely
+        response = s.recv(256)  # Use bytes to handle binary data safely
         response = response.decode(errors="ignore")
 
         # Close the connection
