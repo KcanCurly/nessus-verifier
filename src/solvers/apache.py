@@ -28,7 +28,7 @@ def get_cves(version):
     cve_ids = []
     for c in cves:
         cve_ids.append(c["cve_id"])
-    return c
+    return cve_ids
 
     
     
