@@ -13,9 +13,15 @@ def usage_single(host, timeout, errors, verbose):
         # Connect to Systat service
         s.connect((ip, int(port)))
 
-        # Receive and print the response
-        response = s.recv(4096).decode(errors="ignore")  # Decode safely
-        print("[*] Systat Response:\n", response)
+        response = b""  # Use bytes to handle binary data safely
+        while True:
+            chunk = s.recv(1024)  # Read in 1024-byte chunks
+            if not chunk:  # If empty, connection is closed
+                break
+            response += chunk  # Append to response
+
+        # Decode response (ignoring errors if non-UTF-8 data)
+        print("[*] Response:\n", response.decode(errors="ignore"))
 
         # Close the connection
         s.close()
