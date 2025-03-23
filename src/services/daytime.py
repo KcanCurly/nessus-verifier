@@ -63,7 +63,7 @@ def usage_single(host, timeout, errors, verbose):
         # Close the connection
         s.close()
         year = response.split()[-1]
-        if 1000 < year < 9999: return Version_Vuln_Data(host, response)
+        if 1000 < int(year) < 9999: return Version_Vuln_Data(host, response)
     except Exception as e:
         response = response.decode(errors="ignore")
         year = response.split()[-1]
@@ -82,7 +82,7 @@ def usage_console(args):
     usage_nv(get_hosts_from_file(args.target), args.threads, args.timeout, args.errors, args.verbose)
 
 def helper_parse(commandparser):
-    parser_task1 = commandparser.add_parser("dayime")
+    parser_task1 = commandparser.add_parser("daytime")
     subparsers = parser_task1.add_subparsers(dest="command")
     
     parser_usage = subparsers.add_parser("usage", help="Checks usage")
