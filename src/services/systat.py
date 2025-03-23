@@ -19,8 +19,6 @@ def banner_single(host, timeout, errors, verbose):
             response += chunk  # Append to response
 
         response = response.decode(errors="ignore")
-        # Decode response (ignoring errors if non-UTF-8 data)
-        print("[*] Response:\n", response.decode(errors="ignore"))
 
         # Close the connection
         s.close()
@@ -61,8 +59,6 @@ def usage_single(host, timeout, errors, verbose):
             response += chunk  # Append to response
 
         response = response.decode(errors="ignore")
-        # Decode response (ignoring errors if non-UTF-8 data)
-        print("[*] Response:\n", response.decode(errors="ignore"))
 
         # Close the connection
         s.close()
