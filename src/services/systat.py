@@ -11,7 +11,7 @@ def usage_single(host, timeout, errors, verbose):
         s.settimeout(timeout)  # Set timeout for connection
         
         # Connect to Systat service
-        s.connect((ip, port))
+        s.connect((ip, int(port)))
 
         # Receive and print the response
         response = s.recv(4096).decode(errors="ignore")  # Decode safely
