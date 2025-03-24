@@ -13,7 +13,7 @@ def anon_single(host, timeout, errors, verbose):
 def anon_nv(hosts, threads, timeout, errors, verbose):
     results: list[str] = get_default_context_execution("LDAP Anonymous", threads, hosts, (anon_single, timeout, errors, verbose))
 
-    if len(results) > 0:
+    if results and len(results) > 0:
         print("LDAP anonymous access were found:")
         for v in results:
             print(f"    {v}")

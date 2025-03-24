@@ -47,7 +47,7 @@ def solver_amqp_single(host, timeout, errors, verbose):
 def solve_amqp(hosts, threads, timeout, errors, verbose):
     results: list[AMQP_Vuln_Data] = get_default_context_execution("Cleartext Protocol Detected - AMQP Cleartext Authentication", threads, hosts, (solver_amqp_single, timeout, errors, verbose))
     
-    if len(results) > 0:
+    if results and len(results) > 0:
         print("AMQP Cleartext Authentication Detected:")
         for r in results:
             print(f"{r.host} - {r.mechanisms}")
@@ -63,7 +63,7 @@ def solve_basic_http_single(host, timeout, errors, verbose):
 
 def solve_basic_http(hosts, threads, timeout, errors, verbose):
     results = get_default_context_execution("Cleartext Protocol Detected - Basic Authentication Without HTTPS", threads, hosts, (solve_basic_http_single, timeout, errors, verbose))
-    if len(results) > 0:
+    if results and len(results) > 0:
         print("Basic Authentication Without HTTPS Detected:")
         for value in results:
             print(f"{value}")
@@ -88,7 +88,7 @@ def solve_ftp_single(host, timeout, errors, verbose):
 def solve_ftp(hosts, threads, timeout, errors, verbose):
     results = get_default_context_execution("Cleartext Protocol Detected - Basic Authentication Without HTTPS", threads, hosts, (solve_ftp_single, timeout, errors, verbose))
     
-    if len(results) > 0:
+    if results and len(results) > 0:
         print("FTP Supporting Cleartext Authentication Detected:")
         for value in results:
             print(f"{value}")
@@ -102,15 +102,14 @@ def solve(args, is_all = False):
     
     if args.file:
         hosts = scan.sub_hosts.get("Unencrypted Telnet Server", [])
-        version_nv(hosts, args.threads, args.timeout, args.errors, args.verbose)
+        if hosts: version_nv(hosts, args.threads, args.timeout, args.errors, args.verbose)
         hosts = scan.sub_hosts.get("Basic Authentication Without HTTPS", [])
-        solve_basic_http(hosts, args.threads, args.timeout, args.errors, args.verbose)
+        if hosts: solve_basic_http(hosts, args.threads, args.timeout, args.errors, args.verbose)
         hosts = scan.sub_hosts.get("AMQP Cleartext Authentication", [])
-        solve_amqp(hosts, args.threads, args.timeout, args.errors, args.verbose)
+        if hosts: solve_amqp(hosts, args.threads, args.timeout, args.errors, args.verbose)
         hosts = scan.sub_hosts.get("FTP Supports Cleartext Authentication", [])
-        solve_ftp(hosts, args.threads, args.timeout, args.errors, args.verbose)
+        if hosts: solve_ftp(hosts, args.threads, args.timeout, args.errors, args.verbose)
     
-
     
     """
     # SMTP (TODO)

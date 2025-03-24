@@ -106,7 +106,7 @@ def sign_single(host, timeout, errors, verbose):
 def sign_nv(hosts, threads, timeout, errors, verbose):
     results: list[str] = get_default_context_execution("SMB Signing Check", threads, hosts, (sign_single, timeout, errors, verbose))
 
-    if len(results) > 0:
+    if results and len(results) > 0:
         print("SMB signing NOT enabled on hosts:")
         for v in results:
             print(f"    {v}")
@@ -126,7 +126,7 @@ def smbv1_single(host, timeout, errors, verbose):
 def smbv1_nv(hosts, threads, timeout, errors, verbose):
     results: list[str] = get_default_context_execution("SMBv1 Check", threads, hosts, (smbv1_single, timeout, errors, verbose))
 
-    if len(results) > 0:
+    if results and len(results) > 0:
         print("SMBv1 enabled on hosts:")
         for v in results:
             print(f"    {v}")

@@ -31,7 +31,7 @@ def list_single(host, timeout, errors, verbose):
 def list_nv(hosts, threads, timeout, errors, verbose):
     results: list[NFS_Vuln_Data] = get_default_context_execution("NFS List", threads, hosts, (list_single, timeout, errors, verbose))
 
-    if len(results) > 0:
+    if results and len(results) > 0:
         print("Readable NFS List:")
         for r in results:
             print(r)

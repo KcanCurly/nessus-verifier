@@ -30,7 +30,7 @@ def banner_single(host, timeout, errors, verbose):
 def banner_nv(hosts, threads, timeout, errors, verbose):
     results: list[Version_Vuln_Data] = get_default_context_execution("QOTD Banner Grab", threads, hosts, (banner_single, timeout, errors, verbose))
 
-    if len(results) > 0:
+    if results and len(results) > 0:
         print("QOTD Banners:")
         for r in results:
             print("=================================")
@@ -70,7 +70,7 @@ def usage_single(host, timeout, errors, verbose):
 def usage_nv(hosts, threads, timeout, errors, verbose):
     results = get_default_context_execution("QOTD Usage", threads, hosts, (usage_single, timeout, errors, verbose))
     
-    if len(results) > 0:
+    if results and len(results) > 0:
         print("QOTD Usage Detected:")
         for value in results:
             print(f"{value}")

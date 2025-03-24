@@ -26,7 +26,7 @@ def solve_elastic_version_single(host, timeout, errors, verbose):
 def solve_elastic_version(hosts, threads, timeout, errors, verbose):
     results: list[str] = get_default_context_execution("Elasticsearch Unrestricted Access Information Disclosure", threads, hosts, (solve_elastic_version_single, timeout, errors, verbose))
 
-    if len(results) > 0:
+    if results and len(results) > 0:
         print("Elastic Unrestricted Access:")
         for r in results:
             print(f"    {r}")

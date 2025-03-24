@@ -82,7 +82,7 @@ def anon_single(host, timeout, errors, verbose):
 def anon_nv(hosts, threads, timeout, errors, verbose):
     results: list[FTP_Anon_Vuln_Data] = get_default_context_execution("FTP Anon", threads, hosts, (anon_single, timeout, errors, verbose))
                     
-    if len(results) > 0:
+    if results and len(results) > 0:
         print("FTP Anonymous Access on Hosts:")               
         for a in results:
             print(f"    {a}{" [TLS]" if a.is_TLS else ""}")
@@ -93,7 +93,7 @@ def tls(hosts):
 def brute_nv(hosts, creds, threads, timeout, errors, verbose):
     results: list[FTP_Brute_Vuln_Data] = get_default_context_execution("FTP Brute", threads, hosts, (brute_single, creds, timeout, errors, verbose))
     
-    if len(results) > 0:
+    if results and len(results) > 0:
         print("FTP Credentials Found on Hosts:")               
         for a in results:
             print(f"    {a}{" [TLS]" if a.is_TLS else ""} - {", ".join(a.creds)}")

@@ -28,7 +28,7 @@ def mode6_single(host, timeout, errors, verbose):
 def mode6_nv(hosts, threads, timeout, errors, verbose):
     results: list[Mode6_Vuln_Data] = get_default_context_execution("NTP Mode 6 Usage", threads, hosts, (mode6_single, timeout, errors, verbose))
 
-    if len(results) > 0:
+    if results and len(results) > 0:
         print("NTP Mode 6 Enabled Hosts:")
         for r in results:
             print(r.host)
@@ -58,7 +58,7 @@ def monlist_single(host, timeout, errors, verbose):
 def monlist_nv(hosts, threads, timeout, errors, verbose):
     results: list[Mode6_Vuln_Data] = get_default_context_execution("NTP Mode 6 Usage", threads, hosts, (monlist_single, timeout, errors, verbose))
                 
-    if len(results) > 0:
+    if results and len(results) > 0:
         print("NTP monlist Enabled Hosts:")
         for r in results:
             print(r.host)

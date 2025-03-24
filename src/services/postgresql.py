@@ -31,7 +31,7 @@ def brute_nv(hosts, creds, threads, timeout, errors, verbose):
     results: list[str] = get_default_context_execution("PostgreSQL without Password Usage", threads, hosts, (brute_single, creds, timeout, errors, verbose))
 
         
-    if len(results) > 0:
+    if results and len(results) > 0:
         print("Valid PostgreSQL credential found:")
         for r in results:
             print(f"    {r}")
@@ -119,7 +119,7 @@ def unpassworded_single(host, timeout, errors, verbose):
 def unpassworded_nv(hosts, threads, timeout, errors, verbose):
     results: list[Unpassworded_Vuln_Data] = get_default_context_execution("PostgreSQL without Password Usage", threads, hosts, (unpassworded_single, timeout, errors, verbose))
 
-    if len(results) > 0:
+    if results and len(results) > 0:
         print("PostgreSQL servers that allows user postgres with empty password authentication:")
         for r in results:
             print(f"{r.host}: {", ".join(r.host)}")

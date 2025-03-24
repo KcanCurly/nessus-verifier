@@ -31,7 +31,7 @@ def banner_single(host, timeout, errors, verbose):
 def banner_nv(hosts, threads, timeout, errors, verbose):
     results: list[Version_Vuln_Data] = get_default_context_execution("Telnet Banner Grab", threads, hosts, (banner_single, timeout, errors, verbose))
 
-    if len(results) > 0:
+    if results and len(results) > 0:
         print("Telnet Banners:")
         for r in results:
             print("=================================")
@@ -59,7 +59,7 @@ def version_single(host, timeout, errors, verbose):
 def version_nv(hosts, threads, timeout, errors, verbose):
     results = get_default_context_execution("Telnet Usage", threads, hosts, (version_single, timeout, errors, verbose))
     
-    if len(results) > 0:
+    if results and len(results) > 0:
         print("Telnet Usage Detected:")
         for value in results:
             print(f"{value}")

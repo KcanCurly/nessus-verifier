@@ -32,7 +32,7 @@ def usage_single(host, timeout, errors, verbose):
 def usage_nv(hosts, threads, timeout, errors, verbose):
     results = get_default_context_execution("Discard Usage", threads, hosts, (usage_single, timeout, errors, verbose))
     
-    if len(results) > 0:
+    if results and len(results) > 0:
         print("Discard Usage Detected:")
         for value in results:
             print(f"{value}")
