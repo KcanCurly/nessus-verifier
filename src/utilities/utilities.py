@@ -12,6 +12,8 @@ from rich.table import Column
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from rich.live import Live
 import os
+from datetime import datetime
+from itertools import islice
 
 class Version_Vuln_Data():
     def __init__(self, host: str, version: str):
@@ -227,8 +229,13 @@ def get_cves(cpe, sort_by_epss = False, limit = 10):
         resp_json = resp.json()
         cves = resp_json["cves"]
         cve_ids = []
+        cve_dict = {}
         for c in cves:
-            cve_ids.append(c["cve_id"])
+            cve_dict[c["published_time"]] = c["cve_id"]
+        sorted_data = dict(
+            sorted(cve_dict.items(), key=lambda x: datetime.strptime(x[0], "%Y-%m-%dT%H:%M:%S"), reverse=True))
+            
+        cve_ids = list(islice(sorted_data.values(), limit))
         return cve_ids
     except Exception as e: return []
     
