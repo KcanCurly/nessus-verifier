@@ -1,5 +1,5 @@
 import pprint
-from src.utilities.utilities import get_cves, get_hosts_from_file, add_default_parser_arguments
+from src.utilities.utilities import Version_Vuln_Data, get_cves, get_hosts_from_file, add_default_parser_arguments, get_default_context_execution
 from pymongo import MongoClient
 import pymongo
 from packaging.version import parse
@@ -52,20 +52,26 @@ def unauth_nv(hosts, threads, timeout, errors, verbose):
 def unauth_console(args):
     unauth_nv(get_hosts_from_file(args.target), args.threads, args.timeout, args.errors, args.verbose)
 
+def version_single(host, timeout, errors, verbose):
+    try:
+        ip, port = host.split(":")
+        with pymongo.timeout(timeout):
+            client = MongoClient(ip, int(port))
+            version = client.server_info()['version']
+            return Version_Vuln_Data(host, version)
+
+    except Exception as e: 
+        if errors: print(f"Error for {host}: {e}")
+
 def version_nv(hosts, threads, timeout, errors, verbose):
     versions = {}
+    results: list[Version_Vuln_Data] = get_default_context_execution("MongoDB Version", threads, hosts, (version_single, timeout, errors, verbose))
     
-    for host in hosts:
-        try:
-            ip, port = host.split(":")
-            with pymongo.timeout(timeout):
-                client = MongoClient(ip, int(port))
-                version = client.server_info()['version']
-                if version not in versions:
-                    versions[version] = set()
-                versions[version].add(host)  
-        except:pass
-                    
+    
+    for r in results:
+        if r.version not in versions:
+            versions[r.version] = set()
+        versions[r.version].add(r.host)
 
     if len(versions) > 0:      
         versions = dict(
