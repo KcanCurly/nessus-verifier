@@ -226,11 +226,12 @@ def get_cves(cpe, sort_by_epss = False, limit = 10):
             "limit": limit,
         }
         resp = requests.get(f'https://cvedb.shodan.io/cves', params=params)
-        print(f"Status for {cpe}: {resp.status_code}")
+        if resp.status_code in [404]: return []
+
         resp_json = resp.json()
         cves = resp_json["cves"]
 
-        cve_tuples = [()]
+        cve_tuples = []
         for c in cves:
             # cve_dict[c["published_time"]] = c["cve_id"]
             cve_tuples.append((c["published_time"], c["cve_id"]))
@@ -238,7 +239,5 @@ def get_cves(cpe, sort_by_epss = False, limit = 10):
         top_cves = [cve_id for _, cve_id in sorted_cves[:limit]]
         return top_cves
     except Exception as e:
-        print(f"Error for {cpe}: {e}")
-        traceback.print_exc()
         return []
     
