@@ -29,6 +29,7 @@ setup(
         "asyncssh[bcrypt]",
         "colorama",
         "pymysql",
+        "packaging",
     ],
     classifiers=[
         "Programming Language :: Python :: 3",
