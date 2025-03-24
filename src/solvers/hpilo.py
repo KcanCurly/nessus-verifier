@@ -1,5 +1,6 @@
-from src.utilities.utilities import Version_Vuln_Data, find_scan, get_url_response, get_default_context_execution, add_default_parser_arguments, add_default_solver_parser_arguments
+from src.utilities.utilities import Version_Vuln_Data, get_cves, find_scan, get_url_response, get_default_context_execution, add_default_parser_arguments, add_default_solver_parser_arguments
 from src.modules.nv_parse import GroupNessusScanOutput
+from packaging.version import parse
 
 code = 34
 
@@ -28,9 +29,16 @@ def solve_version(hosts: list[str], threads: int, timeout: int, errors, verbose:
     
     if len(versions) > 0:
         print("Detected HP iLO versions:")
-        versions = dict(sorted(versions.items(), reverse=True))
+        versions = dict(
+            sorted(versions.items(), key=lambda x: parse(x[0]), reverse=True)
+        )
         for key, value in versions.items():
-            print(f"{key}:")
+            """
+            cves = get_cves(f"cpe:2.3:a:grafana:grafana:{key}")
+            if cves: print(f"HP iLO {key} ({", ".join(cves)}):")
+            else: print(f"HP iLO {key}:")
+            """
+            print(f"HP iLO {key}:")
             for v in value:
                 print(f"    {v}")
                 

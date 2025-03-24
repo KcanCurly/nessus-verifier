@@ -1,6 +1,7 @@
-from src.utilities.utilities import Version_Vuln_Data, find_scan, add_default_solver_parser_arguments, add_default_parser_arguments, get_url_response, get_default_context_execution
+from src.utilities.utilities import Version_Vuln_Data, get_cves, find_scan, add_default_solver_parser_arguments, add_default_parser_arguments, get_url_response, get_default_context_execution
 from src.modules.nv_parse import GroupNessusScanOutput
 import re
+from packaging.version import parse
 
 code = 35
 
@@ -33,9 +34,13 @@ def solve_version(hosts: list[str], threads: int, timeout: int, errors, verbose)
 
     if len(versions) > 0:
         print("Detected Jenkins versions:")
-        versions = dict(sorted(versions.items(), reverse=True))
+        versions = dict(
+            sorted(versions.items(), key=lambda x: parse(x[0]), reverse=True)
+        )
         for key, value in versions.items():
-            print(f"{key}:")
+            cves = get_cves(f"cpe:2.3:a:jenkins:jenkins:{key}")
+            if cves: print(f"Jenkins {key} ({", ".join(cves)}):")
+            else: print(f"Jenkins {key}:")
             for v in value:
                 print(f"    {v}")
                 
