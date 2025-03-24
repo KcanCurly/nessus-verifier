@@ -50,6 +50,7 @@ def solve(args, is_all = False):
 
     
     if len(versions) > 0:
+        
         print("Detected Vmware Versions:")
         for key, value in versions.items():
             cves = []
@@ -64,7 +65,6 @@ def solve(args, is_all = False):
                 if m: 
                     cves = get_cves(f"cpe:2.3:a:vmware:vcenter_server:{m.group(1)}")
                     
-            cves = get_cves(f"cpe:2.3:a:php:php:{key}")
             if cves: print(f"{key} ({", ".join(cves)}):")
             else: print(f"{key}:")
             print(f"{key} ({", ".join(cves)}):")
