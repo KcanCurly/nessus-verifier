@@ -1,4 +1,4 @@
-from src.utilities.utilities import find_scan, add_default_solver_parser_arguments, add_default_parser_arguments
+from src.utilities.utilities import find_scan, add_default_solver_parser_arguments, add_default_parser_arguments, get_cves
 from src.modules.nv_parse import GroupNessusScanOutput
 import re
 import subprocess
@@ -52,6 +52,12 @@ def solve(args, is_all = False):
     if len(versions) > 0:
         print("Detected Vmware Versions:")
         for key, value in versions.items():
-            print(f"{key}:")
+            cves = []
+            if "esxi" in key.lower(): 
+                r = r"VMware ESXi (\d+\.\d+\.\d+)"
+                m = re.search(r, key)
+                if m: 
+                    cves = get_cves(f"cpe:2.3:o:vmware:esxi:{m.group(1)}")
+            print(f"{key} ({", ".join(cves)}):")
             for v in value:
                 print(f"    {v}")

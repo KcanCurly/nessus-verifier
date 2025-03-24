@@ -1,6 +1,5 @@
-from src.utilities.utilities import Version_Vuln_Data, find_scan, add_default_solver_parser_arguments, add_default_parser_arguments, get_url_response, get_default_context_execution
+from src.utilities.utilities import Version_Vuln_Data, find_scan, add_default_solver_parser_arguments, add_default_parser_arguments, get_url_response, get_default_context_execution, get_cves
 from src.modules.nv_parse import GroupNessusScanOutput
-import requests
 import re
 
 code = 10
@@ -24,9 +23,7 @@ def solve_version_single(host, timeout, errors, verbose):
         resp = get_url_response(host, timeout=timeout)
 
         m = re.search(r1, resp.text, re.MULTILINE)
-        if m:
-            version = m.group(0)
-            return Version_Vuln_Data(host, version)           
+        if m: return Version_Vuln_Data(host, m.group(1))           
         
     except Exception as e: 
         if errors: print(f"Error for {host}: {e}")
@@ -43,7 +40,7 @@ def solve_version(hosts, threads, timeout, errors, verbose):
         versions = dict(sorted(versions.items(), reverse=True))
         print("Detected Apache Tomcat Versions:")
         for key, value in versions.items():
-            print(f"{key}:")
+            print(f"Apache Tomcat/{key} {", ".join(get_cves(f"cpe:2.3:a:apache:tomcat:{key}"))}:")
             for v in value:
                 print(f"    {v}")
 
