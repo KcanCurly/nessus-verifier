@@ -29,9 +29,7 @@ def solve_version(hosts: list[str], threads: int, timeout: int, errors, verbose:
     
     if len(versions) > 0:
         print("Detected HP iLO versions:")
-        versions = dict(
-            sorted(versions.items(), key=lambda x: parse(x[0]), reverse=True)
-        )
+        versions = dict(sorted(versions.items(), reverse=True))
         for key, value in versions.items():
             """
             cves = get_cves(f"cpe:2.3:a:grafana:grafana:{key}")
