@@ -61,5 +61,5 @@ def solve(args, is_all = False):
         with open(args.list_file, 'r') as f:
             hosts = [line.strip() for line in f]
     
-    solve_version(hosts, args.threads, args.timeout, args.erros, args.verbose)
+    solve_version(hosts, args.threads, args.timeout, args.errors, args.verbose)
     

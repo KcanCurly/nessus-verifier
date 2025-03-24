@@ -27,7 +27,6 @@ def solve_version_single(host, timeout, errors, verbose):
                 m = m.group(1)
                 if " " in m:
                     m = m.split()[0]
-                m = "Python " + m
                 return Version_Vuln_Data(host, m)
     except Exception as e: 
         if errors: print(f"Error for {host}: {e}")
@@ -47,7 +46,7 @@ def solve_version(hosts, threads, timeout, errors, verbose):
         print("Detected Python versions:")
         for key, value in versions.items():
             if parse(key) < parse("3.9"): print(f"{key} (EOL):")
-            else: print(f"{key}:")
+            else: print(f"Python {key}:")
             for v in value:
                 print(f"    {v}")
 
