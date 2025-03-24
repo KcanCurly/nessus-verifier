@@ -13,7 +13,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from rich.live import Live
 import os
 from datetime import datetime
-from itertools import islice
+import traceback
 
 class Version_Vuln_Data():
     def __init__(self, host: str, version: str):
@@ -238,5 +238,6 @@ def get_cves(cpe, sort_by_epss = False, limit = 10):
         return top_cves
     except Exception as e: 
         print(e)
+        traceback.print_exc()
         return []
     
