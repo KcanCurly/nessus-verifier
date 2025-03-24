@@ -122,7 +122,7 @@ def unpassworded_nv(hosts, threads, timeout, errors, verbose):
     if results and len(results) > 0:
         print("PostgreSQL servers that allows user postgres with empty password authentication:")
         for r in results:
-            print(f"{r.host}: {", ".join(r.host)}")
+            print(f"{r.host}: {", ".join(r.dbs)}")
                     
 def unpassworded_console(args):
     unpassworded_nv(get_hosts_from_file(args.target), args.threads, args.timeout, args.errors, args.verbose)
