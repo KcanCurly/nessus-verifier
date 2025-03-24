@@ -27,6 +27,7 @@ def solve_version_single(host, timeout, errors, verbose):
         if errors: print(f"Error for {host}: {e}")
         
 def solve_version(hosts, threads, timeout, errors, verbose):
+    versions = {}
     results: list[Version_Vuln_Data] = get_default_context_execution("Nginx Version", threads, hosts, (solve_version_single, timeout, errors, verbose))
     for r in results:
         if r.version not in versions:

@@ -18,6 +18,7 @@ def helper_parse(subparser):
     parser_task1.set_defaults(func=solve) 
 
 def solve_version(hosts, threads, timeout, errors, verbose):
+    versions = {}
     results: list[Version_Vuln_Data] = get_default_context_execution("OpenSSL Version", threads, hosts, (solve_version_single, timeout, errors, verbose))
     for r in results:
         if r.version not in versions:

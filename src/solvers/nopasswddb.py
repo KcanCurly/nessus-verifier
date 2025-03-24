@@ -46,8 +46,8 @@ def solve(args, is_all = False):
             
     if scan:
         hosts = scan.sub_hosts.get("MongoDB Service Without Authentication Detection", [])
-        mongodb.unauth_nv(hosts, args.threads, args.timeout, args.errors, args.verbose)
+        if hosts: mongodb.unauth_nv(hosts, args.threads, args.timeout, args.errors, args.verbose)
         hosts = scan.sub_hosts.get("PostgreSQL Default Unpassworded Account", [])
-        postgresql.unpassworded_nv(hosts, args.threads, args.timeout, args.errors, args.verbose)
+        if hosts: postgresql.unpassworded_nv(hosts, args.threads, args.timeout, args.errors, args.verbose)
         hosts = scan.sub_hosts.get("Elasticsearch Unrestricted Access Information Disclosure", [])
-        solve_elastic_version(hosts, args.threads, args.timeout, args.errors, args.verbose)
+        if hosts: solve_elastic_version(hosts, args.threads, args.timeout, args.errors, args.verbose)

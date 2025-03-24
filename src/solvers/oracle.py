@@ -19,6 +19,7 @@ def helper_parse(subparser):
 version_regex = r"Version (\d+\.\d+\.\d+\.\d+\.\d+)"
 
 def solve_version(hosts, threads, timeout, errors, verbose):
+    versions = {}
     results: list[Version_Vuln_Data] = get_default_context_execution("Oracle TNS Version", threads, hosts, (solve_version_single, timeout, errors, verbose))
     for r in results:
         if r.version not in versions:

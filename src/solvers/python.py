@@ -32,6 +32,7 @@ def solve_version_single(host, timeout, errors, verbose):
         if errors: print(f"Error for {host}: {e}")
 
 def solve_version(hosts, threads, timeout, errors, verbose):
+    versions = {}
     results: list[Version_Vuln_Data] = get_default_context_execution("Python Version", threads, hosts, (solve_version_single, timeout, errors, verbose))
     for r in results:
         if r.version not in versions:
@@ -47,7 +48,7 @@ def solve_version(hosts, threads, timeout, errors, verbose):
                 print(f"    {v}")
 
 def solve(args, is_all = False):
-    versions = {}
+    
     hosts = []
     if args.file:
         scan: GroupNessusScanOutput = find_scan(args.file, code)
