@@ -152,6 +152,8 @@ def version_nv(hosts, threads, timeout, errors, verbose):
             protocol1.append(r.host)
         if r.version:
             r.version = r.version.split("_")[1]
+            r.version = r.version.replace("p1", "")
+            r.version = r.version.replace("p2", "")
             if r.version not in versions:
                 versions[r.version] = []
             versions[r.version].append(r.host)
@@ -163,7 +165,7 @@ def version_nv(hosts, threads, timeout, errors, verbose):
     
     if len(versions) > 0:
         versions = dict(
-            sorted(versions.items(), key=lambda x: parse(x[0].replace("p1","")), reverse=True)
+            sorted(versions.items(), key=lambda x: parse(x[0]), reverse=True)
         )
         print("SSH Versions:")
         for key, value in versions.items():
