@@ -34,6 +34,7 @@ def solve_version(hosts, threads, timeout, errors, verbose):
             cves = get_cves(f"cpe:2.3:a:openssl:openssl:{key}")
             if cves: print(f"OpenSSL {key} ({", ".join(cves)}):")
             else: print(f"OpenSSL {key}:")
+            print(f"{key}  ----   {value}")
             for v in value:
                 print(f"    {v}")
                 
@@ -43,7 +44,6 @@ def solve_version_single(host, timeout, errors, verbose):
         if header:
             m = re.search(version_regex, header)
             if m:
-                print(m.group(1))
                 return Version_Vuln_Data(host, m.group(1))
 
     except Exception as e:
