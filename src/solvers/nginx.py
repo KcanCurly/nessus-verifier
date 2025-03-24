@@ -41,6 +41,7 @@ def solve_version(hosts, threads, timeout, errors, verbose):
         print("Detected Nginx Versions:")
         for key, value in versions.items():
             cves = get_cves(f"cpe:2.3:a:f5:nginx_open_source:{key}")
+            if not cves = get_cves(f"cpe:2.3:a:f5:nginx:{key}")
             if cves: print(f"Nginx {key} ({", ".join(cves)}):")
             else: print(f"Nginx {key}:")
             for v in value:
