@@ -163,7 +163,7 @@ def version_nv(hosts, threads, timeout, errors, verbose):
     
     if len(versions) > 0:
         versions = dict(
-            sorted(versions.items(), key=lambda x: parse(x[0]), reverse=True)
+            sorted(versions.items(), key=lambda x: parse(x[0].replace("p1","")), reverse=True)
         )
         print("SSH Versions:")
         for key, value in versions.items():
