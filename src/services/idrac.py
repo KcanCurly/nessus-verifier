@@ -56,14 +56,14 @@ def version_nv(hosts: list[str], threads = 10, timeout = 3, errors = False, verb
                 print(f"    {v}")
                 
     if len(versions_8) > 0:
-        print("Detected iDRAC 8 versions:")
+        print("Detected iDRAC 8 versions (EOL):")
         for key, value in versions_8.items():
             print(f"{key}:")
             for v in value:
                 print(f"    {v}")
                 
     if len(versions_7) > 0:
-        print("Detected iDRAC 7 versions:")
+        print("Detected iDRAC 7 versions (EOL):")
         for key, value in versions_7.items():
             print(f"{key}:")
             for v in value:

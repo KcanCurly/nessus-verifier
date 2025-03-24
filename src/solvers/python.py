@@ -1,6 +1,7 @@
 from src.utilities.utilities import Version_Vuln_Data, find_scan, get_header_from_url, add_default_solver_parser_arguments, add_default_parser_arguments, get_default_context_execution
 from src.modules.nv_parse import GroupNessusScanOutput
 import re
+from packaging.version import parse
 
 code = 23
 
@@ -40,10 +41,13 @@ def solve_version(hosts, threads, timeout, errors, verbose):
         versions[r.version].add(r.host)
 
     if len(versions) > 0:
-        versions = dict(sorted(versions.items(), reverse=True))
+        versions = dict(
+            sorted(versions.items(), key=lambda x: parse(x[0]), reverse=True)
+        )
         print("Detected Python versions:")
         for key, value in versions.items():
-            print(f"{key}:")
+            if parse(key) < parse("3.9"): print(f"{key} (EOL):")
+            else: print(f"{key}:")
             for v in value:
                 print(f"    {v}")
 

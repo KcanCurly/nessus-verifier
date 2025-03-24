@@ -2,6 +2,7 @@ from src.utilities.utilities import Version_Vuln_Data, find_scan, get_header_fro
 from src.modules.nv_parse import GroupNessusScanOutput
 import re
 import requests
+from packaging.version import parse
 
 code = 11
 
@@ -43,11 +44,14 @@ def solve_version(hosts, threads, timeout, errors, verbose):
         versions[r.version].add(r.host)
 
     if len(versions) > 0:
-        versions = dict(sorted(versions.items(), reverse=True))
+        versions = dict(
+            sorted(versions.items(), key=lambda x: parse(x[0]), reverse=True)
+        )
         print("Detected Apache Versions:")
         for key, value in versions.items():
             cves = get_cves(f"cpe:2.3:a:apache:http_server:{key}")
-            print(f"Apache/{key} ({", ".join(cves)}):")
+            if cves: print(f"Apache/{key} ({", ".join(cves)}):")
+            else: print(f"Apache/{key}:")
             for v in value:
                 print(f"    {v}")
                 

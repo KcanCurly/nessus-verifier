@@ -1,6 +1,7 @@
 from src.utilities.utilities import Version_Vuln_Data, find_scan, get_url_response, get_default_context_execution, add_default_parser_arguments, add_default_solver_parser_arguments, get_cves
 from src.modules.nv_parse import GroupNessusScanOutput
 import re
+from packaging.version import parse
 
 code = 22
 
@@ -40,7 +41,8 @@ def solve_version(hosts, threads, timeout, errors, verbose):
         print("Detected Grafana Versions:")
         for key, value in versions.items():
             cves = get_cves(f"cpe:2.3:a:grafana:grafana:{key}")
-            print(f"{key} ({", ".join(cves)}):")
+            if cves: print(f"Grafana {key} ({", ".join(cves)}):")
+            else: print(f"Grafana {key}:")
             for v in value:
                 print(f"    {v}")
 

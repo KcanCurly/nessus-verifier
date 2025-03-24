@@ -1,6 +1,7 @@
-from src.utilities.utilities import Version_Vuln_Data, find_scan, get_header_from_url, add_default_solver_parser_arguments, add_default_parser_arguments, get_default_context_execution
+from src.utilities.utilities import Version_Vuln_Data, find_scan, get_cves, get_header_from_url, add_default_solver_parser_arguments, add_default_parser_arguments, get_default_context_execution
 from src.modules.nv_parse import GroupNessusScanOutput
 import re
+from packaging.version import parse
 
 code = 21
 
@@ -22,13 +23,13 @@ def solve_version_single(host, timeout, errors, verbose):
         powered_by = get_header_from_url(host, "X-Powered-By")
         m = re.search(version_regex, powered_by)
         if m:
-            ver = m.group(0)
+            ver = m.group(1)
             return Version_Vuln_Data(host, ver)   
         else:
             server = get_header_from_url(host, "Server")
             m = re.search(version_regex, server)
             if m:
-                ver = m.group(0)
+                ver = m.group(1)
                 return Version_Vuln_Data(host, ver)      
                     
     except Exception as e: 
@@ -43,10 +44,14 @@ def solve_version(hosts, threads, timeout, errors, verbose):
         versions[r.version].add(r.host)
 
     if len(versions) > 0:
-        versions = dict(sorted(versions.items(), reverse=True))
+        versions = dict(
+            sorted(versions.items(), key=lambda x: parse(x[0]), reverse=True)
+        )
         print("Detected PHP versions:")
         for key, value in versions.items():
-            print(f"{key}:")
+            cves = get_cves(f"cpe:2.3:a:php:php:{key}")
+            if cves: print(f"PHP/{key} ({", ".join(cves)}):")
+            else: print(f"PHP/{key}:")
             for v in value:
                 print(f"    {v}")
 

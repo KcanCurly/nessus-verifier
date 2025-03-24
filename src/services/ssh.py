@@ -1,6 +1,7 @@
 import subprocess
 import re
 from src.utilities.utilities import get_cves, get_hosts_from_file, add_default_parser_arguments, get_default_context_execution
+from packaging.version import parse
 
 cve_dict = {
     
@@ -159,11 +160,15 @@ def version_nv(hosts, threads, timeout, errors, verbose):
         for p in protocol1:
             print(f"    {p}")
     
-    versions = dict(sorted(versions.items(), reverse=True))
     if len(versions) > 0:
+        versions = dict(
+            sorted(versions.items(), key=lambda x: parse(x[0]), reverse=True)
+        )
         print("SSH Versions:")
         for key, value in versions.items():
             cves = get_cves(f"cpe:2.3:a:openbsd:openssh:{key}")
+            if cves: print(f"OpenSSH {key} ({", ".join(cves)}):")
+            else: print(f"OpenSSH {key}:")
             print(f"{key} ({", ".join(cves)}):")
             for v in value:
                 print(f"    {v}")

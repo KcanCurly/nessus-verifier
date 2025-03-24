@@ -1,5 +1,6 @@
 from src.utilities.utilities import Version_Vuln_Data, find_scan, add_default_parser_arguments, get_url_response, get_default_context_execution, add_default_solver_parser_arguments, get_cves
 from src.modules.nv_parse import GroupNessusScanOutput
+from packaging.version import parse
 
 code = 25
 
@@ -32,10 +33,14 @@ def solve_version(hosts, threads, timeout, errors, verbose):
         versions[r.version].add(r.host)
     
     if len(versions) > 0:       
-        versions = dict(sorted(versions.items(), reverse=True))
+        versions = dict(
+            sorted(versions.items(), key=lambda x: parse(x[0]), reverse=True)
+        )
         print("Elastic versions detected:")
         for key, value in versions.items():
-            print(f"{key} {", ".join(get_cves(f"cpe:2.3:a:elastic:elasticsearch:{key}"))}:")
+            cves = get_cves(f"cpe:2.3:a:elastic:elasticsearch:{key}")
+            if cves: print(f"{key} ({", ".join(cves)}):")
+            else: print(f"{key}:")
             for v in value:
                 print(f"    {v}")
     

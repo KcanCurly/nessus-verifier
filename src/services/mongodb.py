@@ -1,7 +1,8 @@
 import pprint
-from src.utilities.utilities import get_hosts_from_file, add_default_parser_arguments
+from src.utilities.utilities import get_cves, get_hosts_from_file, add_default_parser_arguments
 from pymongo import MongoClient
 import pymongo
+from packaging.version import parse
 
 def post_nv(hosts, threads, timeout, errors, verbose):
     for host in hosts:
@@ -65,11 +66,16 @@ def version_nv(hosts, threads, timeout, errors, verbose):
                 versions[version].add(host)  
         except:pass
                     
-    versions = dict(sorted(versions.items(), reverse=True))
-    if len(versions) > 0:       
-        print("MongoDB versions detected:")                
+
+    if len(versions) > 0:      
+        versions = dict(
+            sorted(versions.items(), key=lambda x: parse(x[0]), reverse=True)
+        ) 
+        print("MongoDB versions detected:")
         for key, value in versions.items():
-            print(f"{key}:")
+            cves = get_cves(f"cpe:2.3:a:mongodb:mongodb:{key}")
+            if cves: print(f"MongoDB {key} ({", ".join(cves)}):")
+            else: print(f"MongoDB {key}:")  
             for v in value:
                 print(f"    {v}")
 

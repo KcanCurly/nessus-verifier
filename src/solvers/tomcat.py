@@ -45,7 +45,10 @@ def solve_version(hosts, threads, timeout, errors, verbose):
         print("Detected Apache Tomcat Versions:")
         for key, value in versions.items():
             if key.startswith("8"): print(f"Apache Tomcat/{key} (EOL):")
-            else: print(f"Apache Tomcat/{key} ({", ".join(get_cves(f"cpe:2.3:a:apache:tomcat:{key}"))}):")
+            else:
+                cves = get_cves(f"cpe:2.3:a:apache:tomcat:{key}")
+                if cves: print(f"Apache/{key} ({", ".join(cves)}):")
+                else: print(f"Apache/{key}:")
             for v in value:
                 print(f"    {v}")
 
