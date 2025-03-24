@@ -53,7 +53,7 @@ def solve_version(hosts: list[str], threads: int, timeout: int, errors: bool, ve
             for v in value:
                 print(f"    {v}")
 
-def solve(args):
+def solve(args, is_all = False):
     hosts = []
     if args.file:
         scan: GroupNessusScanOutput = find_scan(args.file, code)
