@@ -5,7 +5,7 @@ from packaging.version import parse
 
 code = 32
 
-version_regex = r"OpenSSL\/(\S+)"
+version_regex = r"OpenSSL\/(\d+\S+)"
 
 def get_default_config():
     return """
