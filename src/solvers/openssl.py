@@ -5,7 +5,7 @@ from packaging.version import parse
 
 code = 32
 
-version_regex = r"OpenSSL\/(\d+\S+)"
+version_regex = r"OpenSSL\/(\S+)"
 
 def get_default_config():
     return """
@@ -43,6 +43,7 @@ def solve_version_single(host, timeout, errors, verbose):
         if header:
             m = re.search(version_regex, header)
             if m:
+                print(m.group(1))
                 return Version_Vuln_Data(host, m.group(1))
 
     except Exception as e:
