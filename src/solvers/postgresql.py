@@ -31,8 +31,9 @@ def solve(args, is_all = False):
     # PostgreSQL Default Unpassworded Account
     
     if args.file:
-        hosts = scan.sub_hosts['PostgreSQL Default Unpassworded Account']
-        
-    unpassworded_nv(hosts, args.threads, args.timeout, args.errors, args.verbose)
+        hosts = scan.sub_hosts.get('PostgreSQL Default Unpassworded Account', [])
+        if hosts: unpassworded_nv(hosts, args.threads, args.timeout, args.errors, args.verbose)
+        hosts = scan.sub_hosts.get('PostgreSQL Empty Password Handling Remote Authentication Bypass', [])
+        if hosts: unpassworded_nv(hosts, args.threads, args.timeout, args.errors, args.verbose)
         
     
