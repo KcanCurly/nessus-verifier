@@ -1,4 +1,4 @@
-from src.utilities.utilities import Version_Vuln_Data, find_scan, get_header_from_url, add_default_solver_parser_arguments, add_default_parser_arguments, get_default_context_execution
+from src.utilities.utilities import Version_Vuln_Data, find_scan, get_cves, get_header_from_url, add_default_solver_parser_arguments, add_default_parser_arguments, get_default_context_execution
 from src.modules.nv_parse import GroupNessusScanOutput
 import re
 
@@ -20,7 +20,6 @@ def solve_version_single(host, timeout, errors, verbose):
                 m = m.group(1)
                 if " " in m:
                     m = m.split()[0]
-                m = "nginx " + m
                 return Version_Vuln_Data(host, m)
 
     except Exception as e:
@@ -38,7 +37,8 @@ def solve_version(hosts, threads, timeout, errors, verbose):
         versions = dict(sorted(versions.items(), reverse=True))
         print("Detected Nginx Versions:")
         for key, value in versions.items():
-            print(f"{key}:")
+            cves = get_cves(f"cpe:2.3:a:nginx:nginx:{key}")
+            print(f"{key} {", ".join(cves)}:")
             for v in value:
                 print(f"    {v}")
 
