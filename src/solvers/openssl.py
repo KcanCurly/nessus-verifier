@@ -27,9 +27,8 @@ def solve_version(hosts, threads, timeout, errors, verbose):
         versions[r.version].add(r.host)
 
     if len(versions) > 0:
-        versions = dict(
-            sorted(versions.items(), key=lambda x: parse(x[0]), reverse=True)
-        )
+        versions = dict(sorted(versions.items()), reverse=True)
+
         print("Detected OpenSSL versions:")
         for key, value in versions.items():
             cves = get_cves(f"cpe:2.3:a:openssl:openssl:{key}")
