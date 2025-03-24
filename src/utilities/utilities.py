@@ -230,12 +230,13 @@ def get_cves(cpe, sort_by_epss = False, limit = 10):
         cves = resp_json["cves"]
         cve_ids = []
         cve_dict = {}
+        cve_tuples = [()]
         for c in cves:
-            cve_dict[c["published_time"]] = c["cve_id"]
-        sorted_data = dict(
-            sorted(cve_dict.items(), key=lambda x: datetime.strptime(x[0], "%Y-%m-%dT%H:%M:%S"), reverse=True))
-            
-        cve_ids = list(sorted_data.values())[0:limit]
+            # cve_dict[c["published_time"]] = c["cve_id"]
+            cve_tuples.append((c["published_time"], c["cve_id"]))
+        sorted_cves = sorted(cve_tuples, key=lambda x: datetime.strptime(x[0], "%Y-%m-%dT%H:%M:%S"), reverse=True)
+        top_cves = [cve_id for _, cve_id in sorted_cves[:limit]]
+        cve_ids = top_cves
         return cve_ids
     except Exception as e: return []
     
