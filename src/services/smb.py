@@ -59,7 +59,7 @@ def nullguest_single(host, timeout, errors, verbose):
 def nullguest_nv(hosts, threads, timeout, errors, verbose):
     null_vuln: dict[str, dict[str, list[str]]] = {}
     guest_vuln: dict[str, dict[str, list[str]]] = {}
-    results: list[NullGuest_Vuln_Data] = get_default_context_execution("Null/Guest Share Check", threads, hosts, (sign_single, timeout, errors, verbose))
+    results: list[NullGuest_Vuln_Data] = get_default_context_execution("Null/Guest Share Check", threads, hosts, (nullguest_single, timeout, errors, verbose))
     
     for r in results:
         null_vuln[r.host] = {}
