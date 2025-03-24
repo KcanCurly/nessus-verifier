@@ -58,6 +58,15 @@ def solve(args, is_all = False):
                 m = re.search(r, key)
                 if m: 
                     cves = get_cves(f"cpe:2.3:o:vmware:esxi:{m.group(1)}")
+            if "vcenter server" in key.lower(): 
+                r = r"VMware vCenter Server (\d+\.\d+\.\d+)"
+                m = re.search(r, key)
+                if m: 
+                    cves = get_cves(f"cpe:2.3:a:vmware:vcenter_server:{m.group(1)}")
+                    
+            cves = get_cves(f"cpe:2.3:a:php:php:{key}")
+            if cves: print(f"{key} ({", ".join(cves)}):")
+            else: print(f"{key}:")
             print(f"{key} ({", ".join(cves)}):")
             for v in value:
                 print(f"    {v}")
