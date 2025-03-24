@@ -235,7 +235,7 @@ def get_cves(cpe, sort_by_epss = False, limit = 10):
         sorted_data = dict(
             sorted(cve_dict.items(), key=lambda x: datetime.strptime(x[0], "%Y-%m-%dT%H:%M:%S"), reverse=True))
             
-        cve_ids = list(islice(sorted_data.values(), limit))
+        cve_ids = list(sorted_data.values())[0:limit]
         return cve_ids
     except Exception as e: return []
     
