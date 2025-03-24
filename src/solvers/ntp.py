@@ -31,7 +31,7 @@ def solve(args, is_all = False):
     
     if args.file:
         hosts = scan.sub_hosts.get("Network Time Protocol (NTP) Mode 6 Scanner", [])
-        ntp.mode6_nv(hosts)
+        ntp.mode6_nv(hosts, args.threads, args.timeout, args.errors, args.verbose)
         hosts = scan.sub_hosts.get("Network Time Protocol Daemon (ntpd) monlist Command Enabled DoS", [])
-        ntp.monlist_nv(hosts)
+        ntp.monlist_nv(hosts, args.threads, args.timeout, args.errors, args.verbose)
     

@@ -29,4 +29,4 @@ def solve(args, is_all = False):
         with open(args.list_file, 'r') as f:
             hosts = [line.strip() for line in f]
     
-    version_nv(hosts, timeout=args.timeout, verbose=args.verbose, disable_visual_on_complete=args.disable_visual_on_complete, only_show_progress=args.only_show_progress)
+    version_nv(hosts, args.threads, args.timeout, args.errors, args.verbose)

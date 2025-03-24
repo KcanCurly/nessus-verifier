@@ -28,5 +28,5 @@ def solve(args, is_all = False):
     elif args.list_file:
         with open(args.list_file, 'r') as f:
             hosts = [line.strip() for line in f]
-    ssh.audit_nv(hosts)
+    ssh.audit_nv(hosts, args.threads, args.timeout, args.errors, args.verbose)
             

@@ -31,7 +31,7 @@ def helper_parse(subparser):
     parser_task1.set_defaults(func=solve)
     
 
-def tls_single(host: str, allow_white_ciphers: bool, timeout: int, verbose: bool):
+def tls_single(host, allow_white_ciphers, timeout, errors, verbose):
     try:
         ip, port = host.split(":")
         
@@ -127,13 +127,13 @@ def tls_single(host: str, allow_white_ciphers: bool, timeout: int, verbose: bool
     
     return TLS_Vuln_Data(host, weak_versions, weak_ciphers, weak_bits, is_wrong_host, is_cert_expired)
 
-def tls_nv(hosts: list[str], allow_white_ciphers: bool, threads: int = 10, timeout: int = 3, verbose: bool = False):
+def tls_nv(hosts, allow_white_ciphers, threads, timeout, errors, verbose):
     weak_versions = {}
     weak_ciphers = {}
     weak_bits = {}
     wrong_hosts = []
     expired_cert_hosts = []
-    results: list[TLS_Vuln_Data] = get_default_context_execution("TLS Misconfigurations", threads, hosts, (tls_single, allow_white_ciphers, timeout, verbose))
+    results: list[TLS_Vuln_Data] = get_default_context_execution("TLS Misconfigurations", threads, hosts, (tls_single, allow_white_ciphers, timeout, errors, verbose))
 
     for r in results:
         if not r: continue
@@ -194,4 +194,4 @@ def solve(args, is_all = False):
             data = tomllib.load(f)
             args.allow_white_ciphers = data[str(code)]["allow_white_ciphers"]
         
-    tls_nv(hosts, args.allow_white_ciphers)
+    tls_nv(hosts, args.allow_white_ciphers, args.threads, args.timeout, args.errors, args.verbose)

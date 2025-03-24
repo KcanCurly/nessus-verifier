@@ -28,4 +28,4 @@ def solve(args, is_all = False):
         with open(args.list_file, 'r') as f:
             hosts = [line.strip() for line in f]
     
-    mssql.version_nv(hosts)
+    mssql.version_nv(hosts, args.threads, args.timeout, args.errors, args.verbose)

@@ -1,4 +1,4 @@
-from src.utilities.utilities import get_hosts_from_file
+from src.utilities.utilities import get_hosts_from_file, add_default_parser_arguments
 import pymssql
 import nmap
 
@@ -17,7 +17,7 @@ def connect_to_server(ip, username, password, database, port, domain, login_time
              return None
     return conn
 
-def post_nv(hosts: list[str], username: str, password: str, domain: str, error:bool = False):
+def post_nv(hosts, username, password, domain, threads, timeout, errors, verbose):
     for host in hosts:
         try:
             ip, port = host.split(":")
@@ -25,7 +25,7 @@ def post_nv(hosts: list[str], username: str, password: str, domain: str, error:b
             # Connect to SQL Server
             conn = connect_to_server(ip, username, password, "master", port, domain, login_timeout=10)
             if not conn: 
-                if error: print("Couldn't connect to", host)
+                if errors: print("Couldn't connect to", host)
                 continue
             cursor = conn.cursor()
 
@@ -66,33 +66,32 @@ def post_nv(hosts: list[str], username: str, password: str, domain: str, error:b
                                     else:
                                         print("    No data available")
                                 except Exception as e: 
-                                    if error: print(f"Row Error: {host}: {e}")
+                                    if errors: print(f"Row Error: {host}: {e}")
 
 
                             except Exception as e: 
-                                if error: print(f"Column Error: {host}: {e}")
+                                if errors: print(f"Column Error: {host}: {e}")
                             
 
                     except Exception as e: 
-                        if error: print(f"Table Error: {host}: {e}")
+                        if errors: print(f"Table Error: {host}: {e}")
                     # Switch to the database
 
             except Exception as e:
-                if error: print(f"Database Error: {host}: {e}")
+                if errors: print(f"Database Error: {host}: {e}")
 
 
             # Close connection
             conn.close()
         except Exception as e: 
-            if error: print(f"Error for {host}: {e}")
+            if errors: print(f"Error for {host}: {e}")
 
 
         
 def post_console(args):
-    post_nv(get_hosts_from_file(args.file), args.username, args.password, args.domain, args.errors)
+    post_nv(get_hosts_from_file(args.target), args.username, args.password, args.domain, args.threads, args.timeout, args.errors, args.verbose)
 
-
-def version_nv(hosts: list[str]):
+def version_nv(hosts, threads, timeout, errors, verbose):
     versions = {}
     
     nm = nmap.PortScanner()
@@ -140,24 +139,20 @@ def version_nv(hosts: list[str]):
                 print(f"    {v}")
 
 def version_console(args):
-    version_nv(get_hosts_from_file(args.file))
+    version_nv(get_hosts_from_file(args.target), args.threads, args.timeout, args.errors, args.verbose)
 
 def helper_parse(commandparser):
     parser_task1 = commandparser.add_parser("mssql")
     subparsers = parser_task1.add_subparsers(dest="command")
     
     parser_version = subparsers.add_parser("version", help="Checks version")
-    parser_version.add_argument("-f", "--file", type=str, required=True, help="input file name")
-    parser_version.add_argument("--threads", default=10, type=int, help="Number of threads (Default = 10)")
-    parser_version.add_argument("--timeout", default=5, type=int, help="Timeout in seconds (Default = 5)")
-    parser_version.add_argument("-v", "--verbose", action="store_true", help="Enable verbose")
+    add_default_parser_arguments(parser_version)
     parser_version.set_defaults(func=version_console)
     
     parser_post = subparsers.add_parser("post", help="Post Exploit")
-    parser_post.add_argument("-f", "--file", type=str, required=True, help="input file name")
-    parser_post.add_argument("-u", "--username", type=str, required=True, help="Username")
-    parser_post.add_argument("-p", "--password", type=str, required=True, help="Password")
-    parser_post.add_argument("-d", "--domain", type=str, required=False, help="Domain for windows authentication")
-    parser_post.add_argument("-e", "--errors", action="store_true", help="Enable errors")
-    parser_post.add_argument("-v", "--verbose", action="store_true", help="Enable verbose")
+    parser_post.add_argument("target", type=str, help="File name or targets seperated by space")
+    parser_post.add_argument("username", type=str, help="Username")
+    parser_post.add_argument("password", type=str, help="Password")
+    parser_post.add_argument("domain", type=str, help="Domain for windows authentication")
+    add_default_parser_arguments(parser_post, False)
     parser_post.set_defaults(func=post_console)

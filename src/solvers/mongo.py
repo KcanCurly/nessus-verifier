@@ -29,4 +29,4 @@ def solve(args, is_all = False):
         with open(args.list_file, 'r') as f:
             hosts = [line.strip() for line in f]
     
-    mongodb.version_nv(hosts)
+    mongodb.version_nv(hosts, args.threads, args.timeout, args.errors, args.verbose)

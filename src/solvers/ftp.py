@@ -27,6 +27,6 @@ def solve(args, is_all = False):
     elif args.list_file:
         with open(args.list_file, 'r') as f:
             hosts = [line.strip() for line in f]
-    anon_nv(hosts)
+    anon_nv(hosts, args.threads, args.timeout, args.errors, args.verbose)
     
     

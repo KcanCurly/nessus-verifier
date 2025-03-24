@@ -29,4 +29,4 @@ def solve(args, is_all = False):
         with open(args.list_file, 'r') as f:
             hosts = [line.strip() for line in f]
     
-    nfs.list_nv(hosts)
+    nfs.list_nv(hosts, args.threads, args.timeout, args.errrors, args.verbose)

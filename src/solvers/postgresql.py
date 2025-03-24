@@ -33,6 +33,6 @@ def solve(args, is_all = False):
     if args.file:
         hosts = scan.sub_hosts['PostgreSQL Default Unpassworded Account']
         
-    unpassworded_nv(hosts)
+    unpassworded_nv(hosts, args.threads, args.timeout, args.errors, args.verbose)
         
     

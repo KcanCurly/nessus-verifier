@@ -31,5 +31,5 @@ def solve(args, is_all = False):
     if args.file:
         hosts = scan.sub_hosts.get("SMB Signing not required", [])
 
-    smb.sign_nv(hosts)
+    smb.sign_nv(hosts, args.threads, args.timeout, args.errors, args.verbose)
             

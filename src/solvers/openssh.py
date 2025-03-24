@@ -28,5 +28,5 @@ def solve(args, is_all = False):
         with open(args.list_file, 'r') as f:
             hosts = [line.strip() for line in f]
     
-    ssh.version_nv(hosts)
+    ssh.version_nv(hosts, args.threads, args.timeout, args.errors, args.verbose)
             
