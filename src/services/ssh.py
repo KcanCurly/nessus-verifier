@@ -151,6 +151,7 @@ def version_nv(hosts, threads, timeout, errors, verbose):
         if r.protocol and r.protocol != "2.0":
             protocol1.append(r.host)
         if r.version:
+            r.version = r.version.split("_")[1]
             if r.version not in versions:
                 versions[r.version] = []
             versions[r.version].append(r.host)
@@ -169,7 +170,6 @@ def version_nv(hosts, threads, timeout, errors, verbose):
             cves = get_cves(f"cpe:2.3:a:openbsd:openssh:{key}")
             if cves: print(f"OpenSSH {key} ({", ".join(cves)}):")
             else: print(f"OpenSSH {key}:")
-            print(f"{key} ({", ".join(cves)}):")
             for v in value:
                 print(f"    {v}")
 
