@@ -43,7 +43,7 @@ def solve_version_single(host, timeout, errors, verbose):
         if header:
             m = re.search(version_regex, header)
             if m:
-                return Version_Vuln_Data(host, m.group(0))
+                return Version_Vuln_Data(host, m.group(1))
 
     except Exception as e:
         if errors: print(f"Error for {host}: {e}")
