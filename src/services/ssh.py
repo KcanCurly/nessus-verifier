@@ -3,9 +3,8 @@ import re
 from src.utilities.utilities import get_cves, get_hosts_from_file, add_default_parser_arguments, get_default_context_execution
 from packaging.version import parse
 
-cve_dict = {
-    
-}
+
+shodan_cves_to_skip = ["CVE-2008-3844", "CVE-2007-2768"]
 
 protocol_pattern = r"Remote protocol version (.*),"
 software_pattern = r"remote software version (.*)"
@@ -170,6 +169,11 @@ def version_nv(hosts, threads, timeout, errors, verbose):
         print("SSH Versions:")
         for key, value in versions.items():
             cves = get_cves(f"cpe:2.3:a:openbsd:openssh:{key}")
+            for cve_to_remove in shodan_cves_to_skip:
+                try:
+                    cves.remove(cve_to_remove)
+                except:pass
+
             if cves: print(f"OpenSSH {key} ({", ".join(cves)}):")
             else: print(f"OpenSSH {key}:")
             for v in value:

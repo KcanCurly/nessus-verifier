@@ -41,7 +41,7 @@ def solve_version(hosts, threads, timeout, errors, verbose):
         versions = dict(
             sorted(versions.items(), key=lambda x: parse(x[0]), reverse=True)
         )
-
+        total_cves = []
         print("Detected Apache Tomcat Versions:")
         for key, value in versions.items():
             if key.startswith("8"): print(f"Apache Tomcat/{key} (EOL):")
@@ -49,8 +49,16 @@ def solve_version(hosts, threads, timeout, errors, verbose):
                 cves = get_cves(f"cpe:2.3:a:apache:tomcat:{key}")
                 if cves: print(f"Apache Tomcat/{key} ({", ".join(cves)}):")
                 else: print(f"Apache Tomcat/{key}:")
+                total_cves.append(*cves)
             for v in value:
                 print(f"    {v}")
+                
+        poc_printed = False
+        if "CVE-2025-24813" in total_cves:
+            if not poc_printed: 
+                print("\nPOC:")
+                poc_printed = True
+            print("CVE-2025-24813 => https://github.com/absholi7ly/POC-CVE-2025-24813")
 
 def solve(args, is_all = False):
     hosts = []
