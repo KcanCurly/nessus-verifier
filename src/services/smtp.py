@@ -62,7 +62,7 @@ def userenum_nv(hosts, domain, threads, timeout, errors, verbose):
             
 
 def tls(directory_path, config, hosts):
-    control_TLS(hosts, "--starttls-smtp")
+    # control_TLS(hosts, "--starttls-smtp")
     
 def tls_check(directory_path, config, hosts):
     if not os.path.exists(os.path.join(directory_path, hosts)):

@@ -88,7 +88,7 @@ def anon_nv(hosts, threads, timeout, errors, verbose):
             print(f"    {a}{" [TLS]" if a.is_TLS else ""}")
 
 def tls(hosts):
-    control_TLS(hosts, "--starttls-ftp")
+    # control_TLS(hosts, "--starttls-ftp")
 
 def brute_nv(hosts, creds, threads, timeout, errors, verbose):
     results: list[FTP_Brute_Vuln_Data] = get_default_context_execution("FTP Brute", threads, hosts, (brute_single, creds, timeout, errors, verbose))

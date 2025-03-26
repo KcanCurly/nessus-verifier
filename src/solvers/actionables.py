@@ -1,6 +1,5 @@
 from src.utilities.utilities import find_scan
 from src.modules.nv_parse import GroupNessusScanOutput
-from src.utilities import logger
 
 code = 0
 
@@ -10,8 +9,6 @@ def get_default_config():
 """
 
 def solve(args, is_all = False):
-    l= logger.setup_logging(args.verbose)
-    
     hosts = []
     if args.file:
         scan: GroupNessusScanOutput = find_scan(args.file, code)

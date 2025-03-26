@@ -79,14 +79,15 @@ def save_urls(urls):
     
     
 class GroupNessusScanOutput:
-    def __init__(self, id, plugin_ids, hosts, sub_hosts, name):
+    def __init__(self, id: str, plugin_ids: list[str], hosts: list[str], 
+                 sub_hosts: dict[str, list[str]],name: str) -> None:
         self.id = id
         self.name = name
         self.plugin_ids = plugin_ids
         self.hosts = hosts
         self.sub_hosts = sub_hosts
     
-    def add_host(self, name, id, host) -> bool:
+    def add_host(self, name: str, id: str, host: str) -> bool:
         if id in self.plugin_ids:
             if host not in self.hosts: self.hosts.append(host)
             if name not in self.sub_hosts:
@@ -96,8 +97,8 @@ class GroupNessusScanOutput:
         return False
     
     @classmethod
-    def from_json(cls, data):
-        return cls(**data)
+    def from_json(cls, data) -> Self:  # type: ignore # noqa: ANN001, F821
+        return cls(**data) # type: ignore
     
 class NessusScanOutput:
     def __init__(self, plugin_id, name, description, severity, host_port, output, cve):

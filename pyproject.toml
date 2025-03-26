@@ -1,0 +1,87 @@
+[project]
+name = "nessus_verifier"
+version = "0.1.0"
+description = "A python project that is inexplicably cool"
+requires-python = ">=3.12.0"
+authors = [
+    {name = "Kerim Can Karaduman", email = "karadumankcan@gmail.com"},
+]
+license = {text = "BSD-3-Clause"}
+readme = "README.md"
+dependencies = [
+    "argcomplete",
+    "requests",
+    "dnspython",
+    "impacket",
+    "pyaml",
+    "pysmb",
+    "pymongo",
+    "python-nmap",
+    "rich",
+    "psycopg",
+    "paramiko",
+    "toml",
+    "stomp.py",
+    "pymssql",
+    "asyncssh[bcrypt]",
+    "colorama",
+    "pymysql",
+    "packaging",
+]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Environment :: Console",
+  # Indicate who your project is intended for
+  "Intended Audience :: Developers",
+  "Topic :: Software Development :: Build Tools",
+
+  # Specify the Python versions you support here.
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.6",
+  "Programming Language :: Python :: 3.7",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+]
+
+[project.scripts]
+nv-parse = "modules.nv_parse:main"
+nv-solver = "solvers.solver:main"
+nv-nmap = "modules.nv_nmap:main"
+nv-nuclei = "modules.nv_nuclei:main"
+nv-service = "services.nv_services:main"
+
+[project.urls]
+Repository = "https://github.com/KcanCurly/nessus-verifier"
+
+[project.optional-dependencies]
+lint = [
+    "ruff",
+    "mypy",
+]
+dev = [
+    "nessus_verifier[lint]",
+]
+
+[tool.ruff]
+line-length = 100
+indent-width = 4
+
+[tool.ruff.lint]
+select = [
+    "F",   # pyflakes
+    "E",   # pycodestyle
+    "I",   # isort
+    "ANN", # flake8 type annotations
+    "RUF", # ruff-specific rules
+]
+fixable = ["ALL"]
+
+[tool.mypy]
+python_version = "3.12"
+warn_return_any = true
+disallow_untyped_defs = true
+
+[build-system]
+requires = ["setuptools==69"]
+build-backend = "setuptools.build_meta"
+

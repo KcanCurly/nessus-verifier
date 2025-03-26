@@ -12,3 +12,5 @@ output.json
 output.ndjson
 urls.txt
 *.xlsx
+.mypy_cache
+.vscode

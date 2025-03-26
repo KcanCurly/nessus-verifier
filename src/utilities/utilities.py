@@ -1,37 +1,72 @@
 import json
-import subprocess
-import re
-import ssl
-import socket
-import requests
-from src.modules.nv_parse import GroupNessusScanOutput
-from src.utilities import logger
-from rich.progress import TextColumn, Progress, BarColumn, TimeElapsedColumn, SpinnerColumn
-from rich.console import Console
-from rich.table import Column
-from concurrent.futures import ThreadPoolExecutor, as_completed
-from rich.live import Live
 import os
+from concurrent.futures import Future
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from dataclasses import dataclass
 from datetime import datetime
-import traceback
+from typing import Any, List
 
+import requests
+from rich.console import Console
+from rich.live import Live
+from rich.progress import BarColumn, Progress, SpinnerColumn, TextColumn, TimeElapsedColumn
+from rich.table import Column
+
+from src.modules.nv_parse import GroupNessusScanOutput
+
+
+@dataclass
+class Credential:
+    username: str
+    password: str
+
+@dataclass
+class Host:
+    ip: str
+    port: str
+    
 class Version_Vuln_Data():
-    def __init__(self, host: str, version: str):
-        self.host = host
-        self.version = version
+    def __init__(self, host: str, version: str) -> None:
+        self.host: str = host
+        self.version: str = version
+        
+class Version_List_Vuln_Data():
+    def __init__(self, host: str, values: list[Any]) -> None:
+        self.host: str = host
+        self.values: list[Any] = values
 
-def savetofile(path, message, mode = "a+"):
+def savetofile(path: str, message: str, mode: str = "a+") -> None:
     with open(path, mode) as f:
         f.write(message)
         
-def get_hosts_from_file(name, get_ports = True):
+def get_hosts_from_file(name: str, get_ports: bool = True) -> list[Host]:
+    """
+    Reads a list of hosts from a file and returns a list of Host instances.
+
+    Each line in the file should contain an IP address and a port, separated by ":".
+
+    Args:
+        filename (str): The path to the file containing nessus scan information.
+        id (int): Value of id of target.
+    Returns:
+        GroupNessusScanOutput: Nessus scan output.
+    Raises:
+            FileNotFoundError: If the specified file does not exist.
+            IndexError: If ID does not exist.
+    """
     if os.path.isfile(name):
+        s: set[Host] = set()
         with open(name, "r") as file:
-            if get_ports: return list(set(line.strip() for line in file)) 
-            else: return list(set(line.strip().split(":")[0] for line in file)) 
-    else: return list(set(name.split())) 
+            for line in file:
+                parts: list[str] = line.strip().split()
+                ip: str = parts[0]
+                port: str = parts[1] if get_ports else ""
+                s.add(Host(ip, port))
+        return list(s)
+    else:
+        raise FileNotFoundError(f"No file found named: {name}")
     
-def confirm_prompt(prompt="Are you sure?", suppress = False):
+def confirm_prompt(prompt: str = "Are you sure?", suppress: bool = False) -> bool:
     extra = " [y/N]: " if not suppress else ""
     while True:
         # Display the prompt and get user input
@@ -47,8 +82,9 @@ def confirm_prompt(prompt="Are you sure?", suppress = False):
         else:
             print("Please respond with 'y/yes' or 'n/no'.")
             
-            
-def control_TLS(hosts, extra_command = "", white_results_are_good = False):
+"""        
+def control_TLS(hosts: list[Host], extra_command: str = "", white_results_are_good: bool = False) 
+-> None:
     weak_versions = {}
     weak_ciphers = {}
     weak_bits = {}
@@ -58,8 +94,10 @@ def control_TLS(hosts, extra_command = "", white_results_are_good = False):
         port  = host.split(":")[1]
             
         if extra_command:
-            command = ["sslscan", extra_command, "-no-fallback", "--no-renegotiation", "--no-group", "--no-check-certificate", "--no-heartbleed", "--iana-names", "--connect-timeout=3", host]
-        else: command = ["sslscan", "-no-fallback", "--no-renegotiation", "--no-group", "--no-check-certificate", "--no-heartbleed", "--iana-names", "--connect-timeout=3", host]
+            command = ["sslscan", extra_command, "-no-fallback", "--no-renegotiation", "--no-group",
+            "--no-check-certificate", "--no-heartbleed", "--iana-names", "--connect-timeout=3", host]
+        else: command = ["sslscan", "-no-fallback", "--no-renegotiation", "--no-group", 
+        "--no-check-certificate", "--no-heartbleed", "--iana-names", "--connect-timeout=3", host]
         result = subprocess.run(command, text=True, capture_output=True)
         if "Connection refused" in result.stderr or "enabled" not in result.stdout:
             continue
@@ -144,51 +182,90 @@ def control_TLS(hosts, extra_command = "", white_results_are_good = False):
         print("Wrong hostnames on certficate on hosts:")
         for v in wrong_hosts:
             print(f"\t{v}")
+ """
             
-            
-def find_scan(file_path: str, target_id: int):
-    with open(file_path, "r") as file:
-        for line in file:
-            g = GroupNessusScanOutput.from_json(json.loads(line))
-            if g.id == target_id and not len(g.hosts) == 0: return g
-    return None  # If not found
+def find_scan(filename: str, id: int) -> GroupNessusScanOutput:
+    """
+    Reads nessus file and returns GroupNessusScanOutput.
+
+    Args:
+        filename (str): The path to the file containing nessus scan information.
+        id (int): Value of id of target.
+    Returns:
+        GroupNessusScanOutput: Nessus scan output.
+    Raises:
+            FileNotFoundError: If the specified file does not exist.
+            IndexError: If ID does not exist.
+    """
+    if os.path.isfile(filename):
+        with open(filename, "r") as file:
+            for line in file:
+                g: GroupNessusScanOutput = GroupNessusScanOutput.from_json(json.loads(line)) # type: ignore
+                if g.id == id and g.hosts:  # type: ignore
+                    return g # type: ignore
+            raise IndexError(f"ID value of {id} was not found")
+    else:
+        raise FileNotFoundError(f"No file found named: {filename}")
+        
 
 
-def get_header_from_url(host, header, timeout = 5, errors = False, verbose = False) -> str | None:
+def get_header_from_url(host: Host, header: str, timeout: int = 5, errors: bool = False, 
+                        verbose: bool = False) -> str | None:
+    """
+    Returns the wanted header value from given url.
+
+    Args:
+        host (Host): Host information.
+        header (str): Wanted header name.
+        timeout (int): Timeout to reach the url
+        errors (bool): Print errors
+        verbose (bool): Print verbose
+    Returns:
+        str: Header value. returns "None" if not found
+    Raises:
+            FileNotFoundError: If the specified file does not exist.
+            IndexError: If ID does not exist.
+    """
     resp = get_url_response(host, timeout=timeout)
-    if not resp: return None
-    return resp.headers.get(header, "None")
+    if not resp:
+        if errors:
+            print(f"get_header_from_url failed for {host} because response was None")
+        return None
+    header = resp.headers.get(header, "None")
+    return header
 
-def get_classic_single_progress():
+def get_classic_single_progress() -> Progress:
     text_column1 = TextColumn("{task.fields[host]}", table_column=Column(ratio=1), style= "bold")
     text_column2 = TextColumn("{task.fields[status]}", table_column=Column(ratio=1), style= "dim")
     
     return Progress(text_column1, SpinnerColumn(), text_column2, refresh_per_second= 1)
 
-def get_classic_overall_progress():
-    return Progress(TimeElapsedColumn(), TextColumn("{task.fields[modulename]}"), BarColumn(), TextColumn("{task.completed}/{task.total}"), refresh_per_second=1)
+def get_classic_overall_progress() -> Progress:
+    return Progress(TimeElapsedColumn(), TextColumn("{task.fields[modulename]}"), BarColumn(), 
+                    TextColumn("{task.completed}/{task.total}"), refresh_per_second=1)
 
-def get_classic_console(force_terminal = False):
+def get_classic_console(force_terminal: bool = False) -> Console:
     return Console(force_terminal=force_terminal)
 
-def get_default_context_execution(module_name, threads, hosts, args):
-    if not hosts: return
+def get_default_context_execution(module_name: str, threads: int, hosts: list[Host], 
+                                  args: tuple[Any, ...]) -> list[Any]:
     overall_progress = get_classic_overall_progress()
     overall_task_id = overall_progress.add_task("", start=False, modulename=module_name)
     
-    futures = []
-    results = []
+    futures: list[Any] = []
+    results: list[Any] = []
     """A reusable context manager to handle file, Live display, and thread execution."""
     with Live(overall_progress) as live, ThreadPoolExecutor(threads) as executor:
         overall_progress.update(overall_task_id, total=len(hosts), completed=0)
         overall_progress.start_task(overall_task_id)
         for host in hosts:
             modified_args = (args[0], host) + args[1:]
-            future = executor.submit(*modified_args)
-            futures.append(future)
-        for a in as_completed(futures):
+            future = executor.submit(*modified_args)  # type: ignore
+            futures.append(future)  # type: ignore
+        for a in as_completed(futures):  # type: ignore
             overall_progress.update(overall_task_id, advance=1)
-            if a.result(): results.append(a.result())
+            if a.result(): 
+                results.append(a.result())
             
     return results
 
