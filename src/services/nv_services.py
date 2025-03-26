@@ -35,15 +35,16 @@ service_list = [
 ]
 
 
-def main():
+def main() -> None:
     # Create the main parser
     parser = argparse.ArgumentParser(description="Service Pentesting.")
-    subparsers = parser.add_subparsers(dest="command", help="Available subcommands")
-    
+    subparsers: argparse._SubParsersAction[argparse.ArgumentParser] = parser.add_subparsers(# type: ignore
+        dest="command", help="Available subcommands") 
     for v in service_list:
         try:
             v.helper_parse(subparsers)
-        except:pass
+        except Exception:
+            pass
     args = parser.parse_args()
     
     if hasattr(args, "func"):

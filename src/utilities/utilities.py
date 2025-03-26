@@ -1,10 +1,9 @@
 import json
 import os
-from concurrent.futures import Future
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Any, List
+from typing import Any
 
 import requests
 from rich.console import Console
@@ -255,46 +254,53 @@ def get_default_context_execution(module_name: str, threads: int, hosts: list[Ho
     futures: list[Any] = []
     results: list[Any] = []
     """A reusable context manager to handle file, Live display, and thread execution."""
-    with Live(overall_progress) as live, ThreadPoolExecutor(threads) as executor:
+    with Live(overall_progress), ThreadPoolExecutor(threads) as executor:
         overall_progress.update(overall_task_id, total=len(hosts), completed=0)
         overall_progress.start_task(overall_task_id)
         for host in hosts:
             modified_args = (args[0], host) + args[1:]
-            future = executor.submit(*modified_args)  # type: ignore
-            futures.append(future)  # type: ignore
-        for a in as_completed(futures):  # type: ignore
+            future = executor.submit(*modified_args)
+            futures.append(future)
+        for a in as_completed(futures):
             overall_progress.update(overall_task_id, advance=1)
             if a.result(): 
                 results.append(a.result())
             
     return results
 
-def add_default_parser_arguments(parser, add_target_argument = True):
-    if add_target_argument: parser.add_argument("target", type=str, help="File name or targets seperated by space")
+def add_default_parser_arguments(parser,  # type: ignore  # noqa: ANN001
+                                 add_target_argument: bool = True) -> None:
+    if add_target_argument: 
+        parser.add_argument("target", type=str,
+                            help="File name or targets seperated by space")
     parser.add_argument("--threads", type=int, default=10, help="Amount of threads (Default = 10).")
     parser.add_argument("--timeout", type=int, default=5, help="Amount of timeout (Default = 5).")
     parser.add_argument("-e", "--errors", action="store_true", help="Show Errors")
     parser.add_argument("-v", "--verbose", action="store_true", help="Show Verbose")
 
-def add_default_solver_parser_arguments(parser):
+def add_default_solver_parser_arguments(parser) -> None: # type: ignore  # noqa: ANN001
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("-f", "--file", type=str, help="JSON file")
     group.add_argument("-lf", "--list-file", type=str, help="List file")
     
-def get_url_response(url, timeout=5, redirect = True):
+def get_url_response(url: str, timeout: int = 5, redirect: bool = True) -> requests.Response | None:
     try:
-        resp = requests.get(f"http://{url}", allow_redirects=redirect, verify=False, timeout=timeout)
-        if "You're speaking plain HTTP to an SSL-enabled server port" in resp.text: return requests.get(f"https://{url}", allow_redirects=redirect, verify=False, timeout=timeout)
+        resp = requests.get(f"http://{url}", allow_redirects=redirect, verify=False, 
+                            timeout=timeout)
+        if "You're speaking plain HTTP to an SSL-enabled server port" in resp.text: 
+            return requests.get(f"https://{url}", allow_redirects=redirect, verify=False, 
+                                timeout=timeout)
         return resp
-    except:
+    except Exception:
         try:
-            return requests.get(f"https://{url}", allow_redirects=redirect, verify=False, timeout=timeout)
-        except Exception as e:
+            return requests.get(f"https://{url}", allow_redirects=redirect, verify=False, 
+                                timeout=timeout)
+        except Exception:
             return None
         
-def get_cves(cpe, sort_by_epss = False, limit = 10):        
+def get_cves(cpe: str, sort_by_epss: bool = False, limit: int = 10) -> list[str]:        
     try:
-        params = {
+        params: dict[str, object] = {
             "cpe23": cpe,
             "count": "false",
             "is_key": "false",
@@ -302,7 +308,7 @@ def get_cves(cpe, sort_by_epss = False, limit = 10):
             "skip": "0",
             "limit": limit,
         }
-        resp = requests.get(f'https://cvedb.shodan.io/cves', params=params)
+        resp = requests.get("https://cvedb.shodan.io/cves", params=params) # type: ignore
         if resp.status_code in [404]: return []
 
         resp_json = resp.json()
@@ -312,9 +318,10 @@ def get_cves(cpe, sort_by_epss = False, limit = 10):
         for c in cves:
             # cve_dict[c["published_time"]] = c["cve_id"]
             cve_tuples.append((c["published_time"], c["cve_id"]))
-        sorted_cves = sorted(cve_tuples, key=lambda x: datetime.strptime(x[0], "%Y-%m-%dT%H:%M:%S"), reverse=True)
+        sorted_cves = sorted(cve_tuples, key=lambda x: datetime.strptime(x[0], "%Y-%m-%dT%H:%M:%S"), 
+                             reverse=True)
         top_cves = [cve_id for _, cve_id in sorted_cves[:limit]]
         return top_cves
-    except Exception as e:
+    except Exception:
         return []
     
