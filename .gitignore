@@ -1,4 +1,6 @@
+# Created by venv; see https://docs.python.org/3/library/venv.html
 .venv
+venv
 ports
 *.nessus
 __pycache*
@@ -12,3 +14,5 @@ output.json
 output.ndjson
 urls.txt
 *.xlsx
+.vscode
+.mypy_cache

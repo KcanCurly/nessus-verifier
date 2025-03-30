@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 import json
 import subprocess
 import re
@@ -5,7 +6,6 @@ import ssl
 import socket
 import requests
 from src.modules.nv_parse import GroupNessusScanOutput
-from src.utilities import logger
 from rich.progress import TextColumn, Progress, BarColumn, TimeElapsedColumn, SpinnerColumn
 from rich.console import Console
 from rich.table import Column
@@ -13,9 +13,35 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from rich.live import Live
 import os
 from datetime import datetime
-import traceback
 
+@dataclass
+class Host:
+    def __init__(self, ip: str, port: str):
+        self.ip = ip
+        self.port = port
+        
+    def __str__(self) -> str:
+        return f"{self.ip}:{self.port}"
+        
+@dataclass
+class Credential:
+    def __init__(self, username: str, password: str):
+        self.username = username
+        self.password = password
+        
+    def __str__(self) -> str:
+        return f"{self.username}{f":{self.password}" if self.password else ""}"
+
+class Version_Vuln_Host_Data():
+    def __init__(self, host: Host, version: str):
+        self.host = host
+        self.version = version
 class Version_Vuln_Data():
+    def __init__(self, host: str, version: str):
+        self.host = host
+        self.version = version
+    
+class Vuln_List_Data():
     def __init__(self, host: str, version: str):
         self.host = host
         self.version = version
@@ -24,12 +50,24 @@ def savetofile(path, message, mode = "a+"):
     with open(path, mode) as f:
         f.write(message)
         
+def get_hosts_from_file2(filename: str, get_ports: bool = True) -> list[Host]:
+    hosts: list[Host] = []
+    with open(filename, "r") as file:
+        for line in file:
+            ip, port = line.split()
+            hosts.append(Host(ip, port if get_ports else ""))
+            
+    return hosts
+        
 def get_hosts_from_file(name, get_ports = True):
     if os.path.isfile(name):
         with open(name, "r") as file:
-            if get_ports: return list(set(line.strip() for line in file)) 
-            else: return list(set(line.strip().split(":")[0] for line in file)) 
-    else: return list(set(name.split())) 
+            if get_ports: 
+                return list(set(line.strip() for line in file)) 
+            else: 
+                return list(set(line.strip().split(":")[0] for line in file)) 
+    else: 
+        return list(set(name.split())) 
     
 def confirm_prompt(prompt="Are you sure?", suppress = False):
     extra = " [y/N]: " if not suppress else ""
@@ -59,7 +97,8 @@ def control_TLS(hosts, extra_command = "", white_results_are_good = False):
             
         if extra_command:
             command = ["sslscan", extra_command, "-no-fallback", "--no-renegotiation", "--no-group", "--no-check-certificate", "--no-heartbleed", "--iana-names", "--connect-timeout=3", host]
-        else: command = ["sslscan", "-no-fallback", "--no-renegotiation", "--no-group", "--no-check-certificate", "--no-heartbleed", "--iana-names", "--connect-timeout=3", host]
+        else: 
+            command = ["sslscan", "-no-fallback", "--no-renegotiation", "--no-group", "--no-check-certificate", "--no-heartbleed", "--iana-names", "--connect-timeout=3", host]
         result = subprocess.run(command, text=True, capture_output=True)
         if "Connection refused" in result.stderr or "enabled" not in result.stdout:
             continue
@@ -114,10 +153,9 @@ def control_TLS(hosts, extra_command = "", white_results_are_good = False):
         try:
             context = ssl.create_default_context()
             with socket.create_connection((ip, int(port)), timeout=3) as sock:
-                with context.wrap_socket(sock, server_hostname=ip) as ssock:
-                    pass
+                context.wrap_socket(sock, server_hostname=ip)
         except ssl.CertificateError as e:
-            if "Hostname mismatch" in e:
+            if "Hostname mismatch" in e.reason:
                 wrong_hosts.append(host)
                     
       
@@ -150,13 +188,15 @@ def find_scan(file_path: str, target_id: int):
     with open(file_path, "r") as file:
         for line in file:
             g = GroupNessusScanOutput.from_json(json.loads(line))
-            if g.id == target_id and not len(g.hosts) == 0: return g
+            if g.id == target_id and len(g.hosts): 
+                return g
     return None  # If not found
 
 
 def get_header_from_url(host, header, timeout = 5, errors = False, verbose = False) -> str | None:
     resp = get_url_response(host, timeout=timeout)
-    if not resp: return None
+    if not resp: 
+        return None
     return resp.headers.get(header, "None")
 
 def get_classic_single_progress():
@@ -172,14 +212,13 @@ def get_classic_console(force_terminal = False):
     return Console(force_terminal=force_terminal)
 
 def get_default_context_execution(module_name, threads, hosts, args):
-    if not hosts: return
     overall_progress = get_classic_overall_progress()
     overall_task_id = overall_progress.add_task("", start=False, modulename=module_name)
     
     futures = []
     results = []
     """A reusable context manager to handle file, Live display, and thread execution."""
-    with Live(overall_progress) as live, ThreadPoolExecutor(threads) as executor:
+    with Live(overall_progress), ThreadPoolExecutor(threads) as executor:
         overall_progress.update(overall_task_id, total=len(hosts), completed=0)
         overall_progress.start_task(overall_task_id)
         for host in hosts:
@@ -188,12 +227,14 @@ def get_default_context_execution(module_name, threads, hosts, args):
             futures.append(future)
         for a in as_completed(futures):
             overall_progress.update(overall_task_id, advance=1)
-            if a.result(): results.append(a.result())
+            if a.result(): 
+                results.append(a.result())
             
     return results
 
 def add_default_parser_arguments(parser, add_target_argument = True):
-    if add_target_argument: parser.add_argument("target", type=str, help="File name or targets seperated by space")
+    if add_target_argument: 
+        parser.add_argument("target", type=str, help="File name or targets seperated by space")
     parser.add_argument("--threads", type=int, default=10, help="Amount of threads (Default = 10).")
     parser.add_argument("--timeout", type=int, default=5, help="Amount of timeout (Default = 5).")
     parser.add_argument("-e", "--errors", action="store_true", help="Show Errors")
@@ -207,12 +248,13 @@ def add_default_solver_parser_arguments(parser):
 def get_url_response(url, timeout=5, redirect = True):
     try:
         resp = requests.get(f"http://{url}", allow_redirects=redirect, verify=False, timeout=timeout)
-        if "You're speaking plain HTTP to an SSL-enabled server port" in resp.text: return requests.get(f"https://{url}", allow_redirects=redirect, verify=False, timeout=timeout)
+        if "You're speaking plain HTTP to an SSL-enabled server port" in resp.text: 
+            return requests.get(f"https://{url}", allow_redirects=redirect, verify=False, timeout=timeout)
         return resp
-    except:
+    except Exception:
         try:
             return requests.get(f"https://{url}", allow_redirects=redirect, verify=False, timeout=timeout)
-        except Exception as e:
+        except Exception:
             return None
         
 def get_cves(cpe, sort_by_epss = False, limit = 10):        
@@ -225,8 +267,9 @@ def get_cves(cpe, sort_by_epss = False, limit = 10):
             "skip": "0",
             "limit": limit,
         }
-        resp = requests.get(f'https://cvedb.shodan.io/cves', params=params)
-        if resp.status_code in [404]: return []
+        resp = requests.get('https://cvedb.shodan.io/cves', params=params)
+        if resp.status_code in [404]: 
+            return []
 
         resp_json = resp.json()
         cves = resp_json["cves"]
@@ -238,6 +281,6 @@ def get_cves(cpe, sort_by_epss = False, limit = 10):
         sorted_cves = sorted(cve_tuples, key=lambda x: datetime.strptime(x[0], "%Y-%m-%dT%H:%M:%S"), reverse=True)
         top_cves = [cve_id for _, cve_id in sorted_cves[:limit]]
         return top_cves
-    except Exception as e:
+    except Exception:
         return []
     

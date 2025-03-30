@@ -22,7 +22,7 @@ def version_single(host, timeout, errors, verbose):
     except Exception as e:
         if errors: print(f"Error for {host}: {e}")
 
-def version_nv(hosts: list[str], threads = 10, timeout = 3, errors = False, verbose = False):
+def version_nv(hosts, threads = 10, timeout = 3, errors = False, verbose = False):
     results: list[iDRAC_Version_Vuln_Data] = get_default_context_execution("iDRAC Version", threads, hosts, (version_single, timeout, errors, verbose))
     versions_9 = {}
     versions_8 = {}

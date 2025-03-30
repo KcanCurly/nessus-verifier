@@ -20,7 +20,6 @@ service_list = [
     tftp,
     idrac,
     time,
-    zookeeper,
     postgresql,
     asterisk,
     mysql,
@@ -44,6 +43,9 @@ def main():
         try:
             v.helper_parse(subparsers)
         except:pass
+
+    zzzz = zookeeper.ZookeeperServiceClass()
+    zzzz.helper_parse(subparsers)
     args = parser.parse_args()
     
     if hasattr(args, "func"):

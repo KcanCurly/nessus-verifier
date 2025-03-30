@@ -2,56 +2,59 @@ import argparse
 from src.solvers import grafana, openssl, php, python, tls, kibana, elastic, mongo, oracle, smb, ssh, snmp, tomcat, apache, nginx, vmware, openssh, smtp_relay, mssql, idrac, ipmi, terminal, cleartext, ibmwebsphere, obsolete_protocols, postgresql, nopasswddb, actionables, ftp, ntp, nfs, queuejumper, \
     openssl, webcgi_generic, hpilo, jenkins
 from src.modules.nv_parse import GroupNessusScanOutput
+from src.solvers.solverclass import BaseSolverClass
 from src.utilities.utilities import add_default_parser_arguments 
 
-solver_dict = {
-    0: actionables,
-    1: tls,
+solver_dict: dict[int, type[BaseSolverClass]] = {
+    0: actionables.ActionablesSolverClass,
+    1: tls.TLSSolverClass,
     # 2: smtp_relay,
-    3: ssh,
-    4: ntp,
-    5: smb,
-    6: snmp,
-    7: cleartext,
-    8: terminal,
-    9: nopasswddb,
-    10: tomcat,
-    11: apache,
-    12: nginx,
-    13: vmware,
-    14: openssh,
-    15: nfs,
-    16: mssql,
+    3: ssh.SSHAuditSolverClass,
+    4: ntp.NTPSolverClass,
+    5: smb.SMBSolverClass,
+    6: snmp.SNMPSolverClass,
+    7: cleartext.CleartextSolverClass,
+    8: terminal.TerminalSolverClass,
+    9: nopasswddb.NoPasswordDBSolverClass,
+    10: tomcat.TomcatSolverClass,
+    11: apache.ApacheSolverClass,
+    12: nginx.NginxSolverClass,
+    13: vmware.VmwareSolverClass,
+    14: openssh.OpenSSHSolverClass,
+    15: nfs.NFSSolverClass,
+    16: mssql.MSSQLSolverClass,
     # 17: mDNS,
-    18: obsolete_protocols,
-    19: idrac,
-    20: ipmi,
-    21: php,
-    22: grafana,
-    23: python,
-    24: kibana,
-    25: elastic,
-    26: mongo,
-    27: oracle,
-    28: queuejumper,
-    29: ibmwebsphere,
-    30: postgresql,
-    31: ftp,
-    32: openssl,
+    18: obsolete_protocols.ObsoleteProtocolSolverClass,
+    19: idrac.IDRACSolverClass,
+    20: ipmi.IPMISolverClass,
+    21: php.PHPSolverClass,
+    22: grafana.GrafanaSolverClass,
+    23: python.PythonSolverClass,
+    24: kibana.KibanaSolverClass,
+    25: elastic.ElasticsearchSolverClass,
+    26: mongo.MongoSolverClass,
+    27: oracle.OracleSolverClass,
+    28: queuejumper.QueueJumperSolverClass,
+    29: ibmwebsphere.IBMWebSphereSolverClass,
+    30: postgresql.PSQLSolverClass,
+    31: ftp.FTPSolverClass,
+    32: openssl.OpenSSLSolverClass,
     # 33: webcgi_generic,
-    34: hpilo, 
-    35: jenkins,
+    34: hpilo.HPiLOSolverClass, 
+    35: jenkins.JenkinsSolverClass,
 }
 
 def all_solver(args):
     for k,v in solver_dict.items():
-        v.solve(args, is_all=True)
+        zz = v(args) # type: ignore
+        zz.solve()
+
             
-    
 def create_config_file(args):
     s = ""
     for k,v in solver_dict.items():
-        s += v.get_default_config()
+        zz = v(None) # type: ignore
+        s += zz.get_default_config()
             
     with open(args.output, "w") as f:
         f.write(s)
@@ -72,10 +75,11 @@ def main():
     parser_all.add_argument("-c", "--config", type=str, default="nv-config.toml", help="Config file (default: nv-config.toml).")
     add_default_parser_arguments(parser_all, False)
     parser_all.set_defaults(func=all_solver)
-    parser_all.set_defaults(ignore_fail=True)
+    parser_all.set_defaults(is_all=True)
 
-    for k,v in solver_dict.items():
-        v.helper_parse(subparsers)
+    for _,v in solver_dict.items():
+        zz = v(None) # type: ignore
+        zz.helper_parse(subparsers)
 
 
     args = parser.parse_args()
