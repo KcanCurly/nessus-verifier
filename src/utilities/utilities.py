@@ -237,6 +237,27 @@ def get_default_context_execution(module_name, threads, hosts, args):
             
     return results
 
+def get_default_context_execution2(module_name, threads, hosts, func, **kwargs):
+    overall_progress = get_classic_overall_progress()
+    overall_task_id = overall_progress.add_task("", start=False, modulename=module_name)
+    
+    futures = []
+    results = []
+    """A reusable context manager to handle file, Live display, and thread execution."""
+    with Live(overall_progress), ThreadPoolExecutor(threads) as executor:
+        overall_progress.update(overall_task_id, total=len(hosts), completed=0)
+        overall_progress.start_task(overall_task_id)
+        for host in hosts:
+
+            future = executor.submit(func, hosts, **kwargs)
+            futures.append(future)
+        for a in as_completed(futures):
+            overall_progress.update(overall_task_id, advance=1)
+            if a.result(): 
+                results.append(a.result())
+            
+    return results
+
 def add_default_parser_arguments(parser, add_target_argument = True):
     if add_target_argument: 
         parser.add_argument("target", type=str, help="File name or targets seperated by space")

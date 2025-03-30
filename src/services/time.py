@@ -1,7 +1,7 @@
 import socket
 import struct
 import time
-from src.utilities.utilities import get_default_context_execution
+from src.utilities.utilities import get_default_context_execution2
 from src.services.consts import DEFAULT_ERRORS, DEFAULT_THREAD, DEFAULT_TIMEOUT, DEFAULT_VERBOSE
     
 from src.services.serviceclass import BaseServiceClass
@@ -18,7 +18,7 @@ class TimeUsageSubServiceClass(BaseSubServiceClass):
         verbose = kwargs.get("errors", DEFAULT_VERBOSE)
         
 
-        results: list[str] = get_default_context_execution("Time Protocol Usage", threads, hosts, (self.nv_single, timeout, errors, verbose))
+        results: list[str] = get_default_context_execution2("Time Protocol Usage", threads, hosts, self.nv_single, timeout=timeout, errors=errors, verbose=verbose)
 
         if len(results):
             print("Time protocol detected:")
