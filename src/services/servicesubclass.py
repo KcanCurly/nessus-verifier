@@ -1,4 +1,4 @@
-from src.services.serviceclass import BaseServiceClass
+import src.services.serviceclass
 from src.utilities.utilities import add_default_parser_arguments, get_hosts_from_file2
 
 class BaseSubServiceClass():
@@ -6,7 +6,7 @@ class BaseSubServiceClass():
         self.command_name = command_name
         self.help_description = help_description
 
-    def _set_parent(self, service: BaseServiceClass):
+    def _set_parent(self, service: src.services.serviceclass.BaseServiceClass):
         self.parent_service = service
 
     def helper_parse(self, subparsers):
