@@ -249,7 +249,7 @@ def get_default_context_execution2(module_name, threads, hosts, func, **kwargs):
         overall_progress.start_task(overall_task_id)
         for host in hosts:
 
-            future = executor.submit(func, hosts, **kwargs)
+            future = executor.submit(func, host, **kwargs)
             futures.append(future)
         for a in as_completed(futures):
             overall_progress.update(overall_task_id, advance=1)
