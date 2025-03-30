@@ -1,9 +1,8 @@
 import socket
 import struct
 import time
-from src.utilities.utilities import get_default_context_execution2, print_service_error
+from src.utilities.utilities import get_default_context_execution2, print_service_error, error_handler
 from src.services.consts import DEFAULT_ERRORS, DEFAULT_THREAD, DEFAULT_TIMEOUT, DEFAULT_VERBOSE
-    
 from src.services.serviceclass import BaseServiceClass
 from src.services.servicesubclass import BaseSubServiceClass
 
@@ -25,31 +24,30 @@ class TimeUsageSubServiceClass(BaseSubServiceClass):
             for r in results:
                 print(f"    {r}")
 
-
+    @error_handler(["host"])
     def nv_single(self, host, **kwargs):
         timeout = kwargs.get("timeout", 5)
         errors = kwargs.get("errors", None)
-        try:
-            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-                s.settimeout(timeout)  # Set a timeout for the connection
-                s.connect((host.ip, int(host.port)))  # Connect to the server
-                
-                # Receive the 4-byte binary time response
-                data = s.recv(4)
-                if len(data) != 4:
-                    if errors: print(f"Error for {host} - Invalid response length.")
-                    return
-                
-                # Unpack the 4-byte response as an unsigned integer
-                server_time = struct.unpack("!I", data)[0]
-                
-                # Convert the server time to seconds since the Unix epoch
-                unix_time = server_time - 2208988800  # Subtract Time Protocol epoch (1900) offset
-                
-                # Display the time in human-readable format
-                return f"{host} - {time.ctime(unix_time)}"
-        except Exception as e:
-            print_service_error(errors, f"Error for {host} - {e}")
+
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            s.settimeout(timeout)  # Set a timeout for the connection
+            s.connect((host.ip, int(host.port)))  # Connect to the server
+            
+            # Receive the 4-byte binary time response
+            data = s.recv(4)
+            if len(data) != 4:
+                if errors: print(f"Error for {host} - Invalid response length.")
+                return
+            
+            # Unpack the 4-byte response as an unsigned integer
+            server_time = struct.unpack("!I", data)[0]
+            
+            # Convert the server time to seconds since the Unix epoch
+            unix_time = server_time - 2208988800  # Subtract Time Protocol epoch (1900) offset
+            
+            # Display the time in human-readable format
+            return f"{host} - {time.ctime(unix_time)}"
+
 
 
 class TimeServiceClass(BaseServiceClass):

@@ -1,6 +1,5 @@
 import subprocess
 import re
-from src.utilities.utilities import get_hosts_from_file, add_default_parser_arguments, get_hosts_from_file2
 from src.services.serviceclass import BaseServiceClass
 from src.services.servicesubclass import BaseSubServiceClass
 from src.services.consts import DEFAULT_ERRORS, DEFAULT_THREAD, DEFAULT_TIMEOUT, DEFAULT_VERBOSE

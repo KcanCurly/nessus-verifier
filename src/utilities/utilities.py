@@ -320,3 +320,42 @@ def get_cves(cpe, sort_by_epss = False, limit = 10):
     except Exception:
         return []
     
+
+import functools
+
+def error_handler(variables):
+    def decorator(func):
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            try:
+                # Execute the function
+                return func(*args, **kwargs)
+            except Exception as e:
+                # Capture function name
+                function_name = func.__name__
+                
+                # Get the values of the specified variables from the function
+                variable_values = []
+                for var in variables:
+                    # Check if the variable is in kwargs
+                    value = kwargs.get(var, None)
+                    
+                    # If it's not in kwargs, check if it's in args (positional arguments)
+                    if value is None:
+                        try:
+                            index = func.__code__.co_varnames.index(var)
+                            value = args[index]
+                        except (ValueError, IndexError):
+                            pass
+                    
+                    variable_values.append(f"{var}={value}")
+                
+                print(f"Error in function '{function_name}': {e}")
+                print("Variable values:", ", ".join(variable_values))
+                value = kwargs.get("errors", None)
+                if value == 2:
+                    print_exc()
+                return None  # Handle error gracefully
+
+        return wrapper
+    return decorator
