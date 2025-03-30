@@ -11,7 +11,7 @@ class BaseSubServiceClass():
         self.parent_service = service
 
     def helper_parse(self, subparsers):
-        parser_enum = subparsers.add_parser(self.command_name, self.help_description)
+        parser_enum = subparsers.add_parser(self.command_name, help = self.help_description)
         add_default_parser_arguments(parser_enum)
         parser_enum.set_defaults(func=self.console)
 
