@@ -1,5 +1,5 @@
 from src.services.serviceclass import BaseServiceClass
-from src.utilities.utilities import add_default_parser_arguments, get_hosts_from_file
+from src.utilities.utilities import add_default_parser_arguments, get_hosts_from_file2
 
 class BaseSubServiceClass():
     def __init__(self, command_name: str, help_description: str) -> None:
@@ -18,7 +18,7 @@ class BaseSubServiceClass():
         self.console(args)
 
     def console(self, args):
-        self.nv(get_hosts_from_file(args.target, False), threads=args.threads, timeout=args.timeout, errors=args.errors, verbose=args.verbose)
+        self.nv(get_hosts_from_file2(args.target, False), threads=args.threads, timeout=args.timeout, errors=args.errors, verbose=args.verbose)
 
     def nv(self, hosts, **kwargs):
         print(f"Have not yet implemented nv for {self.command_name} for parent {self.parent_service.name}")
