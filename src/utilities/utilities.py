@@ -52,12 +52,17 @@ def savetofile(path, message, mode = "a+"):
         
 def get_hosts_from_file2(filename: str, get_ports: bool = True) -> list[Host]:
     hosts: list[Host] = []
-    with open(filename, "r") as file:
-        for line in file:
-            ip, port = line.split()
+    if os.path.isfile(filename):
+        with open(filename, "r") as file:
+            for line in file:
+                ip, port = line.split()
+                hosts.append(Host(ip, port if get_ports else ""))
+        return hosts
+    else:
+        for h in set(filename.split()):
+            ip, port = h.split(":")
             hosts.append(Host(ip, port if get_ports else ""))
-            
-    return hosts
+        return hosts
         
 def get_hosts_from_file(name, get_ports = True):
     if os.path.isfile(name):
