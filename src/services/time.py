@@ -30,10 +30,9 @@ class TimeUsageSubServiceClass(BaseSubServiceClass):
         timeout = kwargs.get("timeout", 5)
         errors = kwargs.get("errors", False)
         try:
-            ip, port = host.split(":")
             with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                 s.settimeout(timeout)  # Set a timeout for the connection
-                s.connect((ip, int(port)))  # Connect to the server
+                s.connect((host.ip, int(host.port)))  # Connect to the server
                 
                 # Receive the 4-byte binary time response
                 data = s.recv(4)

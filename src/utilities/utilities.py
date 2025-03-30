@@ -263,7 +263,7 @@ def add_default_parser_arguments(parser, add_target_argument = True):
         parser.add_argument("target", type=str, help="File name or targets seperated by space")
     parser.add_argument("--threads", type=int, default=10, help="Amount of threads (Default = 10).")
     parser.add_argument("--timeout", type=int, default=5, help="Amount of timeout (Default = 5).")
-    parser.add_argument("-e", "--errors", action="store_true", help="Show Errors")
+    parser.add_argument("-e", "--errors", type=int, choices=[1, 2], default = 0, help="1 - Show Errors\n2 - Show errors and prints stacktrace")
     parser.add_argument("-v", "--verbose", action="store_true", help="Show Verbose")
 
 def add_default_solver_parser_arguments(parser):
