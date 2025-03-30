@@ -19,7 +19,7 @@ class BaseSubServiceClass():
         self.console(args)
 
     def console(self, args):
-        self.nv(get_hosts_from_file2(args.target, False), threads=args.threads, timeout=args.timeout, errors=args.errors, verbose=args.verbose)
+        self.nv(get_hosts_from_file2(args.target), threads=args.threads, timeout=args.timeout, errors=args.errors, verbose=args.verbose)
 
     def nv(self, hosts, **kwargs):
         print(f"Have not yet implemented nv for {self.command_name} for parent {self.parent_service.name}")

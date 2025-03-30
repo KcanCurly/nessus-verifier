@@ -13,6 +13,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from rich.live import Live
 import os
 from datetime import datetime
+from traceback import print_exc
 
 @dataclass
 class Host:
@@ -255,8 +256,17 @@ def get_default_context_execution2(module_name, threads, hosts, func, **kwargs):
             overall_progress.update(overall_task_id, advance=1)
             if a.result(): 
                 results.append(a.result())
-            
     return results
+
+def print_service_error(e_level, message):
+    if not e_level:
+        return
+    if e_level == 1:
+        print(message)
+    elif e_level == 2:
+        print(message)
+        print_exc()
+        
 
 def add_default_parser_arguments(parser, add_target_argument = True):
     if add_target_argument: 

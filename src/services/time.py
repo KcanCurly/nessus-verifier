@@ -1,7 +1,7 @@
 import socket
 import struct
 import time
-from src.utilities.utilities import get_default_context_execution2
+from src.utilities.utilities import get_default_context_execution2, print_service_error
 from src.services.consts import DEFAULT_ERRORS, DEFAULT_THREAD, DEFAULT_TIMEOUT, DEFAULT_VERBOSE
     
 from src.services.serviceclass import BaseServiceClass
@@ -28,7 +28,7 @@ class TimeUsageSubServiceClass(BaseSubServiceClass):
 
     def nv_single(self, host, **kwargs):
         timeout = kwargs.get("timeout", 5)
-        errors = kwargs.get("errors", False)
+        errors = kwargs.get("errors", None)
         try:
             with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                 s.settimeout(timeout)  # Set a timeout for the connection
@@ -49,7 +49,7 @@ class TimeUsageSubServiceClass(BaseSubServiceClass):
                 # Display the time in human-readable format
                 return f"{host} - {time.ctime(unix_time)}"
         except Exception as e:
-            if errors: print(f"Error for {host} - {e}")
+            print_service_error(errors, f"Error for {host} - {e}")
 
 
 class TimeServiceClass(BaseServiceClass):
