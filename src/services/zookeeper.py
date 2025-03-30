@@ -1,7 +1,7 @@
 import subprocess
 import re
 from src.utilities.utilities import get_hosts_from_file, add_default_parser_arguments, get_hosts_from_file2
-from serviceclass import BaseServiceClass, BaseSubServiceClass
+from src.services.serviceclass import BaseServiceClass, BaseSubServiceClass
 
 class ZookeeperEnumServiceClass(BaseSubServiceClass):
     def __init__(self) -> None:
