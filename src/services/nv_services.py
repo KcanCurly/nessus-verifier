@@ -46,6 +46,8 @@ def main():
 
     zzzz = zookeeper.ZookeeperServiceClass()
     zzzz.helper_parse(subparsers)
+    zzzz = time.TimeServiceClass()
+    zzzz.helper_parse(subparsers)
     args = parser.parse_args()
     
     if hasattr(args, "func"):

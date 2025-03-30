@@ -3,22 +3,15 @@ import re
 from src.utilities.utilities import get_hosts_from_file, add_default_parser_arguments, get_hosts_from_file2
 from src.services.serviceclass import BaseServiceClass
 from src.services.servicesubclass import BaseSubServiceClass
+from src.services.consts import DEFAULT_ERRORS, DEFAULT_THREAD, DEFAULT_TIMEOUT, DEFAULT_VERBOSE
 
 class ZookeeperEnumServiceClass(BaseSubServiceClass):
     def __init__(self) -> None:
-        super().__init__("zookeepr", "Run enumeration on zookeeper targets")
-
-    def helper_parse(self, subparsers):
-        parser_enum = subparsers.add_parser("enum", help="Run enumeration on zookeeper targets")
-        add_default_parser_arguments(parser_enum)
-        parser_enum.set_defaults(func=self.console)
-
-    def console(self, args):
-        self.nv(get_hosts_from_file2(args.target, False), threads=args.threads, timeout=args.timeout, errors=args.errors, verbose=args.verbose)
+        super().__init__("zookeeper", "Run enumeration on zookeeper targets")
 
     def nv(self, hosts, **kwargs):
-        timeout = kwargs.get("timeout", 10)
-        errors = kwargs.get("errors", False)
+        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
+        errors = kwargs.get("errors", DEFAULT_ERRORS)
 
         print("Running metasploit zookeeper info disclosure module with forcing 1 thread, there will be no progression bar")
         versions = {}
@@ -81,4 +74,3 @@ class ZookeeperServiceClass(BaseServiceClass):
     def __init__(self) -> None:
         super().__init__("zookeeper")
         self.register_subservice(ZookeeperEnumServiceClass())
-
