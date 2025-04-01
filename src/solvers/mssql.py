@@ -1,4 +1,4 @@
-from src.services import mssql
+from src.services.mssql import MSSQLVersionSubServiceClass
 from src.solvers.solverclass import BaseSolverClass
 
 class MSSQLSolverClass(BaseSolverClass):
@@ -9,4 +9,4 @@ class MSSQLSolverClass(BaseSolverClass):
         if not self.hosts:
             return
         if self.is_nv:
-            mssql.version_nv(self.hosts, args.threads, args.timeout, args.errors, args.verbose)
+            MSSQLVersionSubServiceClass().nv(self.hosts, threads=args.threads, timeout=args.timeout, errors=args.errors, verbose=args.verbose)
