@@ -31,8 +31,10 @@ class NetstatBannerSubServiceClass(BaseSubServiceClass):
         timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
         errors = kwargs.get("errors", DEFAULT_ERRORS)
         verbose = kwargs.get("errors", DEFAULT_VERBOSE)
+        ip = host.ip
+        port = host.port
         try:
-            ip, port = host.split(":")
+
             # Create a socket
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             s.settimeout(timeout)  # Set timeout for connection
@@ -84,8 +86,9 @@ class NetstatUsageSubServiceClass(BaseSubServiceClass):
         timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
         errors = kwargs.get("errors", DEFAULT_ERRORS)
         verbose = kwargs.get("errors", DEFAULT_VERBOSE)
+        ip = host.ip
+        port = host.port
         try:
-            ip, port = host.split(":")
             # Create a socket
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             s.settimeout(timeout)  # Set timeout for connection

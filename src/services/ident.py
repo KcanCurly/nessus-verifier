@@ -8,11 +8,10 @@ from traceback import print_exc
 
 class IdentUsersSubServiceClass(BaseSubServiceClass):
     def __init__(self) -> None:
-        super().__init__("users", "ExaEnumerates usersmple")
+        super().__init__("users", "Enumerates Users")
 
     def helper_parse(self, subparsers):
         parser = subparsers.add_parser(self.command_name, help = self.help_description)
-        parser = subparsers.add_parser("users", help="Enumerates users")
         parser.add_argument("target", type=str, help="File name or targets seperated by space")
         parser.add_argument("-p", "--ports", nargs="+", default=["22", "80", "113", "443"], help="Ports to enumerate")
         add_default_parser_arguments(parser, False)

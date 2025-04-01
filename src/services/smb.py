@@ -122,7 +122,7 @@ class SMBNullGuestSubServiceClass(BaseSubServiceClass):
 
 class SMBSignSubServiceClass(BaseSubServiceClass):
     def __init__(self) -> None:
-        super().__init__("smbv1", "Checks SMBv1 usage")
+        super().__init__("sign", "Checks SMBv1 usage")
 
     @error_handler(["host"])
     def nv(self, hosts, **kwargs):

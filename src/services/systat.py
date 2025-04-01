@@ -105,6 +105,6 @@ class SystatUsageSubServiceClass(BaseSubServiceClass):
 
 class SystatServiceClass(BaseServiceClass):
     def __init__(self) -> None:
-        super().__init__("telnet")
+        super().__init__("systat")
         self.register_subservice(SystatUsageSubServiceClass())
         self.register_subservice(SystatBannerSubServiceClass())
