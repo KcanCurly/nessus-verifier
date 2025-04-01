@@ -119,7 +119,7 @@ class NetstatUsageSubServiceClass(BaseSubServiceClass):
                 print_exc()
 
 
-class DaytimeServiceClass(BaseServiceClass):
+class NetstatServiceClass(BaseServiceClass):
     def __init__(self) -> None:
         super().__init__("netstat")
         self.register_subservice(NetstatUsageSubServiceClass())

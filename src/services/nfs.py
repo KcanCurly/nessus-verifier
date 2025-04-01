@@ -12,7 +12,7 @@ class NFS_Vuln_Data():
 showmount_cmd = ["showmount", "-e", "--no-headers"]
 nfsls_cmd = ["nfs-ls", "nfs://"]
 
-class NTPListServiceClass(BaseSubServiceClass):
+class NFSListServiceClass(BaseSubServiceClass):
     def __init__(self) -> None:
         super().__init__("list", "List directories of nfs shares of the hosts")
 
@@ -54,7 +54,7 @@ class NTPListServiceClass(BaseSubServiceClass):
         if v.content.keys:  # type: ignore
             return v
 
-class NTPServiceClass(BaseServiceClass):
+class NFSServiceClass(BaseServiceClass):
     def __init__(self) -> None:
         super().__init__("nfs")
-        self.register_subservice(NTPListServiceClass())
+        self.register_subservice(NFSListServiceClass())

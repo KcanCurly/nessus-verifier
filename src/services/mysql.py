@@ -225,7 +225,7 @@ class MYSQLVersionSubServiceClass(BaseSubServiceClass):
                     if product_name:
                         return Version_Vuln_Host_Data(host, product_name)
 
-class PSQLServiceClass(BaseServiceClass):
+class MySQLServiceClass(BaseServiceClass):
     def __init__(self) -> None:
         super().__init__("mysql")
         self.register_subservice(MYSQLVersionSubServiceClass())

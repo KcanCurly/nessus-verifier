@@ -6,32 +6,7 @@ from src.services.consts import DEFAULT_ERRORS, DEFAULT_THREAD, DEFAULT_TIMEOUT,
 from src.services.serviceclass import BaseServiceClass
 from src.services.servicesubclass import BaseSubServiceClass
 
-
-def users_nv(hosts: list[str], errors, verbose):
-    ips = [line.split(":")[0] for line in hosts]
-    result = ", ".join(ips)
-    vuln = {}
-    try:
-        command = ["msfconsole", "-q", "-x", f"color false; use scanner/finger/finger_users; set RHOSTS {result}; run; exit"]
-        result = subprocess.run(command, text=True, capture_output=True)
-        pattern = r"- (.*) Users found: (.*)"
-        matches = re.findall(pattern, result.stdout)
-
-        for m in matches:
-            if m[0] not in vuln:
-                vuln[m[0]] = []
-            vuln[m[0]].append(m[1])
-            
-    except Exception as e: print(e)
-    
-    if len(vuln) > 0:
-        print("Finger service user enumeration:")
-        for k,v in vuln.items():
-            print(f"    {k}:79 - {", ".join(v)}")
-        
-
-    
-class ExampleSubServiceClass(BaseSubServiceClass):
+class FingerUserenumSubServiceClass(BaseSubServiceClass):
     def __init__(self) -> None:
         super().__init__("userenum", "Enumerates users")
 
@@ -71,6 +46,7 @@ class ExampleSubServiceClass(BaseSubServiceClass):
         ip = host.ip
         port = host.port
 
-class ExampleServiceClass(BaseServiceClass):
+class FingerServiceClass(BaseServiceClass):
     def __init__(self) -> None:
         super().__init__("finger")
+        self.register_subservice(FingerUserenumSubServiceClass())

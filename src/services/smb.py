@@ -1,6 +1,6 @@
 import subprocess
 import re
-from impacket.smbconnection import SMBConnection
+from impacket.smbconnection import SMBConnection # type: ignore
 from smb import SMBConnection as pysmbconn
 from src.utilities.utilities import error_handler, get_default_context_execution2
 from src.services.consts import DEFAULT_ERRORS, DEFAULT_THREAD, DEFAULT_TIMEOUT, DEFAULT_VERBOSE
@@ -179,7 +179,7 @@ class SMBv1SubServiceClass(BaseSubServiceClass):
         SMBConnection(ip, ip, sess_port=int(port), timeout=timeout, preferredDialect="NT LM 0.12")
         return host
 
-class SNMPServiceClass(BaseServiceClass):
+class SMBServiceClass(BaseServiceClass):
     def __init__(self) -> None:
         super().__init__("smb")
         self.register_subservice(SMBv1SubServiceClass())

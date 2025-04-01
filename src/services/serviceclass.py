@@ -14,6 +14,11 @@ class BaseServiceClass():
         subservice._set_parent(self)
         self.subservices.append(subservice)
 
+"""
+    def solve(self, args):
+        for subservice in self.subservices:
+            subservice.solve(args)
+"""
 
 class ExampleServiceClass(BaseServiceClass):
     def __init__(self) -> None:

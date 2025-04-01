@@ -1,36 +1,38 @@
 import argparse
 from src.services import asterisk, chargen, daytime, discard, dns, echo, finger, ftp, ident, ldap, mongodb, ms_exchange, mssql, netstat, qotd, smb, ssh, snmp, nfs, rpc, smtp, snmp, systat, telnet, tftp, time, mssql, idrac, zookeeper, postgresql, mysql
+from src.services.serviceclass import BaseServiceClass
 
-service_list = [
-    dns,
-    finger,
-    ssh,
-    ftp,
-    smb,
-    snmp,
-    ident,
-    ldap,
-    mongodb,
-    ms_exchange,
-    nfs,
-    rpc,
-    smtp,
-    snmp,
-    mssql,
-    tftp,
-    idrac,
-    time,
-    postgresql,
-    asterisk,
-    mysql,
-    telnet,
-    systat,
-    netstat,
-    qotd,
-    echo,
-    discard,
-    daytime,
-    chargen,
+service_dict: list[type[BaseServiceClass]] = [
+    dns.DNSServiceClass,
+    finger.FingerServiceClass,
+    ssh.SSHServiceClass,
+    ftp.FTPServiceClass,
+    smb.SMBServiceClass,
+    snmp.SNMPServiceClass,
+    ident.IdentServiceClass,
+    ldap.LDAPServiceClass,
+    # mongodb.MongoDBServiceClass,
+    # ms_exchange.MSExchangeServiceClass,
+    nfs.NFSServiceClass,
+    rpc.RPCServiceClass,
+    # smtp.SMTPServiceClass,
+    snmp.SNMPServiceClass,
+    mssql.MSSQLServiceClass,
+    tftp.TFTPServiceClass,
+    idrac.IDRACServiceClass,
+    time.TimeServiceClass,
+    postgresql.PSQLServiceClass,
+    asterisk.AsteriskServiceClass,
+    mysql.MySQLServiceClass,
+    telnet.TelnetServiceClass,
+    systat.SystatServiceClass,
+    netstat.NetstatServiceClass,
+    qotd.QOTDServiceClass,
+    echo.EchoServiceClass,
+    discard.DiscardServiceClass,
+    daytime.DaytimeServiceClass,
+    chargen.ChargenServiceClass,
+    zookeeper.ZookeeperServiceClass,
 ]
 
 
@@ -39,18 +41,15 @@ def main():
     parser = argparse.ArgumentParser(description="Service Pentesting.")
     subparsers = parser.add_subparsers(dest="command", help="Available subcommands")
     
-    for v in service_list:
+    for v in service_dict:
         try:
-            v.helper_parse(subparsers)
+            z = v() # type: ignore
+            z.helper_parse(subparsers)
         except:pass
 
-    zzzz = zookeeper.ZookeeperServiceClass()
-    zzzz.helper_parse(subparsers)
-    zzzz = time.TimeServiceClass()
-    zzzz.helper_parse(subparsers)
     args = parser.parse_args()
     
     if hasattr(args, "func"):
-        args.func(args)
+        args.solve(args)
     else:
         parser.print_help()

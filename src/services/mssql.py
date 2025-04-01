@@ -249,6 +249,8 @@ class MSSQLVersionSubServiceClass(BaseSubServiceClass):
                         return Version_Vuln_Host_Data(host, z)
 
 
-class ExampleServiceClass(BaseServiceClass):
+class MSSQLServiceClass(BaseServiceClass):
     def __init__(self) -> None:
         super().__init__("mssql")
+        self.register_subservice(MSSQLVersionSubServiceClass())
+        self.register_subservice(MSSQLPostSubServiceClass())

@@ -1,30 +1,48 @@
 import subprocess
 import os
-from src.utilities.utilities import Version_Vuln_Data, get_hosts_from_file, add_default_parser_arguments, get_default_context_execution
+from src.utilities.utilities import error_handler, get_hosts_from_file2, add_default_parser_arguments
+from src.services.consts import DEFAULT_ERRORS, DEFAULT_THREAD, DEFAULT_TIMEOUT, DEFAULT_VERBOSE
+from src.services.serviceclass import BaseServiceClass
+from src.services.servicesubclass import BaseSubServiceClass
 
-def version_nv(file, port, sippts_output, threads, timeout, errors, verbose):
-    vuln = {}
-    command = ["sippts", "scan", "-f", file, "-r", port, "-p", "all", "-o", sippts_output]
-    try:
-        result = subprocess.run(command, text=True, capture_output=True)
-        
+class AsteriskVersionSubServiceClass(BaseSubServiceClass):
+    def __init__(self) -> None:
+        super().__init__("version", "Checks version")
+
+    def helper_parse(self, subparsers):
+        parser = subparsers.add_parser(self.command_name, help = self.help_description)
+        parser.add_argument("target", type=str, help="File name or targets seperated by space")
+        parser.add_argument("-p", "--ports", type=str, default="5030-5080", help="sippts port argument (Default = 5030-5080)")
+        # parser.add_argument("-o", "--sippts-output", type=str, default="nv-asterisk-data", help="sippts output filename (Default = nv-asterisk-data)")
+        add_default_parser_arguments(parser, False)
+        parser.set_defaults(func=self.console)
+
+    def console(self, args):
+        self.nv(get_hosts_from_file2(args.target), ports=args.ports, threads=args.threads, timeout=args.timeout, errors=args.errors, verbose=args.verbose)
+
+    @error_handler([])
+    def nv(self, hosts, **kwargs) -> None:
+        ports = kwargs.get("ports", "5030-5080")
+        sippts_output = kwargs.get("sippts_output", "nv-asterisk-data")
+        threads = kwargs.get("threads", DEFAULT_THREAD)
+        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
+        errors = kwargs.get("errors", DEFAULT_ERRORS)
+        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
+        vuln = {}
+        with open("sippts_input.txt", "w") as f:
+            for host in hosts:
+                f.write(f"{host.ip}\n")
+
+        command = ["sippts", "scan", "-f", "sippts_input.txt", "-r", ports, "-p", "all", "-o", sippts_output]
+
+        subprocess.run(command, text=True, capture_output=True)
+            
         with open(sippts_output) as f:
             print(f.read())
         os.remove(sippts_output)
+        os.remove("sippts_input.txt")
 
-    except Exception as e: 
-        if errors: print("Error:", e)
-
-def version_console(args):
-    version_nv(get_hosts_from_file(args.target), args.port, args.sippts_output, args.threads, args.timeout, args.errors, args.verbose)
-
-def helper_parse(commandparser):
-    parser_task1 = commandparser.add_parser("asterisk")
-    subparsers = parser_task1.add_subparsers(dest="command")
-    
-    parser_version = subparsers.add_parser("version", help="Checks Asterisk version")
-    parser_version.add_argument("target", type=str, help="File name or targets seperated by space")
-    parser_version.add_argument("-p", "--port", type=str, default="5030-5080", help="sippts port argument (Default = 5030-5080)")
-    parser_version.add_argument("-o", "--sippts-output", type=str, default="nv-asterisk-data", help="sippts output option (Default = nv-asterisk-data)")
-    add_default_parser_arguments(parser_version, False)
-    parser_version.set_defaults(func=version_console)
+class AsteriskServiceClass(BaseServiceClass):
+    def __init__(self) -> None:
+        super().__init__("asterisk")
+        self.register_subservice(AsteriskVersionSubServiceClass())

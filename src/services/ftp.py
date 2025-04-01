@@ -124,7 +124,7 @@ class FTPAnonSubServiceClass(BaseSubServiceClass):
             if "230" in l:
                 return FTP_Anon_Vuln_Data(host, True)
 
-class ExampleServiceClass(BaseServiceClass):
+class FTPServiceClass(BaseServiceClass):
     def __init__(self) -> None:
         super().__init__("ftp")
         self.register_subservice(FTPAnonSubServiceClass())

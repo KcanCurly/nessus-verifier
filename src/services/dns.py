@@ -8,6 +8,10 @@ import dns.update
 import dns.zone
 import re
 from src.utilities.utilities import get_hosts_from_file
+from src.utilities.utilities import error_handler, get_default_context_execution2, Version_Vuln_List_Host_Data, get_hosts_from_file2
+from src.services.consts import DEFAULT_ERRORS, DEFAULT_THREAD, DEFAULT_TIMEOUT, DEFAULT_VERBOSE
+from src.services.serviceclass import BaseServiceClass
+from src.services.servicesubclass import BaseSubServiceClass
 
 def find_domain_name(ip):
     domain_name_pattern = r"PTR\s(.*?)\s+"
@@ -24,172 +28,7 @@ def find_domain_name(ip):
     except Exception as e:
         print("dnsrecon find domain name failed: ", e)
         return None
-
-
-def tls(directory_path, config, args, hosts):
-    no_tls = []
-    weak_versions = {}
-    weak_ciphers = {}
-    weak_bits = {}
-    hosts = get_hosts_from_file(hosts)
-    for host in hosts:
-        ip = host.split(":")[0]
-        port  = 853
-
-        command = ["sslscan", "-no-fallback", "--no-renegotiation", "--no-group", "--no-check-certificate", "--no-heartbleed", "--iana-names", "--connect-timeout=2", f"{host}:{port}"]
-        result = subprocess.run(command, text=True, capture_output=True)
-        if "Connection refused" in result.stderr or "enabled" not in result.stdout:
-            no_tls.append(host)
-            continue
-        
-        host = ip + ":" + port
-        lines = result.stdout.splitlines()
-        protocol_line = False
-        cipher_line = False
-        for line in lines:
-            if "SSL/TLS Protocols" in line:
-                protocol_line = True
-                continue
-            if "Supported Server Cipher(s)" in line:
-                protocol_line = False
-                cipher_line = True
-                continue
-            if "Server Key Exchange Group(s)" in line:
-                cipher_line = False
-                continue
-            if protocol_line:
-                if "enabled" in line:
-                    if "SSLv2" in line:
-                        if host not in weak_versions:
-                            weak_versions[host] = []
-                        weak_versions[host].append("SSLv2")
-                    elif "SSLv3" in line:
-                        if host not in weak_versions:
-                            weak_versions[host] = []
-                        weak_versions[host].append("SSLv3")
-                    elif "TLSv1.0" in line:
-                        if host not in weak_versions:
-                            weak_versions[host] = []
-                        weak_versions[host].append("TLSv1.0")
-                    elif "TLSv1.1" in line:
-                        if host not in weak_versions:
-                            weak_versions[host] = []
-                        weak_versions[host].append("TLSv1.1")
-            
-            if cipher_line and line:
-                cipher = line.split()[4]
-                if "[32m" not in cipher: # If it is not green output
-                    if host not in weak_ciphers:
-                        weak_ciphers[host] = []
-                    weak_ciphers[host].append(re.sub(r'^\x1b\[[0-9;]*m', '', cipher))
-                    continue
-                bit = line.split()[2] # If it is a green output and bit is low
-                if "[33m]" in bit:
-                    if host not in weak_bits:
-                        weak_bits[host] = []
-                    weak_bits[host].append(re.sub(r'^\x1b\[[0-9;]*m', '', bit) + "->" + re.sub(r'^\x1b\[[0-9;]*m', '', cipher))
-                    
-      
-    if len(no_tls) > 0:
-        print("No DNS over TLS supported on Hosts:")
-        for v in no_tls:
-            print(f"\t{v}")
     
-    if len(weak_ciphers) > 0:       
-        print("Vulnerable TLS Ciphers on Hosts:")                
-        for key, value in weak_ciphers.items():
-            print(f"\t{key} - {", ".join(value)}")
-    
-    
-    if len(weak_versions) > 0: 
-        print()             
-        print("Vulnerable TLS Versions on Hosts:")                
-        for key, value in weak_versions.items():
-            print(f"\t{key} - {", ".join(value)}")
-            
-    if len(weak_bits) > 0:
-        print()
-        print("Low Bits on Good Algorithms on Hosts:")
-        for key, value in weak_versions.items():
-            print(f"\t{key} - {", ".join(value)}")
-
-def malicious_nv(hosts: list[str], domains, errors, verbose):
-    vuln = []
-
-    for host in hosts:
-        ip, port = host.split(":")
-
-        resolver = dns.resolver.Resolver()
-        resolver.nameservers = [ip]  # Set the specific DNS server
-        for malicious_domain in domains:
-            try:
-                answer = resolver.resolve(malicious_domain, "A")  # Query for A record
-                print(answer.__dict__)
-    
-            except Exception as e:
-                if errors: print("Error:", e)
-
-    if len(vuln) > 0:
-        print(f"Host(s) that were able to resolve malicious domain '{malicious_domain}':")
-        for v in vuln:
-            print(f"    {v}")
-    
-def zone_transfer_nv(hosts: list[str], errors, verbose):
-    vuln = []
-    for host in hosts:
-        ip, port = host.split(":")
-
-        # If we don't have domain, we first need to get domain from ptr record
-        domain = find_domain_name(ip)
-        if not domain:
-            if errors: print("Couldn't found domain of the ip")
-            continue
-
-        try:
-            command = ["dnsrecon", "-n", ip, "-a", "-d", domain]
-            result = subprocess.run(command, capture_output=True, text=True)
-            if "Zone Transfer was successful" in result.stdout:
-                vuln.append(host)
-                
-
-        except Exception as e: 
-            if errors: print("Error: ", e)
-            
-    if len(vuln) > 0:
-        print("Zone Transfer Was Successful on Hosts:")
-        for v in vuln:
-            print(f"    {v}") 
-    
-
-
-
-def dnssec_nv(hosts: list[str], errors, verbose):
-    vuln = []
-    for host in hosts:
-        ip, port = host.split(":")
-
-        # If we don't have domain, we first need to get domain from ptr record
-
-        domain = find_domain_name(ip)
-        if not domain:
-            if errors: print("Couldn't found domain of the ip")
-            continue
-
-        try:
-            command = ["dnsrecon", "-n", ip, "-d", domain]
-            result = subprocess.run(command, capture_output=True, text=True)
-            if "DNSSEC is not configured" in result.stdout:
-                vuln.append(host)
-                
-        except Exception as e: 
-            if errors: print("Error:", e)
-        
-    if len(vuln) > 0:
-        print("DNSSEC is NOT configured on Hosts:")
-        for v in vuln:
-            print(f"    {v}")
-
-
 
 def add_txt_record_nv(hosts: list[str], txt_record_name, txt_record_value, error, verbose):
     vuln = []
@@ -259,77 +98,12 @@ def cachepoison_nv(hosts: list[str], errors, verbose):
         print("Cache poison vulnerability detected on hosts:")
         for v in vuln:
             print(f"    {v}")
-
-def any_check_nv(hosts: list[str], errors, verbose):
-    vuln = []
-
-    for host in hosts:
-        try:
-            ip = host.split(":")[0]
-            port = host.split(":")[1]
             
-            command = ["dig", "any", f"@{ip}", "example.com"]
-            result = subprocess.run(command, text=True, capture_output=True)
-            answer = re.search("ANSWER: (.*), AUTHORITY", result.stdout)
-            if answer:
-                answer = int(answer.group(1))
-                if answer > 0:
-                    vuln.append(host)
-            
-        except Exception as e: 
-            if errors: print("ANY function error: ", e)    
-                    
-    if len(vuln) > 0:
-        print("Hosts that answered to 'ANY' query:")
-        for v in vuln:
-            print(f"    {v}")
-
-def recursion_nv(hosts: list[str], errors, verbose):
-    vuln = []
-
-    for host in hosts:
-        ip, port = host.split(":")
-
-        # If we don't have domain, we first need to get domain from ptr record
-        domain = find_domain_name(ip)
-        if not domain: 
-            if errors: print("Couldn't found domain of the ip")
-            continue
-
-        try:
-            command = ["dnsrecon", "-n", ip, "-d", domain]
-            result = subprocess.run(command, capture_output=True, text=True)
-            if "Recursion enabled on" in result.stdout:
-                vuln.append(host)
-        except Exception as e:
-            if errors: print("Error:", e)
-
-    
-    if len(vuln) > 0:
-        print("Recursion is ENABLED on Hosts:")
-        for v in vuln:
-            print(f"    {v}")
-            
-def zone_transfer_console(args):
-    zone_transfer_nv(get_hosts_from_file(args.file), args.errors, args.verbose)
-
 def add_txt_record_console(args):
     add_txt_record_nv(get_hosts_from_file(args.file), args.name, args.value, args.errors, args.verbose)
     
-def any_check_console(args):
-    any_check_nv(get_hosts_from_file(args.file), args.errors, args.verbose)
-    
-def recursion_console(args):
-    recursion_nv(get_hosts_from_file(args.file), args.errors, args.verbose)
-    
 def cachepoison_console(args):
     cachepoison_nv(get_hosts_from_file(args.file), args.errors, args.verbose)
-    
-def dnssec_console(args):
-    dnssec_nv(get_hosts_from_file(args.file), args.errors, args.verbose)
-    
-def malicious_console(args):
-    malicious_nv(get_hosts_from_file(args.file), args.domains, args.errors, args.verbose)
 
 def helper_parse(commandparser):
     parser_task1 = commandparser.add_parser("dns")
@@ -337,46 +111,208 @@ def helper_parse(commandparser):
     
     parser_addtxtrecord = subparsers.add_parser("txt", help="Checks if we can add a txt record")
     parser_addtxtrecord.add_argument("-f", "--file", type=str, required=True, help="input file name")
-    parser_addtxtrecord.add_argument("-n", "--name", type=str, default="NV-TEST", help="TXT Record name to be added (Default = NV-TEST).")
-    parser_addtxtrecord.add_argument("-nv", "--value", type=str, default="NV-TEST", help="TXT Record name to be added (Default = Nessus-verifier-test).")
+    parser_addtxtrecord.add_argument("-n", "--name", type=str, default="Pentest-TXT-Record", help="TXT Record name to be added (Default = Pentest-TXT-Record).")
+    parser_addtxtrecord.add_argument("-nv", "--value", type=str, default="Pentest-TXT-Record-Value", help="TXT Record name to be added (Default = Pentest-TXT-Record-Value).")
     parser_addtxtrecord.add_argument("-e", "--errors", action="store_true", help="Show Errors")
     parser_addtxtrecord.add_argument("-v", "--verbose", action="store_true", help="Show Verbose")
     parser_addtxtrecord.set_defaults(func=add_txt_record_console)
-    
-    parser_any = subparsers.add_parser("any", help="Checks ANY query")
-    parser_any.add_argument("-f", "--file", type=str, required=True, help="input file name")
-    parser_any.add_argument("-e", "--errors", action="store_true", help="Show Errors")
-    parser_any.add_argument("-v", "--verbose", action="store_true", help="Enable verbose")
-    parser_any.set_defaults(func=any_check_console)
-    
-    parser_recursion = subparsers.add_parser("recursion", help="Checks if recursion is enabled")
-    parser_recursion.add_argument("-f", "--file", type=str, required=True, help="input file name")
-    parser_recursion.add_argument("-e", "--errors", action="store_true", help="Show Errors")
-    parser_recursion.add_argument("-v", "--verbose", action="store_true", help="Enable verbose")
-    parser_recursion.set_defaults(func=recursion_console)
-    
+
     parser_cacheposion = subparsers.add_parser("cacheposion", help="Checks if cache can be posioned")
     parser_cacheposion.add_argument("-f", "--file", type=str, required=True, help="input file name")
     parser_cacheposion.add_argument("-e", "--errors", action="store_true", help="Show Errors")
     parser_cacheposion.add_argument("-v", "--verbose", action="store_true", help="Enable verbose")
     parser_cacheposion.set_defaults(func=cachepoison_console)
+
+class DNSAnySubServiceClass(BaseSubServiceClass):
+    def __init__(self) -> None:
+        super().__init__("any", "Checks ANY query")
+        
+    def nv(self, hosts, **kwargs):
+        threads = kwargs.get("threads", DEFAULT_THREAD)
+        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
+        errors = kwargs.get("errors", DEFAULT_ERRORS)
+        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
+        vuln = []
+
+        for host in hosts:
+            try:
+                ip = host.ip
+                port = host.port
+                domain = find_domain_name(ip)
+                if not domain: 
+                    if errors: print("Couldn't found domain of the ip")
+                    continue
+                
+                command = ["dig", "any", f"@{ip}", domain]
+                result = subprocess.run(command, text=True, capture_output=True)
+                answer = re.search("ANSWER: (.*), AUTHORITY", result.stdout)
+                if answer:
+                    answer = int(answer.group(1))
+                    if answer > 0:
+                        vuln.append(host)
+                
+            except Exception as e: 
+                if errors: print("ANY function error: ", e)    
+                        
+        if len(vuln) > 0:
+            print("Hosts that answered to 'ANY' query:")
+            for v in vuln:
+                print(f"    {v}")
+
+class DNSRecursionSubServiceClass(BaseSubServiceClass):
+    def __init__(self) -> None:
+        super().__init__("recursion", "Checks if recursion is enabled")
+        
+    def nv(self, hosts, **kwargs):
+        threads = kwargs.get("threads", DEFAULT_THREAD)
+        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
+        errors = kwargs.get("errors", DEFAULT_ERRORS)
+        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
+        vuln = []
+        for host in hosts:
+            ip = host.ip
+            port = host.port
+
+            # If we don't have domain, we first need to get domain from ptr record
+            domain = find_domain_name(ip)
+            if not domain: 
+                if errors: print("Couldn't found domain of the ip")
+                continue
+
+            try:
+                command = ["dnsrecon", "-n", ip, "-d", domain]
+                result = subprocess.run(command, capture_output=True, text=True)
+                if "Recursion enabled on" in result.stdout:
+                    vuln.append(host)
+            except Exception as e:
+                if errors: print("Error:", e)
+
+        
+        if len(vuln) > 0:
+            print("Recursion is ENABLED on Hosts:")
+            for v in vuln:
+                print(f"    {v}")
+
+class DNSAXFRSubServiceClass(BaseSubServiceClass):
+    def __init__(self) -> None:
+        super().__init__("axfr", "Checks if zone transfer is possible")
+        
+    def nv(self, hosts, **kwargs):
+        threads = kwargs.get("threads", DEFAULT_THREAD)
+        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
+        errors = kwargs.get("errors", DEFAULT_ERRORS)
+        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
+        vuln = []
+        for host in hosts:
+            ip = host.ip
+            port = host.port
+
+            # If we don't have domain, we first need to get domain from ptr record
+            domain = find_domain_name(ip)
+            if not domain:
+                if errors: print("Couldn't found domain of the ip")
+                continue
+
+            try:
+                command = ["dnsrecon", "-n", ip, "-a", "-d", domain]
+                result = subprocess.run(command, capture_output=True, text=True)
+                if "Zone Transfer was successful" in result.stdout:
+                    vuln.append(host)
+                    
+
+            except Exception as e: 
+                if errors: print("Error: ", e)
+                
+        if len(vuln) > 0:
+            print("Zone Transfer Was Successful on Hosts:")
+            for v in vuln:
+                print(f"    {v}") 
     
-    parser_axfr = subparsers.add_parser("axfr", help="Checks if zone transfer is possible")
-    parser_axfr.add_argument("-f", "--file", type=str, required=True, help="input file name")
-    parser_axfr.add_argument("-e", "--errors", action="store_true", help="Show Errors")
-    parser_axfr.add_argument("-v", "--verbose", action="store_true", help="Enable verbose")
-    parser_axfr.set_defaults(func=zone_transfer_console)
-    
-    parser_dnssec = subparsers.add_parser("dnssec", help="Checks if dnssec is enabled")
-    parser_dnssec.add_argument("-f", "--file", type=str, required=True, help="input file name")
-    parser_dnssec.add_argument("-e", "--errors", action="store_true", help="Show Errors")
-    parser_dnssec.add_argument("-v", "--verbose", action="store_true", help="Enable verbose")
-    parser_dnssec.set_defaults(func=dnssec_console)
-    
-    parser_dnssec = subparsers.add_parser("malicious", help="Checks if malicious domain can be resolved")
-    parser_dnssec.add_argument("-f", "--file", type=str, required=True, help="input file name")
-    parser_dnssec.add_argument("--domains", nargs="+", default=["accounts.googleaccesspoint.com", "86-adm.one", "pvkxculusei.xyz"], help="List of malicious domains seperated by space")
-    parser_dnssec.add_argument("-e", "--errors", action="store_true", help="Show Errors")
-    parser_dnssec.add_argument("-v", "--verbose", action="store_true", help="Enable verbose")
-    parser_dnssec.set_defaults(func=malicious_console)
-    
+class DNSSecSubServiceClass(BaseSubServiceClass):
+    def __init__(self) -> None:
+        super().__init__("dnssec", "Checks if dnssec is enabled")
+        
+    def nv(self, hosts, **kwargs):
+        threads = kwargs.get("threads", DEFAULT_THREAD)
+        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
+        errors = kwargs.get("errors", DEFAULT_ERRORS)
+        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
+        vuln = []
+        for host in hosts:
+            ip = host.ip
+            port = host.port
+
+            # If we don't have domain, we first need to get domain from ptr record
+
+            domain = find_domain_name(ip)
+            if not domain:
+                if errors: print("Couldn't found domain of the ip")
+                continue
+
+            try:
+                command = ["dnsrecon", "-n", ip, "-d", domain]
+                result = subprocess.run(command, capture_output=True, text=True)
+                if "DNSSEC is not configured" in result.stdout:
+                    vuln.append(host)
+                    
+            except Exception as e: 
+                if errors: print("Error:", e)
+            
+        if len(vuln) > 0:
+            print("DNSSEC is NOT configured on Hosts:")
+            for v in vuln:
+                print(f"    {v}")
+
+class DNSMaliciousSubServiceClass(BaseSubServiceClass):
+    def __init__(self) -> None:
+        super().__init__("malicious", "Checks if malicious domain can be resolved")
+
+    def helper_parse(self, subparsers):
+        parser = subparsers.add_parser(self.command_name, help = self.help_description)
+        parser.add_argument("target", type=str, help="File name or targets seperated by space")
+        parser.add_argument("--domains", nargs="+", default=["accounts.googleaccesspoint.com", "86-adm.one", "pvkxculusei.xyz"], help="List of malicious domains seperated by space")
+        parser(parser, False)
+        parser.set_defaults(func=self.console)
+
+    def console(self, args):
+        self.nv(get_hosts_from_file2(args.target), domains=args.domains, threads=args.threads, timeout=args.timeout, 
+                errors=args.errors, verbose=args.verbose)
+
+    @error_handler([])
+    def nv(self, hosts, **kwargs):
+        threads = kwargs.get("threads", DEFAULT_THREAD)
+        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
+        errors = kwargs.get("errors", DEFAULT_ERRORS)
+        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
+        domains = kwargs.get("domains", ["accounts.googleaccesspoint.com", "86-adm.one", "pvkxculusei.xyz"])
+        vuln = []
+        for host in hosts:
+            ip = host.ip
+            port = host.port
+
+            resolver = dns.resolver.Resolver()
+            resolver.nameservers = [ip]  # Set the specific DNS server
+            for malicious_domain in domains:
+                try:
+                    answers = resolver.resolve(malicious_domain, "A")  # Query for A record
+                    for answer in answers:
+                        print(f"{malicious_domain} resolves to {answer}")
+                    vuln.append(host)
+                except Exception:
+                    pass
+
+        if vuln:
+            print(f"Host(s) that were able to resolve malicious domain '{malicious_domain}':")
+            for v in vuln:
+                print(f"    {v}")
+
+
+
+class DNSServiceClass(BaseServiceClass):
+    def __init__(self) -> None:
+        super().__init__("dns")
+        self.register_subservice(DNSMaliciousSubServiceClass())
+        self.register_subservice(DNSSecSubServiceClass())
+        self.register_subservice(DNSAXFRSubServiceClass())
+        self.register_subservice(DNSRecursionSubServiceClass())
+        self.register_subservice(DNSAnySubServiceClass())
