@@ -1,6 +1,7 @@
 import argparse
 from src.services import asterisk, chargen, daytime, discard, dns, echo, finger, ftp, ident, ldap, mongodb, ms_exchange, mssql, netstat, qotd, smb, ssh, snmp, nfs, rpc, smtp, snmp, systat, telnet, tftp, time, mssql, idrac, zookeeper, postgresql, mysql
 from src.services.serviceclass import BaseServiceClass
+from traceback import print_exc
 
 service_dict: list[type[BaseServiceClass]] = [
     dns.DNSServiceClass,
@@ -45,7 +46,10 @@ def main():
         try:
             z = v() # type: ignore
             z.helper_parse(subparsers)
-        except:pass
+        except Exception as e:
+            print(f"Error parsing {v.__name__}: {e}")
+            print_exc()
+
 
     args = parser.parse_args()
     
