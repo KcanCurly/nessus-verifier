@@ -17,7 +17,6 @@ service_dict: list[type[BaseServiceClass]] = [
     nfs.NFSServiceClass,
     rpc.RPCServiceClass,
     # smtp.SMTPServiceClass,
-    snmp.SNMPServiceClass,
     mssql.MSSQLServiceClass,
     tftp.TFTPServiceClass,
     idrac.IDRACServiceClass,

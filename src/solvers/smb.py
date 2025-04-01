@@ -3,7 +3,7 @@ from src.services.smb import SMBSignSubServiceClass
 
 class SMBSolverClass(BaseSolverClass):
     def __init__(self, args) -> None:
-        super().__init__("SMB Service Misconfigurations", 6, args)
+        super().__init__("SMB Service Misconfigurations", 5, args)
 
     def solve(self, args):
         self.hosts = self._get_hosts(args) # type: ignore
