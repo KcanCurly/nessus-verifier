@@ -1,149 +1,294 @@
-from src.utilities.utilities import get_hosts_from_file, get_default_context_execution, add_default_parser_arguments
 import psycopg
+from src.utilities.utilities import Version_Vuln_List_Host_Data, get_default_context_execution2, error_handler, get_hosts_from_file, get_hosts_from_file2, add_default_parser_arguments
+from src.services.consts import DEFAULT_ERRORS, DEFAULT_THREAD, DEFAULT_TIMEOUT, DEFAULT_VERBOSE
+from src.services.serviceclass import BaseServiceClass
+from src.services.servicesubclass import BaseSubServiceClass
 
-class Unpassworded_Vuln_Data():
-    def __init__(self, host: str, dbs: list[str]):
-        self.host = host
-        self.dbs = dbs
+class PSQLBruteSubServiceClass(BaseSubServiceClass):
+    def __init__(self) -> None:
+        super().__init__("brute", "Bruteforce")
 
-def brute_single(host, creds, timeout, errors, verbose):
-    creds = []
-    ip, port = host.split(":")
-    for cred in creds:
-        u, p = cred.split(":")
+    def helper_parse(self, subparsers):
+        parser = subparsers.add_parser(self.command_name, help = self.help_description)
+        parser.add_argument("target", type=str, help="File name or targets seperated by space")
+        parser.add_argument("credential", type=str, help="Credential file, format is username:password")
+        add_default_parser_arguments(parser, False)
+        parser.set_defaults(func=self.console)
 
-        try:
-            db_params = {
-                "user": u,
-                "password": p,
-                "host": ip,
-                "port": int(port),
-            }
-            with psycopg.connect(**db_params) as con:
-                with con.cursor() as cur:
-                    creds.append(f"{u}:{p}")
+    def console(self, args):
+        self.nv(get_hosts_from_file2(args.target), creds=get_hosts_from_file(args.credential), threads=args.threads, timeout=args.timeout, errors=args.errors, verbose=args.verbose)
 
-        except Exception as e:
-            if errors: print(f"Error for {host}: {e}")
-    if len(creds) > 0: return f"{host} - {",".join(creds)}"
+    def nv(self, hosts, **kwargs):
+        threads = kwargs.get("threads", DEFAULT_THREAD)
+        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
+        errors = kwargs.get("errors", DEFAULT_ERRORS)
+        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
+        creds= kwargs.get("creds", [])
 
-def brute_nv(hosts, creds, threads, timeout, errors, verbose):
-    results: list[str] = get_default_context_execution("PostgreSQL without Password Usage", threads, hosts, (brute_single, creds, timeout, errors, verbose))
+        results: list[str] = get_default_context_execution2("PostgreSQL Bruteforce", threads, hosts, self.single, creds=creds, timeout=timeout, errors=errors, verbose=verbose)
 
-        
-    if results and len(results) > 0:
-        print("Valid PostgreSQL credential found:")
-        for r in results:
-            print(f"    {r}")
+        if results:
+            print("Valid PostgreSQL credential found:")
+            for r in results:
+                print(f"    {r}")
 
-def brute_console(args):
-    brute_nv(get_hosts_from_file(args.target), get_hosts_from_file(args.credential), args.threads, args.timeout, args.errors, args.verbose)
 
-def post_nv(hosts, threads, timeout, errors, verbose):
-    for host in hosts:
-        try:
-            ip, port = host.split(":")
 
-            dbs = []
-            db_params = {
-                "user": "postgres",
-                "password": "",
-                "host": ip,
-                "port": int(port),
-            }
-            with psycopg.connect(**db_params) as con:
-                with con.cursor() as cur:
-                    cur.execute("SELECT datname FROM pg_database;")
-                    dbs = [record[0] for record in cur]
-            for db in dbs:
-                try:
-                    db_params = {
-                        "dbname": db,
-                        "user": "postgres",
-                        "password": "",
-                        "host": ip,
-                        "port": int(port),
-                    }
-                    with psycopg.connect(**db_params) as con:
-                        with con.cursor() as cur:
-                            cur.execute("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public';")
-                            print(f"DATABASE: {db}")
-                            print("=======================")
-                            tables = [record[0] for record in cur]
-                            for table in tables:
-                                try:
-                                    print(table)
-                                    print("-----------------------")
-                                    cur.execute(f"SELECT column_name, data_type FROM information_schema.columns WHERE table_name = '{table}';")
-                                    columns = []
-                                    for c in cur:
-                                        print(f"{c[0]}: {c[1]}")
-                                        columns.append(c[0])
-                                    print()
-                                    try:
-                                        print("#######################")
-                                        cur.execute(f"SELECT {", ".join(columns)} FROM {table} LIMIT 10;")
-                                        for v in cur:
-                                            print(v)
-                                        print()
-                                    except Exception as e: pass
-                                    print()
-                                except Exception as e: pass
-                            
-                                
-                except Exception as e: pass
-            
-        except Exception as e: pass
-        
-def post_console(args):
-    post_nv(get_hosts_from_file(args.target), args.threads, args.timeout, args.errors, args.verbose)
+    @error_handler(["host"])
+    def single(self, host, **kwargs):
+        threads = kwargs.get("threads", DEFAULT_THREAD)
+        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
+        errors = kwargs.get("errors", DEFAULT_ERRORS)
+        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
+        creds = kwargs.get("creds", [])
 
-def unpassworded_single(host, timeout, errors, verbose):
-    try:
-        ip, port = host.split(":")
+        ip = host.ip
+        port = host.port
+
+
+        for cred in creds:
+            u, p = cred.split(":")
+
+            try:
+                db_params = {
+                    "user": u,
+                    "password": p,
+                    "host": ip,
+                    "port": int(port),
+                }
+                with psycopg.connect(**db_params) as con: # type: ignore
+                    with con.cursor() as cur:
+                        creds.append(f"{u}:{p}")
+
+            except Exception:
+                pass
+        if creds: return f"{host} - {",".join(creds)}"
+
+class PSQLDefaultSubServiceClass(BaseSubServiceClass):
+    def __init__(self) -> None:
+        super().__init__("default", "Checks if default/empty password is used")
+
+    def nv(self, hosts, **kwargs):
+        threads = kwargs.get("threads", DEFAULT_THREAD)
+        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
+        errors = kwargs.get("errors", DEFAULT_ERRORS)
+        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
+
+        results: list[Version_Vuln_List_Host_Data] = get_default_context_execution2("PostgreSQL without Password Usage", threads, hosts, self.single, timeout=timeout, errors=errors, verbose=verbose)
+
+        if results:
+            print("PostgreSQL servers that allows user postgres with empty password authentication:")
+            for r in results:
+                print(f"{r.host}: {", ".join(r.version)}")
+
+
+
+    @error_handler(["host"])
+    def single(self, host, **kwargs):
+        ip = host.ip
+        port = host.port
+
         db_params = {
             "user": "postgres",
             "password": "",
             "host": ip,
             "port": int(port),
         }
-        with psycopg.connect(**db_params) as con:
+        with psycopg.connect(**db_params) as con: # type: ignore
             with con.cursor() as cur:
                 cur.execute("SELECT datname FROM pg_database;")
                 dbs = [record[0] for record in cur]
-                return Unpassworded_Vuln_Data(host, dbs)
-    except Exception as e:
-        if errors: print(f"Error for {host}: {e}")
-    
+                return Version_Vuln_List_Host_Data(host, dbs)
 
-def unpassworded_nv(hosts, threads, timeout, errors, verbose):
-    results: list[Unpassworded_Vuln_Data] = get_default_context_execution("PostgreSQL without Password Usage", threads, hosts, (unpassworded_single, timeout, errors, verbose))
 
-    if results and len(results) > 0:
-        print("PostgreSQL servers that allows user postgres with empty password authentication:")
-        for r in results:
-            print(f"{r.host}: {", ".join(r.dbs)}")
-                    
-def unpassworded_console(args):
-    unpassworded_nv(get_hosts_from_file(args.target), args.threads, args.timeout, args.errors, args.verbose)
+class PSQLPostSubServiceClass(BaseSubServiceClass):
+    def __init__(self) -> None:
+        super().__init__("post", "Post-exploit stuff")
 
-def helper_parse(commandparser):
-    parser_task1 = commandparser.add_parser("psql")
-    subparsers = parser_task1.add_subparsers(dest="command")
+    def helper_parse(self, subparsers):
+        parser = subparsers.add_parser(self.command_name, help = self.help_description)
+        parser.add_argument("target", type=str, help="File name or targets seperated by space")
+        parser.add_argument("username", type=str, default="postgres", help="Username (Default = postgres)")
+        parser.add_argument("password", type=str, default="", help="Username (Default = '')")
+        parser.add_argument("--sql", type=str, help="Run SQL on target")
+        parser.add_argument("--databases", action="store_true", help="Print databases")
+        parser.add_argument("--database", type=str, help="Select database")
+        parser.add_argument("--tables", action="store_true", help="Print tables of selected database")
+        parser.add_argument("--table", type=str, help="Select table")
+        parser.add_argument("--columns", action="store_true", help="Print columns of selected table")
+        parser.add_argument("--column", nargs="+", help="Print values of selected columns")
+        parser.add_argument("--limit", type=int, default=10, help="Row Limit (Default = 10)")
+        add_default_parser_arguments(parser, False)
+        parser.set_defaults(func=self.console)
+
+    def console(self, args):
+        self.nv(get_hosts_from_file2(args.target), username=args.username, password=args.password, sql=args.sql, limit=args.limit, 
+                databases=args.databases, database=args.database, tables=args.tables, table=args.table, 
+                columns=args.columns, column=args.column, threads=args.threads, timeout=args.timeout, 
+                errors=args.errors, verbose=args.verbose)
     
-    parser_default = subparsers.add_parser("default", help="Checks if default/empty password is used")
-    add_default_parser_arguments(parser_default)
-    parser_default.set_defaults(func=unpassworded_console)
-    
-    parser_brute = subparsers.add_parser("brute", help="Bruteforce")
-    parser_brute.add_argument("target", type=str, help="File name or targets seperated by space")
-    parser_brute.add_argument("credential", type=str, help="Credential file, format is username:password")
-    add_default_parser_arguments(parser_brute, False)
-    parser_brute.set_defaults(func=brute_console)
-    
-    parser_post = subparsers.add_parser("post", help="Post Exploit")
-    parser_post.add_argument("target", type=str, help="File name or targets seperated by space")
-    parser_post.add_argument("username", type=str, default="postgres", help="Username (Default = postgres)")
-    parser_post.add_argument("password", type=str, default="", help="Username (Default = '')")
-    add_default_parser_arguments(parser_post, False)
-    parser_post.set_defaults(func=post_console)
+    @error_handler([])
+    def nv(self, hosts, **kwargs):
+        threads = kwargs.get("threads", DEFAULT_THREAD)
+        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
+        errors = kwargs.get("errors", DEFAULT_ERRORS)
+        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
+        username = kwargs.get("username", 'postgres')
+        password = kwargs.get("password", '')
+        sql = kwargs.get('sql', '')
+        databases = kwargs.get('databases', False)
+        database = kwargs.get('database', '')
+        tables = kwargs.get('tables', False)
+        table = kwargs.get('table', '')
+        columns = kwargs.get('columns', False)
+        column = kwargs.get('column', '')
+        row_limit = kwargs.get("limit", 10)
+
+        if (tables or table) and not database:
+            print("You need to select a database with argument --database")
+            return
+        
+        if (column or columns) and not table:
+            print("You need to select a table with argument --table")
+            return
+
+        for host in hosts:
+            try:
+                ip = host.ip
+                port = host.port
+                if sql:
+                    db_params = {
+                        "user": username,
+                        "password": password,
+                        "host": ip,
+                        "port": int(port),
+                    }
+                    with psycopg.connect(**db_params) as con: # type: ignore
+                        with con.cursor() as cur:
+                            cur.execute(sql)
+                            for record in cur:
+                                print(record)
+                    return
+
+                if databases:
+                    db_params = {
+                        "user": username,
+                        "password": password,
+                        "host": ip,
+                        "port": int(port),
+                    }
+                    with psycopg.connect(**db_params) as con: # type: ignore
+                        with con.cursor() as cur:
+                            cur.execute("SELECT datname FROM pg_database;")
+                            dbs = [record[0] for record in cur]
+                            for db in dbs:
+                                print(db)
+                    return
+                if tables:
+                    db_params = {
+                        "dbname": database,
+                        "user": "postgres",
+                        "password": "",
+                        "host": ip,
+                        "port": int(port),
+                    }
+                    with psycopg.connect(**db_params) as con: # type: ignore
+                        with con.cursor() as cur:
+                            cur.execute("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public';")
+                            db_tables = [record[0] for record in cur]
+                            for db_table in db_tables:
+                                print(db_table)
+                    return
+                
+                if columns:
+                    db_params = {
+                        "dbname": database,
+                        "user": "postgres",
+                        "password": "",
+                        "host": ip,
+                        "port": int(port),
+                    }
+                    with psycopg.connect(**db_params) as con: # type: ignore
+                        with con.cursor() as cur:
+                            cur.execute(f"SELECT column_name, data_type FROM information_schema.columns WHERE table_name = '{table}';") # type: ignore
+                            for c in cur:
+                                print(f"{c[0]}: {c[1]}")
+                    return
+                
+                if database and table and column:
+                    db_params = {
+                        "dbname": database,
+                        "user": "postgres",
+                        "password": "",
+                        "host": ip,
+                        "port": int(port),
+                    }
+                    with psycopg.connect(**db_params) as con: # type: ignore
+                        with con.cursor() as cur:
+                            cur.execute(f"SELECT {", ".join(db_columns)} FROM {db_table} LIMIT {row_limit};") # type: ignore
+                            for v in cur:
+                                print(v)
+                db_params = {
+                    "user": username,
+                    "password": password,
+                    "host": ip,
+                    "port": int(port),
+                }
+                with psycopg.connect(**db_params) as con: # type: ignore
+                    with con.cursor() as cur:
+                        cur.execute("SELECT datname FROM pg_database;")
+                        dbs = [record[0] for record in cur]
+                        for db in dbs:
+                            try:
+                                db_params = {
+                                    "dbname": db,
+                                    "user": username,
+                                    "password": password,
+                                    "host": ip,
+                                    "port": int(port),
+                                }
+                                with psycopg.connect(**db_params) as con: # type: ignore
+                                    with con.cursor() as cur:
+                                        cur.execute("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public';")
+                                        print(f"DATABASE: {db}")
+                                        print("=======================")
+                                        db_tables = [record[0] for record in cur]
+                                        for db_table in db_tables:
+                                            try:
+                                                print(db_table)
+                                                print("-----------------------")
+                                                cur.execute(f"SELECT column_name, data_type FROM information_schema.columns WHERE table_name = '{db_table}';") # type: ignore
+                                                db_columns = []
+                                                for c in cur:
+                                                    print(f"{c[0]}: {c[1]}")
+                                                    db_columns.append(c[0])
+                                                print()
+                                                try:
+                                                    print("#######################")
+                                                    cur.execute(f"SELECT {", ".join(db_columns)} FROM {db_table} LIMIT {row_limit};") # type: ignore
+                                                    for v in cur:
+                                                        print(v)
+                                                    print()
+                                                except Exception as e: pass
+                                                print()
+                                            except Exception as e: pass
+                                        
+                                            
+                            except Exception as e: pass
+                
+            except Exception as e: pass
+
+    @error_handler(["host"])
+    def single(self, host, **kwargs):
+        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
+        errors = kwargs.get("errors", DEFAULT_ERRORS)
+        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
+        ip = host.ip
+        port = host.port
+
+class PSQLServiceClass(BaseServiceClass):
+    def __init__(self) -> None:
+        super().__init__("psql")
+        self.register_subservice(PSQLDefaultSubServiceClass())
+        self.register_subservice(PSQLBruteSubServiceClass())
+        self.register_subservice(PSQLPostSubServiceClass())

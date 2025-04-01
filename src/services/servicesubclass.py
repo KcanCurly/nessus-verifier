@@ -1,4 +1,5 @@
-from src.utilities.utilities import add_default_parser_arguments, get_hosts_from_file2
+from src.utilities.utilities import add_default_parser_arguments, get_hosts_from_file2, error_handler
+from src.services.consts import DEFAULT_ERRORS, DEFAULT_THREAD, DEFAULT_TIMEOUT, DEFAULT_VERBOSE
 from src.services.serviceclass import BaseServiceClass as base_service
 
 
@@ -23,3 +24,22 @@ class BaseSubServiceClass():
 
     def nv(self, hosts, **kwargs):
         print(f"Have not yet implemented nv for {self.command_name} for parent {self.parent_service.name}")
+
+class ExampleSubServiceClass(BaseSubServiceClass):
+    def __init__(self) -> None:
+        super().__init__("example", "Example")
+
+    @error_handler([])
+    def nv(self, hosts, **kwargs):
+        threads = kwargs.get("threads", DEFAULT_THREAD)
+        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
+        errors = kwargs.get("errors", DEFAULT_ERRORS)
+        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
+
+    @error_handler(["host"])
+    def single(self, host, **kwargs):
+        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
+        errors = kwargs.get("errors", DEFAULT_ERRORS)
+        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
+        ip = host.ip
+        port = host.port

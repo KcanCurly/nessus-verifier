@@ -27,7 +27,7 @@ def parse_nessus_file(file_path):
             if item.attrib.get("pluginID") == '24260' and item.attrib.get("pluginName") == "HyperText Transfer Protocol (HTTP) Information":
                 # Parse the plugin output to extract SSL information
 
-                ssl_match = re.search(r"SSL\s+:\s+(yes|no)", item.findtext('plugin_output'))
+                ssl_match = re.search(r"SSL\s+:\s+(yes|no)", item.findtext('plugin_output')) # type: ignore
                 if ssl_match:
                     ssl = ssl_match.group(1)
                     url = f"http{'s' if ssl == 'yes' else ''}://{host_ip}:{port}"
@@ -119,10 +119,10 @@ def parse_nessus_output(file_path) -> list[NessusScanOutput]:
 
     for host in root.iter('ReportHost'):
         host_properties = host.find('HostProperties')
-        ip_address = host_properties.findtext("./tag[@name='host-ip']")
+        ip_address = host_properties.findtext("./tag[@name='host-ip']") # type: ignore
 
         for item in host.iter('ReportItem'):
-            plugin_id = int(item.get('pluginID'))
+            plugin_id = int(item.get('pluginID')) # type: ignore
             name = item.get('pluginName')
             description = item.findtext('description')
             severity = item.get('severity')

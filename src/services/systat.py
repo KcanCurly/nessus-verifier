@@ -1,9 +1,36 @@
 import socket
-from src.utilities.utilities import Version_Vuln_Data, get_hosts_from_file, get_default_context_execution, add_default_parser_arguments
+from src.utilities.utilities import Version_Vuln_Host_Data, get_default_context_execution2, error_handler
+from src.services.consts import DEFAULT_ERRORS, DEFAULT_THREAD, DEFAULT_TIMEOUT, DEFAULT_VERBOSE
+from src.services.serviceclass import BaseServiceClass
+from src.services.servicesubclass import BaseSubServiceClass
 
-def banner_single(host, timeout, errors, verbose):
-    try:
-        ip, port = host.split(":")
+class SystatBannerSubServiceClass(BaseSubServiceClass):
+    def __init__(self) -> None:
+        super().__init__("banner", "Banner Grab")
+
+    def nv(self, hosts, **kwargs):
+        threads = kwargs.get("threads", DEFAULT_THREAD)
+        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
+        errors = kwargs.get("errors", DEFAULT_ERRORS)
+        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
+
+        results: list[Version_Vuln_Host_Data] = get_default_context_execution2("Systat Banner Grab", threads, hosts, self.single, timeout=timeout, errors=errors, verbose=verbose)
+
+        if results:
+            print("Systat Banners:")
+            for r in results:
+                print("=================================")
+                print(r.host)
+                print("=================================")
+                print(r.version)
+
+    @error_handler(["host"])
+    def single(self, host, **kwargs):
+        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
+        errors = kwargs.get("errors", DEFAULT_ERRORS)
+        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
+        ip = host.ip
+        port = host.port
         # Create a socket
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.settimeout(timeout)  # Set timeout for connection
@@ -23,27 +50,36 @@ def banner_single(host, timeout, errors, verbose):
         # Close the connection
         s.close()
         
-        if "USER" in response and "PID" in response and "COMMAND" in response: return Version_Vuln_Data(host, response)
-    except Exception as e:
-        if errors: print(f"Error for {host}: {e}")
-        
-def banner_nv(hosts, threads, timeout, errors, verbose):
-    results: list[Version_Vuln_Data] = get_default_context_execution("Systat Banner Grab", threads, hosts, (banner_single, timeout, errors, verbose))
+        if "USER" in response and "PID" in response and "COMMAND" in response: 
+            return Version_Vuln_Host_Data(host, response)
 
-    if results and len(results) > 0:
-        print("Systat Banners:")
-        for r in results:
-            print("=================================")
-            print(r.host)
-            print("=================================")
-            print(r.version)
-        
-def banner_console(args):
-    banner_nv(get_hosts_from_file(args.target), args.threads, args.timeout, args.errors, args.verbose)
 
-def usage_single(host, timeout, errors, verbose):
-    try:
-        ip, port = host.split(":")
+
+class SystatUsageSubServiceClass(BaseSubServiceClass):
+    def __init__(self) -> None:
+        super().__init__("usage", "Checks usage")
+
+    def nv(self, hosts, **kwargs):
+        threads = kwargs.get("threads", DEFAULT_THREAD)
+        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
+        errors = kwargs.get("errors", DEFAULT_ERRORS)
+        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
+        results = get_default_context_execution2("Systat Usage", threads, hosts, self.single, timeout=timeout, errors=errors, verbose=verbose)
+        
+        if results:
+            print("Systat Usage Detected:")
+            for value in results:
+                print(f"{value}")
+
+    @error_handler(["host"])
+    def single(self, host, **kwargs):
+        threads = kwargs.get("threads", DEFAULT_THREAD)
+        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
+        errors = kwargs.get("errors", DEFAULT_ERRORS)
+        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
+        ip = host.ip
+        port = host.port
+
         # Create a socket
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.settimeout(timeout)  # Set timeout for connection
@@ -63,30 +99,12 @@ def usage_single(host, timeout, errors, verbose):
         # Close the connection
         s.close()
         
-        if "USER" in response and "PID" in response and "COMMAND" in response: return host
-    except Exception as e:
-        if errors: print(f"Error for {host}: {e}")
-        
-def usage_nv(hosts, threads, timeout, errors, verbose):
-    results = get_default_context_execution("Systat Usage", threads, hosts, (usage_single, timeout, errors, verbose))
-    
-    if results and len(results) > 0:
-        print("Systat Usage Detected:")
-        for value in results:
-            print(f"{value}")
-    
-        
-def usage_console(args):
-    usage_nv(get_hosts_from_file(args.target), args.threads, args.timeout, args.errors, args.verbose)
+        if "USER" in response and "PID" in response and "COMMAND" in response: 
+            return host
 
-def helper_parse(commandparser):
-    parser_task1 = commandparser.add_parser("systat")
-    subparsers = parser_task1.add_subparsers(dest="command")
-    
-    parser_usage = subparsers.add_parser("usage", help="Checks usage")
-    add_default_parser_arguments(parser_usage)
-    parser_usage.set_defaults(func=usage_console)
-    
-    parser_banner = subparsers.add_parser("banner", help="Banner Grab")
-    add_default_parser_arguments(parser_banner)
-    parser_banner.set_defaults(func=banner_console)
+
+class SystatServiceClass(BaseServiceClass):
+    def __init__(self) -> None:
+        super().__init__("telnet")
+        self.register_subservice(SystatUsageSubServiceClass())
+        self.register_subservice(SystatBannerSubServiceClass())

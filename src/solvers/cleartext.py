@@ -1,7 +1,7 @@
 from ftplib import FTP
 from ftplib import error_perm
 from src.utilities.utilities import get_default_context_execution, Host
-from src.services.telnet import version_nv as telnet_version_nv
+from src.services.telnet import TelnetUsageSubServiceClass
 import nmap
 import requests
 from src.solvers.solverclass import BaseSolverClass
@@ -15,13 +15,17 @@ class CleartextSolverClass(BaseSolverClass):
             return
         if self.is_nv:
             hosts = self.subhosts.get("Unencrypted Telnet Server", [])
-            if hosts: telnet_version_nv(hosts, args.threads, args.timeout, args.errors, args.verbose)
+            if hosts: 
+                TelnetUsageSubServiceClass().nv(hosts, threads=args.threads, timeout=args.timeout, errors=args.errors, verbose=args.verbose)
             hosts = self.subhosts.get("Basic Authentication Without HTTPS", [])
-            if hosts: self.solve_basic_http(hosts, args.threads, args.timeout, args.errors, args.verbose)
+            if hosts: 
+                self.solve_basic_http(hosts, args.threads, args.timeout, args.errors, args.verbose)
             hosts = self.subhosts.get("AMQP Cleartext Authentication", [])
-            if hosts: self.solve_amqp(hosts, args.threads, args.timeout, args.errors, args.verbose)
+            if hosts: 
+                self.solve_amqp(hosts, args.threads, args.timeout, args.errors, args.verbose)
             hosts = self.subhosts.get("FTP Supports Cleartext Authentication", [])
-            if hosts: self.solve_ftp(hosts, args.threads, args.timeout, args.errors, args.verbose)
+            if hosts: 
+                self.solve_ftp(hosts, args.threads, args.timeout, args.errors, args.verbose)
 
 
    
@@ -48,7 +52,7 @@ class CleartextSolverClass(BaseSolverClass):
     def solve_amqp(self, hosts, threads, timeout, errors, verbose):
         results: list[tuple[Host, str]] = get_default_context_execution("Cleartext Protocol Detected - AMQP Cleartext Authentication", threads, hosts, (self.solver_amqp_single, timeout, errors, verbose))
     
-        if results and len(results) > 0:
+        if results:
             print("AMQP Cleartext Authentication Detected:")
             for r in results:
                 print(f"{r[0]} - {r[1]}")
@@ -65,7 +69,7 @@ class CleartextSolverClass(BaseSolverClass):
 
     def solve_basic_http(self, hosts, threads, timeout, errors, verbose):
         results = get_default_context_execution("Cleartext Protocol Detected - Basic Authentication Without HTTPS", threads, hosts, (self.solve_basic_http_single, timeout, errors, verbose))
-        if results and len(results) > 0:
+        if results:
             print("Basic Authentication Without HTTPS Detected:")
             for value in results:
                 print(f"{value}")
@@ -89,7 +93,7 @@ class CleartextSolverClass(BaseSolverClass):
     def solve_ftp(self, hosts, threads, timeout, errors, verbose):
         results = get_default_context_execution("Cleartext Protocol Detected - Basic Authentication Without HTTPS", threads, hosts, (self.solve_ftp_single, timeout, errors, verbose))
         
-        if results and len(results) > 0:
+        if results:
             print("FTP Supporting Cleartext Authentication Detected:")
             for value in results:
                 print(f"{value}")

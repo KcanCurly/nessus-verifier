@@ -1,40 +1,63 @@
 import subprocess
 import re
-from src.utilities.utilities import get_hosts_from_file, add_default_parser_arguments
+from src.utilities.utilities import error_handler, get_hosts_from_file2, add_default_parser_arguments
+from src.services.consts import DEFAULT_ERRORS, DEFAULT_THREAD, DEFAULT_TIMEOUT, DEFAULT_VERBOSE
+from src.services.serviceclass import BaseServiceClass
+from src.services.servicesubclass import BaseSubServiceClass
+from traceback import print_exc
 
-def users_nv(hosts, ports, timeout, errors, verbose):
-    print("Running ident-user-enum command, there will be no progression bar")
-    vuln = {}
-    try:
-        for ip in hosts:
-            command = ["ident-user-enum", ip, *ports]
-            result = subprocess.run(command, text=True, capture_output=True)
-            pattern = r"(.*):(.*) (.*)"
-            matches = re.findall(pattern, result.stdout)
+class IdentUsersSubServiceClass(BaseSubServiceClass):
+    def __init__(self) -> None:
+        super().__init__("users", "ExaEnumerates usersmple")
 
-            for m in matches:
-                if m[0] not in vuln:
-                    vuln[m[0]] = []
-                vuln[m[0]].append(f"{m[1]} - {m[2]}")
-            
-    except Exception as e:
-        if errors: print("Error:", e)
-    
-    if len(vuln) > 0:
-        print("Ident service user enumeration:")
-        for k,v in vuln.items():
-            print(f"    {k}:113 - {", ".join(v)}")
+    def helper_parse(self, subparsers):
+        parser = subparsers.add_parser(self.command_name, help = self.help_description)
+        parser = subparsers.add_parser("users", help="Enumerates users")
+        parser.add_argument("target", type=str, help="File name or targets seperated by space")
+        parser.add_argument("-p", "--ports", nargs="+", default=["22", "80", "113", "443"], help="Ports to enumerate")
+        add_default_parser_arguments(parser, False)
+        parser.set_defaults(func=self.console)
+
+    def console(self, args):
+        self.nv(get_hosts_from_file2(args.target), ports=args.ports, threads=args.threads, timeout=args.timeout, 
+                        errors=args.errors, verbose=args.verbose)
+
+    @error_handler([])
+    def nv(self, hosts, **kwargs):
+        threads = kwargs.get("threads", DEFAULT_THREAD)
+        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
+        errors = kwargs.get("errors", DEFAULT_ERRORS)
+        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
+        ports = kwargs.get("ports", [])
+
+        print("Running ident-user-enum command, there will be no progression bar")
+        vuln = {}
+
+        for host in hosts:
+            try:
+                command = ["ident-user-enum", host.ip, *ports]
+                result = subprocess.run(command, text=True, capture_output=True)
+                pattern = r"(.*):(.*) (.*)"
+                matches = re.findall(pattern, result.stdout)
+
+                for m in matches:
+                    if m[0] not in vuln:
+                        vuln[m[0]] = []
+                    vuln[m[0]].append(f"{m[1]} - {m[2]}")
+                
+            except Exception as e:
+                if errors == 1: 
+                    print(f"Error for {host}: {e}")
+                if errors == 2:
+                    print(f"Error for {host}: {e}")
+                    print_exc()
         
+        if vuln:
+            print("Ident service user enumeration:")
+            for k,v in vuln.items():
+                print(f"    {k}:113 - {", ".join(v)}")
 
-def users_console(args):
-    users_nv(get_hosts_from_file(args.target, False), args.ports, args.timeout, args.errors, args.verbose)
-
-def helper_parse(commandparser):
-    parser_task1 = commandparser.add_parser("ident")
-    subparsers = parser_task1.add_subparsers(dest="command")
-    
-    parser_enum = subparsers.add_parser("users", help="Enumerates users")
-    parser_enum.add_argument("target", type=str, help="File name or targets seperated by space")
-    parser_enum.add_argument("-p", "--ports", nargs="+", default=["22", "80", "113", "443"], help="Ports to enumerate")
-    add_default_parser_arguments(parser_enum, False)
-    parser_enum.set_defaults(func=users_console)
+class IdentServiceClass(BaseServiceClass):
+    def __init__(self) -> None:
+        super().__init__("ident")
+        self.register_subservice(IdentUsersSubServiceClass())

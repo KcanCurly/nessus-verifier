@@ -28,7 +28,7 @@ def userenum_nv(hosts, domain, threads, timeout, errors, verbose):
         try:
             answer = smtpp.docmd("MAIL FROM:", "test@test.com")
             if "STARTTLS" in answer[1].decode():
-                smtp = smtplib.SMTP(ip, port, timeout=timeout)
+                smtp = smtplib.SMTP(ip, int(port), timeout=timeout)
                 smtp.starttls()
                 check_enum(smtp)
                 return
@@ -44,12 +44,12 @@ def userenum_nv(hosts, domain, threads, timeout, errors, verbose):
     for host in hosts:
         ip, port = host.split(":")
         try:
-            smtp = smtplib.SMTP(ip, port, timeout=timeout)
+            smtp = smtplib.SMTP(ip, int(port), timeout=timeout)
             smtp.helo()
             check_enum(smtp)
         except Exception as e: # It could be that server requires TLS/SSL so we need to connect again with TLS
             try:
-                smtp = smtplib.SMTP_SSL(ip, port, timeout=timeout)
+                smtp = smtplib.SMTP_SSL(ip, int(port), timeout=timeout)
                 smtp.helo()
                 check_enum(smtp)
             except Exception as e:

@@ -1,49 +1,67 @@
-from src.utilities.utilities import get_hosts_from_file, get_default_context_execution, add_default_parser_arguments
 import socket
+from src.utilities.utilities import get_default_context_execution2, error_handler
+from src.services.consts import DEFAULT_ERRORS, DEFAULT_THREAD, DEFAULT_TIMEOUT, DEFAULT_VERBOSE
+from src.services.serviceclass import BaseServiceClass
+from src.services.servicesubclass import BaseSubServiceClass
+from traceback import print_exc
 
-def usage_single(host, timeout, errors, verbose):
-    try:
-        ip, port = host.split(":")
-        # Create a socket
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.settimeout(timeout)  # Set timeout for connection
+class DiscardUsageSubServiceClass(BaseSubServiceClass):
+    def __init__(self) -> None:
+        super().__init__("usage", "Checks usage")
+
+    def nv(self, hosts, **kwargs):
+        threads = kwargs.get("threads", DEFAULT_THREAD)
+        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
+        errors = kwargs.get("errors", DEFAULT_ERRORS)
+        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
+        results = get_default_context_execution2("Discard Usage", threads, hosts, self.single, timeout=timeout, errors=errors, verbose=verbose)
         
-        # Connect to Systat service
-        s.connect((ip, int(port)))
-        s.sendall(b"pentest")
-        response = b""  # Use bytes to handle binary data safely
-        while True:
-            chunk = s.recv(1024)  # Read in 1024-byte chunks
-            if len(chunk) < 1:  # If empty, connection is closed
-                break
-            response += chunk  # Append to response
+        if results:
+            print("Discard Usage Detected:")
+            for value in results:
+                print(f"{value}")
 
-        response = response.decode(errors="ignore")
+    @error_handler(["host"])
+    def single(self, host, **kwargs):
+        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
+        errors = kwargs.get("errors", DEFAULT_ERRORS)
+        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
+        try:
+            ip, port = host.split(":")
+            # Create a socket
+            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            s.settimeout(timeout)  # Set timeout for connection
+            
+            # Connect to Systat service
+            s.connect((ip, int(port)))
+            s.sendall(b"pentest")
+            response = b""  # Use bytes to handle binary data safely
+            while True:
+                chunk = s.recv(1024)  # Read in 1024-byte chunks
+                if len(chunk) < 1:  # If empty, connection is closed
+                    break
+                response += chunk  # Append to response
 
-        # Close the connection
-        s.close()
-        
-        if response == "": return host
-    except Exception as e:
-        response = response.decode(errors="ignore")
-        if response == "": return host
-        if errors: print(f"Error for {host}: {e}")
-        
-def usage_nv(hosts, threads, timeout, errors, verbose):
-    results = get_default_context_execution("Discard Usage", threads, hosts, (usage_single, timeout, errors, verbose))
-    
-    if results and len(results) > 0:
-        print("Discard Usage Detected:")
-        for value in results:
-            print(f"{value}")
+            response = response.decode(errors="ignore")
 
-def usage_console(args):
-    usage_nv(get_hosts_from_file(args.target), args.threads, args.timeout, args.errors, args.verbose)
+            # Close the connection
+            s.close()
+            
+            if response == "": 
+                return host
+        except Exception as e:
+            if isinstance(response, bytes):
+                response = response.decode(errors="ignore")
+                if response == "": 
+                    return host
+            if errors == 1: 
+                print(f"Error for {host}: {e}")
+            if errors == 2:
+                print(f"Error for {host}: {e}")
+                print_exc()
 
-def helper_parse(commandparser):
-    parser_task1 = commandparser.add_parser("discard")
-    subparsers = parser_task1.add_subparsers(dest="command")
-    
-    parser_usage = subparsers.add_parser("usage", help="Checks usage")
-    add_default_parser_arguments(parser_usage)
-    parser_usage.set_defaults(func=usage_console)
+
+class DiscardServiceClass(BaseServiceClass):
+    def __init__(self) -> None:
+        super().__init__("discard")
+        self.register_subservice(DiscardUsageSubServiceClass())

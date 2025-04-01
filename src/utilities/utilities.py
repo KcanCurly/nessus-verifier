@@ -33,10 +33,16 @@ class Credential:
     def __str__(self) -> str:
         return f"{self.username}{f":{self.password}" if self.password else ""}"
 
+class Version_Vuln_List_Host_Data():
+    def __init__(self, host: Host, version: list[str]):
+        self.host = host
+        self.version = version
+
 class Version_Vuln_Host_Data():
     def __init__(self, host: Host, version: str):
         self.host = host
         self.version = version
+
 class Version_Vuln_Data():
     def __init__(self, host: str, version: str):
         self.host = host

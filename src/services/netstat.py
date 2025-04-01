@@ -1,96 +1,126 @@
 import socket
-from src.utilities.utilities import Version_Vuln_Data, get_hosts_from_file, get_default_context_execution, add_default_parser_arguments
+from src.utilities.utilities import Version_Vuln_Host_Data, get_default_context_execution2, error_handler
+from src.services.consts import DEFAULT_ERRORS, DEFAULT_THREAD, DEFAULT_TIMEOUT, DEFAULT_VERBOSE
+from src.services.serviceclass import BaseServiceClass
+from src.services.servicesubclass import BaseSubServiceClass
+from traceback import print_exc
 
-def banner_single(host, timeout, errors, verbose):
-    try:
-        ip, port = host.split(":")
-        # Create a socket
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.settimeout(timeout)  # Set timeout for connection
+class NetstatBannerSubServiceClass(BaseSubServiceClass):
+    def __init__(self) -> None:
+        super().__init__("banner", "Banner Grab")
+
+    def nv(self, hosts, **kwargs):
+        threads = kwargs.get("threads", DEFAULT_THREAD)
+        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
+        errors = kwargs.get("errors", DEFAULT_ERRORS)
+        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
+
+        results: list[Version_Vuln_Host_Data] = get_default_context_execution2("Netstat Banner Grab", threads, hosts, self.single, timeout=timeout, errors=errors, verbose=verbose)
+
+        if results:
+            print("Netstat Banners:")
+            for r in results:
+                print("=================================")
+                print(r.host)
+                print("=================================")
+                print(r.version)
+            
+    @error_handler(["host"])
+    def single(self, host, **kwargs):
+        threads = kwargs.get("threads", DEFAULT_THREAD)
+        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
+        errors = kwargs.get("errors", DEFAULT_ERRORS)
+        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
+        try:
+            ip, port = host.split(":")
+            # Create a socket
+            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            s.settimeout(timeout)  # Set timeout for connection
+            
+            # Connect to Systat service
+            s.connect((ip, int(port)))
+
+            response = b""  # Use bytes to handle binary data safely
+            while True:
+                chunk = s.recv(4096)  # Read in 1024-byte chunks
+                if not chunk:  # If empty, connection is closed
+                    break
+                response += chunk  # Append to response
+
+            response = response.decode(errors="ignore")
+
+            # Close the connection
+            s.close()
+            
+            if "Local Address" in response and "Proto" in response and "State" in response: 
+                return Version_Vuln_Host_Data(host, response)
+        except Exception as e:
+            if isinstance(response, bytes):
+                response = response.decode(errors="ignore")
+                if "Local Address" in response and "Proto" in response and "State" in response: 
+                    return Version_Vuln_Host_Data(host, response)
+                if errors: 
+                    print(f"Error for {host}: {e}")
+
+class NetstatUsageSubServiceClass(BaseSubServiceClass):
+    def __init__(self) -> None:
+        super().__init__("usage", "Checks usage")
+
+    def nv(self, hosts, **kwargs):
+        threads = kwargs.get("threads", DEFAULT_THREAD)
+        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
+        errors = kwargs.get("errors", DEFAULT_ERRORS)
+        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
+        results = get_default_context_execution2("Netstat Usage", threads, hosts, self.single, timeout=timeout, errors=errors, verbose=verbose)
         
-        # Connect to Systat service
-        s.connect((ip, int(port)))
+        if results:
+            print("Netstat Usage Detected:")
+            for value in results:
+                print(f"{value}")
 
-        response = b""  # Use bytes to handle binary data safely
-        while True:
-            chunk = s.recv(4096)  # Read in 1024-byte chunks
-            if not chunk:  # If empty, connection is closed
-                break
-            response += chunk  # Append to response
+    @error_handler(["host"])
+    def single(self, host, **kwargs):
+        threads = kwargs.get("threads", DEFAULT_THREAD)
+        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
+        errors = kwargs.get("errors", DEFAULT_ERRORS)
+        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
+        try:
+            ip, port = host.split(":")
+            # Create a socket
+            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            s.settimeout(timeout)  # Set timeout for connection
+            
+            # Connect to Systat service
+            s.connect((ip, int(port)))
 
-        response = response.decode(errors="ignore")
+            response = b""  # Use bytes to handle binary data safely
+            while True:
+                chunk = s.recv(4096)  # Read in 1024-byte chunks
+                if not chunk:  # If empty, connection is closed
+                    break
+                response += chunk  # Append to response
 
-        # Close the connection
-        s.close()
-        
-        if "Local Address" in response and "Proto" in response and "State" in response: return Version_Vuln_Data(host, response)
-    except Exception as e:
-        response = response.decode(errors="ignore")
-        if "Local Address" in response and "Proto" in response and "State" in response: return Version_Vuln_Data(host, response)
-        if errors: print(f"Error for {host}: {e}")
-        
-def banner_nv(hosts, threads, timeout, errors, verbose):
-    results: list[Version_Vuln_Data] = get_default_context_execution("Netstat Banner Grab", threads, hosts, (banner_single, timeout, errors, verbose))
+            response = response.decode(errors="ignore")
 
-    if results and len(results) > 0:
-        print("Netstat Banners:")
-        for r in results:
-            print("=================================")
-            print(r.host)
-            print("=================================")
-            print(r.version)
-        
-def banner_console(args):
-    banner_nv(get_hosts_from_file(args.target), args.threads, args.timeout, args.errors, args.verbose)
+            # Close the connection
+            s.close()
+            
+            if "Local Address" in response and "Proto" in response and "State" in response: 
+                return host
+        except Exception as e:
+            if isinstance(response, bytes):
+                response = response.decode(errors="ignore")
+                if "Local Address" in response and "Proto" in response and "State" in response: 
+                    return host
+            if errors == 1: 
+                print(f"Error for {host}: {e}")
+            if errors == 2:
+                print(f"Error for {host}: {e}")
+                print_exc()
 
-def usage_single(host, timeout, errors, verbose):
-    try:
-        ip, port = host.split(":")
-        # Create a socket
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.settimeout(timeout)  # Set timeout for connection
-        
-        # Connect to Systat service
-        s.connect((ip, int(port)))
 
-        response = b""  # Use bytes to handle binary data safely
-        while True:
-            chunk = s.recv(1024)  # Read in 1024-byte chunks
-            if not chunk:  # If empty, connection is closed
-                break
-            response += chunk  # Append to response
-
-        response = response.decode(errors="ignore")
-
-        # Close the connection
-        s.close()
-        
-        if "Proto" in response and "Local Address" in response and "State" in response: return host
-    except Exception as e:
-        response = response.decode(errors="ignore")
-        if "Local Address" in response and "Proto" in response and "State" in response: return host
-        if errors: print(f"Error for {host}: {e}")
-        
-def usage_nv(hosts, threads, timeout, errors, verbose):
-    results = get_default_context_execution("Netstat Usage", threads, hosts, (usage_single, timeout, errors, verbose))
-    
-    if results and len(results) > 0:
-        print("Netstat Usage Detected:")
-        for value in results:
-            print(f"{value}")
-    
-        
-def usage_console(args):
-    usage_nv(get_hosts_from_file(args.target), args.threads, args.timeout, args.errors, args.verbose)
-
-def helper_parse(commandparser):
-    parser_task1 = commandparser.add_parser("netstat")
-    subparsers = parser_task1.add_subparsers(dest="command")
-    
-    parser_usage = subparsers.add_parser("usage", help="Checks usage")
-    add_default_parser_arguments(parser_usage)
-    parser_usage.set_defaults(func=usage_console)
-    
-    parser_banner = subparsers.add_parser("banner", help="Banner Grab")
-    add_default_parser_arguments(parser_banner)
-    parser_banner.set_defaults(func=banner_console)
+class DaytimeServiceClass(BaseServiceClass):
+    def __init__(self) -> None:
+        super().__init__("netstat")
+        self.register_subservice(NetstatUsageSubServiceClass())
+        self.register_subservice(NetstatBannerSubServiceClass())

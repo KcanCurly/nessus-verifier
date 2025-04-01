@@ -1,5 +1,5 @@
-from src.services import snmp
 from src.solvers.solverclass import BaseSolverClass
+from src.services.snmp import SNMPDefaultSubServiceClass
 
 class SNMPSolverClass(BaseSolverClass):
     def __init__(self, args) -> None:
@@ -8,4 +8,4 @@ class SNMPSolverClass(BaseSolverClass):
     def solve(self, args):
         if not self.hosts: 
             return
-        snmp.default_nv(self.hosts, args.threads, args.timeout, args.errors, args.verbose)
+        SNMPDefaultSubServiceClass().nv(self.hosts, threads=args.threads, timeout=args.timeout, errors=args.errors, verbose=args.verbose)

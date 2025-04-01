@@ -1,4 +1,4 @@
-from src.services.ftp import anon_nv
+from src.services.ftp import FTPAnonSubServiceClass
 from src.solvers.solverclass import BaseSolverClass
 
 class FTPSolverClass(BaseSolverClass):
@@ -9,4 +9,4 @@ class FTPSolverClass(BaseSolverClass):
         if not self.hosts:
             return
         if self.is_nv:
-            anon_nv(self.hosts, args.threads, args.timeout, args.errors, args.verbose)
+            FTPAnonSubServiceClass().nv(self.hosts, threads=args.threads, timeout=args.timeout, errors=args.errors, verbose=args.verbose)

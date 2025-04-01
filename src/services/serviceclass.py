@@ -13,3 +13,8 @@ class BaseServiceClass():
     def register_subservice(self, subservice):
         subservice._set_parent(self)
         self.subservices.append(subservice)
+
+
+class ExampleServiceClass(BaseServiceClass):
+    def __init__(self) -> None:
+        super().__init__("example")

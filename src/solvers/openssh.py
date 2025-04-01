@@ -1,4 +1,4 @@
-from src.services import ssh
+from src.services.ssh import SSHVersionSubServiceClass
 from src.solvers.solverclass import BaseSolverClass
 
 class OpenSSHSolverClass(BaseSolverClass):
@@ -9,6 +9,6 @@ class OpenSSHSolverClass(BaseSolverClass):
         if not self.hosts: 
             return
         if self.is_nv:
-            ssh.version_nv(self.hosts, args.threads, args.timeout, args.errors, args.verbose)
+            SSHVersionSubServiceClass().nv(self.hosts, threads=args.threads, timeout=args.timeout, errors=args.errors, verbose=args.verbose)
         else:
-            ssh.version_nv(self.hosts, args.threads, args.timeout, args.errors, args.verbose)
+            SSHVersionSubServiceClass().nv(self.hosts, threads=args.threads, timeout=args.timeout, errors=args.errors, verbose=args.verbose)

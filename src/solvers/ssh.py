@@ -1,4 +1,5 @@
 from src.services import ssh
+from src.services.ssh import SSHAuditSubServiceClass
 from src.solvers.solverclass import BaseSolverClass
 
 class SSHAuditSolverClass(BaseSolverClass):
@@ -8,4 +9,4 @@ class SSHAuditSolverClass(BaseSolverClass):
     def solve(self, args):
         if not self.hosts: 
             return
-        ssh.audit_nv(self.hosts, args.threads, args.timeout, args.errors, args.verbose)
+        SSHAuditSubServiceClass().nv(self.hosts, threads=args.threads, timeout=args.timeout, errors=args.errors, verbose=args.verbose)

@@ -1,7 +1,7 @@
 import socket
 import struct
 import time
-from src.utilities.utilities import get_default_context_execution2, print_service_error, error_handler
+from src.utilities.utilities import get_default_context_execution2, error_handler
 from src.services.consts import DEFAULT_ERRORS, DEFAULT_THREAD, DEFAULT_TIMEOUT, DEFAULT_VERBOSE
 from src.services.serviceclass import BaseServiceClass
 from src.services.servicesubclass import BaseSubServiceClass
@@ -17,7 +17,7 @@ class TimeUsageSubServiceClass(BaseSubServiceClass):
         verbose = kwargs.get("errors", DEFAULT_VERBOSE)
         
 
-        results: list[str] = get_default_context_execution2("Time Protocol Usage", threads, hosts, self.nv_single, timeout=timeout, errors=errors, verbose=verbose)
+        results = get_default_context_execution2("Time Protocol Usage", threads, hosts, self.single, timeout=timeout, errors=errors, verbose=verbose)
 
         if len(results):
             print("Time protocol detected:")
@@ -25,9 +25,10 @@ class TimeUsageSubServiceClass(BaseSubServiceClass):
                 print(f"    {r}")
 
     @error_handler(["host"])
-    def nv_single(self, host, **kwargs):
-        timeout = kwargs.get("timeout", 5)
-        errors = kwargs.get("errors", None)
+    def single(self, host, **kwargs):
+        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
+        errors = kwargs.get("errors", DEFAULT_ERRORS)
+        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
 
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             s.settimeout(timeout)  # Set a timeout for the connection

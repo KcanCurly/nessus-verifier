@@ -1,7 +1,5 @@
 import subprocess
 import re
-from src.utilities.utilities import get_hosts_from_file, add_default_parser_arguments
-from src.utilities.utilities import get_default_context_execution2, print_service_error
 from src.services.consts import DEFAULT_ERRORS, DEFAULT_THREAD, DEFAULT_TIMEOUT, DEFAULT_VERBOSE
 from src.services.serviceclass import BaseServiceClass
 from src.services.servicesubclass import BaseSubServiceClass

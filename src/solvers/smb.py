@@ -1,5 +1,5 @@
-from src.services import smb
 from src.solvers.solverclass import BaseSolverClass
+from src.services.smb import SMBSignSubServiceClass
 
 class SMBSolverClass(BaseSolverClass):
     def __init__(self, args) -> None:
@@ -8,4 +8,4 @@ class SMBSolverClass(BaseSolverClass):
     def solve(self, args):
         if not self.hosts: 
             return
-        smb.sign_nv(self.hosts, args.threads, args.timeout, args.errors, args.verbose)
+        SMBSignSubServiceClass().nv(self.hosts, threads=args.threads, timeout=args.timeout, errors=args.errors, verbose=args.verbose)

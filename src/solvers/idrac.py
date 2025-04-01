@@ -1,4 +1,4 @@
-from src.services.idrac import version_nv
+from src.services.idrac import IDRACVersionSubServiceClass
 from src.solvers.solverclass import BaseSolverClass
 
 class IDRACSolverClass(BaseSolverClass):
@@ -9,4 +9,4 @@ class IDRACSolverClass(BaseSolverClass):
         if not self.hosts:
             return
         if self.is_nv:
-            version_nv(self.hosts, args.threads, args.timeout, args.errors, args.verbose)
+            IDRACVersionSubServiceClass().nv(self.hosts, threads=args.threads, timeout=args.timeout, errors=args.errors, verbos=args.verbose)

@@ -1,32 +1,40 @@
 import subprocess
-from src.utilities.utilities import get_hosts_from_file, get_default_context_execution, add_default_parser_arguments
+from src.utilities.utilities import get_default_context_execution2, error_handler
+from src.services.consts import DEFAULT_ERRORS, DEFAULT_THREAD, DEFAULT_TIMEOUT, DEFAULT_VERBOSE
+from src.services.serviceclass import BaseServiceClass
+from src.services.servicesubclass import BaseSubServiceClass
 
-def anon_single(host, timeout, errors, verbose):
-    try:
+class LDAPSubServiceClass(BaseSubServiceClass):
+    def __init__(self) -> None:
+        super().__init__("anonymous", "Checks anonymous access")
+
+    @error_handler([])
+    def nv(self, hosts, **kwargs):
+        threads = kwargs.get("threads", DEFAULT_THREAD)
+        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
+        errors = kwargs.get("errors", DEFAULT_ERRORS)
+        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
+
+        results= get_default_context_execution2("LDAP Anonymous", threads, hosts, self.single, timeout=timeout, errors=errors, verbose=verbose)
+
+        if results:
+            print("LDAP anonymous access were found:")
+            for v in results:
+                print(f"    {v}")
+
+    @error_handler(["host"])
+    def single(self, host, **kwargs):
+        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
+        errors = kwargs.get("errors", DEFAULT_ERRORS)
+        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
+        ip = host.ip
+        port = host.port
         command = ["ldapsearch", "-x", "-H", f"ldap://{host}", "-b", "", "(objectClass=*)"]
         result = subprocess.run(command, text=True, capture_output=True)
         if "ldaperr" not in result.stdout.lower():
             return host
-    except Exception as e: 
-        if errors: print(f"Error for {host}: {e}")
 
-def anon_nv(hosts, threads, timeout, errors, verbose):
-    results: list[str] = get_default_context_execution("LDAP Anonymous", threads, hosts, (anon_single, timeout, errors, verbose))
-
-    if results and len(results) > 0:
-        print("LDAP anonymous access were found:")
-        for v in results:
-            print(f"    {v}")
-        
-
-def anon_console(args):
-    anon_nv(get_hosts_from_file(args.target), args.threads, args.timeout, args.errors, args.verbose)
-
-def helper_parse(commandparser):    
-    parser_task1 = commandparser.add_parser("ldap")
-    subparsers = parser_task1.add_subparsers(dest="command")
-    
-    parser_anon = subparsers.add_parser("anonymous", help="Checks anonymous access")
-    add_default_parser_arguments(parser_anon)
-    parser_anon.set_defaults(func=anon_console)
-
+class LDAPServiceClass(BaseServiceClass):
+    def __init__(self) -> None:
+        super().__init__("ldap")
+        self.register_subservice(LDAPSubServiceClass())

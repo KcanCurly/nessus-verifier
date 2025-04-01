@@ -1,4 +1,4 @@
-from src.services import nfs
+from src.services.nfs import NTPListServiceClass
 from src.solvers.solverclass import BaseSolverClass
 
 class NFSSolverClass(BaseSolverClass):
@@ -9,5 +9,5 @@ class NFSSolverClass(BaseSolverClass):
         if not self.hosts:
             return
         if self.is_nv:
-            nfs.list_nv(self.hosts, args.threads, args.timeout, args.errors, args.verbose)
+            NTPListServiceClass().nv(self.hosts, threads=args.threads, timeout=args.timeout, errors=args.errors, verbose=args.verbose)
 
