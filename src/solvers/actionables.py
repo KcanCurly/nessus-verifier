@@ -8,6 +8,7 @@ class ActionablesSolverClass(BaseSolverClass):
         super().__init__("Actionables", 0, args)
 
     def solve(self, args):
+        self.hosts = self._get_hosts(args) # type: ignore
         if not self.hosts:
             return
         if self.is_nv:

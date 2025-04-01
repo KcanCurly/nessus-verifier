@@ -6,6 +6,7 @@ class NFSSolverClass(BaseSolverClass):
         super().__init__("NFS", 15, args)
 
     def solve(self, args):
+        self.hosts = self._get_hosts(args) # type: ignore
         if not self.hosts:
             return
         if self.is_nv:

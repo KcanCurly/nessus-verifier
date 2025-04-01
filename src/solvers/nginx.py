@@ -8,6 +8,7 @@ class NginxSolverClass(BaseSolverClass):
         super().__init__("Nginx Version", 12, args)
 
     def solve(self, args):
+        self.hosts = self._get_hosts(args) # type: ignore
         if not self.hosts:
             return
         if self.is_nv:

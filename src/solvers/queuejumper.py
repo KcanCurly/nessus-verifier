@@ -7,6 +7,7 @@ class QueueJumperSolverClass(BaseSolverClass):
         super().__init__("Queuejumper", 28, args)
 
     def solve(self, args):
+        self.hosts = self._get_hosts(args) # type: ignore
         if not self.hosts: 
             return
         print("Running metasploit cve_2023_21554_queuejumper module, there will be no progression bar")

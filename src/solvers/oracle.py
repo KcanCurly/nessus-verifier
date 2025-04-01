@@ -8,6 +8,7 @@ class OracleSolverClass(BaseSolverClass):
         super().__init__("Oracle Database", 27, args)
 
     def solve(self, args):
+        self.hosts = self._get_hosts(args) # type: ignore
         if not self.hosts: 
             return
         if self.is_nv:

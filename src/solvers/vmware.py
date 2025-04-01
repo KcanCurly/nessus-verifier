@@ -8,6 +8,7 @@ class VmwareSolverClass(BaseSolverClass):
         super().__init__("VMWare Product Versions", 13, args)
         
     def solve(self, args):
+        self.hosts = self._get_hosts(args) # type: ignore
         if not self.hosts: 
             return
         r = r"\[\+\] (.*) - Identified (.*)"

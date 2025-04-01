@@ -9,7 +9,6 @@ class BaseSolverClass():
         self.subhosts: dict[str, list[Host]] = {}
         self.hosts: list[Host] = []
         self.is_nv = True
-        self._get_hosts(args)
         
     def get_default_config(self) -> str:
         return f"[{self.id}]"
