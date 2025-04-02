@@ -66,7 +66,7 @@ def main():
     parser = argparse.ArgumentParser(description="Nessus identified vulnerabilities solver.")
     subparsers = parser.add_subparsers(dest="command", help="Available subcommands")
     
-    parser_config = subparsers.add_parser("create-config-file", help="Creates config file")
+    parser_config = subparsers.add_parser("ccf", help="Create config file")
     parser_config.add_argument("-o", "--output", type=str, required=False, default="nv-config.toml", help="Output file name")
     parser_config.set_defaults(func=create_config_file)
 

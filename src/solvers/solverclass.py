@@ -38,7 +38,7 @@ class BaseSolverClass():
                 ip, port = host.split(":")
                 self.hosts.append(Host(ip, port))
                 
-            for key, subhosts in scan.sub_hosts:
+            for key, subhosts in scan.sub_hosts.items():
                 self.subhosts[key] = []
                 for h in subhosts:
                     ip, port = host.split(":")
