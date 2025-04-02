@@ -297,14 +297,14 @@ class DNSMaliciousSubServiceClass(BaseSubServiceClass):
                 try:
                     answers = resolver.resolve(malicious_domain, "A")  # Query for A record
                     for answer in answers:
-                        print(f"{malicious_domain} resolves to {answer}")
-                    vuln.append(host)
+                        vuln.append(f"{host} resolves to {malicious_domain}: {answer}")
                 except Exception:
                     pass
 
         if vuln:
-            print(f"Host(s) that were able to resolve malicious domain '{malicious_domain}':")
-            for v in vuln:
+            sorted_vuln = sorted(vuln, key=lambda x: x.split()[0])
+            print(f"Host(s) that were able to resolve malicious domains:")
+            for v in sorted_vuln:
                 print(f"    {v}")
 
 
