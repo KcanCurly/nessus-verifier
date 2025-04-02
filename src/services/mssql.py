@@ -354,7 +354,7 @@ class MSSQLVersionSubServiceClass(BaseSubServiceClass):
             
 
             for key, value in versions.items():
-                key = key.rsplit(" ")[1]  # Get the version number only
+                key = key.rsplit(" ", 1)[1]  # Get the version number only
                 cpe = ""
                 key  = version_mapping.get(key, key)
                 cves = []
