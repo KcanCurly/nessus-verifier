@@ -11,6 +11,7 @@ from src.utilities.utilities import error_handler, get_hosts_from_file2, add_def
 from src.services.consts import DEFAULT_ERRORS, DEFAULT_THREAD, DEFAULT_TIMEOUT, DEFAULT_VERBOSE
 from src.services.serviceclass import BaseServiceClass
 from src.services.servicesubclass import BaseSubServiceClass
+from traceback import print_exc
 
 def find_domain_name(ip):
     domain_name_pattern = r"PTR\s(.*?)\s+"
@@ -298,8 +299,11 @@ class DNSMaliciousSubServiceClass(BaseSubServiceClass):
                     answers = resolver.resolve(malicious_domain, "A")  # Query for A record
                     for answer in answers:
                         vuln.append(f"{host} resolves to {malicious_domain}: {answer}".strip())
-                except Exception:
-                    pass
+                except Exception as e:
+                    if errors in [1, 2]:
+                        print(f"Error resolving {malicious_domain} on {host}: {e}")
+                    if errors == 2:
+                        print_exc()
 
         if vuln:
             sorted_vuln = sorted(vuln)
