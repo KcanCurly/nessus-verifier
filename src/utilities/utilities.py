@@ -68,7 +68,7 @@ def get_hosts_from_file2(filename: str, get_ports: bool = True) -> list[Host]:
     if os.path.isfile(filename):
         with open(filename, "r") as file:
             for line in file:
-                ip, port = line.split()
+                ip, port = line.split(":")
                 hosts.append(Host(ip, port if get_ports else ""))
         return hosts
     else:
