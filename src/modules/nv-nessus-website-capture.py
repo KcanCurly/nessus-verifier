@@ -22,17 +22,17 @@ for page in range(1, args.pages+1):
         # Loop through each row
         for row in rows:
             # Get the first <td> and find <a> inside it
-            first_td = row.find("td")
+            first_td = row.find("td") # type: ignore
             if first_td:
-                link = first_td.find("a")
+                link = first_td.find("a") # type: ignore
                 if link:
-                    l.append(int(link.text.strip()))
+                    l.append(int(link.text.strip())) # type: ignore
             
             # Get the second <td> value
-            tds = row.find_all("td")
+            tds = row.find_all("td") # type: ignore
             if len(tds) > 1:
                 second_td = tds[1]
-                print(f"  # {link.text.strip()} - {second_td.text.strip()}")
+                print(f"  # {link.text.strip()} - {second_td.text.strip()}") # type: ignore
     else:
         pass
 

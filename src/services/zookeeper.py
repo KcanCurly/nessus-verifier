@@ -54,7 +54,7 @@ class ZookeeperEnumServiceClass(BaseSubServiceClass):
                 
 
 
-        if len(versions) > 0:
+        if versions:
             versions = dict(sorted(versions.items(), reverse=True))
             print("Apache Zookeeper Versions:")
             for k,v in versions.items():
@@ -62,7 +62,7 @@ class ZookeeperEnumServiceClass(BaseSubServiceClass):
                 for a in v:
                     print(f"    {a}")
                     
-        if len(info_vuln) > 0:
+        if info_vuln:
             print("Apache Zookeeper Information Disclosure Detected:")
             for k,v in info_vuln.items():
                 print(f"{k}:2181")

@@ -14,7 +14,6 @@ setup(
         "argcomplete",
         "requests",
         "dnspython",
-        "ntplib",
         "impacket",
         "pyaml",
         "pysmb",
