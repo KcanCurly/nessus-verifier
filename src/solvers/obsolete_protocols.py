@@ -6,7 +6,7 @@ class ObsoleteProtocolSolverClass(BaseSolverClass):
         super().__init__("Obsolete Protocols", 18, args)
 
     def solve(self, args):
-        self.hosts = self._get_hosts(args) # type: ignore
+        self._get_hosts(args) # type: ignore
         if not self.hosts: 
             return
 

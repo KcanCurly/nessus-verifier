@@ -8,7 +8,7 @@ class TerminalSolverClass(BaseSolverClass):
         super().__init__("Terminal Services Misconfigurations", 8, args)
 
     def solve(self, args):
-        self.hosts = self._get_hosts(args) # type: ignore
+        self._get_hosts(args) # type: ignore
         if not self.hosts: 
             return
         issue_re = r"\[-\] (.*) has issue (.*)"

@@ -47,9 +47,8 @@ class BaseSolverClass():
 
         elif args.list_file:
             self.is_nv = False
-            hosts = get_hosts_from_file2(args.list_file)
-        return hosts
-    
+            self.hosts = get_hosts_from_file2(args.list_file)
+
     def _print_exception(self, message, print_traceback = False):
         if self.args.errors:
             print(message)

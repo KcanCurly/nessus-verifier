@@ -8,7 +8,7 @@ class PythonSolverClass(BaseSolverClass):
         super().__init__("Python Unsupported Version", 23, args)
 
     def solve(self, args):
-        self.hosts = self._get_hosts(args) # type: ignore
+        self._get_hosts(args) # type: ignore
         if not self.hosts: 
             return
         self.solve_version(self.hosts, args.threads, args.timeout, args.errors, args.verbose)

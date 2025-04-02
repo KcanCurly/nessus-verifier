@@ -6,7 +6,7 @@ class OpenSSHSolverClass(BaseSolverClass):
         super().__init__("OpenSSH Versions", 14, args)
 
     def solve(self, args):
-        self.hosts = self._get_hosts(args) # type: ignore
+        self._get_hosts(args) # type: ignore
         if not self.hosts: 
             return
         if self.is_nv:

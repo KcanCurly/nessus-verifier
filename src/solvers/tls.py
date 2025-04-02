@@ -21,7 +21,7 @@ class TLSSolverClass(BaseSolverClass):
         super().__init__("TLS Misconfigurations", 1, args)
 
     def solve(self, args):
-        self.hosts = self._get_hosts(args) # type: ignore
+        self._get_hosts(args) # type: ignore
         if not self.hosts: 
             return
         self.tls_nv(self.hosts, args.allow_white_ciphers, args.threads, args.timeout, args.errors, args.verbose)

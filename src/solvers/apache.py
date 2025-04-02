@@ -8,7 +8,7 @@ class ApacheSolverClass(BaseSolverClass):
         super().__init__("Apache", 11, args)
 
     def solve(self, args):
-        self.hosts = self._get_hosts(args) # type: ignore
+        self._get_hosts(args) # type: ignore
         if not self.hosts:
             return
         if self.is_nv:
