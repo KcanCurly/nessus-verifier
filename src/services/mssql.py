@@ -354,6 +354,7 @@ class MSSQLVersionSubServiceClass(BaseSubServiceClass):
             
 
             for key, value in versions.items():
+                key = key.rsplit(" ")[1]  # Get the version number only
                 cpe = ""
                 key  = version_mapping.get(key, key)
                 if "2019" in key:
@@ -365,12 +366,12 @@ class MSSQLVersionSubServiceClass(BaseSubServiceClass):
                 if cpe: 
                     cves = get_cves(f"{cpe}:{key}")
                 if cves: 
-                    print(f"{key} ({", ".join(cves)}):")
+                    print(f"Microsoft SQL Server {key} ({", ".join(cves)}):")
                 else:
                     if not cpe:
-                        print(f"{key} (EOL):")
+                        print(f"Microsoft SQL Server {key} (EOL):")
                     else:
-                        print(f"{key}:")
+                        print(f"Microsoft SQL Server {key}:")
 
                 for v in value:
                     print(f"    {v}")
