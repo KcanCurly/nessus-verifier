@@ -3,8 +3,8 @@ from src.utilities.utilities import Host, Version_Vuln_Host_Data, get_url_respon
 from src.solvers.solverclass import BaseSolverClass
 
 class IBMWebSphereSolverClass(BaseSolverClass):
-    def __init__(self, args) -> None:
-        super().__init__("IBM WebSphere Version", 29, args)
+    def __init__(self) -> None:
+        super().__init__("IBM WebSphere Version", 29)
 
     def solve(self, args):
         self._get_hosts(args) # type: ignore

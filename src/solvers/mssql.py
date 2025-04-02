@@ -2,8 +2,8 @@ from src.services.mssql import MSSQLVersionSubServiceClass
 from src.solvers.solverclass import BaseSolverClass
 
 class MSSQLSolverClass(BaseSolverClass):
-    def __init__(self, args) -> None:
-        super().__init__("MSSQL Version", 16, args)
+    def __init__(self) -> None:
+        super().__init__("MSSQL Version", 16)
 
     def solve(self, args):
         self._get_hosts(args) # type: ignore

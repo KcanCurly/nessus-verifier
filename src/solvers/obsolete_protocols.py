@@ -2,8 +2,8 @@ import nmap
 from src.solvers.solverclass import BaseSolverClass
 
 class ObsoleteProtocolSolverClass(BaseSolverClass):
-    def __init__(self, args) -> None:
-        super().__init__("Obsolete Protocols", 18, args)
+    def __init__(self) -> None:
+        super().__init__("Obsolete Protocols", 18)
 
     def solve(self, args):
         self._get_hosts(args) # type: ignore

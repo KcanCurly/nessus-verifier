@@ -2,8 +2,8 @@ from src.services.postgresql import PSQLDefaultSubServiceClass
 from src.solvers.solverclass import BaseSolverClass
 
 class PSQLSolverClass(BaseSolverClass):
-    def __init__(self, args) -> None:
-        super().__init__("PostgreSQL", 30, args)
+    def __init__(self) -> None:
+        super().__init__("PostgreSQL", 30)
 
     def solve(self, args):
         self._get_hosts(args) # type: ignore

@@ -2,8 +2,8 @@ from src.services import mongodb
 from src.solvers.solverclass import BaseSolverClass
 
 class MongoSolverClass(BaseSolverClass):
-    def __init__(self, args) -> None:
-        super().__init__("MongoDB", 26, args)
+    def __init__(self) -> None:
+        super().__init__("MongoDB", 26)
 
     def solve(self, args):
         self._get_hosts(args) # type: ignore

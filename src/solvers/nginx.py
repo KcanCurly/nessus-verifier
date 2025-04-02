@@ -4,8 +4,8 @@ from packaging.version import parse
 from src.solvers.solverclass import BaseSolverClass
 
 class NginxSolverClass(BaseSolverClass):
-    def __init__(self, args) -> None:
-        super().__init__("Nginx Version", 12, args)
+    def __init__(self) -> None:
+        super().__init__("Nginx Version", 12)
 
     def solve(self, args):
         self._get_hosts(args) # type: ignore

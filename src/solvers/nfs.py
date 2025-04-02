@@ -2,8 +2,8 @@ from src.services.nfs import NFSListServiceClass
 from src.solvers.solverclass import BaseSolverClass
 
 class NFSSolverClass(BaseSolverClass):
-    def __init__(self, args) -> None:
-        super().__init__("NFS", 15, args)
+    def __init__(self) -> None:
+        super().__init__("NFS", 15)
 
     def solve(self, args):
         self._get_hosts(args) # type: ignore

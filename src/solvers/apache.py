@@ -4,8 +4,8 @@ from packaging.version import parse
 from src.solvers.solverclass import BaseSolverClass
 
 class ApacheSolverClass(BaseSolverClass):
-    def __init__(self, args) -> None:
-        super().__init__("Apache", 11, args)
+    def __init__(self) -> None:
+        super().__init__("Apache", 11)
 
     def solve(self, args):
         self._get_hosts(args) # type: ignore

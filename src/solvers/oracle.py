@@ -4,8 +4,8 @@ from src.utilities.utilities import Version_Vuln_Data, get_default_context_execu
 from src.solvers.solverclass import BaseSolverClass
 
 class OracleSolverClass(BaseSolverClass):
-    def __init__(self, args) -> None:
-        super().__init__("Oracle Database", 27, args)
+    def __init__(self) -> None:
+        super().__init__("Oracle Database", 27)
 
     def solve(self, args):
         self._get_hosts(args) # type: ignore

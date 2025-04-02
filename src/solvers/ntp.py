@@ -2,8 +2,8 @@ from src.services.ntp import NTPMode6SubServiceClass, NTPMonlistSubServiceClass
 from src.solvers.solverclass import BaseSolverClass
 
 class NTPSolverClass(BaseSolverClass):
-    def __init__(self, args) -> None:
-        super().__init__("NTP", 4, args)
+    def __init__(self) -> None:
+        super().__init__("NTP", 4)
 
     def solve(self, args):
         self._get_hosts(args) # type: ignore

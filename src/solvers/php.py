@@ -4,8 +4,8 @@ from packaging.version import parse
 from src.solvers.solverclass import BaseSolverClass
 
 class PHPSolverClass(BaseSolverClass):
-    def __init__(self, args) -> None:
-        super().__init__("PHP", 21, args)
+    def __init__(self) -> None:
+        super().__init__("PHP", 21)
 
     def solve(self, args):
         self._get_hosts(args) # type: ignore

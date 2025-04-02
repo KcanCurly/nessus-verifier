@@ -3,8 +3,8 @@ from packaging.version import parse
 from src.solvers.solverclass import BaseSolverClass
 
 class ElasticsearchSolverClass(BaseSolverClass):
-    def __init__(self, args) -> None:
-        super().__init__("Elasticsearch", 25, args)
+    def __init__(self) -> None:
+        super().__init__("Elasticsearch", 25)
 
     def solve(self, args):
         self._get_hosts(args) # type: ignore

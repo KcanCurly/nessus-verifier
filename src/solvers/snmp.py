@@ -2,8 +2,8 @@ from src.solvers.solverclass import BaseSolverClass
 from src.services.snmp import SNMPDefaultSubServiceClass
 
 class SNMPSolverClass(BaseSolverClass):
-    def __init__(self, args) -> None:
-        super().__init__("SNMP Service Misconfigurations", 6, args)
+    def __init__(self) -> None:
+        super().__init__("SNMP Service Misconfigurations", 6)
 
     def solve(self, args):
         self._get_hosts(args) # type: ignore

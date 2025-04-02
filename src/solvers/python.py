@@ -4,8 +4,8 @@ from packaging.version import parse
 from src.solvers.solverclass import BaseSolverClass
 
 class PythonSolverClass(BaseSolverClass):
-    def __init__(self, args) -> None:
-        super().__init__("Python Unsupported Version", 23, args)
+    def __init__(self) -> None:
+        super().__init__("Python Unsupported Version", 23)
 
     def solve(self, args):
         self._get_hosts(args) # type: ignore

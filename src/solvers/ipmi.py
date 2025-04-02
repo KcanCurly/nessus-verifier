@@ -3,8 +3,8 @@ import re
 from src.solvers.solverclass import BaseSolverClass
 
 class IPMISolverClass(BaseSolverClass):
-    def __init__(self, args) -> None:
-        super().__init__("IPMI", 20, args)
+    def __init__(self) -> None:
+        super().__init__("IPMI", 20)
 
     def solve(self, args):
         self._get_hosts(args) # type: ignore

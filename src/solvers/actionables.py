@@ -4,8 +4,8 @@ from src.utilities import logger
 from src.solvers.solverclass import BaseSolverClass
 
 class ActionablesSolverClass(BaseSolverClass):
-    def __init__(self, args) -> None:
-        super().__init__("Actionables", 0, args)
+    def __init__(self) -> None:
+        super().__init__("Actionables", 0)
 
     def solve(self, args):
         self._get_hosts(args) # type: ignore

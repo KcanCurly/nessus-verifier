@@ -2,10 +2,9 @@ from src.utilities.utilities import Host, add_default_parser_arguments, add_defa
 import traceback
 
 class BaseSolverClass():
-    def __init__(self, name:str, id: int, args) -> None:
+    def __init__(self, name:str, id: int) -> None:
         self.name = name
         self.id = id
-        self.args = args
         self.subhosts: dict[str, list[Host]] = {}
         self.hosts: list[Host] = []
         self.is_nv = True
@@ -19,8 +18,9 @@ class BaseSolverClass():
         add_default_parser_arguments(parser_task1, False)
         parser_task1.set_defaults(func=self.solve)
         
-    def solve(self):
-        print(f"Solve function for {self.id} has not been yet implemented.")
+    def solve(self, args):
+        self.args = args
+        self._get_hosts(args)
          
     def _get_subhosts(self, name):
         return self.subhosts.get(name, [])

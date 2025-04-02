@@ -3,8 +3,8 @@ import re
 from src.solvers.solverclass import BaseSolverClass
 
 class QueueJumperSolverClass(BaseSolverClass):
-    def __init__(self, args) -> None:
-        super().__init__("Queuejumper", 28, args)
+    def __init__(self) -> None:
+        super().__init__("Queuejumper", 28)
 
     def solve(self, args):
         self._get_hosts(args) # type: ignore

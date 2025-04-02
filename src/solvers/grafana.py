@@ -4,8 +4,8 @@ from packaging.version import parse
 from src.solvers.solverclass import BaseSolverClass
 
 class GrafanaSolverClass(BaseSolverClass):
-    def __init__(self, args) -> None:
-        super().__init__("Grafana", 22, args)
+    def __init__(self) -> None:
+        super().__init__("Grafana", 22)
 
     def solve(self, args):
         self._get_hosts(args) # type: ignore

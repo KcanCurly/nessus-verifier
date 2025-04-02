@@ -2,8 +2,8 @@ from src.services.ftp import FTPAnonSubServiceClass
 from src.solvers.solverclass import BaseSolverClass
 
 class FTPSolverClass(BaseSolverClass):
-    def __init__(self, args) -> None:
-        super().__init__("FTP", 31, args)
+    def __init__(self) -> None:
+        super().__init__("FTP", 31)
 
     def solve(self, args):
         self._get_hosts(args) # type: ignore

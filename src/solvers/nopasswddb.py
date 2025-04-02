@@ -4,8 +4,8 @@ from src.solvers.solverclass import BaseSolverClass
 from src.services.postgresql import PSQLDefaultSubServiceClass
 
 class NoPasswordDBSolverClass(BaseSolverClass):
-    def __init__(self, args) -> None:
-        super().__init__("Database usage without password", 9, args)
+    def __init__(self) -> None:
+        super().__init__("Database usage without password", 9)
 
     def solve(self, args):
         self._get_hosts(args) # type: ignore

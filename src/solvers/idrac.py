@@ -2,8 +2,8 @@ from src.services.idrac import IDRACVersionSubServiceClass
 from src.solvers.solverclass import BaseSolverClass
 
 class IDRACSolverClass(BaseSolverClass):
-    def __init__(self, args) -> None:
-        super().__init__("iDRAC", 19, args)
+    def __init__(self) -> None:
+        super().__init__("iDRAC", 19)
 
     def solve(self, args):
         self._get_hosts(args) # type: ignore

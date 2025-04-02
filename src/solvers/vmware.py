@@ -4,11 +4,11 @@ import re
 import subprocess
 
 class VmwareSolverClass(BaseSolverClass):
-    def __init__(self, args) -> None:
-        super().__init__("VMWare Product Versions", 13, args)
+    def __init__(self) -> None:
+        super().__init__("VMWare Product Versions", 13)
         
     def solve(self, args):
-        self._get_hosts(args) # type: ignore
+        super().solve(args)
         if not self.hosts: 
             return
         r = r"\[\+\] (.*) - Identified (.*)"

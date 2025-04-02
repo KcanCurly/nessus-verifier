@@ -7,8 +7,8 @@ import requests
 from src.solvers.solverclass import BaseSolverClass
 
 class CleartextSolverClass(BaseSolverClass):
-    def __init__(self, args) -> None:
-        super().__init__("Cleartext Protocol Detected", 7, args)
+    def __init__(self) -> None:
+        super().__init__("Cleartext Protocol Detected", 7)
 
     def solve(self, args):
         self._get_hosts(args) # type: ignore

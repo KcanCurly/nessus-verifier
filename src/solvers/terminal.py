@@ -4,11 +4,11 @@ import os
 from src.solvers.solverclass import BaseSolverClass
 
 class TerminalSolverClass(BaseSolverClass):
-    def __init__(self, args) -> None:
-        super().__init__("Terminal Services Misconfigurations", 8, args)
+    def __init__(self) -> None:
+        super().__init__("Terminal Services Misconfigurations", 8)
 
     def solve(self, args):
-        self._get_hosts(args) # type: ignore
+        super().solve(args)
         if not self.hosts: 
             return
         issue_re = r"\[-\] (.*) has issue (.*)"

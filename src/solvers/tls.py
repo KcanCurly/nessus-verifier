@@ -17,11 +17,11 @@ class TLS_Vuln_Data():
         self.is_cert_expired = is_cert_expired
 
 class TLSSolverClass(BaseSolverClass):
-    def __init__(self, args) -> None:
-        super().__init__("TLS Misconfigurations", 1, args)
+    def __init__(self) -> None:
+        super().__init__("TLS Misconfigurations", 1)
 
     def solve(self, args):
-        self._get_hosts(args) # type: ignore
+        super().solve(args)
         if not self.hosts: 
             return
         self.tls_nv(self.hosts, args.allow_white_ciphers, args.threads, args.timeout, args.errors, args.verbose)

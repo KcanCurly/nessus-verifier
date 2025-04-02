@@ -46,14 +46,14 @@ solver_dict: dict[int, type[BaseSolverClass]] = {
 
 def all_solver(args):
     for k,v in solver_dict.items():
-        zz = v(args) # type: ignore
-        zz.solve()
+        zz = v() # type: ignore
+        zz.solve(args)
 
             
 def create_config_file(args):
     s = ""
     for k,v in solver_dict.items():
-        zz = v(None) # type: ignore
+        zz = v() # type: ignore
         s += zz.get_default_config()
             
     with open(args.output, "w") as f:
@@ -78,7 +78,7 @@ def main():
     parser_all.set_defaults(is_all=True)
 
     for _,v in solver_dict.items():
-        zz = v(None) # type: ignore
+        zz = v() # type: ignore
         zz.helper_parse(subparsers)
 
 

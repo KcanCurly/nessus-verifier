@@ -4,11 +4,11 @@ import re
 from packaging.version import parse
 
 class TomcatSolverClass(BaseSolverClass):
-    def __init__(self, args) -> None:
-        super().__init__("Apache Tomcat Version", 10, args)
+    def __init__(self) -> None:
+        super().__init__("Apache Tomcat Version", 10)
         
     def solve(self, args):
-        self._get_hosts(args) # type: ignore
+        super().solve(args)
         if not self.hosts: 
             return
         versions = {}

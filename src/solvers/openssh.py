@@ -2,8 +2,8 @@ from src.services.ssh import SSHVersionSubServiceClass
 from src.solvers.solverclass import BaseSolverClass
 
 class OpenSSHSolverClass(BaseSolverClass):
-    def __init__(self, args) -> None:
-        super().__init__("OpenSSH Versions", 14, args)
+    def __init__(self) -> None:
+        super().__init__("OpenSSH Versions", 14)
 
     def solve(self, args):
         self._get_hosts(args) # type: ignore
