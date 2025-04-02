@@ -5,6 +5,8 @@ from src.services.consts import DEFAULT_ERRORS, DEFAULT_THREAD, DEFAULT_TIMEOUT,
 from src.services.serviceclass import BaseServiceClass
 from src.services.servicesubclass import BaseSubServiceClass
 
+
+
 class MYSQLPostSubServiceClass(BaseSubServiceClass):
     def __init__(self) -> None:
         super().__init__("post", "Post-exploit stuff")
