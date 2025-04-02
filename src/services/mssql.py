@@ -344,7 +344,6 @@ class MSSQLVersionSubServiceClass(BaseSubServiceClass):
 
         versions = {}
         for r in results:
-            if not r: continue
             if r.version not in versions:
                 versions[r.version] = set()
             versions[r.version].add(r.host)
@@ -356,7 +355,7 @@ class MSSQLVersionSubServiceClass(BaseSubServiceClass):
 
             for key, value in versions.items():
                 cpe = ""
-                key  = version_mapping[key]
+                key  = version_mapping.get(key, key)
                 if "2019" in key:
                     cpe = f"cpe:2.3:a:microsoft:sql_server_2019:{key}"
                 elif "2017" in key:
