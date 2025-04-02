@@ -12,7 +12,7 @@ service_dict: list[type[BaseServiceClass]] = [
     snmp.SNMPServiceClass,
     ident.IdentServiceClass,
     ldap.LDAPServiceClass,
-    # mongodb.MongoDBServiceClass,
+    mongodb.MongoDBServiceClass,
     # ms_exchange.MSExchangeServiceClass,
     nfs.NFSServiceClass,
     rpc.RPCServiceClass,

@@ -1,4 +1,3 @@
-from src.utilities.utilities import get_hosts_from_file, add_default_parser_arguments
 import pymssql
 import nmap
 from src.utilities.utilities import Version_Vuln_Host_Data, get_default_context_execution2, error_handler, get_hosts_from_file2, add_default_parser_arguments
@@ -31,7 +30,6 @@ class MSSQLPostSubServiceClass(BaseSubServiceClass):
         parser.add_argument("username", type=str, help="Username")
         parser.add_argument("password", type=str, help="Password")
         parser.add_argument("domain", type=str, help="Domain for windows authentication")
-        parser.add_argument("--sql", type=str, help="Run SQL on target")
         parser.add_argument("--databases", action="store_true", help="Print databases")
         parser.add_argument("--database", type=str, help="Select database")
         parser.add_argument("--tables", action="store_true", help="Print tables of selected database")
@@ -43,7 +41,7 @@ class MSSQLPostSubServiceClass(BaseSubServiceClass):
         parser.set_defaults(func=self.console)
 
     def console(self, args):
-        self.nv(get_hosts_from_file2(args.target), username=args.username, password=args.password, domain=args.domain, sql=args.sql, limit=args.limit, 
+        self.nv(get_hosts_from_file2(args.target), username=args.username, password=args.password, domain=args.domain, limit=args.limit, 
                 databases=args.databases, database=args.database, tables=args.tables, table=args.table, 
                 columns=args.columns, column=args.column, threads=args.threads, timeout=args.timeout, 
                 errors=args.errors, verbose=args.verbose)

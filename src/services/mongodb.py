@@ -1,109 +1,202 @@
 import pprint
-from src.utilities.utilities import Version_Vuln_Data, get_cves, get_hosts_from_file, add_default_parser_arguments, get_default_context_execution
+from src.utilities.utilities import Host, Version_Vuln_Data, get_cves, get_hosts_from_file, add_default_parser_arguments, get_default_context_execution
 from pymongo import MongoClient
 import pymongo
 from packaging.version import parse
+from src.utilities.utilities import Version_Vuln_Host_Data, get_default_context_execution2, error_handler, get_hosts_from_file2, add_default_parser_arguments
+from src.services.consts import DEFAULT_ERRORS, DEFAULT_THREAD, DEFAULT_TIMEOUT, DEFAULT_VERBOSE
+from src.services.serviceclass import BaseServiceClass
+from src.services.servicesubclass import BaseSubServiceClass
+from traceback import print_exc
 
-def post_nv(hosts, threads, timeout, errors, verbose):
-    for host in hosts:
-        try:
-            ip, port = host.split(":")
+class MongoDBPostSubServiceClass(BaseSubServiceClass):
+    def __init__(self) -> None:
+        super().__init__("post", "Post-exploit stuff")
+
+    def helper_parse(self, subparsers):
+        parser = subparsers.add_parser(self.command_name, help = self.help_description)
+        parser.add_argument("target", type=str, help="File name or targets seperated by space")
+        parser.add_argument("username", type=str, help="Username")
+        parser.add_argument("password", type=str, help="Password")
+        parser.add_argument("--sql", type=str, help="Run SQL on target")
+        parser.add_argument("--databases", action="store_true", help="Print databases")
+        parser.add_argument("--database", type=str, help="Select database")
+        parser.add_argument("--collections", action="store_true", help="Print collections of selected database")
+        parser.add_argument("--collection", type=str, help="Select collection")
+        parser.add_argument("--fields", action="store_true", help="Print fields of selected collection")
+        parser.add_argument("--field", nargs="+", help="Print values of selected fields")
+        parser.add_argument("--limit", type=int, default=10, help="Row Limit (Default = 10)")
+        add_default_parser_arguments(parser, False)
+        parser.set_defaults(func=self.console)
+
+    def console(self, args):
+        self.nv(get_hosts_from_file2(args.target), username=args.username, password=args.password, sql=args.sql, limit=args.limit, 
+                databases=args.databases, database=args.database, tables=args.collections, table=args.collection, 
+                columns=args.fields, column=args.field, threads=args.threads, timeout=args.timeout, 
+                errors=args.errors, verbose=args.verbose)
+
+    @error_handler([])
+    def nv(self, hosts, **kwargs):
+        threads = kwargs.get("threads", DEFAULT_THREAD)
+        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
+        errors = kwargs.get("errors", DEFAULT_ERRORS)
+        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
+        username = kwargs.get("username", 'postgres')
+        password = kwargs.get("password", '')
+        databases = kwargs.get('databases', False)
+        database = kwargs.get('database', '')
+        collections = kwargs.get('collections', False)
+        collection = kwargs.get('collection', '')
+        fields = kwargs.get('fields', False)
+        field = kwargs.get('field', '')
+        row_limit = kwargs.get("limit", 10)
+
+        if (collections or collection) and not database:
+            print("You need to select a database with argument --database")
+            return
+        
+        if (fields or field) and not collection:
+            print("You need to select a collection with argument --collection")
+            return
+        
+        for host in hosts:
+            try:
+                ip = host.ip
+                port = host.port
+                client = MongoClient(ip, int(port), username=username, password=password)
+
+                if databases:
+                    dbs = client.list_databases()
+                    for db in dbs:
+                        print(db['name'])
+                    return
+                if collections:
+                    d = client[database]
+                    cols = d.list_collections()
+                    for c in cols:
+                        print(c['name'])
+                    return
+                if fields:
+                    _fields = set()
+                    db = client[database]
+                    coll = db[collection]
+                    for c in coll.find(filter="", limit=1):
+                        _fields.update(c.keys())
+                    for k in _fields:
+                        print(f"    {k}")
+                    return
+                
+                if database and collection and field:
+                    d = client[database]
+                    doc = d[collection]
+                    for c in doc.find(filter="", limit=row_limit):
+                        pprint.pprint(c)
+                    return
+                
+                dbs = client.list_databases()
+                for db in dbs:
+                    print(f"Database: {db["name"]}")
+                    print("=====================")
+                    d = client[db["name"]]
+                    cols = d.list_collections()
+                    for c in cols:
+                        print(c["name"])
+                        print("---------------------")
+                        doc = d[c["name"]]
+                        for post in doc.find(filter="", limit=row_limit):
+                            pprint.pprint(post)
+                
+
+            except Exception as e:
+                if errors in [1, 2]:
+                    print(f"Error Processing {host}: {e}")
+                if errors == 2:
+                    print_exc()
+
+
+
+
+class MongoDBUnauthSubServiceClass(BaseSubServiceClass):
+    def __init__(self) -> None:
+        super().__init__("unauth", "Checks if unauthenticated access is allowed")
+
+    @error_handler([])
+    def nv(self, hosts, **kwargs):
+        threads = kwargs.get("threads", DEFAULT_THREAD)
+        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
+        errors = kwargs.get("errors", DEFAULT_ERRORS)
+        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
+
+        vuln = []
+        results: list[Host] = get_default_context_execution2("MongoDB Unauth Check", threads, hosts, self.single, timeout=timeout, errors=errors, verbose=verbose)
+        
+        if results:
+            print("MongoDB Unauthenticated Access:")
+            for v in results:
+                print(f"    {v}")
+
+    @error_handler(["host"])
+    def single(self, host, **kwargs):
+        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
+        errors = kwargs.get("errors", DEFAULT_ERRORS)
+        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
+        ip = host.ip
+        port = host.port
+
+        with pymongo.timeout(timeout):
             client = MongoClient(ip, int(port))
             dbs = client.list_databases()
-            for db in dbs:
-                print(f"Database: {db["name"]}")
-                print("=====================")
-                d = client[db["name"]]
-                cols = d.list_collections()
-                for c in cols:
-                    print(c["name"])
-                    print("---------------------")
-                    doc = d[c["name"]]
-                    for post in doc.find(filter="", limit=5):
-                        pprint.pprint(post)
-                    print()
-                        
-                print()
+            return host
 
-        except:pass
+class MongoDBVersionSubServiceClass(BaseSubServiceClass):
+    def __init__(self) -> None:
+        super().__init__("version", "Checks version")
+
+    @error_handler([])
+    def nv(self, hosts, **kwargs):
+        threads = kwargs.get("threads", DEFAULT_THREAD)
+        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
+        errors = kwargs.get("errors", DEFAULT_ERRORS)
+        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
+
+        versions = {}
+        results: list[Version_Vuln_Host_Data] = get_default_context_execution2("MongoDB Version", threads, hosts, self.single, timeout=timeout, errors=errors, verbose=verbose)
         
-def post_console(args):
-    post_nv(get_hosts_from_file(args.target), args.threads, args.timeout, args.errors, args.verbose)
+        
+        for r in results:
+            if r.version not in versions:
+                versions[r.version] = set()
+            versions[r.version].add(r.host)
 
+        if len(versions) > 0:      
+            versions = dict(
+                sorted(versions.items(), key=lambda x: parse(x[0]), reverse=True)
+            ) 
+            print("MongoDB versions detected:")
+            for key, value in versions.items():
+                cves = get_cves(f"cpe:2.3:a:mongodb:mongodb:{key}")
+                if cves: print(f"MongoDB {key} ({", ".join(cves)}):")
+                else: print(f"MongoDB {key}:")  
+                for v in value:
+                    print(f"    {v}")
 
-def unauth_nv(hosts, threads, timeout, errors, verbose):
-    vuln = []
-    
-    for host in hosts:
-        try:
-            ip, port = host.split(":")
-            with pymongo.timeout(timeout):
-                client = MongoClient(ip, int(port))
-                dbs = client.list_databases()
-                vuln.append(host)
+    @error_handler(["host"])
+    def single(self, host, **kwargs):
+        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
+        errors = kwargs.get("errors", DEFAULT_ERRORS)
+        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
+        ip = host.ip
+        port = host.port
 
-        except:pass
-    
-    if len(vuln) > 0:
-        print("MongoDB Unauthenticated Access:")
-        for v in vuln:
-            print(f"    {v}")
-
-def unauth_console(args):
-    unauth_nv(get_hosts_from_file(args.target), args.threads, args.timeout, args.errors, args.verbose)
-
-def version_single(host, timeout, errors, verbose):
-    try:
-        ip, port = host.split(":")
         with pymongo.timeout(timeout):
             client = MongoClient(ip, int(port))
             version = client.server_info()['version']
-            return Version_Vuln_Data(host, version)
+            return Version_Vuln_Host_Data(host, version)
 
-    except Exception as e: 
-        if errors: print(f"Error for {host}: {e}")
 
-def version_nv(hosts, threads, timeout, errors, verbose):
-    versions = {}
-    results: list[Version_Vuln_Data] = get_default_context_execution("MongoDB Version", threads, hosts, (version_single, timeout, errors, verbose))
-    
-    
-    for r in results:
-        if r.version not in versions:
-            versions[r.version] = set()
-        versions[r.version].add(r.host)
-
-    if len(versions) > 0:      
-        versions = dict(
-            sorted(versions.items(), key=lambda x: parse(x[0]), reverse=True)
-        ) 
-        print("MongoDB versions detected:")
-        for key, value in versions.items():
-            cves = get_cves(f"cpe:2.3:a:mongodb:mongodb:{key}")
-            if cves: print(f"MongoDB {key} ({", ".join(cves)}):")
-            else: print(f"MongoDB {key}:")  
-            for v in value:
-                print(f"    {v}")
-
-def version_console(args):
-    version_nv(get_hosts_from_file(args.target), args.threads, args.timeout, args.errors, args.verbose)
-
-def helper_parse(commandparser):    
-    parser_task1 = commandparser.add_parser("mongodb")
-    subparsers = parser_task1.add_subparsers(dest="command")
-    
-    parser_version = subparsers.add_parser("version", help="Checks version")
-    add_default_parser_arguments(parser_version)
-    parser_version.set_defaults(func=version_console)
-    
-    parser_unauth = subparsers.add_parser("unauth", help="Checks if unauthenticated access is allowed")
-    add_default_parser_arguments(parser_unauth)
-    parser_unauth.set_defaults(func=unauth_console)
-    
-    parser_post = subparsers.add_parser("post", help="Post Exploit")
-    parser_post.add_argument("target", type=str, help="File name or targets seperated by space")
-    parser_post.add_argument("username", type=str, required=True, help="Username")
-    parser_post.add_argument("password", type=str, required=True, help="Password")
-    add_default_parser_arguments(parser_post, False)
-    parser_post.set_defaults(func=post_console)
-
+class MongoDBServiceClass(BaseServiceClass):
+    def __init__(self) -> None:
+        super().__init__("mongodb")
+        self.register_subservice(MongoDBVersionSubServiceClass())
+        self.register_subservice(MongoDBUnauthSubServiceClass())
+        self.register_subservice(MongoDBPostSubServiceClass())
