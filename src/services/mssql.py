@@ -355,6 +355,7 @@ class MSSQLVersionSubServiceClass(BaseSubServiceClass):
 
             for key, value in versions.items():
                 extra, pure_version = key.rsplit(" ", 1)
+                print(f"ZZZ  {extra} {pure_version} ZZZ")
                 cpe = ""
                 pure_version  = version_mapping.get(pure_version.strip(), pure_version)
                 cves = []
