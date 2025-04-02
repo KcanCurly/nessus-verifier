@@ -354,25 +354,25 @@ class MSSQLVersionSubServiceClass(BaseSubServiceClass):
             
 
             for key, value in versions.items():
-                key = key.rsplit(" ", 1)[1]  # Get the version number only
+                extra, pure_version = key.rsplit(" ", 1)
                 cpe = ""
-                key  = version_mapping.get(key, key)
+                pure_version  = version_mapping.get(pure_version, key)
                 cves = []
                 if "2019" in key:
-                    cpe = f"cpe:2.3:a:microsoft:sql_server_2019:{key}"
+                    cpe = f"cpe:2.3:a:microsoft:sql_server_2019:{pure_version}"
                 elif "2017" in key:
-                    cpe = f"cpe:2.3:a:microsoft:sql_server_2017:{key}"
+                    cpe = f"cpe:2.3:a:microsoft:sql_server_2017:{pure_version}"
                 elif "2022" in key:
-                    cpe = f"cpe:2.3:a:microsoft:sql_server_2022:{key}"
+                    cpe = f"cpe:2.3:a:microsoft:sql_server_2022:{pure_version}"
                 if cpe: 
-                    cves = get_cves(f"{cpe}:{key}")
+                    cves = get_cves(f"{cpe}:{pure_version}")
                 if cves: 
-                    print(f"Microsoft SQL Server {key} ({", ".join(cves)}):")
+                    print(f"{extra} {pure_version} ({", ".join(cves)}):")
                 else:
                     if not cpe:
-                        print(f"Microsoft SQL Server {key} (EOL):")
+                        print(f"{extra} {pure_version} (EOL):")
                     else:
-                        print(f"Microsoft SQL Server {key}:")
+                        print(f"{extra} {pure_version}:")
 
                 for v in value:
                     print(f"    {v}")
