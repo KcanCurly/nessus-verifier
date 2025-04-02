@@ -27,6 +27,11 @@ class SSH_Version_Vuln_Data():
         self.version = version
         self.protocol = protocol
 
+def remove_extra(input):
+    input = input.replace("p1", "")
+    input = input.replace("p2", "")
+    return input
+
 class SSHAuditSubServiceClass(BaseSubServiceClass):
     def __init__(self) -> None:
         super().__init__("audit", "Run ssh-audit on targets")
@@ -58,7 +63,7 @@ class SSHAuditSubServiceClass(BaseSubServiceClass):
         
         if len(versions) > 0:
             versions = dict(
-                sorted(versions.items(), key=lambda x: parse(x[0]), reverse=True)
+                sorted(versions.items(), key=lambda x: parse(remove_extra(x[0])), reverse=True)
             )
             print("SSH Versions:")
             for key, value in versions.items():
