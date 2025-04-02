@@ -15,26 +15,20 @@ import os
 from datetime import datetime
 from traceback import print_exc
 
+@dataclass(frozen=True)
 @dataclass
 class Host:
     ip: str
     port: str
-
-    def __init__(self, ip: str, port: str):
-        self.ip = ip
-        self.port = port
         
     def __str__(self) -> str:
         return f"{self.ip}:{self.port}"
-        
+
+@dataclass(frozen=True) 
 @dataclass
 class Credential:
     username: str
     password: str
-
-    def __init__(self, username: str, password: str):
-        self.username = username
-        self.password = password
         
     def __str__(self) -> str:
         return f"{self.username}{f":{self.password}" if self.password else ""}"
