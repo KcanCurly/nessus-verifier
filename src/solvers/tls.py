@@ -129,17 +129,17 @@ class TLSSolverClass(BaseSolverClass):
 
         for r in results:
             for z in r.weak_versions:
-                if z not in weak_versions:
-                    weak_versions[z] = []
-                weak_versions[z].append(r.host)
+                if r.host not in weak_versions:
+                    weak_versions[r.host] = []
+                weak_versions[r.host].append(z)
             for z in r.weak_ciphers:
-                if z not in weak_ciphers:
-                    weak_ciphers[z] = []
-                weak_ciphers[z].append(r.host)
+                if r.host not in weak_ciphers:
+                    weak_ciphers[r.host] = []
+                weak_ciphers[r.host].append(z)
             for z in r.weak_bits:
-                if z not in weak_bits:
-                    weak_bits[z] = []
-                weak_bits[z].append(r.host)
+                if r.host not in weak_bits:
+                    weak_bits[r.host] = []
+                weak_bits[r.host].append(z)
 
             if r.is_wrong_hostname:
                 wrong_hosts.append(r.host)
