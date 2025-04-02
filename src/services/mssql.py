@@ -357,6 +357,7 @@ class MSSQLVersionSubServiceClass(BaseSubServiceClass):
                 key = key.rsplit(" ")[1]  # Get the version number only
                 cpe = ""
                 key  = version_mapping.get(key, key)
+                cves = []
                 if "2019" in key:
                     cpe = f"cpe:2.3:a:microsoft:sql_server_2019:{key}"
                 elif "2017" in key:
