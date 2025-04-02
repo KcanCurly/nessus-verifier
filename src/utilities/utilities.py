@@ -17,6 +17,9 @@ from traceback import print_exc
 
 @dataclass
 class Host:
+    ip: str
+    port: str
+
     def __init__(self, ip: str, port: str):
         self.ip = ip
         self.port = port
@@ -26,6 +29,9 @@ class Host:
         
 @dataclass
 class Credential:
+    username: str
+    password: str
+
     def __init__(self, username: str, password: str):
         self.username = username
         self.password = password
