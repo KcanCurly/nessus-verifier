@@ -1,5 +1,5 @@
 import argparse
-from src.services import asterisk, chargen, daytime, discard, dns, echo, finger, ftp, ident, ldap, mongodb, ms_exchange, mssql, netstat, qotd, smb, ssh, snmp, nfs, rpc, smtp, snmp, systat, telnet, tftp, time, mssql, idrac, zookeeper, postgresql, mysql
+from src.services import amqp, asterisk, chargen, daytime, discard, dns, echo, finger, ftp, ident, ldap, mongodb, ms_exchange, mssql, netstat, qotd, smb, ssh, snmp, nfs, rpc, smtp, snmp, systat, telnet, tftp, time, mssql, idrac, zookeeper, postgresql, mysql
 from src.services.serviceclass import BaseServiceClass
 from traceback import print_exc
 
@@ -16,7 +16,7 @@ service_dict: list[type[BaseServiceClass]] = [
     # ms_exchange.MSExchangeServiceClass,
     nfs.NFSServiceClass,
     rpc.RPCServiceClass,
-    # smtp.SMTPServiceClass,
+    smtp.SMTPServiceClass,
     mssql.MSSQLServiceClass,
     tftp.TFTPServiceClass,
     idrac.IDRACServiceClass,
@@ -33,6 +33,7 @@ service_dict: list[type[BaseServiceClass]] = [
     daytime.DaytimeServiceClass,
     chargen.ChargenServiceClass,
     zookeeper.ZookeeperServiceClass,
+    amqp.AMQPServiceClass,
 ]
 
 

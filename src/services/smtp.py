@@ -1,6 +1,10 @@
 import smtplib
 import os
 from src.utilities.utilities import confirm_prompt, control_TLS, get_hosts_from_file, add_default_parser_arguments
+from src.utilities.utilities import error_handler, get_default_context_execution2, get_hosts_from_file2
+from src.services.consts import DEFAULT_ERRORS, DEFAULT_THREAD, DEFAULT_TIMEOUT, DEFAULT_VERBOSE
+from src.services.serviceclass import BaseServiceClass
+from src.services.servicesubclass import BaseSubServiceClass
 
 
 def userenum_nv(hosts, domain, threads, timeout, errors, verbose):
@@ -61,71 +65,31 @@ def userenum_nv(hosts, domain, threads, timeout, errors, verbose):
             print(f"     {key} - {", ".join(value)}")
             
 
-def tls(directory_path, config, hosts):
-    control_TLS(hosts, "--starttls-smtp")
-    
-def tls_check(directory_path, config, hosts):
-    if not os.path.exists(os.path.join(directory_path, hosts)):
-        return
-    with open(os.path.join(directory_path, hosts), "r") as file:
-        hosts = [line.strip() for line in file if line.strip()] 
-    tls = []
-    for host in hosts:
+def sendmail(host, sender, receiver, subject, message):
+    m = f'Subject: {subject}\n\n{message}'
+    ip = host.ip
+    port = host.port
+    try:
+        smtp = smtplib.SMTP(ip, port)
+        smtp.sendmail(sender, receiver, m)
+        return True
+    except Exception: # It could be that server requires TLS/SSL so we need to connect again with TLS
         try:
-            sm = smtplib.SMTP(timeout=5)
-            sm.connect(host)
-            sm.helo() # Some smtp services requires helo first and also we need to get domain name
-            dom = config["smtp"]["Domain"]
-            answer = sm.docmd("MAIL FROM:", f"nessus-verifier-test@{dom}")[1].decode()
-            if "STARTTLS" not in answer:
-                tls.append(host)
-                
-        except TimeoutError as t: # If we get time out its either host is not up or it requires TLS/SSL, in either case we don't need to check it
-           pass
-        except Exception as e:
-            print("Error: ", e)
-                
-    if len(tls) > 0:
-        print("SMTP servers that does NOT force TLS/SSL:")
-        for t in tls:
-            print(f"\t{t}")
+            smtp = smtplib.SMTP_SSL(ip, port)
+            smtp.sendmail(sender, receiver, m)
+            return True
+        except Exception:
+            try:
+                smtp = smtplib.SMTP(ip, port)
+                smtp.starttls()
+                smtp.sendmail(sender, receiver, m)
+                return True
+            except Exception: 
+                pass
+    return False
             
 def open_relay(hosts, confirm, subject, message, client1, client2, in_fake, out_fake, out_real, temp, timeout = 3):
-    vuln = {}
-        
-    def sendmail(sender, receiver, tag):
-        m = f'Subject: {subject}\n\n{message}'
-        try:
-            smtp = smtplib.SMTP(ip, port, timeout=timeout)
-            smtp.sendmail(sender,receiver,m)
-            if f"{ip}:{port}" not in vuln:
-                vuln[f"{ip}:{port}"] = []
-            vuln[f"{ip}:{port}"].append(tag)
-        except smtplib.SMTPServerDisconnected as t: # It could be that server requires TLS/SSL so we need to connect again with TLS
-            try:
-                smtp = smtplib.SMTP_SSL(ip, port, timeout=timeout)
-                smtp.sendmail(sender,receiver,m)
-                if f"{ip}:{port}" not in vuln:
-                    vuln[f"{ip}:{port}"] = []
-                vuln[f"{ip}:{port}"].append(tag)
-            except Exception as er:
-                print("Er: ", er)
-                pass
-                
-        except smtplib.SMTPSenderRefused as ref: # It could be that server requires starttls
-            if "STARTTLS" in ref.smtp_error.decode():
-                try:
-                    smtp = smtplib.SMTP(ip, port, timeout=timeout)
-                    smtp.starttls()
-                    smtp.sendmail(sender,receiver,m)
-                    if f"{ip}:{port}" not in vuln:
-                        vuln[f"{ip}:{port}"] = []
-                    vuln[f"{ip}:{port}"].append(tag)
-                except: pass
-            else: pass
-        except: pass
-    
-    
+    message = message.format(**locals())
     if not confirm:
         print(f"Client1 is {client1}")
         print(f"Client2 is {client2}")
@@ -136,28 +100,24 @@ def open_relay(hosts, confirm, subject, message, client1, client2, in_fake, out_
         print("Note: You can bypass this prompt by adding --confirm")
         if not confirm_prompt("Do you want to continue with those emails?"):
             return
-        
-    
     
     for host in hosts:
-        ip = host.split(":")[0]
-        port = host.split(":")[1]
-            
-        
-        sendmail(client1, client1, "Client 1 -> Client 1")
-        sendmail(client2, client1, "Client 2 -> Client 1")
-        sendmail(in_fake, client1, "Fake In -> Client 1")
-        sendmail(out_real, client1, "Out Real -> Client 1")
-        sendmail(client1, out_real, "Client 1 -> Out Real")
-        sendmail(in_fake, out_real, "In Fake -> Out Real")
-        sendmail(out_fake, client1, "Out Fake -> Client 1")
-        sendmail(out_fake, temp, "Out Fake -> Temporary Mail")
-    
-    if len(vuln) > 0:
-        print()
-        print("Open Relay Test:")
-        for key, value in vuln.items():
-            print(f"    {key}: {", ".join(value)}")
+        if sendmail(host, client1, client1, subject, message):
+            print(f"[+] Email sent from {client1} to {client1} on {host}")
+        if sendmail(host, client2, client1, subject, message):
+            print(f"[+] Email sent from {client2} to {client1} on {host}")
+        if sendmail(host, in_fake, client1, subject, message):
+            print(f"[+] Email sent from {in_fake} to {client1} on {host}")
+        if sendmail(host, out_real, client1, subject, message):
+            print(f"[+] Email sent from {out_real} to {client1} on {host}")
+        if sendmail(host, client1, out_real, subject, message):
+            print(f"[+] Email sent from {client1} to {out_real} on {host}")
+        if sendmail(host, in_fake, out_real, subject, message):
+            print(f"[+] Email sent from {in_fake} to {out_real} on {host}")
+        if sendmail(host, out_fake, client1, subject, message):
+            print(f"[+] Email sent from {out_fake} to {client1} on {host}")
+        if sendmail(host, out_fake, temp, subject, message):
+            print(f"[+] Email sent from {out_fake} to {temp} on {host}")
 
 def userenum_console(args):
     userenum_nv(get_hosts_from_file(args.target), args.domain, args.threads, args.timeout, args.errors, args.verbose)
@@ -172,3 +132,83 @@ def helper_parse(commandparser):
     add_default_parser_arguments(parser_userenum, False)
     parser_userenum.set_defaults(func=userenum_console)
     
+class SMTPOpenRelaySubServiceClass(BaseSubServiceClass):
+    def __init__(self) -> None:
+        super().__init__("openrelay", "Checks if the SMTP server is an open relay")
+
+    def helper_parse(self, subparsers):
+        parser = subparsers.add_parser(self.command_name, help = self.help_description)
+        parser.add_argument("target", type=str, help="File name or targets seperated by space")
+        parser.add_argument("client1", type=str, help="Client email address 1")
+        parser.add_argument("client2", type=str, help="Client email address 2")
+        parser.add_argument("in_fake", type=str, help="Fake email address in domain")
+        parser.add_argument("out_fake", type=str, help="Fake email address out of domain")
+        parser.add_argument("out_real", type=str, help="Real email address out of domain")
+        parser.add_argument("temp", type=str, help="Temporary email address")
+        parser.add_argument("--subject", type=str, default="Openrelay Test", help="Email subject")
+        parser.add_argument("--message", type=str, default="Openrelay test message", help="Email message, this is a template meaning $host would be replaced with the host value")
+        parser.add_argument("--confirm", action="store_true", help="Bypass confirm prompt")
+        add_default_parser_arguments(parser, False)
+        parser.set_defaults(func=self.console)
+
+    def console(self, args):
+        self.nv(get_hosts_from_file2(args.target), confirm=args.confirm, subject=args.subject, message=args.message, client1=args.client1, client2=args.client2, in_fake=args.in_fake, out_fake=args.out_fake, out_real=args.out_real, temp=args.temp, threads=args.threads, timeout=args.timeout, errors=args.errors, verbose=args.verbose)
+
+    @error_handler([])
+    def nv(self, hosts, **kwargs):
+        threads = kwargs.get("threads", DEFAULT_THREAD)
+        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
+        errors = kwargs.get("errors", DEFAULT_ERRORS)
+        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
+        confirm = kwargs.get("confirm", False)
+        subject = kwargs.get("subject")
+        message = kwargs.get("message")
+        client1 = kwargs.get("client1")
+        client2 = kwargs.get("client2")
+        in_fake = kwargs.get("in_fake")
+        out_fake = kwargs.get("out_fake")
+        out_real = kwargs.get("out_real")
+        temp = kwargs.get("temp")
+
+
+        if not confirm:
+            print(f"Client1: {client1}")
+            print(f"Client2: {client2}")
+            print(f"In fake: {in_fake}")
+            print(f"Fake out: {out_fake}")
+            print(f"Real out: {out_real}")
+            print(f"Temp: {temp}")
+            print("Note: You can bypass this prompt by adding --confirm")
+            if not confirm_prompt("Do you want to continue with those emails?"):
+                return
+        
+        for host in hosts:
+            if sendmail(host, client1, client1, subject, message):
+                print(f"[+] Email sent from {client1} to {client1} on {host} successfully")
+            if sendmail(host, client2, client1, subject, message):
+                print(f"[+] Email sent from {client2} to {client1} on {host} successfully")
+            if sendmail(host, in_fake, client1, subject, message):
+                print(f"[+] Email sent from {in_fake} to {client1} on {host} successfully")
+            if sendmail(host, out_real, client1, subject, message):
+                print(f"[+] Email sent from {out_real} to {client1} on {host} successfully")
+            if sendmail(host, client1, out_real, subject, message):
+                print(f"[+] Email sent from {client1} to {out_real} on {host} successfully")
+            if sendmail(host, in_fake, out_real, subject, message):
+                print(f"[+] Email sent from {in_fake} to {out_real} on {host} successfully")
+            if sendmail(host, out_fake, client1, subject, message):
+                print(f"[+] Email sent from {out_fake} to {client1} on {host} successfully")
+            if sendmail(host, out_fake, temp, subject, message):
+                print(f"[+] Email sent from {out_fake} to {temp} on {host} successfully")
+
+
+    @error_handler(["host"])
+    def single(self, host, **kwargs):
+        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
+        errors = kwargs.get("errors", DEFAULT_ERRORS)
+        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
+        ip = host.ip
+        port = host.port
+
+class SMTPServiceClass(BaseServiceClass):
+    def __init__(self) -> None:
+        super().__init__("smtp")
