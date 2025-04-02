@@ -181,7 +181,7 @@ class SSHAuditSubServiceClass(BaseSubServiceClass):
         vuln_key = []
         vuln_cipher = []
         # if verbose: console.print(f"Starting processing {host}")
-        command = ["ssh-audit", "--skip-rate-test", "-t", timeout, host]
+        command = ["ssh-audit", "--skip-rate-test", "-t", str(timeout), str(host)]
         # Execute the command and capture the output
         result = subprocess.run(command, text=True, capture_output=True)
         lines = result.stdout.splitlines()

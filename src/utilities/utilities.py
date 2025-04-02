@@ -364,9 +364,11 @@ def error_handler(variables):
                     
                     variable_values.append(f"{var}={value}")
                 
-                print(f"Error in function '{function_name}': {e}")
-                print("Variable values:", ", ".join(variable_values))
+
                 value = kwargs.get("errors", None)
+                if value in [1, 2]:
+                    print(f"Error in function '{function_name}': {e}")
+                    print("Variable values:", ", ".join(variable_values))
                 if value == 2:
                     print_exc()
                 return None  # Handle error gracefully
