@@ -32,9 +32,9 @@ def remove_extra(input):
     input = input.replace("p2", "")
     return input
 
-class SSHAuditSubServiceClass(BaseSubServiceClass):
+class SSHVersionSubServiceClass(BaseSubServiceClass):
     def __init__(self) -> None:
-        super().__init__("audit", "Run ssh-audit on targets")
+        super().__init__("version", "Run SSH version check on targets")
 
     def nv(self, hosts, **kwargs):
         threads = kwargs.get("threads", DEFAULT_THREAD)
@@ -108,9 +108,9 @@ class SSHAuditSubServiceClass(BaseSubServiceClass):
 
 
 
-class SSHVersionSubServiceClass(BaseSubServiceClass):
+class SSHAuditSubServiceClass(BaseSubServiceClass):
     def __init__(self) -> None:
-        super().__init__("version", "Run SSH version check on targets")
+        super().__init__("", "Run ssh-audit on targets")
 
     def nv(self, hosts, **kwargs):
         threads = kwargs.get("threads", DEFAULT_THREAD)

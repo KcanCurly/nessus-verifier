@@ -1,6 +1,6 @@
 - name: IGNORE
   id: -1
-  plugin-ids: [142960, 10114, 34850, 51192, 12085, 11213, 98048, 136929, 57582, 24244, 10759, 12224, 18391, 44135, 85582, 42057, 26194, 47831, 65914, 9559, 9558, 181418, 1997]
+  plugin-ids: [142960, 10114, 34850, 51192, 12085, 11213, 98048, 136929, 57582, 24244, 10759, 12224, 18391, 44135, 85582, 42057, 26194, 47831]
   # 142960 - HSTS Missing From HTTPS Server (RFC 6797)
   # 10114 - ICMP Timestamp Request Remote Date Disclosure
   # 34850 - Web Server Uses Basic Authentication Without HTTPS
@@ -19,11 +19,6 @@
   # 42057 - Web Server Allows Password Auto-Completion
   # 26194 - Web Server Transmits Cleartext Credentials
   # 47831 - CGI Generic XSS (comprehensive test)
-  # 65914 - MongoDB Detection
-  # 9559 - MongoDB Version Detection
-  # 9558 - MongoDB Database Server Detection
-  # 181418 - OpenSSH Detection
-  # 1997 - OpenSSH Detection
 
 - name: Actionables
   id: 0
@@ -1146,10 +1141,12 @@
   # 154174 - OpenSSH 6.2 < 8.8
   # 147662 - OpenSSH 8.2 < 8.5
   # 701168 - OpenSSH < 3.7.1 Multiple Vulnerabilities
+  # 181418 - OpenSSH Detection
   # 701157 - OpenSSH < 7.9 Access Validation Error
   # 701171 - OpenSSH < 3.6.2 Reverse DNS Lookup Bypass
   # 9309 - OpenSSH < 7.0 Multiple Vulnerabilities
   # 4209 - OpenSSH < 4.7 Trusted X11 Cookie Connection Policy Bypass
+  # 1997 - OpenSSH Detection
   # 9310 - OpenSSH < 7.1 PermitRootLogin Bypass Vulnerability
   # 701165 - OpenSSH < 4.5 Multiple Vulnerabilities
   # 701162 - OpenSSH < 5.9 Multiple DoS
@@ -1758,7 +1755,7 @@
 
 - name: MongoDB
   id: 26
-  plugin-ids: [205616, 205615, 65915, 197879, 126506, 122363, 209641, 135921, 122243, 126648, 67243, 72334, 88931, 9972, 232848]
+  plugin-ids: [205616, 205615, 65915, 197879, 126506, 122363, 209641, 135921, 122243, 65914, 9559, 9558, 126648, 67243, 72334, 88931, 9972]
   # 205616 - MongoDB 5.0.x < 5.0.27 / 6.0.x < 6.0.16 / 7.0.x < 7.0.12 / 7.3.x < 7.3.3 (SERVER-93211)
   # 205615 - MongoDB 6.0.x < 6.0.13 / 7.0.x < 7.0.11 / 7.3.x < 7.3.3 (SERVER-93516)
   # 65915 - MongoDB Web Interface Detection
@@ -1768,12 +1765,14 @@
   # 209641 - MongoDB  6.0.x < 6.0.17 / 7.0.x < 7.0.13 / 7.3.x < 7.3.4 incorrect enforcement of index constraints (SERVER-92382)
   # 135921 - MongoDB 2.x, 3.0.x < 3.0.15, 3.1.x < 3.2.14, 3.3.x < 3.3.14 Mongo Shell Information Disclosure Vulnerability (SERVER-25335)
   # 122243 - MongoDB 2.6.x < 2.6.9, 3.0.x < 3.0.14, 3.2.x < 3.2.8 mongod
+  # 65914 - MongoDB Detection
+  # 9559 - MongoDB Version Detection
+  # 9558 - MongoDB Database Server Detection
   # 126648 - MongoDB 2.4 / 2.6 Denial of Service Vulnerability
   # 67243 - MongoDB < 2.4.5 / 2.5.1 Multiple Vulnerabilities
   # 72334 - MongoDB < 2.3.2 BSON Object Length Handling Memory Disclosure
   # 88931 - MongoDB 2.4.x < 2.4.13 / 2.6.x < 2.6.8 / 3.0.x < 3.0.0-rc9 mongod BSON DoSncies (fd2e0ca8-e3ae-11e9-8af7-08002720423d)
   # 9972 - MongoDB 3.0.x < 3.0.7 / 3.1.x < 3.1.9 Authentication Bypass
-  # 232848 - MongoDB 6.0.x < 6.0.17 / 7.0.x < 7.0.13 / 7.3.x < 7.3.4 incorrect enforcement of index constraints (SERVER-92382)
 
 - name: Oracle Database
   id: 27
