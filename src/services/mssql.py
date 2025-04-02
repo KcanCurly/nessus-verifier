@@ -365,7 +365,7 @@ class MSSQLVersionSubServiceClass(BaseSubServiceClass):
                 elif "2022" in key:
                     cpe = f"cpe:2.3:a:microsoft:sql_server_2022:{pure_version}"
                 if cpe: 
-                    cves = get_cves(f"{cpe}:{pure_version}")
+                    cves = get_cves(cpe)
                 if cves: 
                     print(f"{extra} {pure_version} ({", ".join(cves)}):")
                 else:
