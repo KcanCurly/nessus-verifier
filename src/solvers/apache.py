@@ -3,6 +3,8 @@ import re
 from packaging.version import parse
 from src.solvers.solverclass import BaseSolverClass
 
+shodan_cves_to_skip = ["CVE-2006-20001"]
+
 class ApacheSolverClass(BaseSolverClass):
     def __init__(self) -> None:
         super().__init__("Apache", 11)
@@ -29,7 +31,7 @@ class ApacheSolverClass(BaseSolverClass):
             )
             print("Detected Apache Versions:")
             for key, value in versions.items():
-                cves = get_cves(f"cpe:2.3:a:apache:http_server:{key}")
+                cves = get_cves(f"cpe:2.3:a:apache:http_server:{key}", cves_to_skip=shodan_cves_to_skip)
                 if cves: print(f"Apache/{key} ({", ".join(cves)}):")
                 else: print(f"Apache/{key}:")
                 for v in value:

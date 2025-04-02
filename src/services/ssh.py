@@ -69,11 +69,7 @@ class SSHAuditSubServiceClass(BaseSubServiceClass):
             for key, value in versions.items():
                 key1 = key.replace("p1", "")
                 key1 = key1.replace("p2", "")
-                cves = get_cves(f"cpe:2.3:a:openbsd:openssh:{key1}")
-                for cve_to_remove in shodan_cves_to_skip:
-                    try:
-                        cves.remove(cve_to_remove)
-                    except:pass
+                cves = get_cves(f"cpe:2.3:a:openbsd:openssh:{key1}", cves_to_skip=shodan_cves_to_skip)
 
                 if cves: print(f"OpenSSH {key} ({", ".join(cves)}):")
                 else: print(f"OpenSSH {key}:")
