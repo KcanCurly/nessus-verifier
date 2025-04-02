@@ -28,7 +28,8 @@ class NFSListServiceClass(BaseSubServiceClass):
         if results:
             print("Readable NFS List:")
             for r in results:
-                print(r)
+                if not r.content: continue
+                print(r.host)
                 for k,v in r.content:
                     print(f"    {k}:")
                     for n in v:
