@@ -1,6 +1,6 @@
 - name: IGNORE
   id: -1
-  plugin-ids: [142960, 10114, 34850, 51192, 12085, 11213, 98048, 136929, 57582, 24244, 10759, 12224, 18391, 44135, 85582, 42057, 26194, 47831, 65914, 9559, 9558]
+  plugin-ids: [142960, 10114, 34850, 51192, 12085, 11213, 98048, 136929, 57582, 24244, 10759, 12224, 18391, 44135, 85582, 42057, 26194, 47831, 65914, 9559, 9558, 181418, 1997]
   # 142960 - HSTS Missing From HTTPS Server (RFC 6797)
   # 10114 - ICMP Timestamp Request Remote Date Disclosure
   # 34850 - Web Server Uses Basic Authentication Without HTTPS
@@ -22,6 +22,8 @@
   # 65914 - MongoDB Detection
   # 9559 - MongoDB Version Detection
   # 9558 - MongoDB Database Server Detection
+  # 181418 - OpenSSH Detection
+  # 1997 - OpenSSH Detection
 
 - name: Actionables
   id: 0
@@ -1144,12 +1146,10 @@
   # 154174 - OpenSSH 6.2 < 8.8
   # 147662 - OpenSSH 8.2 < 8.5
   # 701168 - OpenSSH < 3.7.1 Multiple Vulnerabilities
-  # 181418 - OpenSSH Detection
   # 701157 - OpenSSH < 7.9 Access Validation Error
   # 701171 - OpenSSH < 3.6.2 Reverse DNS Lookup Bypass
   # 9309 - OpenSSH < 7.0 Multiple Vulnerabilities
   # 4209 - OpenSSH < 4.7 Trusted X11 Cookie Connection Policy Bypass
-  # 1997 - OpenSSH Detection
   # 9310 - OpenSSH < 7.1 PermitRootLogin Bypass Vulnerability
   # 701165 - OpenSSH < 4.5 Multiple Vulnerabilities
   # 701162 - OpenSSH < 5.9 Multiple DoS
