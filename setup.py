@@ -29,6 +29,7 @@ setup(
         "colorama",
         "pymysql",
         "packaging",
+        "pika",
     ],
     classifiers=[
         "Programming Language :: Python :: 3",
