@@ -26,7 +26,6 @@ def connect_and_get_response_single(host, **kwargs):
 
     
 def connect_and_get_response_multiple(hosts, output, message, threads, timeout):
-    hosts = get_hosts_from_file2(hosts)
     results: list[Version_Vuln_Host_Data] = get_default_context_execution2("banner grab", threads, hosts, connect_and_get_response_single, timeout=timeout)
     
     for result in results:

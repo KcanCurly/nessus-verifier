@@ -28,8 +28,11 @@ class RedisPostSubServiceClass(BaseSubServiceClass):
                     keys = client.keys("*")  # Get all keys in the DB
                     for key in keys[:10]: # type: ignore
                         print(f"  - {key}")
-                except redis.exceptions.ResponseError:
+                except redis.exceptions.ResponseError as z:
+                    print("zzzzzzzz", z)
                     break  # If the database does not exist, break the loop
+                except Exception as e:
+                    print(e)
 
 
 
