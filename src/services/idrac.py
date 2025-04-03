@@ -27,7 +27,6 @@ class IDRACVersionSubServiceClass(BaseSubServiceClass):
         versions_unknown = {}
                     
         for r in results:
-            if not r: continue
             if r.main_version == "9":
                 if r.version not in versions_9:
                     versions_9[r.version] = set()

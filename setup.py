@@ -43,6 +43,7 @@ setup(
             "nv-solver=src.solvers.solver:main",
             "nv-nmap=src.modules.nv_nmap:main",
             "nv-nuclei=src.modules.nv_nuclei:main",
+            "nv-nc=src.modules.nv_nc:main",
             "nv-service=src.services.nv_services:main",
         ],
     },
