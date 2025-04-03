@@ -25,8 +25,8 @@ class RedisPostSubServiceClass(BaseSubServiceClass):
             for db in range(max_dbs):
                 try:
                     client.execute_command(f"SELECT {db}")  # Switch to database
-                    keys = await client.keys("*")  # Get all keys in the DB
-                    for key in keys[:10]:
+                    keys = client.keys("*")  # Get all keys in the DB
+                    for key in keys[:10]: # type: ignore
                         print(f"  - {key}")
                 except redis.exceptions.ResponseError:
                     break  # If the database does not exist, break the loop
