@@ -123,4 +123,5 @@ class RedisServiceClass(BaseServiceClass):
     def __init__(self) -> None:
         super().__init__("redis")
         self.register_subservice(RedisUnauthSubServiceClass())
+        self.register_subservice(RedisVersionSubServiceClass())
         self.register_subservice(RedisPostSubServiceClass())
