@@ -1,19 +1,20 @@
-from src.utilities.utilities import get_default_context_execution2, get_hosts_from_file2
+from src.utilities.utilities import error_handler, get_default_context_execution2, get_hosts_from_file2
 import nmap
 import argparse
 
+@error_handler(["host"])
 def identify_service_single(host,**kwargs):
     nm = kwargs["nm"]
-    try:
-        ip = host.ip
-        port = host.port
-        nm.scan(ip, port, "-sV", timeout=3600)
-        if ip in nm.all_hosts():
-            nmap_host = nm[ip]
-            print(f"{host} => {nmap_host['tcp'][int(port)]['name']}")
-            return f"{host} => {nmap_host['tcp'][int(port)]['name']}"
 
-    except: pass
+    ip = host.ip
+    port = host.port
+    nm.scan(ip, port, "-sV", timeout=3600)
+    if ip in nm.all_hosts():
+        nmap_host = nm[ip]
+        srv = nmap_host['tcp'][int(port)]['name']
+        if srv:
+            print(f"{host} => {srv}")
+            return f"{host} => {srv}"
 
 def identify_service(hosts, output, threads, verbose = False):
     hosts = get_hosts_from_file2(hosts)
@@ -25,7 +26,7 @@ def identify_service(hosts, output, threads, verbose = False):
 
     for item in results:
         left, right = item.split(" => ")  # Split string into two parts
-        result_dict.setdefault(right, set()).add(left)  # Add to dictionary
+        result_dict.setdefault(right, []).append(left)  # Add to dictionary
 
     with open(output, "w") as f:
         for a, b in result_dict.items():
