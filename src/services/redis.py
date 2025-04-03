@@ -1,35 +1,46 @@
 import redis
+import redis.exceptions
 from src.utilities.utilities import Version_Vuln_Host_Data, get_default_context_execution2, error_handler
 from src.services.consts import DEFAULT_ERRORS, DEFAULT_THREAD, DEFAULT_TIMEOUT, DEFAULT_VERBOSE
 from src.services.serviceclass import BaseServiceClass
 from src.services.servicesubclass import BaseSubServiceClass
-"""
-def list_redis_databases(host, port, password=None):
-    try:
-        # Connect to the Redis server
-        client = redis.StrictRedis(host=host, port=port, password=password, decode_responses=True)
 
-        # Check if the connection is successful
-        if client.ping():
-            print("Connected to Redis server")
+class RedisPostSubServiceClass(BaseSubServiceClass):
+    def __init__(self) -> None:
+        super().__init__("post", "Post-exploit stuff")
 
-        # List all databases by iterating through database indexes
-        databases = []
-        for db_index in range(16):  # Default Redis supports 16 databases (0-15)
-            try:
-                client.execute_command('SELECT', db_index)
-                if client.dbsize() > 0:  # Check if the database has keys
-                    databases.append(db_index)
-            except redis.exceptions.ResponseError:
-                break  # Stop if the database index is out of range
+    @error_handler([])
+    async def nv(self, hosts, **kwargs):
+        threads = kwargs.get("threads", DEFAULT_THREAD)
+        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
+        errors = kwargs.get("errors", DEFAULT_ERRORS)
+        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
 
-        print(f"Databases with keys: {databases}")
-        return databases
+        for host in hosts:
+            client = redis.Redis(host=host.ip, port=int(host.port), password=None, decode_responses=True)
 
-    except redis.ConnectionError as e:
-        print(f"Failed to connect to Redis server: {e}")
-        return []
-"""
+            max_dbs = 16  # Default max DBs (configurable in Redis)
+            databases = []
+            
+            for db in range(max_dbs):
+                try:
+                    client.execute_command(f"SELECT {db}")  # Switch to database
+                    keys = await client.keys("*")  # Get all keys in the DB
+                    for key in keys[:10]:
+                        print(f"  - {key}")
+                except redis.exceptions.ResponseError:
+                    break  # If the database does not exist, break the loop
+
+
+
+    @error_handler(["host"])
+    def single(self, host, **kwargs):
+        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
+        errors = kwargs.get("errors", DEFAULT_ERRORS)
+        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
+        ip = host.ip
+        port = host.port
+
 class RedisUnauthSubServiceClass(BaseSubServiceClass):
     def __init__(self) -> None:
         super().__init__("unauth", "Checks unauthenticated Redis instances")
@@ -65,3 +76,4 @@ class RedisServiceClass(BaseServiceClass):
     def __init__(self) -> None:
         super().__init__("redis")
         self.register_subservice(RedisUnauthSubServiceClass())
+        self.register_subservice(RedisPostSubServiceClass())
