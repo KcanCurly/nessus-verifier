@@ -10,7 +10,7 @@ class RedisPostSubServiceClass(BaseSubServiceClass):
         super().__init__("post", "Post-exploit stuff")
 
     @error_handler([])
-    async def nv(self, hosts, **kwargs):
+    def nv(self, hosts, **kwargs):
         threads = kwargs.get("threads", DEFAULT_THREAD)
         timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
         errors = kwargs.get("errors", DEFAULT_ERRORS)
