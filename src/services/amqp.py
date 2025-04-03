@@ -7,7 +7,7 @@ from src.services.servicesubclass import BaseSubServiceClass
 import pika
 import nmap
 
-class AMQPVersion2SubServiceClass(BaseSubServiceClass):
+class AMQPVersionSubServiceClass(BaseSubServiceClass):
     def __init__(self) -> None:
         super().__init__("version", "Checks version")
 
@@ -76,67 +76,10 @@ class AMQPVersion2SubServiceClass(BaseSubServiceClass):
                 version_number = tcp_info['version']
                 z = product_name + " " + version_number
                 return Version_Vuln_Host_Data(host, z)
-                print(tcp_info)
-                if 'script' in tcp_info and 'amqp' in tcp_info['script']:
-                    amqp_info = tcp_info['script']['amqp-info']
-                    print(amqp_info)
-                    # Parse the output to get product name and version
-                    product_name = None
-                    version_number = None
 
-                    # Look for product and version in the output
-                    for line in amqp_info.splitlines():
-                        if "product:" in line:
-                            product_name = line.split(":")[1].strip()
-                        if "version:" in line:
-                            version_number = line.split(":")[1].strip()
-
-                    if product_name and version_number:
-                        z = product_name + " " + version_number
-                        return Version_Vuln_Host_Data(host, z)
-
-
-
-
-
-class AMQPVersionSubServiceClass(BaseSubServiceClass):
-    def __init__(self) -> None:
-        super().__init__("version", "Checks version")
-
-    @error_handler([])
-    def nv(self, hosts, **kwargs) -> None:
-        threads = kwargs.get("threads", DEFAULT_THREAD)
-        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
-        errors = kwargs.get("errors", DEFAULT_ERRORS)
-        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
-        vuln = {}
-
-        for host in hosts:
-            try:
-                connection = pika.BlockingConnection(pika.ConnectionParameters(host=host.ip, port=host.port, socket_timeout=timeout))
-                channel = connection.channel()
-                server_properties = channel.connection.server_properties
-                if 'version' in server_properties:
-                    v = server_properties['version']
-                    if v not in vuln:
-                        vuln[v] = set()
-                    vuln[v].add(host.ip)
-
-                connection.close()
-            except Exception as e:
-                if verbose:
-                    print(f"Error connecting to {host.ip}: {e}")
-
-        if vuln:
-            print("Detected AMQP versions:")
-            for version, hosts in vuln.items():
-                print(f"Version {version}:")
-                for v in hosts:
-                    print(f"    {v}")
-                
 
 
 class AMQPServiceClass(BaseServiceClass):
     def __init__(self) -> None:
         super().__init__("amqp")
-        self.register_subservice(AMQPVersion2SubServiceClass())
+        self.register_subservice(AMQPVersionSubServiceClass())
