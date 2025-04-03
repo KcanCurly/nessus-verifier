@@ -63,11 +63,14 @@ class AMQPVersion2SubServiceClass(BaseSubServiceClass):
         port = host.port
 
         nm.scan(ip, port, arguments=f'--script amqp-info')
-        
+        print(1)
         if ip in nm.all_hosts():
+            print(2)
             nmap_host = nm[ip]
             if 'tcp' in nmap_host and int(port) in nmap_host['tcp']:
+                print(3)
                 tcp_info = nmap_host['tcp'][int(port)]
+                print(tcp_info)
                 if 'script' in tcp_info and 'amqp' in tcp_info['script']:
                     amqp_info = tcp_info['script']['amqp-info']
                     print(amqp_info)
