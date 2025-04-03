@@ -69,7 +69,7 @@ class AMQPVersion2SubServiceClass(BaseSubServiceClass):
             if 'tcp' in nmap_host and int(port) in nmap_host['tcp']:
                 tcp_info = nmap_host['tcp'][int(port)]
                 if 'script' in tcp_info and 'amqp' in tcp_info['script']:
-                    amqp_info = tcp_info['script']['amqp']
+                    amqp_info = tcp_info['script']['amqp-info']
 
                     # Parse the output to get product name and version
                     product_name = None
