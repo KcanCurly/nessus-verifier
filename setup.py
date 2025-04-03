@@ -30,6 +30,7 @@ setup(
         "pymysql",
         "packaging",
         "pika",
+        "redis[hiredis]",
     ],
     classifiers=[
         "Programming Language :: Python :: 3",
