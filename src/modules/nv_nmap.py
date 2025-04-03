@@ -4,7 +4,6 @@ import argparse
 
 def identify_service_single(host,**kwargs):
     nm = kwargs["nm"]
-    output = kwargs["output"]
     try:
         ip = host.ip
         port = host.port
@@ -20,7 +19,7 @@ def identify_service(hosts, output, threads, verbose = False):
     hosts = get_hosts_from_file2(hosts)
     nm = nmap.PortScanner()
     
-    results: list[str] = get_default_context_execution2("nmap", threads, hosts, identify_service_single, nm=nm, output=output, verbose=verbose)
+    results: list[str] = get_default_context_execution2("nmap", threads, hosts, identify_service_single, nm=nm, verbose=verbose)
 
     result_dict = {}
 
@@ -28,10 +27,14 @@ def identify_service(hosts, output, threads, verbose = False):
         left, right = item.split(" => ")  # Split string into two parts
         result_dict.setdefault(right, set()).add(left)  # Add to dictionary
 
-    for a, b in result_dict.items():
-        print(a)
-        for c in b:
-            print(f"  {c}")
+    with open(output, "w") as f:
+        for a, b in result_dict.items():
+            print(a, file=f)
+            print("*" * 20, file=f)
+            for c in b:
+                print(f"  {c}")
+            print(file=f)
+            print(file=f)
         
         
 def main():
