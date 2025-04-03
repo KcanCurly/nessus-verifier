@@ -24,7 +24,7 @@ class CleartextSolverClass(BaseSolverClass):
             hosts = self.subhosts.get("AMQP Cleartext Authentication", [])
             if hosts: 
                 self.solve_amqp(hosts, args.threads, args.timeout, args.errors, args.verbose)
-            hosts: list[Host] = self.subhosts.get("FTP Supports Cleartext Authentication", [])
+            hosts = self.subhosts.get("FTP Supports Cleartext Authentication", [])
             if hosts: 
                 self.solve_ftp(hosts, args.threads, args.timeout, args.errors, args.verbose)
 
