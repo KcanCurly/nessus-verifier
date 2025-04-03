@@ -33,7 +33,7 @@ def identify_service(hosts, output, threads, verbose = False):
             print(a, file=f)
             print("*" * 20, file=f)
             for c in b:
-                print(f"  {c}", file=f)
+                print(c, file=f)
             print(file=f)
             print(file=f)
         
