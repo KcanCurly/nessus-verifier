@@ -155,6 +155,7 @@ def connect_to_server(ip, username, password, database, port, domain, login_time
     try:
         conn = pymssql.connect(ip, username, password, database, port=port, login_timeout=login_timeout)
     except Exception as e:
+        print(e)
         try:
             conn = pymssql.connect(
                 host=ip,
