@@ -1,6 +1,6 @@
 from ftplib import FTP
 from ftplib import error_perm
-from src.utilities.utilities import get_default_context_execution, Host
+from src.utilities.utilities import error_handler, get_default_context_execution, Host
 from src.services.telnet import TelnetUsageSubServiceClass
 import nmap
 import requests
@@ -29,27 +29,25 @@ class CleartextSolverClass(BaseSolverClass):
                 self.solve_ftp(hosts, args.threads, args.timeout, args.errors, args.verbose)
 
 
-   
+    @error_handler(["host"])
     def solver_amqp_single(self, host, timeout, errors, verbose):
-        try:
-            nm = nmap.PortScanner()
+        nm = nmap.PortScanner()
 
-            nm.scan(host.ip, host.port, arguments=f'--script amqp-info')
-            
-            if host.ip in nm.all_hosts():
-                nmap_host = nm[host.ip]
-                if 'tcp' in nmap_host and int(host.port) in nmap_host['tcp']:
-                    tcp_info = nmap_host['tcp'][int(host.port)]
-                    if 'script' in tcp_info and 'amqp-info' in tcp_info['script']:
-                        amqpinfo = tcp_info['script']['amqp-info']
-                        for line in amqpinfo.splitlines():
-                            if "mechanisms:" in line:
-                                mech = line.split(":")[1].strip()
-                                return (host, mech)
+        nm.scan(host.ip, host.port, arguments=f'--script amqp-info')
+        
+        if host.ip in nm.all_hosts():
+            nmap_host = nm[host.ip]
+            if 'tcp' in nmap_host and int(host.port) in nmap_host['tcp']:
+                tcp_info = nmap_host['tcp'][int(host.port)]
+                if 'script' in tcp_info and 'amqp-info' in tcp_info['script']:
+                    amqpinfo = tcp_info['script']['amqp-info']
+                    for line in amqpinfo.splitlines():
+                        if "mechanisms:" in line:
+                            mech = line.split(":")[1].strip()
+                            return (host, mech)
                                         
-        except Exception as e:
-            self._print_exception(f"Error for {host}: {e}")
     
+    @error_handler([])
     def solve_amqp(self, hosts, threads, timeout, errors, verbose):
         results: list[tuple[Host, str]] = get_default_context_execution("Cleartext Protocol Detected - AMQP Cleartext Authentication", threads, hosts, (self.solver_amqp_single, timeout, errors, verbose))
     
@@ -58,16 +56,15 @@ class CleartextSolverClass(BaseSolverClass):
             for r in results:
                 print(f"{r[0]} - {r[1]}")
 
+    @error_handler(["host"])
     def solve_basic_http_single(self, host, timeout, errors, verbose):
-        try:
-            response = requests.get(f"http://{host}", timeout=timeout)
-            if response.status_code == 401 and "WWW-Authenticate" in response.headers:
-                return host
-
-        except Exception as e:
-            self._print_exception(f"Error for {host}: {e}")
+        response = requests.get(f"http://{host}", timeout=timeout)
+        if response.status_code == 401 and "WWW-Authenticate" in response.headers:
+            return host
 
 
+
+    @error_handler([])
     def solve_basic_http(self, hosts, threads, timeout, errors, verbose):
         results = get_default_context_execution("Cleartext Protocol Detected - Basic Authentication Without HTTPS", threads, hosts, (self.solve_basic_http_single, timeout, errors, verbose))
         if results:
@@ -75,22 +72,21 @@ class CleartextSolverClass(BaseSolverClass):
             for value in results:
                 print(f"{value}")
 
+    @error_handler(["host"])
     def solve_ftp_single(self, host, timeout, errors, verbose):
+        ftp = FTP()
+        ftp.connect(host.ip, int(host.port), timeout=timeout)
         try:
-            ftp = FTP()
-            ftp.connect(host.ip, int(host.port), timeout=timeout)
-            try:
-                l = ftp.login()
-                if "230" in l:
-                    return host
+            l = ftp.login()
+            if "230" in l:
+                return host
 
-            except error_perm as e:
-                if "530" in str(e):
-                    return host
-            except Exception: pass
-        except Exception as e:
-            self._print_exception(f"Error for {host}: {e}")
+        except error_perm as e:
+            if "530" in str(e):
+                return host
+        except Exception: pass
 
+    @error_handler([])
     def solve_ftp(self, hosts, threads, timeout, errors, verbose):
         results = get_default_context_execution("Cleartext Protocol Detected - Basic Authentication Without HTTPS", threads, hosts, (self.solve_ftp_single, timeout, errors, verbose))
         

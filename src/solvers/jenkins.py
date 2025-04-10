@@ -1,4 +1,4 @@
-from src.utilities.utilities import Host, Version_Vuln_Host_Data, get_cves, get_url_response, get_default_context_execution
+from src.utilities.utilities import Host, Version_Vuln_Host_Data, error_handler, get_cves, get_url_response, get_default_context_execution
 import re
 from packaging.version import parse
 from src.solvers.solverclass import BaseSolverClass
@@ -14,19 +14,18 @@ class JenkinsSolverClass(BaseSolverClass):
         if self.is_nv:
             self.solve_version(self.hosts, args.threads, args.timeout, args.timeout, args.verbose)
 
+    @error_handler(["host"])
     def solve_version_single(self, host: Host, timeout: int, errors: bool, verbose: bool):
         r = r"Jenkins-Version: (\S+)"
-        try:
-            resp = get_url_response(host, timeout=timeout)
-            if not resp:
-                return
-            m = re.search(r, resp.text)
-            if m: 
-                return  Version_Vuln_Host_Data(host, m.group(1))
+        resp = get_url_response(host, timeout=timeout)
+        if not resp:
+            return
+        m = re.search(r, resp.text)
+        if m: 
+            return  Version_Vuln_Host_Data(host, m.group(1))
 
-        except Exception as e:
-            self._print_exception(e)
 
+    @error_handler([])
     def solve_version(self, hosts: list[Host], threads: int, timeout: int, errors, verbose):
         versions: dict[str, set[Host]] = {}
         results: list[Version_Vuln_Host_Data] = get_default_context_execution("Jenkins Version", threads, hosts, (self.solve_version_single, timeout, errors, verbose))

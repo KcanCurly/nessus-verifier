@@ -8,6 +8,10 @@ class BaseSolverClass():
         self.subhosts: dict[str, list[Host]] = {}
         self.hosts: list[Host] = []
         self.is_nv = True
+        self.spaces_before_hosts = 0
+
+    def process_config(self, config: str) -> None:
+        pass
         
     def get_default_config(self) -> str:
         return f"[{self.id}]"
@@ -20,6 +24,7 @@ class BaseSolverClass():
         
     def solve(self, args):
         self.args = args
+        if args.is_all: self.process_config(args.config)
         self._get_hosts(args)
          
     def _get_subhosts(self, name):

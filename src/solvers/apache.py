@@ -1,4 +1,4 @@
-from src.utilities.utilities import Version_Vuln_Host_Data, get_header_from_url, add_default_parser_arguments, get_default_context_execution, add_default_solver_parser_arguments, get_cves
+from src.utilities.utilities import Version_Vuln_Host_Data, error_handler, get_header_from_url, add_default_parser_arguments, get_default_context_execution, add_default_solver_parser_arguments, get_cves
 import re
 from packaging.version import parse
 from src.solvers.solverclass import BaseSolverClass
@@ -37,17 +37,14 @@ class ApacheSolverClass(BaseSolverClass):
                 for v in value:
                     print(f"    {v}")
                     
+    @error_handler(["host"])
     def solve_version_single(self, host, timeout, errors, verbose):
         version_regex = r"Apache/(.*)"
-        try:
-            header = get_header_from_url(host, "Server", timeout, errors, verbose)
-            if header:
-                m = re.search(version_regex, header)
-                if m:
-                    m = m.group(1)
-                    if " " in m:
-                        m = m.split()[0]
-                    return Version_Vuln_Host_Data(host, m)
-
-        except Exception as e:
-            self._print_exception(f"Error for {host}: {e}")
+        header = get_header_from_url(host, "Server", timeout, errors, verbose)
+        if header:
+            m = re.search(version_regex, header)
+            if m:
+                m = m.group(1)
+                if " " in m:
+                    m = m.split()[0]
+                return Version_Vuln_Host_Data(host, m)

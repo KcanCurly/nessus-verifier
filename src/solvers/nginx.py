@@ -1,4 +1,4 @@
-from src.utilities.utilities import Version_Vuln_Host_Data, get_cves, get_header_from_url, get_default_context_execution
+from src.utilities.utilities import Version_Vuln_Host_Data, error_handler, get_cves, get_header_from_url, get_default_context_execution
 import re
 from packaging.version import parse
 from src.solvers.solverclass import BaseSolverClass
@@ -14,21 +14,20 @@ class NginxSolverClass(BaseSolverClass):
         if self.is_nv:
             self.solve_version(self.hosts, args.threads, args.timeout, args.errors, args.verbose)
 
+    @error_handler(["host"])
     def solve_version_single(self, host, timeout, errors, verbose):
         version_regex = r"nginx/(.*)"
-        try:
-            header = get_header_from_url(str(host), "Server", timeout, errors, verbose)
-            if header:
-                m = re.search(version_regex, header)
-                if m:
-                    m = m.group(1)
-                    if " " in m:
-                        m = m.split()[0]
-                    return Version_Vuln_Host_Data(host, m)
+        header = get_header_from_url(str(host), "Server", timeout, errors, verbose)
+        if header:
+            m = re.search(version_regex, header)
+            if m:
+                m = m.group(1)
+                if " " in m:
+                    m = m.split()[0]
+                return Version_Vuln_Host_Data(host, m)
 
-        except Exception as e:
-            self._print_exception(f"Error for {host}: {e}")
-        
+
+    @error_handler([])
     def solve_version(self, hosts, threads, timeout, errors, verbose):
         versions = {}
         results: list[Version_Vuln_Host_Data] = get_default_context_execution("Nginx Version", threads, hosts, (self.solve_version_single, timeout, errors, verbose))
@@ -37,7 +36,7 @@ class NginxSolverClass(BaseSolverClass):
                 versions[r.version] = set()
             versions[r.version].add(r.host)
 
-        if len(versions) > 0:
+        if versions:
             versions = dict(
                 sorted(versions.items(), key=lambda x: parse(x[0]), reverse=True)
             )

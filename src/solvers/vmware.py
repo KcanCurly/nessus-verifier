@@ -1,5 +1,5 @@
 from src.solvers.solverclass import BaseSolverClass
-from src.utilities.utilities import get_cves
+from src.utilities.utilities import error_handler, get_cves
 import re
 import subprocess
 
@@ -7,6 +7,7 @@ class VmwareSolverClass(BaseSolverClass):
     def __init__(self) -> None:
         super().__init__("VMWare Product Versions", 13)
         
+    @error_handler([])
     def solve(self, args):
         super().solve(args)
         if not self.hosts: 
@@ -29,8 +30,7 @@ class VmwareSolverClass(BaseSolverClass):
             self._print_exception(e)
 
         
-        if len(versions) > 0:
-            
+        if versions:
             print("Detected Vmware Versions:")
             for key, value in versions.items():
                 cves = []
@@ -50,5 +50,5 @@ class VmwareSolverClass(BaseSolverClass):
                 else: 
                     print(f"{key}:")
                 for v in value:
-                    print(f"    {v}")
+                    print(f"{" " * args.space}{v}")
 

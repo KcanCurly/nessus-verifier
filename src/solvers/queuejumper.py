@@ -1,11 +1,13 @@
 import subprocess
 import re
 from src.solvers.solverclass import BaseSolverClass
+from src.utilities.utilities import error_handler
 
 class QueueJumperSolverClass(BaseSolverClass):
     def __init__(self) -> None:
         super().__init__("Queuejumper", 28)
 
+    @error_handler([])
     def solve(self, args):
         self._get_hosts(args) # type: ignore
         if not self.hosts: 
@@ -28,7 +30,7 @@ class QueueJumperSolverClass(BaseSolverClass):
         except Exception as e: 
             self._print_exception(e)
         
-        if len(vuln) > 0:
+        if vuln:
             print("Vulnerable to CVE-2023-21554 (QueueJumper):")
             for v in vuln:
                 print(f"    {v}")

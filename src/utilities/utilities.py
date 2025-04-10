@@ -289,10 +289,12 @@ def print_service_error(e_level, message):
 def add_default_parser_arguments(parser, add_target_argument = True):
     if add_target_argument: 
         parser.add_argument("target", type=str, help="File name or targets seperated by space")
-    parser.add_argument("--threads", type=int, default=10, help="Amount of threads (Default = 10).")
-    parser.add_argument("--timeout", type=int, default=5, help="Amount of timeout (Default = 5).")
-    parser.add_argument("-e", "--errors", type=int, choices=[1, 2], default = 0, help="1 - Show Errors\n2 - Show errors and prints stacktrace")
-    parser.add_argument("-v", "--verbose", action="store_true", help="Show Verbose")
+    parser.add_argument("-o", "--output", type=str, required=False, help="Output filename.")
+    parser.add_argument("-s", "--space", type=str, default=0, help="Amount of spaces to prepend when printing affected hosts. (Default = 0)")    
+    parser.add_argument("-th", "--threads", type=int, default=10, help="Amount of threads (Default = 10).")
+    parser.add_argument("-ti", "--timeout", type=int, default=5, help="Amount of timeout (Default = 5).")
+    parser.add_argument("-e", "--errors", type=int, choices=[1, 2], default = 0, help="1 - Print Errors\n2 - Print errors and prints stacktrace")
+    parser.add_argument("-v", "--verbose", action="store_true", help="Print Verbose")
 
 def add_default_solver_parser_arguments(parser):
     group = parser.add_mutually_exclusive_group(required=True)

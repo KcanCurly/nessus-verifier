@@ -1,4 +1,4 @@
-from src.utilities.utilities import Version_Vuln_Host_Data, get_url_response, get_default_context_execution, get_cves
+from src.utilities.utilities import Version_Vuln_Host_Data, error_handler, get_url_response, get_default_context_execution, get_cves
 from src.solvers.solverclass import BaseSolverClass
 import re
 from packaging.version import parse
@@ -7,6 +7,7 @@ class TomcatSolverClass(BaseSolverClass):
     def __init__(self) -> None:
         super().__init__("Apache Tomcat Version", 10)
         
+    @error_handler([])
     def solve(self, args):
         super().solve(args)
         if not self.hosts: 
@@ -43,7 +44,8 @@ class TomcatSolverClass(BaseSolverClass):
                     print("\nPOC:")
                     poc_printed = True
                 print("CVE-2025-24813 => https://github.com/absholi7ly/POC-CVE-2025-24813")
-                
+    
+    @error_handler(["host"])
     def solve_version_single(self, host, timeout, errors, verbose):
         r1 = r"Apache Tomcat\/(\d+\.\d+\.\d+)"
         try:

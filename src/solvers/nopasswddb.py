@@ -1,4 +1,4 @@
-from src.utilities.utilities import Host, get_default_context_execution, get_url_response
+from src.utilities.utilities import Host, error_handler, get_default_context_execution, get_url_response
 from src.services import mongodb, postgresql
 from src.solvers.solverclass import BaseSolverClass
 
@@ -15,7 +15,7 @@ class NoPasswordDBSolverClass(BaseSolverClass):
             postgresql.PSQLDefaultSubServiceClass().nv(self._get_subhosts("PostgreSQL Default Unpassworded Account"), threads=args.threads, timeout=args.timeout, errors=args.errors, verbose=args.verbose)
             self.solve_elastic_version(self._get_subhosts("Elasticsearch Unrestricted Access Information Disclosure"), args.threads, args.timeout, args.errors, args.verbose)
             
-
+    @error_handler(["host"])
     def solve_elastic_version_single(self, host, timeout, errors, verbose):
         try:
             resp = get_url_response(f"{str(host)}/*", timeout=timeout)
@@ -26,6 +26,7 @@ class NoPasswordDBSolverClass(BaseSolverClass):
         except Exception as e:
             self._print_exception(f"Error for {host}: {e}")
         
+    @error_handler([])
     def solve_elastic_version(self, hosts, threads, timeout, errors, verbose):
         results: list[Host] = get_default_context_execution("Elasticsearch Unrestricted Access Information Disclosure", threads, hosts, (self.solve_elastic_version_single, timeout, errors, verbose))
 

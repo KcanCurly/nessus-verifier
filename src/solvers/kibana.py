@@ -1,5 +1,5 @@
 import re
-from src.utilities.utilities import Host, Version_Vuln_Host_Data, get_url_response, get_default_context_execution
+from src.utilities.utilities import Host, Version_Vuln_Host_Data, error_handler, get_url_response, get_default_context_execution
 from src.solvers.solverclass import BaseSolverClass
 
 class KibanaSolverClass(BaseSolverClass):
@@ -13,19 +13,17 @@ class KibanaSolverClass(BaseSolverClass):
         if self.is_nv:
             self.solve_version(self.hosts, args.threads, args.timeout, args.timeout, args.verbose)
 
-
+    @error_handler(["host"])
     def solve_version_single(self, host: Host, timeout: int, errors: bool, verbose: bool):
         version_regex = r'data="{&quot;version&quot;:&quot;(.*)&quot;,&quot;buildNumber'
-        try:
-            resp = get_url_response(str(host), timeout=timeout)
-            if not resp:
-                return
-            m = re.search(version_regex, resp.text)
-            if m:
-                return Version_Vuln_Host_Data(host, m.group(1))
-        except Exception as e:
-            self._print_exception(f"Error for {host}: {e}")
+        resp = get_url_response(str(host), timeout=timeout)
+        if not resp:
+            return
+        m = re.search(version_regex, resp.text)
+        if m:
+            return Version_Vuln_Host_Data(host, m.group(1))
 
+    @error_handler([])
     def solve_version(self, hosts: list[Host], threads: int, timeout: int, errors: bool, verbose: bool):
         versions: dict[str, set[Host]] = {}
         results: list[Version_Vuln_Host_Data] = get_default_context_execution("Kibana Version", threads, hosts, (self.solve_version_single, timeout, errors, verbose))

@@ -1,4 +1,4 @@
-from src.utilities.utilities import Version_Vuln_Host_Data, get_cves, get_header_from_url, get_default_context_execution
+from src.utilities.utilities import Version_Vuln_Host_Data, error_handler, get_cves, get_header_from_url, get_default_context_execution
 import re
 from src.solvers.solverclass import BaseSolverClass
 
@@ -15,7 +15,8 @@ class OpenSSLSolverClass(BaseSolverClass):
         else:
             self.solve_version(self.hosts, args.threads, args.timeout, args.errors, args.verbose)
 
-    def solve_version(self,hosts, threads, timeout, errors, verbose):
+    @error_handler([])
+    def solve_version(self, hosts, threads, timeout, errors, verbose):
         versions = {}
         results: list[Version_Vuln_Host_Data] = get_default_context_execution("OpenSSL Version", threads, hosts, (self.solve_version_single, timeout, errors, verbose))
         for r in results:
@@ -36,14 +37,11 @@ class OpenSSLSolverClass(BaseSolverClass):
                 for v in value:
                     print(f"    {v}")
                 
+    @error_handler(["host"])
     def solve_version_single(self, host, timeout, errors, verbose):
         version_regex = r"OpenSSL\/(\S+)"
-        try:
-            header = get_header_from_url(str(host), "Server", timeout, errors, verbose)
-            if header:
-                m = re.search(version_regex, header)
-                if m:
-                    return Version_Vuln_Host_Data(host, m.group(1))
-
-        except Exception as e:
-            self._print_exception(f"Error for {host}: {e}")
+        header = get_header_from_url(str(host), "Server", timeout, errors, verbose)
+        if header:
+            m = re.search(version_regex, header)
+            if m:
+                return Version_Vuln_Host_Data(host, m.group(1))

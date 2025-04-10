@@ -1,4 +1,4 @@
-from src.utilities.utilities import Version_Vuln_Host_Data, get_url_response, get_default_context_execution, add_default_solver_parser_arguments, get_cves
+from src.utilities.utilities import Version_Vuln_Host_Data, error_handler, get_url_response, get_default_context_execution, add_default_solver_parser_arguments, get_cves
 from packaging.version import parse
 from src.solvers.solverclass import BaseSolverClass
 
@@ -14,17 +14,16 @@ class ElasticsearchSolverClass(BaseSolverClass):
             self.solve_version(self.hosts, args.threads, args.timeout, args.errors, args.verbose)
 
 
-
+    @error_handler(["host"])
     def solve_version_single(self, host, timeout, errors, verbose):
-        try:
-            resp = get_url_response(host, timeout=timeout)
-            if not resp:
-                return
-            version = resp.json()['version']['number']
-            return Version_Vuln_Host_Data(host, version)
-        except Exception as e:
-            self._print_exception(f"Error for {host}: {e}")
-        
+        resp = get_url_response(host, timeout=timeout)
+        if not resp:
+            return
+        version = resp.json()['version']['number']
+        return Version_Vuln_Host_Data(host, version)
+
+    
+    @error_handler([])
     def solve_version(self, hosts, threads, timeout, errors, verbose):
         versions = {}
         results: list[Version_Vuln_Host_Data] = get_default_context_execution("Elastic Version", threads, hosts, (self.solve_version_single, timeout, errors, verbose))

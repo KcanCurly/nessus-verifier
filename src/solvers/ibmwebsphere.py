@@ -1,5 +1,5 @@
 import re
-from src.utilities.utilities import Host, Version_Vuln_Host_Data, get_url_response, get_default_context_execution
+from src.utilities.utilities import Host, Version_Vuln_Host_Data, error_handler, get_url_response, get_default_context_execution
 from src.solvers.solverclass import BaseSolverClass
 
 class IBMWebSphereSolverClass(BaseSolverClass):
@@ -13,28 +13,26 @@ class IBMWebSphereSolverClass(BaseSolverClass):
         if self.is_nv:
             self.solve_version(self.hosts, args.threads, args.timeout, args.errors, args.verbose)
 
-    
+    @error_handler(["host"])
     def solve_version_single(self, host, timeout, errors, verbose):
         r = r"<title>WebSphere Application Server V(.*)</title>"
         liberty = r"<title>WebSphere Liberty (.*)</title>"
-        try:
-            resp = get_url_response(host)
-            if resp:
-                m = re.search(r, resp.text)
+        resp = get_url_response(host)
+        if resp:
+            m = re.search(r, resp.text)
+            if m:
+                version = m.group(1)
+                version = f"WebSphere Application Server {version}"
+                return Version_Vuln_Host_Data(host, version)
+
+            else:
+                m = re.search(liberty, resp.text)
                 if m:
                     version = m.group(1)
-                    version = f"WebSphere Application Server {version}"
+                    version = f"WebSphere Liberty {version}"
                     return Version_Vuln_Host_Data(host, version)
 
-                else:
-                    m = re.search(liberty, resp.text)
-                    if m:
-                        version = m.group(1)
-                        version = f"WebSphere Liberty {version}"
-                        return Version_Vuln_Host_Data(host, version)
-        except Exception as e:
-            self._print_exception(f"Error for {host}: {e}")
-    
+    @error_handler([])
     def solve_version(self, hosts, threads: int, timeout: int, errors: bool, verbose: bool):
         versions: dict[str, set[Host]] = {}
         results: list[Version_Vuln_Host_Data] = get_default_context_execution("IBM WebSphere Version", threads, hosts, (self.solve_version_single, timeout, errors, verbose))

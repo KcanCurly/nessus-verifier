@@ -1,4 +1,4 @@
-from src.utilities.utilities import Version_Vuln_Host_Data, get_header_from_url, get_default_context_execution
+from src.utilities.utilities import Version_Vuln_Host_Data, error_handler, get_header_from_url, get_default_context_execution
 import re
 from packaging.version import parse
 from src.solvers.solverclass import BaseSolverClass
@@ -13,6 +13,7 @@ class PythonSolverClass(BaseSolverClass):
             return
         self.solve_version(self.hosts, args.threads, args.timeout, args.errors, args.verbose)
         
+    @error_handler([])
     def solve_version(self, hosts, threads, timeout, errors, verbose):
         versions = {}
         results: list[Version_Vuln_Host_Data] = get_default_context_execution("Python Version", threads, hosts, (self.solve_version_single, timeout, errors, verbose))
@@ -36,18 +37,15 @@ class PythonSolverClass(BaseSolverClass):
 
 
 
-
+    @error_handler(["host"])
     def solve_version_single(self, host, timeout, errors, verbose):
         r = r"Python/(.*)"
-        try:
-            header = get_header_from_url(str(host), "Server", timeout=timeout)
-            if header:
-                m = re.search(r, header)
-                if m:
-                    m = m.group(1)
-                    if " " in m:
-                        m = m.split()[0]
-                    return Version_Vuln_Host_Data(host, m)
-        except Exception as e: 
-            if errors: 
-                self._print_exception(f"Error for {host}: {e}")
+        header = get_header_from_url(str(host), "Server", timeout=timeout)
+        if header:
+            m = re.search(r, header)
+            if m:
+                m = m.group(1)
+                if " " in m:
+                    m = m.split()[0]
+                return Version_Vuln_Host_Data(host, m)
+

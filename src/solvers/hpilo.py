@@ -1,4 +1,4 @@
-from src.utilities.utilities import Host, Version_Vuln_Host_Data, get_url_response, get_default_context_execution
+from src.utilities.utilities import Host, Version_Vuln_Host_Data, error_handler, get_url_response, get_default_context_execution
 from src.solvers.solverclass import BaseSolverClass
 
 class HPiLOSolverClass(BaseSolverClass):
@@ -12,19 +12,17 @@ class HPiLOSolverClass(BaseSolverClass):
         if self.is_nv:
             self.solve_version(self.hosts, args.threads, args.timeout, args.errors, args.verbose)
 
-
+    @error_handler(["host"])
     def solve_version_single(self, host, timeout, errors, verbose):
-        try:
-            resp = get_url_response(f"{host}/json/login_session")     
-            if not resp:
-                return   
-            big_version = resp.json()["moniker"]["PRODGEN"]
-            version = resp.json()["version"]
-            return Version_Vuln_Host_Data(host, f"{big_version} - {version}")
-        except Exception as e:
-            self._print_exception(f"Error for {host}: {e}")
+        resp = get_url_response(f"{host}/json/login_session")     
+        if not resp:
+            return   
+        big_version = resp.json()["moniker"]["PRODGEN"]
+        version = resp.json()["version"]
+        return Version_Vuln_Host_Data(host, f"{big_version} - {version}")
 
-    def solve_version(self, hosts: list[Host], threads: int, timeout: int, errors, verbose: bool):
+    @error_handler([])
+    def solve_version(self, hosts, threads, timeout, errors, verbose):
         versions: dict[str, set[Host]] = {}
         results: list[Version_Vuln_Host_Data] = get_default_context_execution("HP iLO Version", threads, hosts, (self.solve_version_single, timeout, errors, verbose))
 

@@ -2,11 +2,13 @@ import subprocess
 import re
 import os
 from src.solvers.solverclass import BaseSolverClass
+from src.utilities.utilities import error_handler
 
 class TerminalSolverClass(BaseSolverClass):
     def __init__(self) -> None:
         super().__init__("Terminal Services Misconfigurations", 8)
 
+    @error_handler([])
     def solve(self, args):
         super().solve(args)
         if not self.hosts: 
@@ -32,7 +34,7 @@ class TerminalSolverClass(BaseSolverClass):
             except Exception as e: 
                 self._print_exception(f"Error for {host}: {e}")
                 
-        if len(vuln) > 0:
+        if vuln:
             print("Terminal Misconfigurations Detected:")
             for key, value in vuln.items():
                 print(f"{key}")
