@@ -268,6 +268,7 @@ class MSSQLPostSubServiceClass(BaseSubServiceClass):
                 
                 if database and table and column:
                     cursor.execute(f"USE {database}")
+                    print(column)
                     cursor.execute(f"SELECT {', '.join(column)} FROM {table} LIMIT {row_limit}")
                     rows = cursor.fetchall()
                     if rows:
