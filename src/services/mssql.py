@@ -153,7 +153,7 @@ version_mapping = {
 
 def connect_to_server(ip, username, password, database, port, domain, login_timeout = 10):
     try:
-        conn = pymssql.connect(ip, username, password, database, login_timeout=login_timeout)
+        conn = pymssql.connect(ip, username, password, database, port=port, login_timeout=login_timeout, tds_version="7.0")
     except Exception as e:
         print(e)
         try:
