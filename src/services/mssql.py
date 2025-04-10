@@ -225,10 +225,12 @@ class MSSQLPostSubServiceClass(BaseSubServiceClass):
 
                 # Connect to SQL Server
                 conn = connect_to_server(ip, username, password, "master", str(port), domain, login_timeout=10)
+                """
                 if not conn: 
                     if errors: print("Couldn't connect to", host)
                     continue
-                cursor = conn.cursor()
+                """
+                cursor = conn.cursor() # type: ignore
 
                 if sql:
                     cursor.execute(sql)
@@ -325,7 +327,7 @@ class MSSQLPostSubServiceClass(BaseSubServiceClass):
                 except Exception as e:
                     if errors: print(f"Database Error: {host}: {e}")
 
-                conn.close()
+                conn.close() # type: ignore
             except Exception as e: 
                 if errors: print(f"Error for {host}: {e}")
 
