@@ -175,7 +175,7 @@ class MSSQLPostSubServiceClass(BaseSubServiceClass):
         parser.add_argument("target", type=str, help="File name or targets seperated by space")
         parser.add_argument("username", type=str, help="Username")
         parser.add_argument("password", type=str, help="Password")
-        parser.add_argument("domain", type=str, help="Domain for windows authentication")
+        parser.add_argument("--domain", default="a", type=str, help="Domain for windows authentication")
         parser.add_argument("--databases", action="store_true", help="Print databases")
         parser.add_argument("--database", type=str, help="Select database")
         parser.add_argument("--tables", action="store_true", help="Print tables of selected database")
@@ -223,7 +223,7 @@ class MSSQLPostSubServiceClass(BaseSubServiceClass):
                 port = host.port
 
                 # Connect to SQL Server
-                conn = connect_to_server(ip, username, password, "master", port, domain, login_timeout=10)
+                conn = connect_to_server(ip, username, password, "master", str(port), domain, login_timeout=10)
                 if not conn: 
                     if errors: print("Couldn't connect to", host)
                     continue
