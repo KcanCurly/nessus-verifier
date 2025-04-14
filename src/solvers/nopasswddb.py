@@ -1,5 +1,5 @@
 from src.utilities.utilities import Host, error_handler, get_default_context_execution, get_url_response
-from src.services import mongodb, postgresql
+from src.services import mongodb, postgresql, redis
 from src.solvers.solverclass import BaseSolverClass
 
 class NoPasswordDBSolverClass(BaseSolverClass):
@@ -13,6 +13,7 @@ class NoPasswordDBSolverClass(BaseSolverClass):
         if self.is_nv:
             mongodb.MongoDBUnauthSubServiceClass().nv(self._get_subhosts("MongoDB Service Without Authentication Detection"), threads=args.threads, timeout=args.timeout, errors=args.errors, verbose=args.verbose)
             postgresql.PSQLDefaultSubServiceClass().nv(self._get_subhosts("PostgreSQL Default Unpassworded Account"), threads=args.threads, timeout=args.timeout, errors=args.errors, verbose=args.verbose)
+            redis.RedisUnauthSubServiceClass().nv(self._get_subhosts("Redis Server Unprotected by Password Authentication"), threads=args.threads, timeout=args.timeout, errors=args.errors, verbose=args.verbose)
             self.solve_elastic_version(self._get_subhosts("Elasticsearch Unrestricted Access Information Disclosure"), args.threads, args.timeout, args.errors, args.verbose)
             
     @error_handler(["host"])

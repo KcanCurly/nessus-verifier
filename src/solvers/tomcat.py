@@ -13,7 +13,7 @@ class TomcatSolverClass(BaseSolverClass):
         if not self.hosts: 
             return
         versions = {}
-        results: list[Version_Vuln_Host_Data] = get_default_context_execution(self.id, args.threads, self.hosts, (self.solve_version_single, args.timeout, args.errors, args.verbose))
+        results: list[Version_Vuln_Host_Data] = get_default_context_execution("Apache Tomcat", args.threads, self.hosts, (self.solve_version_single, args.timeout, args.errors, args.verbose))
         for r in results:
             if r.version not in versions:
                 versions[r.version] = set()

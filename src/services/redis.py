@@ -30,7 +30,7 @@ class RedisPostSubServiceClass(BaseSubServiceClass):
         ip = host.ip
         port = host.port
 
-        client = redis.Redis(host=host.ip, port=int(host.port), password=None, decode_responses=True)
+        client = redis.Redis(host=ip, port=int(port), password=None, decode_responses=True)
 
         max_dbs = 16  # Default max DBs (configurable in Redis)
         databases = []
@@ -105,6 +105,8 @@ class RedisUnauthSubServiceClass(BaseSubServiceClass):
             print(f"Unauthenticated Redis instances found:")
             for r in results:
                 print(r)
+            print("redis-cli -h x.x.x.x -p 6379 info")
+            
 
 
     @error_handler(["host"])
