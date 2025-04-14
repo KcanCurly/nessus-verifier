@@ -20,12 +20,11 @@ class BaseSolverClass():
         parser_task1 = subparser.add_parser(str(self.id), help=self.name)
         add_default_solver_parser_arguments(parser_task1)
         add_default_parser_arguments(parser_task1, False)
-        parser_task1.set_defaults(is_all=False)
         parser_task1.set_defaults(func=self.solve)
         
     def solve(self, args):
         self.args = args
-        if args.is_all: self.process_config(args.config)
+        if hasattr(args, "is_all") and args.is_all: self.process_config(args.config)
         self._get_hosts(args)
          
     def _get_subhosts(self, name):
