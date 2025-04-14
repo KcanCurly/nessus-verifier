@@ -14,7 +14,7 @@ class BaseSolverClass():
         pass
         
     def get_default_config(self) -> str:
-        return f"[{self.id}]"
+        return f"[{self.id}]\n"
         
     def helper_parse(self, subparser):
         parser_task1 = subparser.add_parser(str(self.id), help=self.name)
