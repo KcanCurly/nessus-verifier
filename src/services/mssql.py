@@ -153,18 +153,20 @@ version_mapping = {
 
 def connect_to_server(ip, username, password, database, port, domain, login_timeout = 10):
     try:
-        conn = pymssql.connect(ip, username, password, database, port=port, login_timeout=login_timeout, tds_version="7.0")
-    except Exception as e:
-        print(e)
+        conn = pymssql.connect(ip, username, password, database, port=port, login_timeout=login_timeout)
+    except Exception:
         try:
-            conn = pymssql.connect(
-                host=ip,
-                user=f'{domain}\\{username}',
-                password=password,
-                database=database
-            )
+            conn = pymssql.connect(ip, username, password, database, port=port, login_timeout=login_timeout, tds_version="7.0")
         except Exception:
-            return None
+            try:
+                conn = pymssql.connect(
+                    host=ip,
+                    user=f'{domain}\\{username}',
+                    password=password,
+                    database=database
+                )
+            except Exception:
+                return None
     return conn
 
 class MSSQLPostSubServiceClass(BaseSubServiceClass):
@@ -268,7 +270,6 @@ class MSSQLPostSubServiceClass(BaseSubServiceClass):
                 
                 if database and table and column:
                     cursor.execute(f"USE {database}")
-                    print(column)
                     cursor.execute(f"SELECT TOP {row_limit} {', '.join(column)} FROM {table}")
                     rows = cursor.fetchall()
                     if rows:

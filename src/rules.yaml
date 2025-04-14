@@ -28,7 +28,9 @@
 
 - name: TLS Misconfigurations
   id: 1
-  plugin-ids: [20007, 104743, 157288, 31705, 66848, 26928, 94437, 65821, 42873, 83738, 81606, 7282, 132675, 7222, 45411, 35291, 69551, 15901, 78479, 83875]
+  plugin-ids: [20007, 104743, 157288, 31705, 66848, 26928, 94437, 65821, 42873, 83738, 
+  81606, 7282, 132675, 7222, 45411, 35291, 69551, 15901, 78479, 83875, 91572]
+  # 91572 - OpenSSL AES-NI Padding Oracle MitM Information Disclosure
   # 20007 - SSL Version 2 and 3 Protocol Detection
   # 104743 - TLS Version 1.0 Protocol Detection
   # 157288 - TLS Version 1.1 Deprecated Protocol
@@ -162,7 +164,18 @@
   6644, 5794, 5795, 6334, 5790, 6331, 800623, 800618, 800604, 800598, 800625, 800595, 4621, 800610, 800630, 
   800596, 800600, 800630, 800599, 800621, 800619, 800627, 800784, 800626, 800611, 800597, 800608, 
   800622, 800602, 800617, 800609, 800612, 800783, 800620, 800605, 800606, 201848, 213078, 232528, 211503,
-  186366]
+  186366, 197847, 161181, 162502, 160891, 152183, 182811, 173256, 111068, 197827, 132413, 160894]
+  # 160894 - Apache Tomcat 9.0.13 < 9.0.63
+  # 132413 - Apache Tomcat 8.5.0 < 8.5.49 multiple vulnerabilities
+  # 197827 - Apache Tomcat 8.5.0 < 8.5.51 multiple vulnerabilities
+  # 111068 - Apache Tomcat 8.5.5 < 8.5.32 multiple vulnerabilities
+  # 173256 - Apache Tomcat 8.5.0 < 8.5.86
+  # 182811 - Apache Tomcat 8.5.0 < 8.5.94 multiple vulnerabilities
+  # 152183 - Apache Tomcat 8.5.0 < 8.5.68
+  # 160891 - Apache Tomcat 8.5.38 < 8.5.79
+  # 162502 - Apache Tomcat 8.5.50 < 8.5.82
+  # 161181 - Apache Tomcat 8.5.0 < 8.5.76
+  # 197847 - Apache Tomcat 8.5.0 < 8.5.66
   # 186366 - Apache Tomcat 10.1.0.M1 < 10.1.16
   # 211503 - Apache Tomcat 9.0.92 < 9.0.96 multiple vulnerabilities
   # 232528 - Apache Tomcat 9.0.0.M1 < 9.0.99
