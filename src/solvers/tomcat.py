@@ -34,7 +34,7 @@ class TomcatSolverClass(BaseSolverClass):
                         print(f"Apache Tomcat/{key} ({", ".join(cves)}):")
                     else: 
                         print(f"Apache Tomcat/{key}:")
-                    total_cves.append(*cves)
+                    total_cves.extend(cves)
                 for v in value:
                     print(f"    {v}")
                     
