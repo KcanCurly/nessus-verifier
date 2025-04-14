@@ -29,7 +29,8 @@
 - name: TLS Misconfigurations
   id: 1
   plugin-ids: [20007, 104743, 157288, 31705, 66848, 26928, 94437, 65821, 42873, 83738, 
-  81606, 7282, 132675, 7222, 45411, 35291, 69551, 15901, 78479, 83875, 91572]
+  81606, 7282, 132675, 7222, 45411, 35291, 69551, 15901, 78479, 83875, 91572, 60108]
+  # 60108 - SSL Certificate Chain Contains Weak RSA Keys
   # 91572 - OpenSSL AES-NI Padding Oracle MitM Information Disclosure
   # 20007 - SSL Version 2 and 3 Protocol Detection
   # 104743 - TLS Version 1.0 Protocol Detection
@@ -164,7 +165,17 @@
   6644, 5794, 5795, 6334, 5790, 6331, 800623, 800618, 800604, 800598, 800625, 800595, 4621, 800610, 800630, 
   800596, 800600, 800630, 800599, 800621, 800619, 800627, 800784, 800626, 800611, 800597, 800608, 
   800622, 800602, 800617, 800609, 800612, 800783, 800620, 800605, 800606, 201848, 213078, 232528, 211503,
-  186366, 197847, 161181, 162502, 160891, 152183, 182811, 173256, 111068, 197827, 132413, 160894]
+  186366, 197847, 161181, 162502, 160891, 152183, 182811, 173256, 111068, 197827, 132413, 160894, 197843,
+  197823, 197820, 148405, 147163, 121121, 106975, 103782, 88936]
+  # 88936 - Apache Tomcat 7.0.0 < 7.0.68 multiple vulnerabilities
+  # 103782 - Apache Tomcat 7.0.0 < 7.0.82
+  # 106975 - Apache Tomcat 7.0.0 < 7.0.85 multiple vulnerabilities
+  # 121121 - Apache Tomcat 7.0.28 < 7.0.88
+  # 147163 - Apache Tomcat 7.0.0 < 7.0.108 multiple vulnerabilities
+  # 148405 - Apache Tomcat 7.0.0 < 7.0.107
+  # 197820 - Apache Tomcat 7.0.0 < 7.0.77
+  # 197823 - Apache Tomcat 7.0.0 < 7.0.75
+  # 197843 - Apache Tomcat 7.0.0 < 7.0.100 multiple vulnerabilities
   # 160894 - Apache Tomcat 9.0.13 < 9.0.63
   # 132413 - Apache Tomcat 8.5.0 < 8.5.49 multiple vulnerabilities
   # 197827 - Apache Tomcat 8.5.0 < 8.5.51 multiple vulnerabilities
@@ -1334,7 +1345,8 @@
   64993, 10701, 66843, 66842, 72511, 73862, 80332, 55925, 32123, 59530, 81082, 76281, 81510, 
   78556, 81511, 82025, 63622, 85300, 11807, 67259, 74291, 74292, 79247, 82026, 82027, 35043, 
   81080, 81081, 52717, 63622, 10628, 72882, 73863, 76772, 80331, 77402, 77403, 55969, 85299, 
-  76282, 81512, 63621, 58039, 58039, 15708, 58987, 142591, 152853, 76791, 79246, 83517]
+  76282, 81512, 63621, 58039, 58039, 15708, 58987, 142591, 152853, 76791, 79246, 83517, 39480]
+  # 39480 - PHP < 5.2.10 Multiple Vulnerabilities
   # 83517 - PHP 5.4.x < 5.4.41 Multiple Vulnerabilities
   # 79246 - PHP 5.4.x < 5.4.35 'donote' DoS
   # 76791 - PHP 5.4.x < 5.4.31 CLI Server 'header' DoS
@@ -2121,7 +2133,73 @@
 
 - name: Jenkins
   id: 35
-  plugin-ids: [193426, 208098, 205143]
+  plugin-ids: [193426, 208098, 205143,65054 ,165766 ,156929 ,172394 ,83956 ,205143 ,189463 ,154894 ,125733 ,151193 ,208098 ,
+  227562 ,148418 ,83956 ,125734 ,181682 ,233779 ,145248 ,177395 ,178903 ,9659 ,119500 ,135178 ,89725 ,99984 ,138887 ,124168 ,72685 
+  ,89034 ,104634 ,129776 ,109551 ,111603 ,106951 ,154055 ,148975 ,65055 ,163258 ,164898 ,133527 ,117337 ,106559 ,139726 ,148401 
+  ,89925 ,192307 ,127053 ,193426 ,86898 ,9657 ,65056 ,66898 ,139734 ,183316 ,78859 ,118147 ,125706 ,157860 ,145533 ,130099 ,114168, 121330, 97609]
+  # 97609 - Jenkins < 2.44 / 2.32.x < 2.32.2, Jenkins Operations Center < 1.625.22.1 / 2.7.22.0.1 / 2.32.2.1, and Jenkins Enterprise < 1.651.22.1 / 2.7.22.0.1 / 2.32.2.1 Multiple Vulnerabilities
+  # 121330 - Jenkins < 2.150.2 LTS / 2.160 Multiple Vulnerabilities
   # 193426 - Jenkins LTS < 2.440.3 / Jenkins weekly < 2.452
   # 208098 - Jenkins LTS < 2.462.3 / Jenkins weekly < 2.479 Multiple Vulnerabilities
   # 205143 - Jenkins LTS < 2.452.4 / Jenkins weekly < 2.471 Multiple Vulnerabilities
+  # 65054 - Jenkins Detection
+  # 165766 - Jenkins weekly < 2.370 Multiple Vulnerabilities
+  # 156929 - Jenkins LTS < 2.319.2 / Jenkins weekly < 2.330 Multiple Vulnerabilities
+  # 172394 - Jenkins LTS < 2.375.4 / Jenkins weekly < 2.394 Multiple Vulnerabilities
+  # 83956 - Jenkins < 1.565.3 / 1.586 Multiple Vulnerabilities
+  # 205143 - Jenkins LTS < 2.452.4 / Jenkins weekly < 2.471 Multiple Vulnerabilities
+  # 189463 - Jenkins LTS < 2.426.3 / Jenkins weekly < 2.442 Multiple Vulnerabilities
+  # 154894 - Jenkins LTS < 2.303.3 / Jenkins weekly < 2.319 Multiple Vulnerabilities
+  # 125733 - Jenkins < 2.107 / < 2.89.4 (LTS) Server-Side Request Forgery (SSRF) Vulnerability
+  # 151193 - Jenkins LTS < 2.289.2 / Jenkins weekly < 2.300 Multiple Vulnerabilities
+  # 208098 - Jenkins LTS < 2.462.3 / Jenkins weekly < 2.479 Multiple Vulnerabilities
+  # 227562 - Jenkins LTS < 2.492.2 / Jenkins weekly < 2.500 Multiple Vulnerabilities
+  # 148418 - Jenkins LTS < 2.277.2 / Jenkins weekly < 2.287 Multiple Vulnerabilities
+  # 83956 - Jenkins < 1.565.3 / 1.586 Multiple Vulnerabilities
+  # 125734 - Jenkins < 2.121 / < 2.107.3 (LTS) Multiple Vulnerabilities
+  # 181682 - Jenkins LTS < 2.414.2 / Jenkins weekly < 2.424 Multiple Vulnerabilities
+  # 233779 - Jenkins LTS < 2.492.3 / Jenkins weekly < 2.504 Multiple Vulnerabilities
+  # 145248 - Jenkins < 2.263.2 LTS / 2.275 Multiple Vulnerabilities
+  # 177395 - Jenkins LTS < 2.401.1 / Jenkins weekly < 2.400 XSRF
+  # 178903 - Jenkins LTS < 2.401.3 / Jenkins weekly < 2.416 Multiple Vulnerabilities
+  # 9659 - Jenkins Detection
+  # 119500 - Jenkins < 2.138.4 LTS / 2.150.1 LTS / 2.154 Multiple Vulnerabilities
+  # 135178 - Jenkins < (2.204.6 / 2.222.1) LTS / 2.228 Multiple Vulnerabilities
+  # 89725 - Jenkins < 1.642.2 / 1.650 Java Object Deserialization RCE
+  # 99984 - Jenkins < 2.46.2 / 2.57 and Jenkins Enterprise < 1.625.24.1 / 1.651.24.1 / 2.7.24.0.1 / 2.46.2.1 Multiple Vulnerabilities
+  # 138887 - Jenkins ( < 2.235.2 LTS / < 2.245 Weekly) Multiple Stored XSS (Jenkins Security Advisory 2020-07-15)
+  # 124168 - Jenkins < 2.164.2 LTS / 2.172 Multiple Vulnerabilities
+  # 72685 - Jenkins < 1.551 / 1.532.2 and Jenkins Enterprise 1.509.x / 1.532.x < 1.509.5.1 / 1.532.2.2 Multiple Vulnerabilities
+  # 89034 - Jenkins < 1.642.2 / 1.650 Java Object Deserialization RCE
+  # 104634 - Jenkins < 2.73.3 / 2.89 Multiple Vulnerabilities
+  # 129776 - Jenkins < 2.176.3 LTS / 2.192 Multiple Vulnerabilities
+  # 109551 - Jenkins < 2.107.2 / 2.116 Multiple Vulnerabilities
+  # 111603 - Jenkins < 2.121.2 / 2.133 Multiple Vulnerabilities
+  # 106951 - Jenkins < 2.89.4 / 2.107 Multiple Vulnerabilities
+  # 154055 - Jenkins LTS < 2.303.2 / Jenkins weekly < 2.315 Multiple Vulnerabilities
+  # 148975 - Jenkins LTS < 2.277.3 / Jenkins weekly < 2.286
+  # 65055 - Jenkins < 1.498 / 1.480.2 and Jenkins Enterprise 1.447.x / 1.466.x < 1.447.6.1 / 1.466.12.1 Unspecified Master Cryptographic Key Information Disclosure
+  # 163258 - Jenkins LTS < 2.332.4 / Jenkins weekly < 2.356 Multiple Vulnerabilities
+  # 164898 - Jenkins LTS < 2.361.1 / Jenkins weekly < 2.363
+  # 133527 - Jenkins < 2.204.2 LTS / 2.219 Multiple Vulnerabilities
+  # 117337 - Jenkins < 2.121.3 / 2.138 Multiple Vulnerabilities
+  # 106559 - Jenkins < 2.89.2 / 2.95 Multiple Vulnerabilities
+  # 139726 - Jenkins < 2.235.4 LTS / 2.252 Multiple Cross-Site Scripting (XSS) Vulnerabilities
+  # 148401 - Jenkins weekly < 2.280 Privilege Escalation
+  # 89925 - Jenkins < 1.642.2 / 1.650 and Jenkins Enterprise < 1.609.16.1 / 1.625.16.1 / 1.642.2.1 Multiple Vulnerabilities
+  # 192307 - Jenkins LTS < 2.440.2 / Jenkins weekly < 2.444
+  # 127053 - Jenkins < 2.176.2 LTS / 2.186 Multiple Vulnerabilities
+  # 193426 - Jenkins LTS < 2.440.3 / Jenkins weekly < 2.452
+  # 86898 - Jenkins < 1.638 / 1.625.2 Java Object Deserialization RCE
+  # 9657 - Jenkins Version Detection
+  # 65056 - Jenkins < 1.502 / 1.480.3 and Jenkins Enterprise 1.447.x / 1.466.x / 1.480.x < 1.447.7.1 / 1.466.13.1 / 1.480.3.1 Multiple Vulnerabilities
+  # 66898 - Jenkins < 1.514 / 1.509.1 and Jenkins Enterprise 1.466.x / 1.480.x < 1.466.14.1 / 1.480.4.1 Multiple Vulnerabilities
+  # 139734 - Jenkins < 2.235.5 LTS / 2.243 Information Disclosure Vulnerability
+  # 183316 - Jenkins LTS < 2.414.3 / Jenkins weekly < 2.428 Multiple Vulnerabilities
+  # 78859 - Jenkins < 1.583 / 1.565.3 and Jenkins Enterprise 1.532.x / 1.554.x / 1.565.x < 1.532.10.1 / 1.554.10.1 / 1.565.3.1 Multiple Vulnerabilities
+  # 118147 - Jenkins < 2.138.2 (LTS) / 2.146 Multiple Vulnerabilities
+  # 125706 - Jenkins < 2.84 / < 2.73.2 (LTS) Multiple Vulnerabilities
+  # 157860 - Jenkins LTS < 2.319.3 / Jenkins weekly < 2.334 Multiple Vulnerabilities
+  # 145533 - Jenkins < 2.263.3 LTS / 2.276 TOCTOU
+  # 130099 - Jenkins < 2.176.4 LTS / 2.197 Multiple Vulnerabilities
+  # 114168 - Jenkins < 2.442 / < LTS 2.426.3 Arbitrary File Read

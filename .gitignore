@@ -16,3 +16,4 @@ urls.txt
 *.xlsx
 .vscode
 .mypy_cache
+src/modules/output.txt
