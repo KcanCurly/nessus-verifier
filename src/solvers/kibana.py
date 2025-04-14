@@ -1,6 +1,7 @@
 import re
-from src.utilities.utilities import Host, Version_Vuln_Host_Data, error_handler, get_url_response, get_default_context_execution
+from src.utilities.utilities import Host, Version_Vuln_Host_Data, error_handler, get_cves, get_url_response, get_default_context_execution
 from src.solvers.solverclass import BaseSolverClass
+from packaging.version import parse
 
 class KibanaSolverClass(BaseSolverClass):
     def __init__(self) -> None:
@@ -33,12 +34,22 @@ class KibanaSolverClass(BaseSolverClass):
                 versions[r.version] = set()
             versions[r.version].add(r.host)
 
-        if len(versions) > 0:
-            print("Detected Kibana versions:")
-            versions = dict(sorted(versions.items(), reverse=True))
+        if versions:
+            versions = dict(
+                sorted(versions.items(), key=lambda x: parse(x[0]), reverse=True)
+            )
+            total_cves = []
+            print("Detected Kibana Versions:")
             for key, value in versions.items():
-                print(f"{key}:")
+                if key.startswith("8"): 
+                    print(f"{key} (EOL):")
+                else:
+                    cves = get_cves(f"cpe:2.3:a:elastic:kibana:{key}")
+                    if cves: 
+                        print(f"{key} ({", ".join(cves)}):")
+                    else: 
+                        print(f"{key}:")
+                    total_cves.append(*cves)
                 for v in value:
                     print(f"    {v}")
-
 

@@ -19,7 +19,7 @@ class TomcatSolverClass(BaseSolverClass):
                 versions[r.version] = set()
             versions[r.version].add(r.host)
 
-        if len(versions) > 0:
+        if versions:
             versions = dict(
                 sorted(versions.items(), key=lambda x: parse(x[0]), reverse=True)
             )
