@@ -18,14 +18,12 @@ class NoPasswordDBSolverClass(BaseSolverClass):
             
     @error_handler(["host"])
     def solve_elastic_version_single(self, host, timeout, errors, verbose):
-        try:
-            resp = get_url_response(f"{str(host)}/*", timeout=timeout)
-            if not resp:
-                return
-            if resp.status_code in [200]:
-                return host
-        except Exception as e:
-            self._print_exception(f"Error for {host}: {e}")
+        resp = get_url_response(f"{str(host)}/*", timeout=timeout)
+        if not resp:
+            return
+        if resp.status_code in [200]:
+            return host
+
         
     @error_handler([])
     def solve_elastic_version(self, hosts, threads, timeout, errors, verbose):
