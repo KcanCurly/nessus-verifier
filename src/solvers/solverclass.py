@@ -31,7 +31,6 @@ class BaseSolverClass():
         return self.subhosts.get(name, [])
         
     def _get_hosts(self, args):
-        hosts: list[Host] = []
         if args.file:
             scan = find_scan(args.file, self.id)
             if not scan: 
