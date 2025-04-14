@@ -21,6 +21,8 @@ class LDAPSubServiceClass(BaseSubServiceClass):
             print("LDAP anonymous access were found:")
             for v in results:
                 print(f"    {v}")
+            print()
+            print("Check with: ldapsearch -x -H ldap://<host> -b '' '(objectClass=*)'")
 
     @error_handler(["host"])
     def single(self, host, **kwargs):
