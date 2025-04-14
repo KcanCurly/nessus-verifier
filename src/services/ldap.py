@@ -33,7 +33,7 @@ class LDAPSubServiceClass(BaseSubServiceClass):
         port = host.port
         command = ["ldapsearch", "-x", "-H", f"ldap://{host}", "-b", "", "(objectClass=*)"]
         result = subprocess.run(command, text=True, capture_output=True)
-        if "ldaperr" not in result.stdout.lower() and "can't contact" not in result.stdout.lower():
+        if "ldaperr" not in result.stdout.lower() and "can't contact" not in result.stderr.lower():
             return host
 
 class LDAPServiceClass(BaseServiceClass):
