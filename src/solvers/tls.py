@@ -43,7 +43,7 @@ class TLSSolverClass(BaseSolverClass):
         self.tls_nv(self.hosts, args.allow_white_ciphers, args.threads, args.timeout, args.errors, args.verbose)
 
     def get_default_config(self):
-        return f"[{self.id}]\nallow_white_ciphers = True\n"
+        return f"[{self.id}]\nallow_white_ciphers = true\n"
 
     def helper_parse(self, subparser):
         parser_task1 = subparser.add_parser(str(self.id), help="TLS Misconfigurations")
