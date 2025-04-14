@@ -18,11 +18,10 @@ class JenkinsSolverClass(BaseSolverClass):
     def solve_version_single(self, host: Host, timeout: int, errors: bool, verbose: bool):
         r = r"Jenkins-Version: (\S+)"
         resp = get_url_response(host, timeout=timeout)
-        if not resp:
-            return
-        m = re.search(r, resp.text)
+
+        m = re.search(r, resp.text) # type: ignore
         if m: 
-            return  Version_Vuln_Host_Data(host, m.group(1))
+            return Version_Vuln_Host_Data(host, m.group(1))
         else:
             z = get_header_from_url(host, "X-Jenkins", timeout=timeout, errors=errors, verbose=verbose)
             if z: return Version_Vuln_Host_Data(host, z)

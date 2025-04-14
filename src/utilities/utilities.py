@@ -221,7 +221,7 @@ def get_header_from_url(host, header, timeout = 5, errors = False, verbose = Fal
     resp = get_url_response(host, timeout=timeout)
     if not resp: 
         return None
-    return resp.headers.get(header, "None")
+    return resp.headers.get(header, None)
 
 def get_classic_single_progress():
     text_column1 = TextColumn("{task.fields[host]}", table_column=Column(ratio=1), style= "bold")
