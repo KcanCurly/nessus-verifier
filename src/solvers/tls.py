@@ -23,9 +23,13 @@ class TLSSolverClass(BaseSolverClass):
     def process_config(self, config: str) -> None:
         try:
             with open(config, "rb") as f:
+                print(f"Reading config file: {config}")
                 config = tomllib.load(f) # type: ignore
+                print(config)
                 if str(self.id) in config:
+                    print(f"Config found for {self.id}")
                     self.allow_white_ciphers = config[str(self.id)].get("allow_white_ciphers", False) # type: ignore
+                    print("Value of allow_white_ciphers:", self.allow_white_ciphers)
         except Exception as e:
             print(f"Error reading config file: {e}")
             return
