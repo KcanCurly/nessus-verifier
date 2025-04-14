@@ -219,7 +219,6 @@ def find_scan(file_path: str, target_id: int):
 
 def get_header_from_url(host, header, timeout = 5, errors = False, verbose = False) -> str | None:
     resp = get_url_response(host, timeout=timeout)
-    print(resp.headers) # type: ignore
     return resp.headers.get(header, None) # type: ignore
 
 def get_classic_single_progress():

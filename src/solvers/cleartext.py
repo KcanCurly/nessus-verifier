@@ -37,6 +37,7 @@ class CleartextSolverClass(BaseSolverClass):
         
         if host.ip in nm.all_hosts():
             nmap_host = nm[host.ip]
+            print(nmap_host)
             if 'tcp' in nmap_host and int(host.port) in nmap_host['tcp']:
                 tcp_info = nmap_host['tcp'][int(host.port)]
                 if 'script' in tcp_info and 'amqp-info' in tcp_info['script']:
