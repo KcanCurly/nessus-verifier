@@ -1,5 +1,5 @@
 import argparse
-from src.solvers import grafana, openssl, php, python, tls, kibana, elastic, mongo, oracle, smb, ssh, snmp, tomcat, apache, nginx, vmware, openssh, smtp_relay, mssql, idrac, ipmi, terminal, cleartext, ibmwebsphere, obsolete_protocols, postgresql, nopasswddb, actionables, ftp, ntp, nfs, queuejumper, \
+from src.solvers import grafana, mdns, openssl, php, python, tls, kibana, elastic, mongo, oracle, smb, ssh, snmp, tomcat, apache, nginx, vmware, openssh, smtp_relay, mssql, idrac, ipmi, terminal, cleartext, ibmwebsphere, obsolete_protocols, postgresql, nopasswddb, actionables, ftp, ntp, nfs, queuejumper, \
     openssl, webcgi_generic, hpilo, jenkins
 from src.modules.nv_parse import GroupNessusScanOutput
 from src.solvers.solverclass import BaseSolverClass
@@ -23,7 +23,7 @@ solver_dict: dict[int, type[BaseSolverClass]] = {
     14: openssh.OpenSSHSolverClass,
     15: nfs.NFSSolverClass,
     16: mssql.MSSQLSolverClass,
-    # 17: mDNS,
+    17: mdns.MDNSSolverClass,
     18: obsolete_protocols.ObsoleteProtocolSolverClass,
     19: idrac.IDRACSolverClass,
     20: ipmi.IPMISolverClass,
