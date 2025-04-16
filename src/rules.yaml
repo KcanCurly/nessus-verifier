@@ -1,6 +1,8 @@
 - name: IGNORE
   id: -1
-  plugin-ids: [142960, 10114, 34850, 51192, 12085, 11213, 98048, 136929, 57582, 24244, 10759, 12224, 18391, 44135, 85582, 42057, 26194, 47831]
+  plugin-ids: [142960, 10114, 34850, 51192, 12085, 11213, 98048, 136929, 
+  57582, 24244, 10759, 12224, 18391, 44135, 85582, 42057, 26194, 47831,
+  10407]
   # 142960 - HSTS Missing From HTTPS Server (RFC 6797)
   # 10114 - ICMP Timestamp Request Remote Date Disclosure
   # 34850 - Web Server Uses Basic Authentication Without HTTPS
@@ -19,6 +21,7 @@
   # 42057 - Web Server Allows Password Auto-Completion
   # 26194 - Web Server Transmits Cleartext Credentials
   # 47831 - CGI Generic XSS (comprehensive test)
+  # 10407 - X Server Detection
 
 - name: Actionables
   id: 0
@@ -167,7 +170,11 @@
   800596, 800600, 800630, 800599, 800621, 800619, 800627, 800784, 800626, 800611, 800597, 800608, 
   800622, 800602, 800617, 800609, 800612, 800783, 800620, 800605, 800606, 201848, 213078, 232528, 211503,
   186366, 197847, 161181, 162502, 160891, 152183, 182811, 173256, 111068, 197827, 132413, 160894, 197843,
-  197823, 197820, 148405, 147163, 121121, 106975, 103782, 88936]
+  197823, 197820, 148405, 147163, 121121, 106975, 103782, 88936, 106712, 194473, 152182, 147164]
+  # 147164 - Apache Tomcat 9.0.0.M1 < 9.0.43 multiple vulnerabilities
+  # 152182 - Apache Tomcat 9.0.0.M1 < 9.0.48
+  # 194473 - Apache Tomcat 9.0.0.M1 < 9.0.44 multiple vulnerabilities
+  # 106712 - Apache Tomcat 8.5.16 < 8.5.24
   # 88936 - Apache Tomcat 7.0.0 < 7.0.68 multiple vulnerabilities
   # 103782 - Apache Tomcat 7.0.0 < 7.0.82
   # 106975 - Apache Tomcat 7.0.0 < 7.0.85 multiple vulnerabilities
