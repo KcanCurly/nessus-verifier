@@ -45,9 +45,12 @@ class MDNSDiscoverySubServiceClass(BaseSubServiceClass):
             if "udp" in nm[result] and int(port) in nm[result]["udp"]:
                 ntp_script = nm[result]["udp"][int(port)].get("script", {})
                 v = Version_Vuln_List_Host_Data(host, [])
-                for key, value in ntp_script.items():
-                    v.version.append(value)
-                return v
+                if len(ntp_script.items()):
+                    for key, value in ntp_script.items():
+                        if not value:
+                            continue
+                        v.version.append(value)
+                    return v
 
 
 
