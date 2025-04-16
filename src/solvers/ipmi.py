@@ -21,6 +21,7 @@ class IPMISolverClass(BaseSolverClass):
             
             
             result = ", ".join(h.ip for h in self.hosts)
+            print(result)
             command = ["msfconsole", "-q", "-x", f"color false; use auxiliary/scanner/ipmi/ipmi_dumphashes; set RHOSTS {result}; run; exit"]
             try:
                 result = subprocess.run(command, text=True, capture_output=True)
