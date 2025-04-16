@@ -13,8 +13,8 @@ class IPMISolverClass(BaseSolverClass):
         if not self.hosts:
             return
         if self.is_nv:
-            r = r"[+] (.*) - IPMI - Hash found: (.*)"
-            r1 =  r"[+] (.*) - IPMI - Hash for user '(.*)' matches password '(.*)'"
+            r = r"[\+] (.*) - IPMI - Hash found: (.*)"
+            r1 =  r"[\+] (.*) - IPMI - Hash for user '(.*)' matches password '(.*)'"
             print("Running metasploit ipmi dumphashes module, there will be no progression bar")
             hashes = {}
             creds = {}
