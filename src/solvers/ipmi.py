@@ -13,8 +13,8 @@ class IPMISolverClass(BaseSolverClass):
         if not self.hosts:
             return
         if self.is_nv:
-            r = r"[\+] (.*) - IPMI - Hash found: (.*)"
-            r1 =  r"[\+] (.*) - IPMI - Hash for user '(.*)' matches password '(.*)'"
+            r = r"\[\+\] (.*) - IPMI - Hash found: (.*)"
+            r1 =  r"\[\+\] (.*) - IPMI - Hash for user '(.*)' matches password '(.*)'"
             print("Running metasploit ipmi dumphashes module, there will be no progression bar")
             hashes = {}
             creds = {}
@@ -24,11 +24,6 @@ class IPMISolverClass(BaseSolverClass):
             command = ["msfconsole", "-q", "-x", f"color false; use auxiliary/scanner/ipmi/ipmi_dumphashes; set RHOSTS {result}; set THREADS {args.threads}; run; exit"]
             try:
                 result = subprocess.run(command, text=True, capture_output=True)
-                print("stdout:")
-                print(result.stdout)
-                print("stderr:")
-                print(result.stderr)
-                
                 matches = re.findall(r, result.stdout)
                 for m in matches:
                     if m[0] not in hashes:
@@ -44,14 +39,14 @@ class IPMISolverClass(BaseSolverClass):
             except Exception as e:
                 self._print_exception(e)
             
-            if len(hashes) > 0:
+            if hashes:
                 print("IPMI hashes dumped:")
                 for key, value in hashes.items():
                     print(f"{key}:")
                     for v in value:
                         print(f"    {v}")
 
-            if len(creds) > 0:
+            if creds:
                 print("IPMI Creds found:")
                 for key, value in creds.items():
                     print(f"{key}:")
