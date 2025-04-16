@@ -29,7 +29,7 @@ class NFSListServiceClass(BaseSubServiceClass):
             print("Readable NFS List:")
             for r in results:
                 print(r.host)
-                for k,v in r.content:
+                for k,v in r.content.items():
                     print(f"    {k}:")
                     for n in v:
                         print(f"        {n}")
