@@ -3,7 +3,7 @@ from src.solvers.solverclass import BaseSolverClass
 
 class MDNSSolverClass(BaseSolverClass):
     def __init__(self) -> None:
-        super().__init__("NTP", 4)
+        super().__init__("NTP", 17)
 
     def solve(self, args):
         self._get_hosts(args) # type: ignore
