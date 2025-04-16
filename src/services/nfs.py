@@ -47,11 +47,10 @@ class NFSListServiceClass(BaseSubServiceClass):
         for line in result.stdout.splitlines():
             c = ["nfs-ls", f"nfs://{ip}{line.split()[0]}"]
             result = subprocess.run(c, text=True, capture_output=True)
+            v.content = dict[str, list[str]]()
             v.content[line.split()[0]] = []
             for line1 in result.stdout.splitlines():
                 v.content[line.split()[0]].append(line1.rsplit(maxsplit=1)[1])
-                print(line1)
-                print(line1.rsplit(maxsplit=1)[1])
 
                 
         if v.content.keys:  # type: ignore
