@@ -47,7 +47,7 @@ class MDNSDiscoverySubServiceClass(BaseSubServiceClass):
                 v = Version_Vuln_List_Host_Data(host, [])
                 if len(ntp_script.items()):
                     for key, value in ntp_script.items():
-                        if not value:
+                        if not value or not key:
                             continue
                         v.version.append(value)
                     return v
