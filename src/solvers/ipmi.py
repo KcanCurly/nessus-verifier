@@ -28,13 +28,13 @@ class IPMISolverClass(BaseSolverClass):
             for m in matches:
                 if m[0] not in hashes:
                     hashes[m[0]] = []
-                hashes[m[0]] = m[1]
+                hashes[m[0]].append(m[1])
                 
             matches = re.findall(r1, result.stdout)
             for m in matches:
-                if m[0] not in hashes:
+                if m[0] not in creds:
                     creds[m[0]] = []
-                creds[m[0]] = f"{m[1]}:{m[2]}"
+                creds[m[0]].append(f"{m[1]}:{m[2]}")
             
             if hashes:
                 print("IPMI hashes dumped:")
