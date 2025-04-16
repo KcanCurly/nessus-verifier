@@ -48,15 +48,11 @@ class TomcatSolverClass(BaseSolverClass):
     @error_handler(["host"])
     def solve_version_single(self, host, timeout, errors, verbose):
         r1 = r"Apache Tomcat\/(\d+\.\d+\.\d+)"
-        try:
-            resp = get_url_response(str(host), timeout=timeout)
-            if not resp: 
-                return
-            m = re.search(r1, resp.text, re.MULTILINE)
-            if m: 
-                return Version_Vuln_Host_Data(host, m.group(1))           
+
+        resp = get_url_response(str(host), timeout=timeout)
+        m = re.search(r1, resp.text, re.MULTILINE) # type: ignore
+        if m: 
+            return Version_Vuln_Host_Data(host, m.group(1))
             
-        except Exception as e: 
-            self._print_exception(f"Error for {host}: {e}")
-        
+
         

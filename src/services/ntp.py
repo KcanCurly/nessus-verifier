@@ -61,7 +61,7 @@ class NTPMonlistSubServiceClass(BaseSubServiceClass):
         errors = kwargs.get("errors", DEFAULT_ERRORS)
         verbose = kwargs.get("errors", DEFAULT_VERBOSE)
 
-        results: list[Version_Vuln_List_Host_Data] = get_default_context_execution2("NTP Mode 6 Usage", threads, hosts, self.single, timeout=timeout, errors=errors, verbose=verbose)
+        results: list[Version_Vuln_List_Host_Data] = get_default_context_execution2("NTP Monlist Usage", threads, hosts, self.single, timeout=timeout, errors=errors, verbose=verbose)
                     
         if results:
             print("NTP monlist Enabled Hosts:")
