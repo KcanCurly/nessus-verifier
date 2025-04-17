@@ -1,5 +1,7 @@
+import asyncio
 import subprocess
 import re
+import asyncssh
 from packaging.version import parse
 from src.utilities.utilities import get_default_context_execution2, error_handler, get_cves, Host
 from src.services.consts import DEFAULT_ERRORS, DEFAULT_THREAD, DEFAULT_TIMEOUT, DEFAULT_VERBOSE
@@ -106,11 +108,73 @@ class SSHVersionSubServiceClass(BaseSubServiceClass):
 
         return SSH_Version_Vuln_Data(host, version, protocol)
 
+class SSHCommandSubServiceClass(BaseSubServiceClass):
+    def __init__(self) -> None:
+        super().__init__("command", "Run command on targets")
+
+    def helper_parse(self, subparsers):
+        parser_enum = subparsers.add_parser(self.command_name, help = self.help_description)
+        parser_enum.add_argument("target", type=str, help="File name or targets seperated by space, format is: 'host:port => username:password'")
+        parser_enum.add_argument("command", type=str, help="Command to run")
+        parser_enum.add_argument("-o", "--output", type=str, required=False, help="Output filename.")
+        parser_enum.add_argument("-th", "--threads", type=int, default=10, help="Amount of threads (Default = 10).")
+        parser_enum.add_argument("-ti", "--timeout", type=int, default=5, help="Amount of timeout (Default = 5).")
+        parser_enum.add_argument("-e", "--errors", type=int, choices=[1, 2], default = 0, help="1 - Print Errors\n2 - Print errors and prints stacktrace")
+        parser_enum.add_argument("-v", "--verbose", action="store_true", help="Print Verbose")
+        parser_enum.set_defaults(func=self.console)
+
+    def console(self, args):
+        asyncio.run(self.nv(args.target, args.command, threads=args.threads, timeout=args.timeout, errors=args.errors, verbose=args.verbose))
+
+    async def nv(self, target, command, **kwargs):
+        lines = []
+        with open(target, "r") as f:
+            lines = f.readlines()
+
+        threads = kwargs.get("threads", DEFAULT_THREAD)
+        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
+        errors = kwargs.get("errors", DEFAULT_ERRORS)
+        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
+
+        try:
+            async with asyncio.timeout(60*60*3): # 3 hours
+                try:
+                    async with asyncio.TaskGroup() as tg:
+                        tasks = []
+                        for entry in lines:
+                            try:
+                                host, cred = entry.split(" => ")
+                                ip, port = host.split(":")
+                                username, password = cred.split(":")
+                                tasks.append(tg.create_task(self.process_host(command, ip, port, username, password)))
+                            except Exception as e:
+                                pass
+                        for task in asyncio.as_completed(tasks):
+                            try:
+                                await task
+                            except Exception as e:
+                                pass
+                except Exception as e:
+                    pass
+        except Exception as e:
+            pass
+
+
+    async def process_host(self, command, ip, port, username, password):
+        try:
+            async with await asyncssh.connect(ip, port=port, username=username, password=password, known_hosts=None, client_keys=None, keepalive_interval=10) as conn:
+                ans = await conn.run(command, check=True)
+                print(ans.stdout)
+
+        except Exception as e:
+            pass
+
+
 
 
 class SSHAuditSubServiceClass(BaseSubServiceClass):
     def __init__(self) -> None:
-        super().__init__("", "Run ssh-audit on targets")
+        super().__init__("audit", "Run ssh-audit on targets")
 
     def nv(self, hosts, **kwargs):
         threads = kwargs.get("threads", DEFAULT_THREAD)
@@ -212,3 +276,4 @@ class SSHServiceClass(BaseServiceClass):
         super().__init__("ssh")
         self.register_subservice(SSHAuditSubServiceClass())
         self.register_subservice(SSHVersionSubServiceClass())
+        self.register_subservice(SSHCommandSubServiceClass())

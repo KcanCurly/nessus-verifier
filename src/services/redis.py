@@ -18,10 +18,6 @@ class RedisPostSubServiceClass(BaseSubServiceClass):
 
         results: list[Version_Vuln_Host_Data] = get_default_context_execution2("Redis Post", threads, hosts, self.single, timeout=timeout, errors=errors, verbose=verbose)
 
-        
-
-
-
     @error_handler(["host"])
     def single(self, host, **kwargs):
         timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
