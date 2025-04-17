@@ -3,7 +3,7 @@ import subprocess
 import re
 import asyncssh
 from packaging.version import parse
-from src.utilities.utilities import get_default_context_execution2, error_handler, get_cves, Host
+from src.utilities.utilities import get_default_context_execution2, error_handler, get_cves, Host, normalize_line_endings
 from src.services.consts import DEFAULT_ERRORS, DEFAULT_THREAD, DEFAULT_TIMEOUT, DEFAULT_VERBOSE
 from src.services.serviceclass import BaseServiceClass
 from src.services.servicesubclass import BaseSubServiceClass
@@ -143,6 +143,7 @@ class SSHCommandSubServiceClass(BaseSubServiceClass):
                         tasks = []
                         for entry in lines:
                             try:
+                                entry = normalize_line_endings(entry.strip())
                                 host, cred = entry.split(" => ")
                                 ip, port = host.split(":")
                                 username, password = cred.split(":")
