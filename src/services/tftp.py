@@ -10,6 +10,7 @@ class TFTPBruteSubServiceClass(BaseSubServiceClass):
 
 
     def nv(self, hosts, **kwargs):
+        pattern = r"\[\+\] Found (.*) on (\S*)"
         threads = kwargs.get("threads", DEFAULT_THREAD)
         timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
         errors = kwargs.get("errors", DEFAULT_ERRORS)
@@ -21,20 +22,20 @@ class TFTPBruteSubServiceClass(BaseSubServiceClass):
         try:
             command = ["msfconsole", "-q", "-x", f"color false; use auxiliary/scanner/tftp/tftpbrute; set RHOSTS {result}; set THREADS {threads}; set ConnectTimeout {timeout}; run; exit"]
             result = subprocess.run(command, text=True, capture_output=True)
-            pattern = r"\[\+\] Found (.*) on (\S*)"
-            matches = re.findall(pattern, result.stdout)
+            
+            matches = re.findall(pattern, result.stdout, re.MULTILINE)
 
             for m in matches:
                 if m[1] not in vuln:
                     vuln[m[1]] = set()
                 vuln[m[1]].add(m[0])
                 
-            command = ["msfconsole", "-q", "-x", f"color false; use auxiliary/scanner/tftp/tftpbrute; set RHOSTS {result}; set DICTIONARY {nmap_file}; set THREADS {threads}; set ConnectTimeout {timeout}; run; exit"]
-            result = subprocess.run(command, text=True, capture_output=True)
-            pattern = r"\[\+\] Found (.*) on (\S*)"
-            matches = re.findall(pattern, result.stdout)
+            command1 = ["msfconsole", "-q", "-x", f"color false; use auxiliary/scanner/tftp/tftpbrute; set RHOSTS {result}; set DICTIONARY {nmap_file}; set THREADS {threads}; set ConnectTimeout {timeout}; run; exit"]
+            result1 = subprocess.run(command1, text=True, capture_output=True)
+
+            matches1 = re.findall(pattern, result1.stdout, re.MULTILINE)
             
-            for m in matches:
+            for m in matches1:
                 if m[1] not in vuln:
                     vuln[m[1]] = set()
                 vuln[m[1]].add(m[0])
