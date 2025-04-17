@@ -116,7 +116,7 @@ class SSHCommandSubServiceClass(BaseSubServiceClass):
         parser_enum = subparsers.add_parser(self.command_name, help = self.help_description)
         parser_enum.add_argument("target", type=str, help="File name or targets seperated by space, format is: 'host:port => username:password'")
         parser_enum.add_argument("command", type=str, help="Command to run")
-        parser_enum.add_argument("--sudo", action="store_true", type=str, help="Run as sudo")
+        parser_enum.add_argument("--sudo", action="store_true", help="Run as sudo")
         parser_enum.add_argument("-o", "--output", type=str, required=False, help="Output filename.")
         parser_enum.add_argument("-th", "--threads", type=int, default=10, help="Amount of threads (Default = 10).")
         parser_enum.add_argument("-ti", "--timeout", type=int, default=5, help="Amount of timeout (Default = 5).")
