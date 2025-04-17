@@ -165,10 +165,15 @@ class SSHCommandSubServiceClass(BaseSubServiceClass):
         try:
             async with await asyncssh.connect(ip, port=port, username=username, password=password, known_hosts=None, client_keys=None, keepalive_interval=10) as conn:
                 ans = await conn.run(command, check=True)
-                print("stdout:")
-                print(ans.stdout)
-                print("stderr:")
-                print(ans.stderr)
+                if ans.stdout:
+                    print("===========================")
+                    print(f"{ip}:{port} - {username}:")
+                    print(ans.stdout)
+                if ans.stderr:
+                    print("===========================")
+                    print(f"{ip}:{port} - {username}:")
+                    print("stderr:")
+                    print(ans.stderr)
 
         except Exception as e:
             print(f"Error connecting to {ip}:{port} - {e}")
