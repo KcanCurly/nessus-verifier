@@ -116,6 +116,7 @@ class SSHCommandSubServiceClass(BaseSubServiceClass):
         parser_enum = subparsers.add_parser(self.command_name, help = self.help_description)
         parser_enum.add_argument("target", type=str, help="File name or targets seperated by space, format is: 'host:port => username:password'")
         parser_enum.add_argument("command", type=str, help="Command to run")
+        parser_enum.add_argument("--sudo", action="store_true", type=str, help="Run as sudo")
         parser_enum.add_argument("-o", "--output", type=str, required=False, help="Output filename.")
         parser_enum.add_argument("-th", "--threads", type=int, default=10, help="Amount of threads (Default = 10).")
         parser_enum.add_argument("-ti", "--timeout", type=int, default=5, help="Amount of timeout (Default = 5).")
@@ -124,9 +125,9 @@ class SSHCommandSubServiceClass(BaseSubServiceClass):
         parser_enum.set_defaults(func=self.console)
 
     def console(self, args):
-        asyncio.run(self.nv(args.target, args.command, threads=args.threads, timeout=args.timeout, errors=args.errors, verbose=args.verbose))
+        asyncio.run(self.nv(args.target, args.command, args.sudo, threads=args.threads, timeout=args.timeout, errors=args.errors, verbose=args.verbose))
 
-    async def nv(self, target, command, **kwargs):
+    async def nv(self, target, command, sudo, **kwargs):
         lines = []
         with open(target, "r") as f:
             lines = f.readlines()
@@ -147,7 +148,7 @@ class SSHCommandSubServiceClass(BaseSubServiceClass):
                                 host, cred = entry.split(" => ")
                                 ip, port = host.split(":")
                                 username, password = cred.split(":")
-                                tasks.append(tg.create_task(self.process_host(command, ip, port, username, password)))
+                                tasks.append(tg.create_task(self.process_host(command, sudo, ip, port, username, password)))
                             except Exception as e:
                                 print(f"Error parsing line '{entry.strip()}': {e}")
                         for task in asyncio.as_completed(tasks):
@@ -161,9 +162,11 @@ class SSHCommandSubServiceClass(BaseSubServiceClass):
             print(f"Timeout error: {e}")
 
 
-    async def process_host(self, command, ip, port, username, password):
+    async def process_host(self, command, sudo, ip, port, username, password):
         try:
             async with await asyncssh.connect(ip, port=port, username=username, password=password, known_hosts=None, client_keys=None, keepalive_interval=10) as conn:
+                if sudo:
+                    command = f"echo '{password}' | sudo -S {command}"
                 ans = await conn.run(command, check=True)
                 if ans.stdout:
                     print("===========================")
