@@ -21,7 +21,7 @@ class TFTPBruteSubServiceClass(BaseSubServiceClass):
         try:
             command = ["msfconsole", "-q", "-x", f"color false; use auxiliary/scanner/tftp/tftpbrute; set RHOSTS {result}; set THREADS {threads}; set ConnectTimeout {timeout}; run; exit"]
             result = subprocess.run(command, text=True, capture_output=True)
-            pattern = r"\[\+\] Found (.*) on (.*)\s+"
+            pattern = r"\[\+\] Found (.*) on (\S*)"
             matches = re.findall(pattern, result.stdout)
 
             for m in matches:
@@ -31,7 +31,7 @@ class TFTPBruteSubServiceClass(BaseSubServiceClass):
                 
             command = ["msfconsole", "-q", "-x", f"color false; use auxiliary/scanner/tftp/tftpbrute; set RHOSTS {result}; set DICTIONARY {nmap_file}; set THREADS {threads}; set ConnectTimeout {timeout}; run; exit"]
             result = subprocess.run(command, text=True, capture_output=True)
-            pattern = r"\[\+\] Found (.*) on (.*)\s+"
+            pattern = r"\[\+\] Found (.*) on (\S*)"
             matches = re.findall(pattern, result.stdout)
             
             for m in matches:
