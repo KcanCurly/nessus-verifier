@@ -137,7 +137,7 @@ class SSHCommandSubServiceClass(BaseSubServiceClass):
         verbose = kwargs.get("errors", DEFAULT_VERBOSE)
 
         try:
-            async with asyncio.timeout(60*60*3): # 3 hours
+            async with asyncio.timeout(60): # 1 minute
                 try:
                     async with asyncio.TaskGroup() as tg:
                         tasks = []
@@ -148,26 +148,30 @@ class SSHCommandSubServiceClass(BaseSubServiceClass):
                                 username, password = cred.split(":")
                                 tasks.append(tg.create_task(self.process_host(command, ip, port, username, password)))
                             except Exception as e:
-                                pass
+                                print(f"Error parsing line '{entry.strip()}': {e}")
                         for task in asyncio.as_completed(tasks):
                             try:
                                 await task
                             except Exception as e:
-                                pass
+                                print(f"Task error: {e}")
                 except Exception as e:
-                    pass
+                    print(f"Task group error: {e}")
         except Exception as e:
-            pass
+            print(f"Timeout error: {e}")
 
 
     async def process_host(self, command, ip, port, username, password):
         try:
             async with await asyncssh.connect(ip, port=port, username=username, password=password, known_hosts=None, client_keys=None, keepalive_interval=10) as conn:
                 ans = await conn.run(command, check=True)
+                print("stdout:")
                 print(ans.stdout)
+                print("stderr:")
+                print(ans.stderr)
 
         except Exception as e:
-            pass
+            print(f"Error connecting to {ip}:{port} - {e}")
+
 
 
 
