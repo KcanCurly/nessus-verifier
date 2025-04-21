@@ -111,7 +111,9 @@ class TLSSolverClass(BaseSolverClass):
                             if "[33m]" in bit: # If it is a green or white output and bit is low
                                 weak_bits.append(re.sub(r'^\x1b\[[0-9;]*m', '', bit) + "->" + re.sub(r'^\x1b\[[0-9;]*m', '', cipher))
                     else:
+                        print(cipher, "4")
                         weak_ciphers.add(re.sub(r'^\x1b\[[0-9;]*m', '', cipher))
+                        print(re.sub(r'^\x1b\[[0-9;]*m', '', cipher))
                         bit = line.split()[2] # If it is a green output and bit is low
                         if "[33m]" in bit:
                             weak_bits.append(re.sub(r'^\x1b\[[0-9;]*m', '', bit) + "->" + re.sub(r'^\x1b\[[0-9;]*m', '', cipher))
