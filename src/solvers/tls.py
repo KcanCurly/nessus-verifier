@@ -114,7 +114,7 @@ class TLSSolverClass(BaseSolverClass):
                         print(cipher, "4")
                         ansi_escape = re.compile(r'\x1B\[[0-9;?]*[mGKHF]')
 
-                        weak_ciphers.add(re.sub(r'^\x1b\[[0-9;]*m', '', cipher))
+                        weak_ciphers.add(ansi_escape.sub('', cipher))
                         print(ansi_escape.sub('', cipher))
                         bit = line.split()[2] # If it is a green output and bit is low
                         if "[33m]" in bit:
@@ -143,6 +143,7 @@ class TLSSolverClass(BaseSolverClass):
         expired_cert_hosts = []
         results: list[TLS_Vuln_Data] = get_default_context_execution("TLS Misconfigurations", threads, hosts, (self.tls_single, allow_white_ciphers, timeout, errors, verbose))
 
+        print(results)
         for r in results:
             for z in r.weak_versions:
                 if r.host not in weak_versions:
