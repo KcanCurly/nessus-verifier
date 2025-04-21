@@ -101,9 +101,7 @@ class TLSSolverClass(BaseSolverClass):
                     if "[32m" not in cipher: # Non-green
                         if allow_white_ciphers: # We allow white ciphers
                             if "[" in cipher: # Non-white
-                                print(cipher, "3")
                                 weak_ciphers.add(re.sub(r'^\x1b\[[0-9;]*m', '', cipher))
-                                print(re.sub(r'^\x1b\[[0-9;]*m', '', cipher))
                                 bit = line.split()[2]
                                 if "[33m]" in bit: # If it is a green or white output and bit is low
                                     weak_bits.append(re.sub(r'^\x1b\[[0-9;]*m', '', bit) + "->" + re.sub(r'^\x1b\[[0-9;]*m', '', cipher))
@@ -123,7 +121,6 @@ class TLSSolverClass(BaseSolverClass):
             if e.strerror and "Hostname mismatch" in e.strerror:
                 is_wrong_host = True
         except Exception as e: 
-            print("17")
             self._print_exception(f"Error for {host}: {e}")
 
         return TLS_Vuln_Data(host, weak_versions, list(weak_ciphers), weak_bits, is_wrong_host, is_cert_expired)
