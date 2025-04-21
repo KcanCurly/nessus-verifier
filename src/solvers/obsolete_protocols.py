@@ -46,32 +46,32 @@ class ObsoleteProtocolSolverClass(BaseSolverClass):
             except Exception:
                 pass
         
-        if len(vuln_echo) > 0:
+        if vuln_echo:
             print("Echo Protocol Detected:")
             for value in vuln_echo:
                 print(f"{value}")
                 
-        if len(vuln_discard) > 0:
+        if vuln_discard:
             print("Discard Protocol Detected:")
             for value in vuln_discard:
                 print(f"{value}")
                 
-        if len(vuln_daytime) > 0:
+        if vuln_daytime:
             print("Daytime Protocol Detected:")
             for value in vuln_daytime:
                 print(f"{value}")
                 
-        if len(vuln_qotd) > 0:
+        if vuln_qotd:
             print("QOTD Protocol Detected:")
             for value in vuln_qotd:
                 print(f"{value}")
                 
-        if len(vuln_chargen) > 0:
+        if vuln_chargen:
             print("Chargen Protocol Detected:")
             for value in vuln_chargen:
                 print(f"{value}")
                 
-        if len(vuln_systat) > 0:
+        if vuln_systat:
             print("Systat Protocol Detected:")
             for value in vuln_systat:
                 print(f"{value}")

@@ -105,7 +105,7 @@ nv-solver all -f output.ndjson
 * OpenSSH
 * NFS
 * MSSQL
-* mDNS (TODO)
+* mDNS
 * Obsolete Protocols (TODO)
 * iDRAC
 * IPMI
