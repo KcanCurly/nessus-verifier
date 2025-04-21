@@ -100,9 +100,13 @@ class TLSSolverClass(BaseSolverClass):
                 cipher = line.split()[4]
                 print(cipher)
                 if "[32m" not in cipher: # Non-green
+                    print(cipher, "1")
                     if allow_white_ciphers: # We allow white ciphers
+                        print(cipher, "2")
                         if "[" in cipher: # Non-white
+                            print(cipher, "3")
                             weak_ciphers.add(re.sub(r'^\x1b\[[0-9;]*m', '', cipher))
+                            print(re.sub(r'^\x1b\[[0-9;]*m', '', cipher))
                             bit = line.split()[2]
                             if "[33m]" in bit: # If it is a green or white output and bit is low
                                 weak_bits.append(re.sub(r'^\x1b\[[0-9;]*m', '', bit) + "->" + re.sub(r'^\x1b\[[0-9;]*m', '', cipher))
