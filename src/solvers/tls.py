@@ -112,8 +112,10 @@ class TLSSolverClass(BaseSolverClass):
                                 weak_bits.append(re.sub(r'^\x1b\[[0-9;]*m', '', bit) + "->" + re.sub(r'^\x1b\[[0-9;]*m', '', cipher))
                     else:
                         print(cipher, "4")
+                        ansi_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
+
                         weak_ciphers.add(re.sub(r'^\x1b\[[0-9;]*m', '', cipher))
-                        print(re.sub(r'^\x1b\[[0-9;]*m', '', cipher))
+                        print(ansi_escape.sub('', cipher))
                         bit = line.split()[2] # If it is a green output and bit is low
                         if "[33m]" in bit:
                             weak_bits.append(re.sub(r'^\x1b\[[0-9;]*m', '', bit) + "->" + re.sub(r'^\x1b\[[0-9;]*m', '', cipher))
