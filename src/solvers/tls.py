@@ -123,15 +123,22 @@ class TLSSolverClass(BaseSolverClass):
                     
         
         try:
+            print("11")
             context = ssl.create_default_context()
+            print("12")
             with socket.create_connection((host.ip, int(host.port)), timeout=timeout) as sock:
+                print("13")
                 context.wrap_socket(sock, server_hostname=host.ip)
+                print("14")
         except ssl.CertificateError as e:
+            print("15")
             if e.strerror and "Hostname mismatch" in e.strerror:
+                print("16")
                 is_wrong_host = True
         except Exception as e: 
+            print("17")
             self._print_exception(f"Error for {host}: {e}")
-        
+        print("18")
         print(weak_ciphers)
         return TLS_Vuln_Data(host, weak_versions, list(weak_ciphers), weak_bits, is_wrong_host, is_cert_expired)
 
