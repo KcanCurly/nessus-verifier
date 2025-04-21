@@ -112,7 +112,7 @@ class TLSSolverClass(BaseSolverClass):
                                 weak_bits.append(re.sub(r'^\x1b\[[0-9;]*m', '', bit) + "->" + re.sub(r'^\x1b\[[0-9;]*m', '', cipher))
                     else:
                         print(cipher, "4")
-                        ansi_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
+                        ansi_escape = re.compile(r'\x1B\[[0-9;?]*[mGKHF]')
 
                         weak_ciphers.add(re.sub(r'^\x1b\[[0-9;]*m', '', cipher))
                         print(ansi_escape.sub('', cipher))
