@@ -13,7 +13,7 @@ def connect_and_get_response_single(host, **kwargs):
         try:
             response = sock.recv(1024)  # Try receiving data
             if response:
-                return response.decode().strip()
+                return Version_Vuln_Host_Data(host, response.decode().strip())
         except socket.timeout:
             pass  # No response within timeout
 
