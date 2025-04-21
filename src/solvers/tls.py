@@ -132,6 +132,7 @@ class TLSSolverClass(BaseSolverClass):
         except Exception as e: 
             self._print_exception(f"Error for {host}: {e}")
         
+        print(weak_ciphers)
         return TLS_Vuln_Data(host, weak_versions, list(weak_ciphers), weak_bits, is_wrong_host, is_cert_expired)
 
     @error_handler([])
