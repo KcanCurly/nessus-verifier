@@ -96,7 +96,9 @@ class TLSSolverClass(BaseSolverClass):
                         weak_versions.append("TLSv1.1")
             
             if cipher_line and line:
+                print(line)
                 cipher = line.split()[4]
+                print(cipher)
                 if "[32m" not in cipher: # Non-green
                     if allow_white_ciphers: # We allow white ciphers
                         if "[" in cipher: # Non-white
@@ -152,7 +154,7 @@ class TLSSolverClass(BaseSolverClass):
             if r.is_cert_expired:
                 expired_cert_hosts.append(f"{r.host} - {r.is_cert_expired}")
         
-        if len(weak_ciphers) > 0:       
+        if weak_ciphers:       
             print("Vulnerable TLS Ciphers on Hosts:")                
             for key, value in weak_ciphers.items():
                 print(f"    {key} - {", ".join(value)}")
@@ -167,7 +169,7 @@ class TLSSolverClass(BaseSolverClass):
         if len(weak_bits) > 0:
             print()
             print("Low Bits on Good Algorithms on Hosts:")
-            for key, value in weak_versions.items():
+            for key, value in weak_bits.items():
                 print(f"    {key} - {", ".join(value)}")
         
         if len(wrong_hosts) > 0:
