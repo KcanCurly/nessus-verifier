@@ -6,6 +6,7 @@ import socket
 @error_handler(["host"])
 def connect_and_get_response_single(host, **kwargs):
     timeout = kwargs.get("timeout", 3)  # Default timeout is 3 seconds
+    message = kwargs.get("message", "info")
 
     with socket.create_connection((host.ip, int(host.port)), timeout=timeout) as sock:
         sock.settimeout(timeout)
@@ -18,7 +19,7 @@ def connect_and_get_response_single(host, **kwargs):
             pass  # No response within timeout
 
         # If no response, send "info"
-        sock.sendall(b"info\n")
+        sock.sendall(bytes(message))
 
         response = sock.recv(1024)  # Receive response after sending "info"
         return Version_Vuln_Host_Data(host, response.decode().strip())

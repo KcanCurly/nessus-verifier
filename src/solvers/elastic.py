@@ -40,8 +40,8 @@ class ElasticsearchSolverClass(BaseSolverClass):
             print("Elastic versions detected:")
             for key, value in versions.items():
                 cves = get_cves(f"cpe:2.3:a:elastic:elasticsearch:{key}")
-                if cves: print(f"{key} ({", ".join(cves)}):")
-                else: print(f"{key}:")
+                if cves: print(f"Elastic {key} ({", ".join(cves)}):")
+                else: print(f"Elastic {key}:")
                 for v in value:
                     print(f"    {v}")
     

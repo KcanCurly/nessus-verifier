@@ -240,7 +240,7 @@ class SSHAuditSubServiceClass(BaseSubServiceClass):
                 print(f"    {k}")
                 
         if len(vuln_terrapin) > 0:
-            print("Vulnerable Terraping hosts:")
+            print("Vulnerable Terrapin hosts:")
             for k in vuln_terrapin:
                 print(f"    {k}")
 
