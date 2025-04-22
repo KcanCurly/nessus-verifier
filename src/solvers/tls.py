@@ -134,7 +134,6 @@ class TLSSolverClass(BaseSolverClass):
         expired_cert_hosts = []
         results: list[TLS_Vuln_Data] = get_default_context_execution("TLS Misconfigurations", threads, hosts, (self.tls_single, allow_white_ciphers, timeout, errors, verbose))
 
-        print(results)
         for r in results:
             for z in r.weak_versions:
                 if r.host not in weak_versions:

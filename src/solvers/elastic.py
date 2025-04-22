@@ -33,15 +33,15 @@ class ElasticsearchSolverClass(BaseSolverClass):
                 versions[r.version] = set()
             versions[r.version].add(r.host)
         
-        if len(versions) > 0:       
+        if versions:       
             versions = dict(
                 sorted(versions.items(), key=lambda x: parse(x[0]), reverse=True)
             )
             print("Elastic versions detected:")
             for key, value in versions.items():
                 cves = get_cves(f"cpe:2.3:a:elastic:elasticsearch:{key}")
-                if cves: print(f"Elastic {key} ({", ".join(cves)}):")
-                else: print(f"Elastic {key}:")
+                if cves: print(f"Elasticsearch {key} ({", ".join(cves)}):")
+                else: print(f"Elasticsearch {key}:")
                 for v in value:
                     print(f"    {v}")
     
