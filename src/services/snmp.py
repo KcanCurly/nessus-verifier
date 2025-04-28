@@ -14,13 +14,13 @@ class SNMPDefaultSubServiceClass(BaseSubServiceClass):
         threads = kwargs.get("threads", DEFAULT_THREAD)
         timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
         errors = kwargs.get("errors", DEFAULT_ERRORS)
-        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
+        verbose = kwargs.get("verbose", DEFAULT_VERBOSE)
 
         print("Running metasploit snmp_login module, there will be no progression bar")
-        result = ", ".join(host.ip for host in hosts)
+        ips = ", ".join(host.ip for host in hosts)
 
         vuln = {} 
-        command = ["msfconsole", "-q", "-x", f"color false; use auxiliary/scanner/snmp/snmp_login; set RHOSTS {result}; set ConnectTimeout {timeout}; set THREADS {threads}; run; exit"]
+        command = ["msfconsole", "-q", "-x", f"color false; use auxiliary/scanner/snmp/snmp_login; set RHOSTS {ips}; set ConnectTimeout {timeout}; set THREADS {threads}; run; exit"]
         try:
             result = subprocess.run(command, text=True, capture_output=True)
             if verbose:
