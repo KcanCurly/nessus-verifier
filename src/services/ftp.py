@@ -30,7 +30,7 @@ class FTPBruteSubServiceClass(BaseSubServiceClass):
         parser.set_defaults(func=self.console)
 
     def console(self, args):
-        self.nv(get_hosts_from_file2(args.target), creds=get_hosts_from_file(args.credential_file), threads=args.threads, timeout=args.timeout, errors=args.errors, verbose=args.verbose)
+        self.nv(get_hosts_from_file2(args.target), creds=get_hosts_from_file(args.credential), threads=args.threads, timeout=args.timeout, errors=args.errors, verbose=args.verbose)
 
     @error_handler([])
     def nv(self, hosts, **kwargs):
