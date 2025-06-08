@@ -73,6 +73,7 @@ def main():
     parser_all = subparsers.add_parser("all", help="Runs all solvers from json file")
     parser_all.add_argument("-f", "--file", type=str, default="output.ndjson", help="json file name (Default = output.ndjson)")
     parser_all.add_argument("-c", "--config", type=str, default="nv-config.toml", help="Config file (default: nv-config.toml).")
+    parser_all.add_argument("-a", "--create-actions", type=str, required=False, help="Creates action toml file for windowcatcher.")
     add_default_parser_arguments(parser_all, False)
     parser_all.set_defaults(func=all_solver)
     parser_all.set_defaults(is_all=True)

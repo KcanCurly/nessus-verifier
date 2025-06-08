@@ -1,10 +1,7 @@
-import subprocess
-import os
 from src.utilities.utilities import error_handler, get_cves, get_hosts_from_file2, add_default_parser_arguments, get_default_context_execution2, Version_Vuln_Host_Data
 from src.services.consts import DEFAULT_ERRORS, DEFAULT_THREAD, DEFAULT_TIMEOUT, DEFAULT_VERBOSE
 from src.services.serviceclass import BaseServiceClass
 from src.services.servicesubclass import BaseSubServiceClass
-import pika
 import nmap
 
 class AMQPVersionSubServiceClass(BaseSubServiceClass):
