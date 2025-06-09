@@ -1,8 +1,6 @@
 import subprocess
 import re
-from src.utilities.utilities import get_hosts_from_file, get_default_context_execution, add_default_parser_arguments
-from src.utilities.utilities import Version_Vuln_Host_Data, get_default_context_execution2, error_handler
-from src.services.consts import DEFAULT_ERRORS, DEFAULT_THREAD, DEFAULT_TIMEOUT, DEFAULT_VERBOSE
+from src.utilities.utilities import error_handler
 from src.services.serviceclass import BaseServiceClass
 from src.services.servicesubclass import BaseSubServiceClass
 
@@ -12,10 +10,7 @@ class FingerUserenumSubServiceClass(BaseSubServiceClass):
 
     @error_handler([])
     def nv(self, hosts, **kwargs):
-        threads = kwargs.get("threads", DEFAULT_THREAD)
-        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
-        errors = kwargs.get("errors", DEFAULT_ERRORS)
-        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
+        super().nv(hosts, kwargs=kwargs)
 
         result = ", ".join(host.ip for host in hosts)
 
@@ -33,18 +28,10 @@ class FingerUserenumSubServiceClass(BaseSubServiceClass):
                 
         except Exception as e: print(e)
         
-        if len(vuln) > 0:
-            print("Finger service user enumeration:")
+        if vuln:
+            self.print_output("Finger service user enumeration:")
             for k,v in vuln.items():
-                print(f"    {k}:79 - {", ".join(v)}")
-
-    @error_handler(["host"])
-    def single(self, host, **kwargs):
-        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
-        errors = kwargs.get("errors", DEFAULT_ERRORS)
-        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
-        ip = host.ip
-        port = host.port
+                self.print_output(f"    {k}:79 - {", ".join(v)}")
 
 class FingerServiceClass(BaseServiceClass):
     def __init__(self) -> None:

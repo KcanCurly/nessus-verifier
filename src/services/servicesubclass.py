@@ -1,7 +1,7 @@
 from src.utilities.utilities import add_default_parser_arguments, get_hosts_from_file2, error_handler
 from src.services.consts import DEFAULT_ERRORS, DEFAULT_THREAD, DEFAULT_TIMEOUT, DEFAULT_VERBOSE
 from src.services.serviceclass import BaseServiceClass as base_service
-
+from dataclasses import dataclass
 
 class BaseSubServiceClass():
     def __init__(self, command_name: str, help_description: str) -> None:
@@ -20,10 +20,21 @@ class BaseSubServiceClass():
         self.console(args)
 
     def console(self, args):
-        self.nv(get_hosts_from_file2(args.target), threads=args.threads, timeout=args.timeout, errors=args.errors, verbose=args.verbose)
+        self.nv(get_hosts_from_file2(args.target), threads=args.threads, timeout=args.timeout, errors=args.errors, verbose=args.verbose, outout=args.output)
 
     def nv(self, hosts, **kwargs):
-        print(f"Have not yet implemented nv for {self.command_name} for parent {self.parent_service.name}")
+        self.threads = kwargs.get("threads", DEFAULT_THREAD)
+        self.timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
+        self.errors = kwargs.get("errors", DEFAULT_ERRORS)
+        self.verbose = kwargs.get("verbose", DEFAULT_VERBOSE)
+        self.output = kwargs.get("output", "")
+
+    @error_handler([])
+    def print_output(self, message):
+        print(message)
+        if self.output:
+            with open(self.output, "a") as f:
+                print(message, file=f)
 
 class ExampleSubServiceClass(BaseSubServiceClass):
     def __init__(self) -> None:
@@ -31,10 +42,7 @@ class ExampleSubServiceClass(BaseSubServiceClass):
 
     @error_handler([])
     def nv(self, hosts, **kwargs):
-        threads = kwargs.get("threads", DEFAULT_THREAD)
-        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
-        errors = kwargs.get("errors", DEFAULT_ERRORS)
-        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
+        super().nv(hosts, kwargs=kwargs)
 
     @error_handler(["host"])
     def single(self, host, **kwargs):
@@ -42,4 +50,12 @@ class ExampleSubServiceClass(BaseSubServiceClass):
         errors = kwargs.get("errors", DEFAULT_ERRORS)
         verbose = kwargs.get("errors", DEFAULT_VERBOSE)
         ip = host.ip
-        port = host.port
+        port = host.port    
+
+@dataclass
+class NVOptions:
+    threads: int = DEFAULT_THREAD
+    timeout: int = DEFAULT_TIMEOUT
+    errors: int = DEFAULT_ERRORS
+    verbose: bool = DEFAULT_VERBOSE
+    output: str = ""

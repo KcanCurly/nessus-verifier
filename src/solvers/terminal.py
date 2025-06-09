@@ -10,7 +10,13 @@ class TerminalSolverClass(BaseSolverClass):
 
     @error_handler([])
     def solve(self, args):
-        super().solve(args)
+        self.process_args(args)
+
+        if self.output:
+            if not self.output.endswith("/"):
+                self.output += "/"
+            self.output += "terminal.txt" 
+
         if not self.hosts: 
             return
         issue_re = r"\[-\] (.*) has issue (.*)"
@@ -35,8 +41,8 @@ class TerminalSolverClass(BaseSolverClass):
                 self._print_exception(f"Error for {host}: {e}")
                 
         if vuln:
-            print("Terminal Misconfigurations Detected:")
+            self.print_output("Terminal Misconfigurations Detected:")
             for key, value in vuln.items():
-                print(f"{key}")
+                self.print_output(f"{key}")
                 for v in value:
-                    print(f"    {v}")
+                    self.print_output(f"    {v}")

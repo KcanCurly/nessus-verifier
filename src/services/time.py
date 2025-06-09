@@ -2,7 +2,6 @@ import socket
 import struct
 import time
 from src.utilities.utilities import get_default_context_execution2, error_handler
-from src.services.consts import DEFAULT_ERRORS, DEFAULT_THREAD, DEFAULT_TIMEOUT, DEFAULT_VERBOSE
 from src.services.serviceclass import BaseServiceClass
 from src.services.servicesubclass import BaseSubServiceClass
 
@@ -10,34 +9,29 @@ class TimeUsageSubServiceClass(BaseSubServiceClass):
     def __init__(self) -> None:
         super().__init__("usage", "Checks Time protocol usage")
 
+    @error_handler([])
     def nv(self, hosts, **kwargs):
-        threads = kwargs.get("threads", DEFAULT_THREAD)
-        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
-        errors = kwargs.get("errors", DEFAULT_ERRORS)
-        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
+        super().nv(hosts, kwargs=kwargs)
         
 
-        results = get_default_context_execution2("Time Protocol Usage", threads, hosts, self.single, timeout=timeout, errors=errors, verbose=verbose)
+        results = get_default_context_execution2("Time Protocol Usage", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
 
         if len(results):
-            print("Time protocol detected:")
+            self.print_output("Time protocol detected:")
             for r in results:
-                print(f"    {r}")
+                self.print_output(f"    {r}")
 
     @error_handler(["host"])
     def single(self, host, **kwargs):
-        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
-        errors = kwargs.get("errors", DEFAULT_ERRORS)
-        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
 
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-            s.settimeout(timeout)  # Set a timeout for the connection
+            s.settimeout(self.timeout)  # Set a timeout for the connection
             s.connect((host.ip, int(host.port)))  # Connect to the server
             
             # Receive the 4-byte binary time response
             data = s.recv(4)
             if len(data) != 4:
-                if errors: print(f"Error for {host} - Invalid response length.")
+                if self.errors: print(f"Error for {host} - Invalid response length.")
                 return
             
             # Unpack the 4-byte response as an unsigned integer

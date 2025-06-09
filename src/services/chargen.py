@@ -9,31 +9,25 @@ class ChargenBannerSubServiceClass(BaseSubServiceClass):
         super().__init__("banner", "Banner Grab")
 
     def nv(self, hosts, **kwargs):
-        threads = kwargs.get("threads", DEFAULT_THREAD)
-        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
-        errors = kwargs.get("errors", DEFAULT_ERRORS)
-        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
+        super().nv(hosts, kwargs=kwargs)
 
-        results: list[Version_Vuln_Host_Data] = get_default_context_execution2("Chargen Banner Grab", threads, hosts, self.single, timeout=timeout, errors=errors, verbose=verbose)
+        results: list[Version_Vuln_Host_Data] = get_default_context_execution2("Chargen Banner Grab", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
 
         if results:
-            print("Chargen Banners:")
+            self.print_output("Chargen Banners:")
             for r in results:
-                print("=================================")
-                print(r.host)
-                print("=================================")
-                print(r.version)
+                self.print_output("=================================")
+                self.print_output(r.host)
+                self.print_output("=================================")
+                self.print_output(r.version)
             
     @error_handler(["host"])
     def single(self, host, **kwargs):
-        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
-        errors = kwargs.get("errors", DEFAULT_ERRORS)
-        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
         ip = host.ip
         port = host.port
         # Create a socket
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.settimeout(timeout)  # Set timeout for connection
+        s.settimeout(self.timeout)  # Set timeout for connection
         
         # Connect to Systat service
         s.connect((ip, int(port)))
@@ -51,28 +45,24 @@ class ChargenUsageSubServiceClass(BaseSubServiceClass):
         super().__init__("usage", "Checks usage")
 
     def nv(self, hosts, **kwargs):
-        threads = kwargs.get("threads", DEFAULT_THREAD)
-        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
-        errors = kwargs.get("errors", DEFAULT_ERRORS)
-        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
-        results = get_default_context_execution2("Chargen Usage", threads, hosts, self.single, timeout=timeout, errors=errors, verbose=verbose)
+        super().nv(hosts, kwargs=kwargs)
+
+        results = get_default_context_execution2("Chargen Usage", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
         
         if results:
-            print("Chargen Usage Detected:")
+            self.print_output("Chargen Usage Detected:")
             for value in results:
-                print(f"{value}")
+                self.print_output(f"{value}")
 
     @error_handler(["host"])
     def single(self, host, **kwargs):
-        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
-        errors = kwargs.get("errors", DEFAULT_ERRORS)
-        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
+
         ip = host.ip
         port = host.port
         try:
             # Create a socket
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            s.settimeout(timeout)  # Set timeout for connection
+            s.settimeout(self.timeout)  # Set timeout for connection
             
             # Connect to Systat service
             s.connect((ip, int(port)))
@@ -90,7 +80,7 @@ class ChargenUsageSubServiceClass(BaseSubServiceClass):
                 response = response.decode(errors="ignore")
                 year = response.split()[-1]
                 if 1000 < int(year) < 9999: return host
-            if errors: print(f"Error for {host}: {e}")
+            if self.errors: print(f"Error for {host}: {e}")
 
 
 class ChargenServiceClass(BaseServiceClass):

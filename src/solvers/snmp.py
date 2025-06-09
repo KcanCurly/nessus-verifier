@@ -6,7 +6,13 @@ class SNMPSolverClass(BaseSolverClass):
         super().__init__("SNMP Service Misconfigurations", 6)
 
     def solve(self, args):
-        self._get_hosts(args) # type: ignore
+        self.process_args(args)
+
+        if self.output:
+            if not self.output.endswith("/"):
+                self.output += "/"
+            self.output += "snmp.txt" 
+
         if not self.hosts: 
             return
-        SNMPDefaultSubServiceClass().nv(self.hosts, threads=args.threads, timeout=args.timeout, errors=args.errors, verbose=args.verbose)
+        SNMPDefaultSubServiceClass().nv(self.hosts, threads=args.threads, timeout=args.timeout, errors=args.errors, verbose=args.verbose, output=self.output)

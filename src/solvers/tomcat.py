@@ -9,7 +9,13 @@ class TomcatSolverClass(BaseSolverClass):
         
     @error_handler([])
     def solve(self, args):
-        super().solve(args)
+        self.process_args(args)
+
+        if self.output:
+            if not self.output.endswith("/"):
+                self.output += "/"
+            self.output += "tomcat.txt" 
+
         if not self.hosts: 
             return
         versions = {}
@@ -24,26 +30,26 @@ class TomcatSolverClass(BaseSolverClass):
                 sorted(versions.items(), key=lambda x: parse(x[0]), reverse=True)
             )
             total_cves = []
-            print("Detected Apache Tomcat Versions:")
+            self.print_output("Detected Apache Tomcat Versions:")
             for key, value in versions.items():
                 if key.startswith("8"): 
-                    print(f"Apache Tomcat/{key} (EOL):")
+                    self.print_output(f"Apache Tomcat/{key} (EOL):")
                 else:
                     cves = get_cves(f"cpe:2.3:a:apache:tomcat:{key}")
                     if cves: 
-                        print(f"Apache Tomcat/{key} ({", ".join(cves)}):")
+                        self.print_output(f"Apache Tomcat/{key} ({", ".join(cves)}):")
                     else: 
-                        print(f"Apache Tomcat/{key}:")
+                        self.print_output(f"Apache Tomcat/{key}:")
                     total_cves.extend(cves)
                 for v in value:
-                    print(f"    {v}")
+                    self.print_output(f"    {v}")
                     
             poc_printed = False
             if "CVE-2025-24813" in total_cves:
                 if not poc_printed: 
-                    print("\nPOC:")
+                    self.print_output("\nPOC:")
                     poc_printed = True
-                print("CVE-2025-24813 => https://github.com/absholi7ly/POC-CVE-2025-24813")
+                self.print_output("CVE-2025-24813 => https://github.com/absholi7ly/POC-CVE-2025-24813")
     
     @error_handler(["host"])
     def solve_version_single(self, host, timeout, errors, verbose):

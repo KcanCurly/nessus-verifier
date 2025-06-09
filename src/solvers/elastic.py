@@ -7,7 +7,12 @@ class ElasticsearchSolverClass(BaseSolverClass):
         super().__init__("Elasticsearch", 25)
 
     def solve(self, args):
-        self._get_hosts(args) # type: ignore
+        self.process_args(args)
+        if self.output:
+            if not self.output.endswith("/"):
+                self.output += "/"
+            self.output += "elastic.txt" 
+
         if not self.hosts:
             return
         if self.is_nv:
@@ -37,13 +42,13 @@ class ElasticsearchSolverClass(BaseSolverClass):
             versions = dict(
                 sorted(versions.items(), key=lambda x: parse(x[0]), reverse=True)
             )
-            print("Elastic versions detected:")
+            self.print_output("Elastic versions detected:")
             for key, value in versions.items():
                 cves = get_cves(f"cpe:2.3:a:elastic:elasticsearch:{key}")
-                if cves: print(f"Elasticsearch {key} ({", ".join(cves)}):")
-                else: print(f"Elasticsearch {key}:")
+                if cves: self.print_output(f"Elasticsearch {key} ({", ".join(cves)}):")
+                else: self.print_output(f"Elasticsearch {key}:")
                 for v in value:
-                    print(f"    {v}")
+                    self.print_output(f"    {v}")
     
 
     

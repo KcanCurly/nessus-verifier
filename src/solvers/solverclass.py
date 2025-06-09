@@ -9,6 +9,20 @@ class BaseSolverClass():
         self.hosts: list[Host] = []
         self.is_nv = True
         self.spaces_before_hosts = 0
+        self.output = ""
+
+    def process_args(self, args):
+        self.args = args
+        if hasattr(args, "is_all") and args.is_all: self.process_config(args.config)
+        self._get_hosts(args)
+        if args.output:
+            self.output = args.output
+
+    def print_output(self, message):
+        print(message)
+        if self.output:
+            with open(self.output, "a") as f:
+                print(message, file=f)
 
     def process_config(self, config: str) -> None:
         pass
@@ -23,10 +37,11 @@ class BaseSolverClass():
         parser_task1.set_defaults(func=self.solve)
         
     def solve(self, args):
-        self.args = args
-        if hasattr(args, "is_all") and args.is_all: self.process_config(args.config)
-        self._get_hosts(args)
+        return
          
+    def create_windowcatcher_action(self):
+        return
+
     def _get_subhosts(self, name):
         return self.subhosts.get(name, [])
         

@@ -1,7 +1,6 @@
 import subprocess
 import re
 from src.utilities.utilities import error_handler, get_hosts_from_file2, add_default_parser_arguments
-from src.services.consts import DEFAULT_ERRORS, DEFAULT_THREAD, DEFAULT_TIMEOUT, DEFAULT_VERBOSE
 from src.services.serviceclass import BaseServiceClass
 from src.services.servicesubclass import BaseSubServiceClass
 from traceback import print_exc
@@ -23,10 +22,7 @@ class IdentUsersSubServiceClass(BaseSubServiceClass):
 
     @error_handler([])
     def nv(self, hosts, **kwargs):
-        threads = kwargs.get("threads", DEFAULT_THREAD)
-        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
-        errors = kwargs.get("errors", DEFAULT_ERRORS)
-        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
+        super().nv(hosts, kwargs=kwargs)
         ports = kwargs.get("ports", [])
 
         print("Running ident-user-enum command, there will be no progression bar")
@@ -45,16 +41,16 @@ class IdentUsersSubServiceClass(BaseSubServiceClass):
                     vuln[m[0]].append(f"{m[1]} - {m[2]}")
                 
             except Exception as e:
-                if errors == 1: 
+                if self.errors == 1: 
                     print(f"Error for {host}: {e}")
-                if errors == 2:
+                if self.errors == 2:
                     print(f"Error for {host}: {e}")
                     print_exc()
         
         if vuln:
-            print("Ident service user enumeration:")
+            self.print_output("Ident service user enumeration:")
             for k,v in vuln.items():
-                print(f"    {k}:113 - {", ".join(v)}")
+                self.print_output(f"    {k}:113 - {", ".join(v)}")
 
 class IdentServiceClass(BaseServiceClass):
     def __init__(self) -> None:

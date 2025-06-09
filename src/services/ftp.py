@@ -1,9 +1,7 @@
 from ftplib import FTP
 from ftplib import Error
 from ftplib import FTP_TLS
-from src.utilities.utilities import control_TLS, get_hosts_from_file, get_default_context_execution2, add_default_parser_arguments, Host
-from src.utilities.utilities import error_handler, get_hosts_from_file2, add_default_parser_arguments
-from src.services.consts import DEFAULT_ERRORS, DEFAULT_THREAD, DEFAULT_TIMEOUT, DEFAULT_VERBOSE
+from src.utilities.utilities import error_handler, get_hosts_from_file, get_hosts_from_file2, get_default_context_execution2, add_default_parser_arguments, Host
 from src.services.serviceclass import BaseServiceClass
 from src.services.servicesubclass import BaseSubServiceClass
 
@@ -34,24 +32,18 @@ class FTPBruteSubServiceClass(BaseSubServiceClass):
 
     @error_handler([])
     def nv(self, hosts, **kwargs):
-        threads = kwargs.get("threads", DEFAULT_THREAD)
-        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
-        errors = kwargs.get("errors", DEFAULT_ERRORS)
-        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
+        super().nv(hosts, kwargs=kwargs)
         creds = kwargs.get("creds", [])
 
-        results: list[FTP_Brute_Vuln_Data] = get_default_context_execution2("FTP Brute", threads, hosts, self.single, creds=creds, timeout=timeout, errors=errors, verbose=verbose)
+        results: list[FTP_Brute_Vuln_Data] = get_default_context_execution2("FTP Brute", self.threads, hosts, self.single, creds=creds, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
         
         if results:
-            print("FTP Credentials Found on Hosts:")               
+            self.print_output("FTP Credentials Found on Hosts:")               
             for a in results:
-                print(f"    {a}{" [TLS]" if a.is_TLS else ""} - {", ".join(a.creds)}")
+                self.print_output(f"    {a}{" [TLS]" if a.is_TLS else ""} - {", ".join(a.creds)}")
 
     @error_handler(["host"])
     def single(self, host, **kwargs):
-        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
-        errors = kwargs.get("errors", DEFAULT_ERRORS)
-        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
         creds = kwargs.get("creds", [])
         ip = host.ip
         port = host.port
@@ -62,7 +54,7 @@ class FTPBruteSubServiceClass(BaseSubServiceClass):
             try:
                 username, password = cred.split(":")
                 ftp = FTP()
-                ftp.connect(ip, int(port), timeout=timeout)
+                ftp.connect(ip, int(port), timeout=self.timeout)
                 l = ftp.login(username, password)
                 if "230" in l:
                     vuln.creds.append(f"{username}:{password}")
@@ -70,7 +62,7 @@ class FTPBruteSubServiceClass(BaseSubServiceClass):
             except Error:
                 try:
                     ftp = FTP_TLS()
-                    ftp.connect(ip, int(port), timeout=timeout)
+                    ftp.connect(ip, int(port), timeout=self.timeout)
                     l = ftp.login(username, password)
                     if "230" in l:
                         vuln.is_TLS = True
@@ -90,28 +82,22 @@ class FTPAnonSubServiceClass(BaseSubServiceClass):
 
     @error_handler([])
     def nv(self, hosts, **kwargs):
-        threads = kwargs.get("threads", DEFAULT_THREAD)
-        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
-        errors = kwargs.get("errors", DEFAULT_ERRORS)
-        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
+        super().nv(hosts, kwargs=kwargs)
 
-        results: list[FTP_Anon_Vuln_Data] = get_default_context_execution2("FTP Anon", threads, hosts, self.single, timeout=timeout, errors=errors, verbose=verbose)
+        results: list[FTP_Anon_Vuln_Data] = get_default_context_execution2("FTP Anon", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
                         
         if results:
-            print("FTP Anonymous Access on Hosts:")               
+            self.print_output("FTP Anonymous Access on Hosts:")               
             for a in results:
-                print(f"    {a}{" [TLS]" if a.is_TLS else ""}")
+                self.print_output(f"    {a}{" [TLS]" if a.is_TLS else ""}")
 
     @error_handler(["host"])
     def single(self, host, **kwargs):
-        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
-        errors = kwargs.get("errors", DEFAULT_ERRORS)
-        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
         ip = host.ip
         port = host.port
 
         ftp = FTP()
-        ftp.connect(ip, int(port), timeout=timeout)
+        ftp.connect(ip, int(port), timeout=self.timeout)
         try:
             l = ftp.login()
             if "230" in l:
@@ -119,7 +105,7 @@ class FTPAnonSubServiceClass(BaseSubServiceClass):
 
         except Error as e:
             ftp = FTP_TLS()
-            ftp.connect(ip, int(port), timeout=timeout)
+            ftp.connect(ip, int(port), timeout=self.timeout)
             l = ftp.login()
             if "230" in l:
                 return FTP_Anon_Vuln_Data(host, True)

@@ -9,7 +9,13 @@ class QueueJumperSolverClass(BaseSolverClass):
 
     @error_handler([])
     def solve(self, args):
-        self._get_hosts(args) # type: ignore
+        self.process_args(args)
+
+        if self.output:
+            if not self.output.endswith("/"):
+                self.output += "/"
+            self.output += "queuejumper.txt" 
+
         if not self.hosts: 
             return
         print("Running metasploit cve_2023_21554_queuejumper module, there will be no progression bar")
@@ -31,7 +37,7 @@ class QueueJumperSolverClass(BaseSolverClass):
             self._print_exception(e)
         
         if vuln:
-            print("Vulnerable to CVE-2023-21554 (QueueJumper):")
+            self.print_output("Vulnerable to CVE-2023-21554 (QueueJumper):")
             for v in vuln:
-                print(f"    {v}")
+                self.print_output(f"    {v}")
 

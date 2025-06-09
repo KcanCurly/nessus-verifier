@@ -8,7 +8,13 @@ class PythonSolverClass(BaseSolverClass):
         super().__init__("Python Unsupported Version", 23)
 
     def solve(self, args):
-        self._get_hosts(args) # type: ignore
+        self.process_args(args)
+
+        if self.output:
+            if not self.output.endswith("/"):
+                self.output += "/"
+            self.output += "python.txt" 
+
         if not self.hosts: 
             return
         self.solve_version(self.hosts, args.threads, args.timeout, args.errors, args.verbose)
@@ -22,18 +28,18 @@ class PythonSolverClass(BaseSolverClass):
                 versions[r.version] = set()
             versions[r.version].add(r.host)
 
-        if len(versions) > 0:
+        if versions:
             versions = dict(
                 sorted(versions.items(), key=lambda x: parse(x[0]), reverse=True)
             )
-            print("Detected Python versions:")
+            self.print_output("Detected Python versions:")
             for key, value in versions.items():
                 if parse(key) < parse("3.9"):
-                    print(f"{key} (EOL):")
+                    self.print_output(f"{key} (EOL):")
                 else: 
-                    print(f"Python {key}:")
+                    self.print_output(f"Python {key}:")
                 for v in value:
-                    print(f"    {v}")
+                    self.print_output(f"    {v}")
 
 
 

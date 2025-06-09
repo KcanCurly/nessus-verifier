@@ -6,7 +6,13 @@ class SMBSolverClass(BaseSolverClass):
         super().__init__("SMB Service Misconfigurations", 5)
 
     def solve(self, args):
-        self._get_hosts(args) # type: ignore
+        self.process_args(args)
+
+        if self.output:
+            if not self.output.endswith("/"):
+                self.output += "/"
+            self.output += "smb.txt"
+             
         if not self.hosts: 
             return
-        SMBSignSubServiceClass().nv(self.hosts, threads=args.threads, timeout=args.timeout, errors=args.errors, verbose=args.verbose)
+        SMBSignSubServiceClass().nv(self.hosts, threads=args.threads, timeout=args.timeout, errors=args.errors, verbose=args.verbose, output=self.output)

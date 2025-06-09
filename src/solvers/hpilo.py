@@ -6,7 +6,13 @@ class HPiLOSolverClass(BaseSolverClass):
         super().__init__("HP iLO Version", 34)
 
     def solve(self, args):
-        self._get_hosts(args) # type: ignore
+        self.process_args(args)
+
+        if self.output:
+            if not self.output.endswith("/"):
+                self.output += "/"
+            self.output += "hpilo.txt" 
+
         if not self.hosts:
             return
         if self.is_nv:
@@ -31,8 +37,8 @@ class HPiLOSolverClass(BaseSolverClass):
                 versions[r.version] = set()
             versions[r.version].add(r.host)
         
-        if len(versions) > 0:
-            print("Detected HP iLO versions:")
+        if versions:
+            self.print_output("Detected HP iLO versions:")
             versions = dict(sorted(versions.items(), reverse=True))
             for key, value in versions.items():
                 """
@@ -40,7 +46,7 @@ class HPiLOSolverClass(BaseSolverClass):
                 if cves: print(f"HP iLO {key} ({", ".join(cves)}):")
                 else: print(f"HP iLO {key}:")
                 """
-                print(f"HP iLO {key}:")
+                self.print_output(f"HP iLO {key}:")
                 for v in value:
-                    print(f"    {v}")
+                    self.print_output(f"    {v}")
                 

@@ -3,8 +3,7 @@ import subprocess
 import re
 import asyncssh
 from packaging.version import parse
-from src.utilities.utilities import get_default_context_execution2, error_handler, get_cves, Host, normalize_line_endings
-from src.services.consts import DEFAULT_ERRORS, DEFAULT_THREAD, DEFAULT_TIMEOUT, DEFAULT_VERBOSE
+from src.utilities.utilities import add_default_parser_arguments, get_default_context_execution2, error_handler, get_cves, Host, normalize_line_endings
 from src.services.serviceclass import BaseServiceClass
 from src.services.servicesubclass import BaseSubServiceClass
 
@@ -39,12 +38,9 @@ class SSHVersionSubServiceClass(BaseSubServiceClass):
         super().__init__("version", "Run SSH version check on targets")
 
     def nv(self, hosts, **kwargs):
-        threads = kwargs.get("threads", DEFAULT_THREAD)
-        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
-        errors = kwargs.get("errors", DEFAULT_ERRORS)
-        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
+        super().nv(hosts, kwargs=kwargs)
 
-        results: list[SSH_Version_Vuln_Data] = get_default_context_execution2("SSH Version", threads, hosts, self.single, timeout=timeout, errors=errors, verbose=verbose)
+        results: list[SSH_Version_Vuln_Data] = get_default_context_execution2("SSH Version", self.threads, hosts, self.single)
 
         protocol1 = []
         versions = {}
@@ -58,38 +54,35 @@ class SSHVersionSubServiceClass(BaseSubServiceClass):
                     versions[r.version] = []
                 versions[r.version].append(r.host)
                 
-        if len(protocol1) > 0:
-            print("Protocol Version 1:")
+        if protocol1:
+            self.print_output("Protocol Version 1:")
             for p in protocol1:
-                print(f"    {p}")
+                self.print_output(f"    {p}")
         
-        if len(versions) > 0:
+        if versions:
             versions = dict(
                 sorted(versions.items(), key=lambda x: parse(remove_extra(x[0])), reverse=True)
             )
-            print("SSH Versions:")
+            self.print_output("SSH Versions:")
             for key, value in versions.items():
                 key1 = key.replace("p1", "")
                 key1 = key1.replace("p2", "")
                 cves = get_cves(f"cpe:2.3:a:openbsd:openssh:{key1}", cves_to_skip=shodan_cves_to_skip)
 
-                if cves: print(f"OpenSSH {key} ({", ".join(cves)}):")
-                else: print(f"OpenSSH {key}:")
+                if cves: self.print_output(f"OpenSSH {key} ({", ".join(cves)}):")
+                else: self.print_output(f"OpenSSH {key}:")
                 for v in value:
-                    print(f"    {v}")
+                    self.print_output(f"    {v}")
 
     @error_handler(["host"])
     def single(self, host, **kwargs):
-        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
-        errors = kwargs.get("errors", DEFAULT_ERRORS)
-        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
         ip = host.ip
         port = host.port
         
         protocol = ""
         version = ""
         
-        command = ["ssh", "-vvv", "-p", port, "-o", "StrictHostKeyChecking=no", "-o", "BatchMode=yes", "-o", f"ConnectTimeout={timeout}", ip]
+        command = ["ssh", "-vvv", "-p", port, "-o", "StrictHostKeyChecking=no", "-o", "BatchMode=yes", "-o", f"ConnectTimeout={self.timeout}", ip]
 
         # Execute the command and capture the output
         result = subprocess.run(command, text=True, capture_output=True)
@@ -117,25 +110,18 @@ class SSHCommandSubServiceClass(BaseSubServiceClass):
         parser_enum.add_argument("target", type=str, help="File name or targets seperated by space, format is: 'host:port => username:password'")
         parser_enum.add_argument("command", type=str, help="Command to run")
         parser_enum.add_argument("--sudo", action="store_true", help="Run as sudo")
-        parser_enum.add_argument("-o", "--output", type=str, required=False, help="Output filename.")
-        parser_enum.add_argument("-th", "--threads", type=int, default=10, help="Amount of threads (Default = 10).")
-        parser_enum.add_argument("-ti", "--timeout", type=int, default=5, help="Amount of timeout (Default = 5).")
-        parser_enum.add_argument("-e", "--errors", type=int, choices=[1, 2], default = 0, help="1 - Print Errors\n2 - Print errors and prints stacktrace")
-        parser_enum.add_argument("-v", "--verbose", action="store_true", help="Print Verbose")
+        add_default_parser_arguments(parser_enum, False)
         parser_enum.set_defaults(func=self.console)
 
     def console(self, args):
         asyncio.run(self.nv(args.target, args.command, args.sudo, threads=args.threads, timeout=args.timeout, errors=args.errors, verbose=args.verbose))
 
-    async def nv(self, target, command, sudo, **kwargs):
-        lines = []
-        with open(target, "r") as f:
-            lines = f.readlines()
+    async def nv(self, hosts, command, sudo, **kwargs):
+        super().nv(hosts, kwargs=kwargs)
 
-        threads = kwargs.get("threads", DEFAULT_THREAD)
-        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
-        errors = kwargs.get("errors", DEFAULT_ERRORS)
-        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
+        lines = []
+        with open(hosts, "r") as f:
+            lines = f.readlines()
 
         try:
             async with asyncio.timeout(60): # 1 minute
@@ -169,33 +155,25 @@ class SSHCommandSubServiceClass(BaseSubServiceClass):
                     command = f"echo '{password}' | sudo -S {command}"
                 ans = await conn.run(command, check=True)
                 if ans.stdout:
-                    print("===========================")
-                    print(f"{ip}:{port} - {username}:")
-                    print(ans.stdout)
+                    self.print_output("stdout ===========================")
+                    self.print_output(f"{ip}:{port} - {username}:")
+                    self.print_output(ans.stdout)
                 if ans.stderr:
-                    print("===========================")
-                    print(f"{ip}:{port} - {username}:")
-                    print("stderr:")
-                    print(ans.stderr)
+                    self.print_output("stderr ===========================")
+                    self.print_output(f"{ip}:{port} - {username}:")
+                    self.print_output(ans.stderr)
 
         except Exception as e:
             print(f"Error connecting to {ip}:{port} - {e}")
-
-
-
-
 
 class SSHAuditSubServiceClass(BaseSubServiceClass):
     def __init__(self) -> None:
         super().__init__("audit", "Run ssh-audit on targets")
 
     def nv(self, hosts, **kwargs):
-        threads = kwargs.get("threads", DEFAULT_THREAD)
-        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
-        errors = kwargs.get("errors", DEFAULT_ERRORS)
-        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
+        super().nv(hosts, kwargs=kwargs)
 
-        results: list[Audit_Vuln_Data] = get_default_context_execution2("SSH Audit", threads, hosts, self.single, timeout=timeout, errors=errors, verbose=verbose)
+        results: list[Audit_Vuln_Data] = get_default_context_execution2("SSH Audit", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
         
         vuln_kex = set()
         vuln_mac = set()
@@ -214,51 +192,45 @@ class SSHAuditSubServiceClass(BaseSubServiceClass):
             if r.is_terrapin:
                 vuln_terrapin.add(r.host)
         
-        if len(vuln_kex) > 0:
-            print("Vulnerable KEX algorithms:")
+        if vuln_kex:
+            self.print_output("Vulnerable KEX algorithms:")
             for k in vuln_kex:
-                print(f"    {k}")
+                self.print_output(f"    {k}")
             
-        if len(vuln_mac) > 0:
-            print("Vulnerable MAC algorithms:")
+        if vuln_mac:
+            self.print_output("Vulnerable MAC algorithms:")
             for k in vuln_mac:
-                print(f"    {k}")
+                self.print_output(f"    {k}")
                 
-        if len(vuln_key) > 0:
-            print("Vulnerable Host-Key algorithms:")
+        if vuln_key:
+            self.print_output("Vulnerable Host-Key algorithms:")
             for k in vuln_key:
-                print(f"    {k}")
+                self.print_output(f"    {k}")
         
-        if len(vuln_cipher) > 0:
-            print("Vulnerable Cipher algorithms:")
+        if vuln_cipher:
+            self.print_output("Vulnerable Cipher algorithms:")
             for k in vuln_cipher:
-                print(f"    {k}")
+                self.print_output(f"    {k}")
                 
-        if len(vuln_hosts) > 0:
-            print("Vulnerable hosts:")
+        if vuln_hosts:
+            self.print_output("Vulnerable hosts:")
             for k in vuln_hosts:
-                print(f"    {k}")
+                self.print_output(f"    {k}")
                 
-        if len(vuln_terrapin) > 0:
-            print("Vulnerable Terrapin hosts:")
+        if vuln_terrapin:
+            self.print_output("Vulnerable Terrapin hosts:")
             for k in vuln_terrapin:
-                print(f"    {k}")
+                self.print_output(f"    {k}")
 
 
     @error_handler(["host"])
     def single(self, host, **kwargs):
-        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
-        errors = kwargs.get("errors", DEFAULT_ERRORS)
-        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
-        ip = host.ip
-        port = host.port
-
         vuln_kex = []
         vuln_mac = []
         vuln_key = []
         vuln_cipher = []
         # if verbose: console.print(f"Starting processing {host}")
-        command = ["ssh-audit", "--skip-rate-test", "-t", str(timeout), str(host)]
+        command = ["ssh-audit", "--skip-rate-test", "-t", str(self.timeout), str(host)]
         # Execute the command and capture the output
         result = subprocess.run(command, text=True, capture_output=True)
         lines = result.stdout.splitlines()

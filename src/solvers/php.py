@@ -8,7 +8,13 @@ class PHPSolverClass(BaseSolverClass):
         super().__init__("PHP", 21)
 
     def solve(self, args):
-        self._get_hosts(args) # type: ignore
+        self.process_args(args)
+
+        if self.output:
+            if not self.output.endswith("/"):
+                self.output += "/"
+            self.output += "php.txt" 
+
         if not self.hosts: 
             return
         if self.is_nv:
@@ -48,12 +54,12 @@ class PHPSolverClass(BaseSolverClass):
             versions = dict(
                 sorted(versions.items(), key=lambda x: parse(x[0]), reverse=True)
             )
-            print("Detected PHP versions:")
+            self.print_output("Detected PHP versions:")
             for key, value in versions.items():
                 cves = get_cves(f"cpe:2.3:a:php:php:{key}")
                 if cves: 
-                    print(f"PHP/{key} ({", ".join(cves)}):")
+                    self.print_output(f"PHP/{key} ({", ".join(cves)}):")
                 else: 
-                    print(f"PHP/{key}:")
+                    self.print_output(f"PHP/{key}:")
                 for v in value:
-                    print(f"    {v}")
+                    self.print_output(f"    {v}")

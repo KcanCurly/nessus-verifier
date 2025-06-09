@@ -1,6 +1,5 @@
 import socket
 from src.utilities.utilities import get_default_context_execution2, error_handler
-from src.services.consts import DEFAULT_ERRORS, DEFAULT_THREAD, DEFAULT_TIMEOUT, DEFAULT_VERBOSE
 from src.services.serviceclass import BaseServiceClass
 from src.services.servicesubclass import BaseSubServiceClass
 from traceback import print_exc
@@ -10,27 +9,23 @@ class DiscardUsageSubServiceClass(BaseSubServiceClass):
         super().__init__("usage", "Checks usage")
 
     def nv(self, hosts, **kwargs):
-        threads = kwargs.get("threads", DEFAULT_THREAD)
-        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
-        errors = kwargs.get("errors", DEFAULT_ERRORS)
-        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
-        results = get_default_context_execution2("Discard Usage", threads, hosts, self.single, timeout=timeout, errors=errors, verbose=verbose)
+        super().nv(hosts, kwargs=kwargs)
+
+        results = get_default_context_execution2("Discard Usage", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
         
         if results:
-            print("Discard Usage Detected:")
+            self.print_output("Discard Usage Detected:")
             for value in results:
-                print(f"{value}")
+                self.print_output(f"{value}")
 
     @error_handler(["host"])
     def single(self, host, **kwargs):
-        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
-        errors = kwargs.get("errors", DEFAULT_ERRORS)
-        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
+
         try:
             ip, port = host.split(":")
             # Create a socket
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            s.settimeout(timeout)  # Set timeout for connection
+            s.settimeout(self.timeout)  # Set timeout for connection
             
             # Connect to Systat service
             s.connect((ip, int(port)))
@@ -54,9 +49,9 @@ class DiscardUsageSubServiceClass(BaseSubServiceClass):
                 response = response.decode(errors="ignore")
                 if response == "": 
                     return host
-            if errors == 1: 
+            if self.errors == 1: 
                 print(f"Error for {host}: {e}")
-            if errors == 2:
+            if self.errors == 2:
                 print(f"Error for {host}: {e}")
                 print_exc()
 

@@ -8,7 +8,13 @@ class GrafanaSolverClass(BaseSolverClass):
         super().__init__("Grafana", 22)
 
     def solve(self, args):
-        self._get_hosts(args) # type: ignore
+        self.process_args(args)
+
+        if self.output:
+            if not self.output.endswith("/"):
+                self.output += "/"
+            self.output += "grafana.txt" 
+
         if not self.hosts:
             return
         if self.is_nv:
@@ -35,15 +41,15 @@ class GrafanaSolverClass(BaseSolverClass):
                 versions[r.version] = set()
             versions[r.version].add(r.host)
         
-        if len(versions) > 0:
+        if versions:
             versions = dict(
                 sorted(versions.items(), key=lambda x: parse(x[0]), reverse=True)
             )
-            print("Detected Grafana Versions:")
+            self.print_output("Detected Grafana Versions:")
             for key, value in versions.items():
                 cves = get_cves(f"cpe:2.3:a:grafana:grafana:{key}")
-                if cves: print(f"Grafana {key} ({", ".join(cves)}):")
-                else: print(f"Grafana {key}:")
+                if cves: self.print_output(f"Grafana {key} ({", ".join(cves)}):")
+                else: self.print_output(f"Grafana {key}:")
                 for v in value:
-                    print(f"    {v}")
+                    self.print_output(f"    {v}")
 

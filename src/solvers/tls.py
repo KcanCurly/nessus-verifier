@@ -32,7 +32,13 @@ class TLSSolverClass(BaseSolverClass):
             return
 
     def solve(self, args):
-        super().solve(args)
+        self.process_args(args)
+
+        if self.output:
+            if not self.output.endswith("/"):
+                self.output += "/"
+            self.output += "tls.txt" 
+            
         if not self.hosts: 
             return
         if hasattr(args, "is_all") and args.is_all:
@@ -154,32 +160,32 @@ class TLSSolverClass(BaseSolverClass):
                 expired_cert_hosts.append(f"{r.host} - {r.is_cert_expired}")
         
         if weak_ciphers:       
-            print("Vulnerable TLS Ciphers on Hosts:")                
+            self.print_output("Vulnerable TLS Ciphers on Hosts:")                
             for key, value in weak_ciphers.items():
-                print(f"    {key} - {", ".join(value)}")
+                self.print_output(f"    {key} - {", ".join(value)}")
         
         
-        if len(weak_versions) > 0: 
-            print()             
-            print("Vulnerable TLS Versions on Hosts:")                
+        if weak_versions: 
+            self.print_output("Vulnerable TLS Versions on Hosts:")                
             for key, value in weak_versions.items():
-                print(f"    {key} - {", ".join(value)}")
+                self.print_output(f"    {key} - {", ".join(value)}")
+            self.print_output("")
                 
-        if len(weak_bits) > 0:
-            print()
-            print("Low Bits on Good Algorithms on Hosts:")
+        if weak_bits:
+            self.print_output("Low Bits on Good Algorithms on Hosts:")
             for key, value in weak_bits.items():
-                print(f"    {key} - {", ".join(value)}")
+                self.print_output(f"    {key} - {", ".join(value)}")
+            self.print_output("")
         
-        if len(wrong_hosts) > 0:
-            print()
-            print("Wrong hostnames on certficate on hosts:")
+        if wrong_hosts:
+            self.print_output("Wrong hostnames on certficate on hosts:")
             for v in wrong_hosts:
-                print(f"    {v}")
+                self.print_output(f"    {v}")
+            self.print_output("")
                 
-        if len(expired_cert_hosts) > 0:
-            print()
-            print("Expired cert on hosts:")
+        if expired_cert_hosts:
+            self.print_output("Expired cert on hosts:")
             for v in expired_cert_hosts:
-                print(f"    {v}")
+                self.print_output(f"    {v}")
+            self.print_output("")
     

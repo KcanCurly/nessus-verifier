@@ -8,7 +8,13 @@ class NginxSolverClass(BaseSolverClass):
         super().__init__("Nginx Version", 12)
 
     def solve(self, args):
-        self._get_hosts(args) # type: ignore
+        self.process_args(args)
+
+        if self.output:
+            if not self.output.endswith("/"):
+                self.output += "/"
+            self.output += "nginx.txt" 
+
         if not self.hosts:
             return
         if self.is_nv:
@@ -40,14 +46,14 @@ class NginxSolverClass(BaseSolverClass):
             versions = dict(
                 sorted(versions.items(), key=lambda x: parse(x[0]), reverse=True)
             )
-            print("Detected Nginx Versions:")
+            self.print_output("Detected Nginx Versions:")
             for key, value in versions.items():
                 cves = get_cves(f"cpe:2.3:a:f5:nginx_open_source:{key}")
                 if not cves:
                     cves = get_cves(f"cpe:2.3:a:f5:nginx:{key}")
                 if cves: 
-                    print(f"Nginx {key} ({", ".join(cves)}):")
+                    self.print_output(f"Nginx {key} ({", ".join(cves)}):")
                 else: 
-                    print(f"Nginx {key}:")
+                    self.print_output(f"Nginx {key}:")
                 for v in value:
-                    print(f"    {v}")
+                    self.print_output(f"    {v}")

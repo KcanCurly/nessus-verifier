@@ -3,7 +3,6 @@ import re
 from src.utilities.utilities import error_handler
 from src.services.serviceclass import BaseServiceClass
 from src.services.servicesubclass import BaseSubServiceClass
-from src.services.consts import DEFAULT_ERRORS, DEFAULT_THREAD, DEFAULT_TIMEOUT, DEFAULT_VERBOSE
 
 class ZookeeperEnumServiceClass(BaseSubServiceClass):
     def __init__(self) -> None:
@@ -11,8 +10,7 @@ class ZookeeperEnumServiceClass(BaseSubServiceClass):
 
     @error_handler([])
     def nv(self, hosts, **kwargs):
-        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
-        errors = kwargs.get("errors", DEFAULT_ERRORS)
+        super().nv(hosts, kwargs=kwargs)
 
         print("Running metasploit zookeeper info disclosure module with forcing 1 thread, there will be no progression bar")
         versions = {}
@@ -21,7 +19,7 @@ class ZookeeperEnumServiceClass(BaseSubServiceClass):
         result = ", ".join(host.ip for host in hosts)
 
 
-        command = ["msfconsole", "-q", "-x", f"color false; use auxiliary/gather/zookeeper_info_disclosure; set RHOSTS {result}; set ConnectTimeout {timeout}; run; exit"]
+        command = ["msfconsole", "-q", "-x", f"color false; use auxiliary/gather/zookeeper_info_disclosure; set RHOSTS {result}; set ConnectTimeout {self.timeout}; run; exit"]
         result = subprocess.run(command, text=True, capture_output=True)
         host_start = r"\[\*\] (.*)\s+ - Using a timeout of"
         zookeeper_version = r"zookeeper.version=(.*),"
@@ -56,18 +54,19 @@ class ZookeeperEnumServiceClass(BaseSubServiceClass):
 
         if versions:
             versions = dict(sorted(versions.items(), reverse=True))
-            print("Apache Zookeeper Versions:")
+            self.print_output("Apache Zookeeper Versions:")
             for k,v in versions.items():
+                self.print_output(f"{k}:")
                 print(f"{k}:")
                 for a in v:
-                    print(f"    {a}")
+                    self.print_output(f"    {a}")
                     
         if info_vuln:
-            print("Apache Zookeeper Information Disclosure Detected:")
+            self.print_output("Apache Zookeeper Information Disclosure Detected:")
             for k,v in info_vuln.items():
-                print(f"{k}:2181")
+                self.print_output(f"{k}:")
                 for a in v:
-                    print(f"    {a}")
+                    self.print_output(f"    {a}")
 
 
 class ZookeeperServiceClass(BaseServiceClass):

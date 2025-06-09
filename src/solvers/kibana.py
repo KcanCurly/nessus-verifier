@@ -8,7 +8,13 @@ class KibanaSolverClass(BaseSolverClass):
         super().__init__("Kibana", 24)
 
     def solve(self, args):
-        self._get_hosts(args) # type: ignore
+        self.process_args(args)
+
+        if self.output:
+            if not self.output.endswith("/"):
+                self.output += "/"
+            self.output += "kibana.txt" 
+
         if not self.hosts:
             return
         if self.is_nv:
@@ -39,14 +45,14 @@ class KibanaSolverClass(BaseSolverClass):
                 sorted(versions.items(), key=lambda x: parse(x[0]), reverse=True)
             )
             total_cves = []
-            print("Detected Kibana Versions:")
+            self.print_output("Detected Kibana Versions:")
             for key, value in versions.items():
                 cves = get_cves(f"cpe:2.3:a:elastic:kibana:{key}")
                 if cves: 
-                    print(f"{key} ({", ".join(cves)}):")
+                    self.print_output(f"{key} ({", ".join(cves)}):")
                 else: 
-                    print(f"{key}:")
+                    self.print_output(f"{key}:")
                 total_cves.extend(cves)
                 for v in value:
-                    print(f"    {v}")
+                    self.print_output(f"    {v}")
 

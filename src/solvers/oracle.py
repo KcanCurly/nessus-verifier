@@ -8,7 +8,13 @@ class OracleSolverClass(BaseSolverClass):
         super().__init__("Oracle Database", 27)
 
     def solve(self, args):
-        self._get_hosts(args) # type: ignore
+        self.process_args(args)
+
+        if self.output:
+            if not self.output.endswith("/"):
+                self.output += "/"
+            self.output += "oracle.txt" 
+
         if not self.hosts: 
             return
         if self.is_nv:
@@ -27,11 +33,11 @@ class OracleSolverClass(BaseSolverClass):
 
         if versions:
             versions = dict(sorted(versions.items(), reverse=True))
-            print("Oracle TNS versions detected:")
+            self.print_output("Oracle TNS versions detected:")
             for key, value in versions.items():
-                print(f"{key}")
+                self.print_output(f"{key}")
                 for v in value:
-                    print(f"    {v}")
+                    self.print_output(f"    {v}")
                 
     @error_handler(["host"])
     def solve_version_single(self, host, timeout, errors, verbose):

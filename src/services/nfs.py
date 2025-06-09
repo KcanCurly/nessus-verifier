@@ -1,6 +1,5 @@
 import subprocess
 from src.utilities.utilities import get_default_context_execution2, error_handler
-from src.services.consts import DEFAULT_ERRORS, DEFAULT_THREAD, DEFAULT_TIMEOUT, DEFAULT_VERBOSE
 from src.services.serviceclass import BaseServiceClass
 from src.services.servicesubclass import BaseSubServiceClass
 
@@ -18,27 +17,21 @@ class NFSListServiceClass(BaseSubServiceClass):
 
     @error_handler([])
     def nv(self, hosts, **kwargs):
-        threads = kwargs.get("threads", DEFAULT_THREAD)
-        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
-        errors = kwargs.get("errors", DEFAULT_ERRORS)
-        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
+        super().nv(hosts, kwargs=kwargs)
 
-        results: list[NFS_Vuln_Data] = get_default_context_execution2("NFS List", threads, hosts, self.single, timeout=timeout, errors=errors, verbose=verbose)
+        results: list[NFS_Vuln_Data] = get_default_context_execution2("NFS List", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
 
         if results:
-            print("Readable NFS List:")
+            self.print_output("Readable NFS List:")
             for r in results:
-                print(r.host)
+                self.print_output(r.host)
                 for k,v in r.content.items():
-                    print(f"    {k}:")
+                    self.print_output(f"    {k}:")
                     for n in v:
-                        print(f"        {n}")
+                        self.print_output(f"        {n}")
 
     @error_handler(["host"])
     def single(self, host, **kwargs):
-        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
-        errors = kwargs.get("errors", DEFAULT_ERRORS)
-        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
         ip = host.ip
         port = host.port
 

@@ -3,7 +3,6 @@ import re
 from impacket.smbconnection import SMBConnection # type: ignore
 from smb import SMBConnection as pysmbconn
 from src.utilities.utilities import error_handler, get_default_context_execution2
-from src.services.consts import DEFAULT_ERRORS, DEFAULT_THREAD, DEFAULT_TIMEOUT, DEFAULT_VERBOSE
 from src.services.serviceclass import BaseServiceClass
 from src.services.servicesubclass import BaseSubServiceClass
         
@@ -19,15 +18,12 @@ class SMBNullGuestSubServiceClass(BaseSubServiceClass):
 
     @error_handler(["host"])
     def nv(self, hosts, **kwargs):
-        threads = kwargs.get("threads", DEFAULT_THREAD)
-        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
-        errors = kwargs.get("errors", DEFAULT_ERRORS)
-        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
+        super().nv(hosts, kwargs=kwargs)
 
         null_vuln: dict[str, dict[str, list[str]]] = {}
         guest_vuln: dict[str, dict[str, list[str]]] = {}
-        results_null: list[NullGuest_Vuln_Data] = get_default_context_execution2("Null Share Check", threads, hosts, self.single_null, timeout=timeout, errors=errors, verbose=verbose)
-        results_guest: list[NullGuest_Vuln_Data] = get_default_context_execution2("Guest Share Check", threads, hosts, self.single_guest, timeout=timeout, errors=errors, verbose=verbose)
+        results_null: list[NullGuest_Vuln_Data] = get_default_context_execution2("Null Share Check", self.threads, hosts, self.single_null, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
+        results_guest: list[NullGuest_Vuln_Data] = get_default_context_execution2("Guest Share Check", self.threads, hosts, self.single_guest, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
         results = results_null + results_guest
         
         for r in results:
@@ -37,32 +33,34 @@ class SMBNullGuestSubServiceClass(BaseSubServiceClass):
                 null_vuln[r.host][share] = files
             for share, files in r.guest_files.items():
                 guest_vuln[r.host][share] = files
-        
-        if len(null_vuln) > 0:
-            print("Null Accessble Shares Found:")
+        written = False
+        if null_vuln:
             for host, info in null_vuln.items():
                 if len(info.items()) <= 0: continue
-                print(f"{host}:")
+                if not written:
+                    self.print_output("Null Accessble Shares Found:")
+                    written = True
+                self.print_output(f"{host}:")
                 for share, files in info.items():
-                    print(f"    {share}:")
+                    self.print_output(f"    {share}:")
                     for file in files:
-                        print(f"        {file}")
-
-        if len(guest_vuln) > 0:
-            print("Guest Accessble Shares Found:")
+                        self.print_output(f"        {file}")
+        written = False
+        if guest_vuln:
             for host, info in guest_vuln.items():
                 if len(info.items()) <= 0: continue
-                print(f"{host}:")
+                if not written:
+                    self.print_output("Guest Accessble Shares Found:")
+                    written = True
+                self.print_output(f"{host}:")
                 for share, files in info.items():
-                    print(f"    {share}:")
+                    self.print_output(f"    {share}:")
                     for file in files:
-                        print(f"        {file}")
+                        self.print_output(f"        {file}")
 
     @error_handler(["host"])
     def single_guest(self, host, **kwargs):
-        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
-        errors = kwargs.get("errors", DEFAULT_ERRORS)
-        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
+
         ip = host.ip
         port = host.port
 
@@ -70,7 +68,7 @@ class SMBNullGuestSubServiceClass(BaseSubServiceClass):
 
         # Get NetBIOS of the remote computer
         command = ["nmblookup", "-A", ip]
-        result = subprocess.run(command, text=True, capture_output=True, timeout=timeout)
+        result = subprocess.run(command, text=True, capture_output=True, timeout=self.timeout)
         netbios_re = r"\s+(.*)\s+<20>"
         
         s = re.search(netbios_re, result.stdout)
@@ -91,9 +89,6 @@ class SMBNullGuestSubServiceClass(BaseSubServiceClass):
         
     @error_handler(["host"])
     def single_null(self, host, **kwargs):
-        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
-        errors = kwargs.get("errors", DEFAULT_ERRORS)
-        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
         ip = host.ip
         port = host.port
 
@@ -101,7 +96,7 @@ class SMBNullGuestSubServiceClass(BaseSubServiceClass):
 
         # Get NetBIOS of the remote computer
         command = ["nmblookup", "-A", ip]
-        result = subprocess.run(command, text=True, capture_output=True, timeout=timeout)
+        result = subprocess.run(command, text=True, capture_output=True, timeout=self.timeout)
         netbios_re = r"\s+(.*)\s+<20>"
         
         s = re.search(netbios_re, result.stdout)
@@ -126,27 +121,21 @@ class SMBSignSubServiceClass(BaseSubServiceClass):
 
     @error_handler(["host"])
     def nv(self, hosts, **kwargs):
-        threads = kwargs.get("threads", DEFAULT_THREAD)
-        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
-        errors = kwargs.get("errors", DEFAULT_ERRORS)
-        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
+        super().nv(hosts, kwargs=kwargs)
 
-        results = get_default_context_execution2("SMB Signing Check", threads, hosts, self.single, timeout=timeout, errors=errors, verbose=verbose)
+        results = get_default_context_execution2("SMB Signing Check", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
 
         if results:
-            print("SMB signing NOT enabled on hosts:")
+            self.print_output("SMB signing NOT enabled on hosts:")
             for v in results:
-                print(f"    {v}")
+                self.print_output(f"    {v}")
 
     @error_handler(["host"])
     def single(self, host, **kwargs):
-        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
-        errors = kwargs.get("errors", DEFAULT_ERRORS)
-        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
         ip = host.ip
         port = host.port
 
-        conn = SMBConnection(ip, ip, sess_port=int(port), timeout=timeout)
+        conn = SMBConnection(ip, ip, sess_port=int(port), timeout=self.timeout)
         if not conn._SMBConnection.is_signing_required(): 
             return host
 
@@ -156,27 +145,21 @@ class SMBv1SubServiceClass(BaseSubServiceClass):
 
     @error_handler(["host"])
     def nv(self, hosts, **kwargs):
-        threads = kwargs.get("threads", DEFAULT_THREAD)
-        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
-        errors = kwargs.get("errors", DEFAULT_ERRORS)
-        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
+        super().nv(hosts, kwargs=kwargs)
 
-        results = get_default_context_execution2("SMBv1 Check", threads, hosts, self.single, timeout=timeout, errors=errors, verbose=verbose)
+        results = get_default_context_execution2("SMBv1 Check", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
 
         if results:
-            print("SMBv1 enabled on hosts:")
+            self.print_output("SMBv1 enabled on hosts:")
             for v in results:
-                print(f"    {v}")
+                self.print_output(f"    {v}")
 
     @error_handler(["host"])
     def single(self, host, **kwargs):
-        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
-        errors = kwargs.get("errors", DEFAULT_ERRORS)
-        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
         ip = host.ip
         port = host.port
 
-        SMBConnection(ip, ip, sess_port=int(port), timeout=timeout, preferredDialect="NT LM 0.12")
+        SMBConnection(ip, ip, sess_port=int(port), timeout=self.timeout, preferredDialect="NT LM 0.12")
         return host
 
 class SMBServiceClass(BaseServiceClass):

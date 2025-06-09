@@ -29,25 +29,19 @@ class RPCUsageSubServiceClass(BaseSubServiceClass):
 
     @error_handler([])
     def nv(self, hosts, **kwargs):
-        threads = kwargs.get("threads", DEFAULT_THREAD)
-        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
-        errors = kwargs.get("errors", DEFAULT_ERRORS)
-        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
+        super().nv(hosts, kwargs=kwargs)
 
-        results: list[Version_Vuln_List_Host_Data] = get_default_context_execution2("RPC Anonymous Access Check", threads, hosts, self.single, timeout=timeout, errors=errors, verbose=verbose)
+        results: list[Version_Vuln_List_Host_Data] = get_default_context_execution2("RPC Anonymous Access Check", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
     
-        if len(results):
-            print("Anonymous RPC pipes detected:")
+        if results:
+            self.print_output("Anonymous RPC pipes detected:")
             for r in results:
-                print(r.host)
+                self.print_output(r.host)
                 for value in r.version:
-                    print(f"    {value}")
+                    self.print_output(f"    {value}")
 
     @error_handler(["host"])
     def single(self, host, **kwargs):
-        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
-        errors = kwargs.get("errors", DEFAULT_ERRORS)
-        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
         ip = host.ip
         port = host.port
         vul: list[str] = []

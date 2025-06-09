@@ -11,13 +11,18 @@ class CleartextSolverClass(BaseSolverClass):
         super().__init__("Cleartext Protocol Detected", 7)
 
     def solve(self, args):
-        self._get_hosts(args) # type: ignore
+        self.process_args(args)
+        if self.output:
+            if not self.output.endswith("/"):
+                self.output += "/"
+            self.output += "cleartext.txt" 
+
         if not self.hosts:
             return
         if self.is_nv:
             hosts = self.subhosts.get("Unencrypted Telnet Server", [])
             if hosts: 
-                TelnetUsageSubServiceClass().nv(hosts, threads=args.threads, timeout=args.timeout, errors=args.errors, verbose=args.verbose)
+                TelnetUsageSubServiceClass().nv(hosts, threads=args.threads, timeout=args.timeout, errors=args.errors, verbose=args.verbose, output=self.output)
             hosts = self.subhosts.get("Basic Authentication Without HTTPS", [])
             if hosts: 
                 self.solve_basic_http(hosts, args.threads, args.timeout, args.errors, args.verbose)
@@ -52,9 +57,9 @@ class CleartextSolverClass(BaseSolverClass):
         results: list[tuple[Host, str]] = get_default_context_execution("Cleartext Protocol Detected - AMQP Cleartext Authentication", threads, hosts, (self.solver_amqp_single, timeout, errors, verbose))
     
         if results:
-            print("AMQP Cleartext Authentication Detected:")
+            self.print_output("AMQP Cleartext Authentication Detected:")
             for r in results:
-                print(f"{r[0]} - {r[1]}")
+                self.print_output(f"{r[0]} - {r[1]}")
 
     @error_handler(["host"])
     def solve_basic_http_single(self, host, timeout, errors, verbose):
@@ -68,9 +73,9 @@ class CleartextSolverClass(BaseSolverClass):
     def solve_basic_http(self, hosts, threads, timeout, errors, verbose):
         results = get_default_context_execution("Cleartext Protocol Detected - Basic Authentication Without HTTPS", threads, hosts, (self.solve_basic_http_single, timeout, errors, verbose))
         if results:
-            print("Basic Authentication Without HTTPS Detected:")
+            self.print_output("Basic Authentication Without HTTPS Detected:")
             for value in results:
-                print(f"{value}")
+                self.print_output(f"{value}")
 
     @error_handler(["host"])
     def solve_ftp_single(self, host, timeout, errors, verbose):
@@ -88,12 +93,12 @@ class CleartextSolverClass(BaseSolverClass):
 
     @error_handler([])
     def solve_ftp(self, hosts, threads, timeout, errors, verbose):
-        results = get_default_context_execution("Cleartext Protocol Detected - Basic Authentication Without HTTPS", threads, hosts, (self.solve_ftp_single, timeout, errors, verbose))
+        results = get_default_context_execution("FTP Supporting Cleartext Authentication", threads, hosts, (self.solve_ftp_single, timeout, errors, verbose))
         
         if results:
-            print("FTP Supporting Cleartext Authentication Detected:")
+            self.print_output("FTP Supporting Cleartext Authentication Detected:")
             for value in results:
-                print(f"{value}")
+                self.print_output(f"{value}")
 
 
     """

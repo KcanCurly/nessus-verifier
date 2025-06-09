@@ -9,31 +9,25 @@ class QOTDBannerSubServiceClass(BaseSubServiceClass):
         super().__init__("banner", "Banner Grab")
 
     def nv(self, hosts, **kwargs):
-        threads = kwargs.get("threads", DEFAULT_THREAD)
-        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
-        errors = kwargs.get("errors", DEFAULT_ERRORS)
-        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
+        super().nv(hosts, kwargs=kwargs)
 
-        results: list[Version_Vuln_Host_Data] = get_default_context_execution2("QOTD Banner Grab", threads, hosts, self.single, timeout=timeout, errors=errors, verbose=verbose)
+        results: list[Version_Vuln_Host_Data] = get_default_context_execution2("QOTD Banner Grab", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
 
         if results:
-            print("QOTD Banners:")
+            self.print_output("QOTD Banners:")
             for r in results:
-                print("=================================")
-                print(r.host)
-                print("=================================")
-                print(r.version)
+                self.print_output("=================================")
+                self.print_output(r.host)
+                self.print_output("=================================")
+                self.print_output(r.version)
             
     @error_handler(["host"])
     def single(self, host, **kwargs):
-        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
-        errors = kwargs.get("errors", DEFAULT_ERRORS)
-        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
         ip = host.ip
         port = host.port
         # Create a socket
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.settimeout(timeout)  # Set timeout for connection
+        s.settimeout(self.timeout)  # Set timeout for connection
         
         # Connect to Systat service
         s.connect((ip, int(port)))
@@ -57,27 +51,23 @@ class QOTDUsageSubServiceClass(BaseSubServiceClass):
         super().__init__("usage", "Checks usage")
 
     def nv(self, hosts, **kwargs):
-        threads = kwargs.get("threads", DEFAULT_THREAD)
-        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
-        errors = kwargs.get("errors", DEFAULT_ERRORS)
-        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
-        results = get_default_context_execution2("QOTD Usage", threads, hosts, self.single, timeout=timeout, errors=errors, verbose=verbose)
+        super().nv(hosts, kwargs=kwargs)
+
+        results = get_default_context_execution2("QOTD Usage", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
         
         if results:
-            print("QOTD Usage Detected:")
+            self.print_output("QOTD Usage Detected:")
             for value in results:
-                print(f"{value}")
+                self.print_output(f"{value}")
 
     @error_handler(["host"])
     def single(self, host, **kwargs):
-        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
-        errors = kwargs.get("errors", DEFAULT_ERRORS)
-        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
+
         ip = host.ip
         port = host.port
 
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.settimeout(timeout)  # Set timeout for connection
+        s.settimeout(self.timeout)  # Set timeout for connection
         
         # Connect to Systat service
         s.connect((ip, int(port)))

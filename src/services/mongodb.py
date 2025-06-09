@@ -1,10 +1,8 @@
 import pprint
-from src.utilities.utilities import Host, Version_Vuln_Data, get_cves, get_hosts_from_file, add_default_parser_arguments, get_default_context_execution
 from pymongo import MongoClient
 import pymongo
 from packaging.version import parse
-from src.utilities.utilities import Version_Vuln_Host_Data, get_default_context_execution2, error_handler, get_hosts_from_file2, add_default_parser_arguments
-from src.services.consts import DEFAULT_ERRORS, DEFAULT_THREAD, DEFAULT_TIMEOUT, DEFAULT_VERBOSE
+from src.utilities.utilities import Version_Vuln_Host_Data, get_default_context_execution2, error_handler, get_hosts_from_file2, add_default_parser_arguments, Host, get_cves
 from src.services.serviceclass import BaseServiceClass
 from src.services.servicesubclass import BaseSubServiceClass
 from traceback import print_exc
@@ -37,10 +35,7 @@ class MongoDBPostSubServiceClass(BaseSubServiceClass):
 
     @error_handler([])
     def nv(self, hosts, **kwargs):
-        threads = kwargs.get("threads", DEFAULT_THREAD)
-        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
-        errors = kwargs.get("errors", DEFAULT_ERRORS)
-        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
+        super().nv(hosts, kwargs=kwargs)
         username = kwargs.get("username", 'postgres')
         password = kwargs.get("password", '')
         databases = kwargs.get('databases', False)
@@ -68,13 +63,13 @@ class MongoDBPostSubServiceClass(BaseSubServiceClass):
                 if databases:
                     dbs = client.list_databases()
                     for db in dbs:
-                        print(db['name'])
+                        self.print_output(f"Host: {host} - Database: {db['name']}")
                     return
                 if collections:
                     d = client[database]
                     cols = d.list_collections()
                     for c in cols:
-                        print(c['name'])
+                        self.print_output(f"Host: {host} - Database: {db['name']} - Collection: {c['name']}")
                     return
                 if fields:
                     _fields = set()
@@ -83,34 +78,32 @@ class MongoDBPostSubServiceClass(BaseSubServiceClass):
                     for c in coll.find(filter="", limit=1):
                         _fields.update(c.keys())
                     for k in _fields:
-                        print(f"    {k}")
+                        self.print_output(f"Host: {host} - Database: {db['name']} - Collection: {c['name']} - Field: {k}")
                     return
                 
                 if database and collection and field:
                     d = client[database]
                     doc = d[collection]
+                    self.print_output(f"Host: {host} - Database: {d.name} - Collection: {doc.name}")
                     for c in doc.find(filter="", limit=row_limit):
                         pprint.pprint(c)
                     return
                 
                 dbs = client.list_databases()
                 for db in dbs:
-                    print(f"Database: {db["name"]}")
-                    print("=====================")
                     d = client[db["name"]]
                     cols = d.list_collections()
                     for c in cols:
-                        print(c["name"])
-                        print("---------------------")
                         doc = d[c["name"]]
+                        self.print_output(f"Host: {host} - Database: {d.name} - Collection: {doc.name}")
                         for post in doc.find(filter="", limit=row_limit):
                             pprint.pprint(post)
                 
 
             except Exception as e:
-                if errors in [1, 2]:
+                if self.errors in [1, 2]:
                     print(f"Error Processing {host}: {e}")
-                if errors == 2:
+                if self.errors == 2:
                     print_exc()
 
 
@@ -122,13 +115,10 @@ class MongoDBUnauthSubServiceClass(BaseSubServiceClass):
 
     @error_handler([])
     def nv(self, hosts, **kwargs):
-        threads = kwargs.get("threads", DEFAULT_THREAD)
-        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
-        errors = kwargs.get("errors", DEFAULT_ERRORS)
-        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
+        super().nv(hosts, kwargs=kwargs)
 
         vuln = []
-        results: list[Host] = get_default_context_execution2("MongoDB Unauth Check", threads, hosts, self.single, timeout=timeout, errors=errors, verbose=verbose)
+        results: list[Host] = get_default_context_execution2("MongoDB Unauth Check", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
         
         if results:
             print("MongoDB Unauthenticated Access:")
@@ -137,13 +127,10 @@ class MongoDBUnauthSubServiceClass(BaseSubServiceClass):
 
     @error_handler(["host"])
     def single(self, host, **kwargs):
-        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
-        errors = kwargs.get("errors", DEFAULT_ERRORS)
-        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
         ip = host.ip
         port = host.port
 
-        with pymongo.timeout(timeout):
+        with pymongo.timeout(self.timeout):
             client = MongoClient(ip, int(port))
             dbs = client.list_databases()
             return host
@@ -154,13 +141,10 @@ class MongoDBVersionSubServiceClass(BaseSubServiceClass):
 
     @error_handler([])
     def nv(self, hosts, **kwargs):
-        threads = kwargs.get("threads", DEFAULT_THREAD)
-        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
-        errors = kwargs.get("errors", DEFAULT_ERRORS)
-        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
+        super().nv(hosts, kwargs=kwargs)
 
         versions = {}
-        results: list[Version_Vuln_Host_Data] = get_default_context_execution2("MongoDB Version", threads, hosts, self.single, timeout=timeout, errors=errors, verbose=verbose)
+        results: list[Version_Vuln_Host_Data] = get_default_context_execution2("MongoDB Version", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
         
         
         for r in results:
@@ -168,27 +152,24 @@ class MongoDBVersionSubServiceClass(BaseSubServiceClass):
                 versions[r.version] = set()
             versions[r.version].add(r.host)
 
-        if len(versions) > 0:      
+        if versions:      
             versions = dict(
                 sorted(versions.items(), key=lambda x: parse(x[0]), reverse=True)
             ) 
-            print("MongoDB versions detected:")
+            self.print_output("MongoDB versions detected:")
             for key, value in versions.items():
                 cves = get_cves(f"cpe:2.3:a:mongodb:mongodb:{key}")
-                if cves: print(f"MongoDB {key} ({", ".join(cves)}):")
-                else: print(f"MongoDB {key}:")  
+                if cves: self.print_output(f"MongoDB {key} ({", ".join(cves)}):")
+                else: self.print_output(f"MongoDB {key}:")  
                 for v in value:
-                    print(f"    {v}")
+                    self.print_output(f"    {v}")
 
     @error_handler(["host"])
     def single(self, host, **kwargs):
-        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
-        errors = kwargs.get("errors", DEFAULT_ERRORS)
-        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
         ip = host.ip
         port = host.port
 
-        with pymongo.timeout(timeout):
+        with pymongo.timeout(self.timeout):
             client = MongoClient(ip, int(port))
             version = client.server_info()['version']
             return Version_Vuln_Host_Data(host, version)

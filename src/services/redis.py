@@ -11,32 +11,25 @@ class RedisPostSubServiceClass(BaseSubServiceClass):
 
     @error_handler([])
     def nv(self, hosts, **kwargs):
-        threads = kwargs.get("threads", DEFAULT_THREAD)
-        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
-        errors = kwargs.get("errors", DEFAULT_ERRORS)
-        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
+        super().nv(hosts, kwargs=kwargs)
 
-        results: list[Version_Vuln_Host_Data] = get_default_context_execution2("Redis Post", threads, hosts, self.single, timeout=timeout, errors=errors, verbose=verbose)
+        results: list[Version_Vuln_Host_Data] = get_default_context_execution2("Redis Post", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
 
     @error_handler(["host"])
     def single(self, host, **kwargs):
-        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
-        errors = kwargs.get("errors", DEFAULT_ERRORS)
-        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
         ip = host.ip
         port = host.port
 
         client = redis.Redis(host=ip, port=int(port), password=None, decode_responses=True)
 
         max_dbs = 16  # Default max DBs (configurable in Redis)
-        databases = []
         
         for db in range(max_dbs):
             try:
                 client.execute_command(f"SELECT {db}")  # Switch to database
                 keys = client.keys("*")  # Get all keys in the DB
                 for key in keys[:10]: # type: ignore
-                    print(f"  - {key}")
+                    self.print_output(f"  - {key}")
             except redis.exceptions.ResponseError as z:
                 break  # If the database does not exist, break the loop
 
@@ -47,12 +40,9 @@ class RedisVersionSubServiceClass(BaseSubServiceClass):
 
     @error_handler([])
     def nv(self, hosts, **kwargs):
-        threads = kwargs.get("threads", DEFAULT_THREAD)
-        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
-        errors = kwargs.get("errors", DEFAULT_ERRORS)
-        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
+        super().nv(hosts, kwargs=kwargs)
 
-        results: list[Version_Vuln_Host_Data] = get_default_context_execution2("Redis Version", threads, hosts, self.single, timeout=timeout, errors=errors, verbose=verbose)
+        results: list[Version_Vuln_Host_Data] = get_default_context_execution2("Redis Version", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
         versions = {}
 
         for r in results:
@@ -61,22 +51,18 @@ class RedisVersionSubServiceClass(BaseSubServiceClass):
             versions[r.version].add(r.host)
         if versions:
             versions = dict(sorted(versions.items(), reverse=True))
-            print("Detected Redis Versions:")
+            self.print_output("Detected Redis Versions:")
             for r, values in versions.items():
                 cves = get_cves(f"cpe:2.3:a:redis:redis:{r}")
                 if cves:
-                    print(f"{r} ({", ".join(cves)}):")
+                    self.print_output(f"{r} ({", ".join(cves)}):")
                 else:
-                    print(f"{r}:")
+                    self.print_output(f"{r}:")
                 for v in values:
-                    print(f"    {v}")
+                    self.print_output(f"    {v}")
 
     @error_handler(["host"])
     def single(self, host, **kwargs):
-        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
-        errors = kwargs.get("errors", DEFAULT_ERRORS)
-        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
-
         client = redis.StrictRedis(host=host.ip, port=int(host.port), password=None, decode_responses=True)
 
         # Check if the connection is successful
@@ -90,27 +76,20 @@ class RedisUnauthSubServiceClass(BaseSubServiceClass):
 
     @error_handler([])
     def nv(self, hosts, **kwargs):
-        threads = kwargs.get("threads", DEFAULT_THREAD)
-        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
-        errors = kwargs.get("errors", DEFAULT_ERRORS)
-        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
+        super().nv(hosts, kwargs=kwargs)
 
-        results: list[str] = get_default_context_execution2("Redis Unauth", threads, hosts, self.single, timeout=timeout, errors=errors, verbose=verbose)
+        results: list[str] = get_default_context_execution2("Redis Unauth", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
 
         if results:
-            print(f"Unauthenticated Redis instances found:")
+            self.print_output(f"Unauthenticated Redis instances found:")
             for r in results:
-                print(r)
-            print("redis-cli -h x.x.x.x -p 6379 info")
+                self.print_output(r)
+            self.print_output("redis-cli -h x.x.x.x -p 6379 info")
             
 
 
     @error_handler(["host"])
     def single(self, host, **kwargs):
-        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
-        errors = kwargs.get("errors", DEFAULT_ERRORS)
-        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
-
         client = redis.StrictRedis(host=host.ip, port=int(host.port), password=None, decode_responses=True)
 
         # Check if the connection is successful

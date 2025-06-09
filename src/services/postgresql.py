@@ -19,27 +19,20 @@ class PSQLBruteSubServiceClass(BaseSubServiceClass):
         self.nv(get_hosts_from_file2(args.target), creds=get_hosts_from_file(args.credential), threads=args.threads, timeout=args.timeout, errors=args.errors, verbose=args.verbose)
 
     def nv(self, hosts, **kwargs):
-        threads = kwargs.get("threads", DEFAULT_THREAD)
-        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
-        errors = kwargs.get("errors", DEFAULT_ERRORS)
-        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
+        super().nv(hosts, kwargs=kwargs)
         creds= kwargs.get("creds", [])
 
-        results: list[str] = get_default_context_execution2("PostgreSQL Bruteforce", threads, hosts, self.single, creds=creds, timeout=timeout, errors=errors, verbose=verbose)
+        results: list[str] = get_default_context_execution2("PostgreSQL Bruteforce", self.threads, hosts, self.single, creds=creds, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
 
         if results:
-            print("Valid PostgreSQL credential found:")
+            self.print_output("Valid PostgreSQL credential found:")
             for r in results:
-                print(f"    {r}")
+                self.print_output(f"    {r}")
 
 
 
     @error_handler(["host"])
     def single(self, host, **kwargs):
-        threads = kwargs.get("threads", DEFAULT_THREAD)
-        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
-        errors = kwargs.get("errors", DEFAULT_ERRORS)
-        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
         creds = kwargs.get("creds", [])
 
         ip = host.ip
@@ -62,24 +55,22 @@ class PSQLBruteSubServiceClass(BaseSubServiceClass):
 
             except Exception:
                 pass
-        if creds: return f"{host} - {",".join(creds)}"
+        if creds: 
+            return f"{host} - {",".join(creds)}"
 
 class PSQLDefaultSubServiceClass(BaseSubServiceClass):
     def __init__(self) -> None:
         super().__init__("default", "Checks if default/empty password is used")
 
     def nv(self, hosts, **kwargs):
-        threads = kwargs.get("threads", DEFAULT_THREAD)
-        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
-        errors = kwargs.get("errors", DEFAULT_ERRORS)
-        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
+        super().nv(hosts, kwargs=kwargs)
 
-        results: list[Version_Vuln_List_Host_Data] = get_default_context_execution2("PostgreSQL without Password Usage", threads, hosts, self.single, timeout=timeout, errors=errors, verbose=verbose)
+        results: list[Version_Vuln_List_Host_Data] = get_default_context_execution2("PostgreSQL without Password Usage", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
 
         if results:
-            print("PostgreSQL servers that allows user postgres with empty password authentication:")
+            self.print_output("PostgreSQL servers that allows user postgres with empty password authentication:")
             for r in results:
-                print(f"{r.host}: {", ".join(r.version)}")
+                self.print_output(f"{r.host}: {", ".join(r.version)}")
 
 
 
@@ -129,10 +120,6 @@ class PSQLPostSubServiceClass(BaseSubServiceClass):
     
     @error_handler([])
     def nv(self, hosts, **kwargs):
-        threads = kwargs.get("threads", DEFAULT_THREAD)
-        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
-        errors = kwargs.get("errors", DEFAULT_ERRORS)
-        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
         username = kwargs.get("username", 'postgres')
         password = kwargs.get("password", '')
         sql = kwargs.get('sql', '')
@@ -167,8 +154,9 @@ class PSQLPostSubServiceClass(BaseSubServiceClass):
                         with con.cursor() as cur:
                             cur.execute(sql)
                             for record in cur:
-                                print(record)
-                    return
+                                self.print_output(host)
+                                self.print_output(record)
+                    continue
 
                 if databases:
                     db_params = {
@@ -182,8 +170,8 @@ class PSQLPostSubServiceClass(BaseSubServiceClass):
                             cur.execute("SELECT datname FROM pg_database;")
                             dbs = [record[0] for record in cur]
                             for db in dbs:
-                                print(db)
-                    return
+                                self.print_output(f"Host: {host} - Database: {database}")
+                    continue
                 if tables:
                     db_params = {
                         "dbname": database,
@@ -197,8 +185,8 @@ class PSQLPostSubServiceClass(BaseSubServiceClass):
                             cur.execute("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public';")
                             db_tables = [record[0] for record in cur]
                             for db_table in db_tables:
-                                print(db_table)
-                    return
+                                self.print_output(f"Host: {host} - Database: {database} - Table: {db_table}")
+                    continue
                 
                 if columns:
                     db_params = {
@@ -212,8 +200,8 @@ class PSQLPostSubServiceClass(BaseSubServiceClass):
                         with con.cursor() as cur:
                             cur.execute(f"SELECT column_name, data_type FROM information_schema.columns WHERE table_name = '{table}';") # type: ignore
                             for c in cur:
-                                print(f"{c[0]}: {c[1]}")
-                    return
+                                self.print_output(f"Host: {host} - Database: {database} - Table: {table} - Column: {c[0]} - ColumnType: {c[1]}")
+                    continue
                 
                 if database and table and column:
                     db_params = {
@@ -225,9 +213,11 @@ class PSQLPostSubServiceClass(BaseSubServiceClass):
                     }
                     with psycopg.connect(**db_params) as con: # type: ignore
                         with con.cursor() as cur:
-                            cur.execute(f"SELECT {", ".join(db_columns)} FROM {db_table} LIMIT {row_limit};") # type: ignore
+                            cur.execute(f"SELECT {", ".join(column)} FROM {table} LIMIT {row_limit};") # type: ignore
+                            self.print_output(f"Host: {host} - Database: {database} - Table: {table} - Columns: {", ".join(column)}")
                             for v in cur:
-                                print(v)
+                                self.print_output(v)
+                    continue
                 db_params = {
                     "user": username,
                     "password": password,
@@ -250,41 +240,28 @@ class PSQLPostSubServiceClass(BaseSubServiceClass):
                                 with psycopg.connect(**db_params) as con: # type: ignore
                                     with con.cursor() as cur:
                                         cur.execute("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public';")
-                                        print(f"DATABASE: {db}")
-                                        print("=======================")
                                         db_tables = [record[0] for record in cur]
                                         for db_table in db_tables:
                                             try:
-                                                print(db_table)
-                                                print("-----------------------")
                                                 cur.execute(f"SELECT column_name, data_type FROM information_schema.columns WHERE table_name = '{db_table}';") # type: ignore
                                                 db_columns = []
                                                 for c in cur:
-                                                    print(f"{c[0]}: {c[1]}")
                                                     db_columns.append(c[0])
-                                                print()
+                                                self.print_output("")
                                                 try:
-                                                    print("#######################")
                                                     cur.execute(f"SELECT {", ".join(db_columns)} FROM {db_table} LIMIT {row_limit};") # type: ignore
+                                                    self.print_output(f"Host: {host} - Database: {database} - Table: {db_table} - Columns: {", ".join(db_columns)} - Limit: {row_limit}")
                                                     for v in cur:
-                                                        print(v)
-                                                    print()
+                                                        self.print_output(v)
+                                                    self.print_output("")
                                                 except Exception as e: pass
-                                                print()
+                                                self.print_output("")
                                             except Exception as e: pass
                                         
                                             
                             except Exception as e: pass
                 
             except Exception as e: pass
-
-    @error_handler(["host"])
-    def single(self, host, **kwargs):
-        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
-        errors = kwargs.get("errors", DEFAULT_ERRORS)
-        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
-        ip = host.ip
-        port = host.port
 
 class PSQLServiceClass(BaseServiceClass):
     def __init__(self) -> None:

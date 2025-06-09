@@ -1,6 +1,5 @@
 import nmap
 from src.utilities.utilities import Version_Vuln_List_Host_Data, get_default_context_execution2, error_handler
-from src.services.consts import DEFAULT_ERRORS, DEFAULT_THREAD, DEFAULT_TIMEOUT, DEFAULT_VERBOSE
 from src.services.serviceclass import BaseServiceClass
 from src.services.servicesubclass import BaseSubServiceClass
 
@@ -13,29 +12,23 @@ class NTPMode6SubServiceClass(BaseSubServiceClass):
 
     @error_handler([])
     def nv(self, hosts, **kwargs):
-        threads = kwargs.get("threads", DEFAULT_THREAD)
-        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
-        errors = kwargs.get("errors", DEFAULT_ERRORS)
-        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
+        super().nv(hosts, kwargs=kwargs)
 
-        results: list[Version_Vuln_List_Host_Data] = get_default_context_execution2("NTP Mode 6 Usage", threads, hosts, self.single, timeout=timeout, errors=errors, verbose=verbose)
+        results: list[Version_Vuln_List_Host_Data] = get_default_context_execution2("NTP Mode 6 Usage", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
 
         if results:
-            print("NTP Mode 6 Enabled Hosts:")
+            self.print_output("NTP Mode 6 Enabled Hosts:")
             for r in results:
-                print(r.host)
-            print("NTP Mode 6 Data:")
+                self.print_output(r.host)
+            self.print_output("NTP Mode 6 Data:")
             for r in results:
-                print(f"{r.host}:")
+                self.print_output(f"{r.host}:")
                 for v in r.version:
                     if is_empty_or_spaces(v): continue
-                    print(f"    {v}")
+                    self.print_output(f"    {v}")
 
     @error_handler(["host"])
     def single(self, host, **kwargs):
-        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
-        errors = kwargs.get("errors", DEFAULT_ERRORS)
-        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
         ip = host.ip
         port = host.port
 
@@ -56,29 +49,23 @@ class NTPMonlistSubServiceClass(BaseSubServiceClass):
 
     @error_handler([])
     def nv(self, hosts, **kwargs):
-        threads = kwargs.get("threads", DEFAULT_THREAD)
-        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
-        errors = kwargs.get("errors", DEFAULT_ERRORS)
-        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
+        super().nv(hosts, kwargs=kwargs)
 
-        results: list[Version_Vuln_List_Host_Data] = get_default_context_execution2("NTP Monlist Usage", threads, hosts, self.single, timeout=timeout, errors=errors, verbose=verbose)
+        results: list[Version_Vuln_List_Host_Data] = get_default_context_execution2("NTP Monlist Usage", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
                     
         if results:
-            print("NTP monlist Enabled Hosts:")
+            self.print_output("NTP monlist Enabled Hosts:")
             for r in results:
-                print(r.host)
-            print("NTP monlist Data:")
+                self.print_output(r.host)
+            self.print_output("NTP monlist Data:")
             for r in results:
-                print(f"{r.host}:")
+                self.print_output(f"{r.host}:")
                 for v in r.version:
                     if is_empty_or_spaces(v): continue
-                    print(f"    {v}")
+                    self.print_output(f"    {v}")
 
     @error_handler(["host"])
     def single(self, host, **kwargs):
-        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
-        errors = kwargs.get("errors", DEFAULT_ERRORS)
-        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
         ip = host.ip
         port = host.port
 

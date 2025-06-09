@@ -197,10 +197,8 @@ class MSSQLPostSubServiceClass(BaseSubServiceClass):
         
     @error_handler([])
     def nv(self, hosts, **kwargs):
-        threads = kwargs.get("threads", DEFAULT_THREAD)
-        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
-        errors = kwargs.get("errors", DEFAULT_ERRORS)
-        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
+        super().nv(hosts, kwargs=kwargs)
+
         username = kwargs.get("username", 'postgres')
         password = kwargs.get("password", '')
         domain = kwargs.get("domain", "")
@@ -239,16 +237,16 @@ class MSSQLPostSubServiceClass(BaseSubServiceClass):
                     rows = cursor.fetchall()
                     if rows:
                         for row in rows:
-                            print(row)
+                            self.print_output(row)
                     else:
-                        print("No data available")
+                        self.print_output("No data available")
                     return
                 
                 if databases:
                     cursor.execute("SELECT name FROM sys.databases")
                     databases = [db[0] for db in cursor.fetchall()] # type: ignore
                     for db in databases:
-                        print(f"    {db}")
+                        self.print_output(f"Host: {host} - Database: {db}")
 
                     return
 
@@ -257,7 +255,7 @@ class MSSQLPostSubServiceClass(BaseSubServiceClass):
                     cursor.execute("SELECT TABLE_SCHEMA, TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE'")
                     tables = cursor.fetchall()
                     for schema, table in tables: # type: ignore
-                        print(f"{table} [Schema: {schema}]")
+                        self.print_output(f"Host: {host} - Database: {database} - Table: {table} - Schema: {schema}")
                     return
 
                 if columns:
@@ -265,18 +263,19 @@ class MSSQLPostSubServiceClass(BaseSubServiceClass):
                     cursor.execute(f"SELECT COLUMN_NAME, DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '{table}'")
                     columns = [(col[0], col[1]) for col in cursor.fetchall()] # type: ignore
                     for column, data_type in columns:
-                        print(f"{column}: {data_type}")
+                        self.print_output(f"Host: {host} - Database: {database} - Table: {table} - Column: {column} - ColumnType: {data_type}")
                     return
                 
                 if database and table and column:
                     cursor.execute(f"USE {database}")
                     cursor.execute(f"SELECT TOP {row_limit} {', '.join(column)} FROM {table}")
                     rows = cursor.fetchall()
+                    self.print_output(f"Host: {host} - Database: {database} - Table: {table} - Columns: {', '.join(column)}")
                     if rows:
                         for row in rows:
-                            print(row)
+                            self.print_output(row)
                     else:
-                        print("No data available")
+                        self.print_output("No data available")
                     return
 
                 try:
@@ -287,8 +286,6 @@ class MSSQLPostSubServiceClass(BaseSubServiceClass):
                     for db in databases:
                         try:
                             cursor.execute(f"USE {db}")
-                            print(f"\n[+] Processing database: {db}")
-                            print("============================")
                             # Get all tables
                             cursor.execute("SELECT TABLE_SCHEMA, TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE'")
                             tables = cursor.fetchall()
@@ -296,42 +293,38 @@ class MSSQLPostSubServiceClass(BaseSubServiceClass):
 
                             for schema, table in tables: # type: ignore
                                 full_table_name = f"{schema}.{table}"
-                                print(f"\n  [Schema: {schema}] [Table: {table}]")
-                                print("----------------------------")
-                                
                                 try:
                                     # Get all columns
                                     cursor.execute(f"SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '{table}'")
                                     columns = [col[0] for col in cursor.fetchall()] # type: ignore
-                                    print(f"    Columns: {columns}")
                                     
                                     try:
                                         # Get first 5 rows
-                                        cursor.execute(f"SELECT TOP 5 * FROM {full_table_name}")
+                                        cursor.execute(f"SELECT TOP {row_limit} * FROM {full_table_name}")
                                         rows = cursor.fetchall()
-
+                                        self.print_output(f"Host: {host} - Database: {database} - Table: {table} - Columns: {', '.join(columns)}")
                                         if rows:
                                             for row in rows:
-                                                print("    Row:", row)
+                                                self.print_output(row)
                                         else:
-                                            print("    No data available")
+                                            self.print_output("No data available")
                                     except Exception as e: 
-                                        if errors: print(f"Row Error: {host}: {e}")
+                                        if self.errors: print(f"Row Error: {host}: {e}")
 
 
                                 except Exception as e: 
-                                    if errors: print(f"Column Error: {host}: {e}")
+                                    if self.errors: print(f"Column Error: {host}: {e}")
                                 
 
                         except Exception as e: 
-                            if errors: print(f"Table Error: {host}: {e}")
+                            if self.errors: print(f"Table Error: {host}: {e}")
 
                 except Exception as e:
-                    if errors: print(f"Database Error: {host}: {e}")
+                    if self.errors: print(f"Database Error: {host}: {e}")
 
                 conn.close() # type: ignore
             except Exception as e: 
-                if errors: print(f"Error for {host}: {e}")
+                if self.errors: print(f"Error for {host}: {e}")
 
 
 class MSSQLVersionSubServiceClass(BaseSubServiceClass):
@@ -340,12 +333,9 @@ class MSSQLVersionSubServiceClass(BaseSubServiceClass):
 
     @error_handler([])
     def nv(self, hosts, **kwargs):
-        threads = kwargs.get("threads", DEFAULT_THREAD)
-        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
-        errors = kwargs.get("errors", DEFAULT_ERRORS)
-        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
+        super().nv(hosts, kwargs=kwargs)
 
-        results: list[Version_Vuln_Host_Data] = get_default_context_execution2("MSSQL Version", threads, hosts, self.single, timeout=timeout, errors=errors, verbose=verbose)
+        results: list[Version_Vuln_Host_Data] = get_default_context_execution2("MSSQL Version", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
 
         versions = {}
         for r in results:
@@ -355,7 +345,7 @@ class MSSQLVersionSubServiceClass(BaseSubServiceClass):
 
         if versions:
             versions = dict(sorted(versions.items(), reverse=True))
-            print("Detected MSSQL Versions:")
+            self.print_output("Detected MSSQL Versions:")
             
 
             for key, value in versions.items():
@@ -375,21 +365,18 @@ class MSSQLVersionSubServiceClass(BaseSubServiceClass):
                 if cpe: 
                     cves = get_cves(cpe)
                 if cves: 
-                    print(f"{extra} {pure_version} ({", ".join(cves)}):")
+                    self.print_output(f"{extra} {pure_version} ({", ".join(cves)}):")
                 else:
                     if not cpe:
-                        print(f"{extra} {pure_version} (EOL):")
+                        self.print_output(f"{extra} {pure_version} (EOL):")
                     else:
-                        print(f"{extra} {pure_version}:")
+                        self.print_output(f"{extra} {pure_version}:")
 
                 for v in value:
-                    print(f"    {v}")
+                    self.print_output(f"    {v}")
 
     @error_handler(["host"])
     def single(self, host, **kwargs):
-        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
-        errors = kwargs.get("errors", DEFAULT_ERRORS)
-        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
         ip = host.ip
         port = host.port
 

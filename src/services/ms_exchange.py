@@ -1,13 +1,10 @@
-import argparse
-import configparser
-import os
-from pathlib import Path
 import requests
-from requests.packages import urllib3  
+from urllib3 import disable_warnings
+from urllib3.exceptions import InsecureRequestWarning
 from src.utilities.utilities import get_hosts_from_file
 
 # Suppress only the InsecureRequestWarning
-urllib3.disable_warnings(category=urllib3.exceptions.InsecureRequestWarning)
+disable_warnings(category=InsecureRequestWarning)
 
 exch_versions = {
     "15.2.1544.14" : "Exchange Server 2019 CU14 Nov24SUv2",
@@ -213,7 +210,7 @@ def version_nv(hosts: list[str]):
                     d[exchange_version] = []
                 d[exchange_version].append(host)
             
-        except: continue
+        except Exception: continue
         
     if len(d) > 0:
         print("Exchange Server information:")

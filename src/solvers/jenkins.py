@@ -8,7 +8,13 @@ class JenkinsSolverClass(BaseSolverClass):
         super().__init__("Jenkins Version", 35)
 
     def solve(self, args):
-        self._get_hosts(args) # type: ignore
+        self.process_args(args)
+
+        if self.output:
+            if not self.output.endswith("/"):
+                self.output += "/"
+            self.output += "jenkins.txt" 
+
         if not self.hosts:
             return
         if self.is_nv:
@@ -37,22 +43,22 @@ class JenkinsSolverClass(BaseSolverClass):
                 versions[r.version] = set()
             versions[r.version].add(r.host)
 
-        if len(versions) > 0:
-            print("Detected Jenkins versions:")
+        if versions:
+            self.print_output("Detected Jenkins versions:")
             versions = dict(
                 sorted(versions.items(), key=lambda x: parse(x[0]), reverse=True)
             )
             for key, value in versions.items():
                 if compare_versions(key, "2.492") == -1:
-                    print(f"Jenkins/{key} (EOL):")
+                    self.print_output(f"Jenkins/{key} (EOL):")
                 else:
                     cves = get_cves(f"cpe:2.3:a:jenkins:jenkins:{key}")
                     if cves: 
-                        print(f"Jenkins {key} ({", ".join(cves)}):")
+                        self.print_output(f"Jenkins {key} ({", ".join(cves)}):")
                     else: 
-                        print(f"Jenkins {key}:")
+                        self.print_output(f"Jenkins {key}:")
                 for v in value:
-                    print(f"    {v}")
+                    self.print_output(f"    {v}")
                 
 
 def normalize_version(v, max_parts=3):

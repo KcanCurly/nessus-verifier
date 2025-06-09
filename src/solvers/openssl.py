@@ -7,7 +7,13 @@ class OpenSSLSolverClass(BaseSolverClass):
         super().__init__("OpenSSL", 32)
 
     def solve(self, args):
-        self._get_hosts(args) # type: ignore
+        self.process_args(args)
+
+        if self.output:
+            if not self.output.endswith("/"):
+                self.output += "/"
+            self.output += "openssl.txt" 
+
         if not self.hosts: 
             return
         if self.is_nv:
@@ -24,18 +30,18 @@ class OpenSSLSolverClass(BaseSolverClass):
                 versions[r.version] = set()
             versions[r.version].add(r.host)
 
-        if len(versions) > 0:
+        if versions:
             versions = dict(sorted(versions.items(), reverse=True))
 
-            print("Detected OpenSSL versions:")
+            self.print_output("Detected OpenSSL versions:")
             for key, value in versions.items():
                 cves = get_cves(f"cpe:2.3:a:openssl:openssl:{key}")
                 if cves: 
-                    print(f"OpenSSL {key} ({", ".join(cves)})")
+                    self.print_output(f"OpenSSL {key} ({", ".join(cves)})")
                 else: 
-                    print(f"OpenSSL {key}")
+                    self.print_output(f"OpenSSL {key}")
                 for v in value:
-                    print(f"    {v}")
+                    self.print_output(f"    {v}")
                 
     @error_handler(["host"])
     def solve_version_single(self, host, timeout, errors, verbose):

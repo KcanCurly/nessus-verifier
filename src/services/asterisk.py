@@ -13,7 +13,6 @@ class AsteriskVersionSubServiceClass(BaseSubServiceClass):
         parser = subparsers.add_parser(self.command_name, help = self.help_description)
         parser.add_argument("target", type=str, help="File name or targets seperated by space")
         parser.add_argument("-p", "--ports", type=str, default="5030-5080", help="sippts port argument (Default = 5030-5080)")
-        # parser.add_argument("-o", "--sippts-output", type=str, default="nv-asterisk-data", help="sippts output filename (Default = nv-asterisk-data)")
         add_default_parser_arguments(parser, False)
         parser.set_defaults(func=self.console)
 
@@ -22,13 +21,10 @@ class AsteriskVersionSubServiceClass(BaseSubServiceClass):
 
     @error_handler([])
     def nv(self, hosts, **kwargs) -> None:
+        super().nv(hosts, kwargs=kwargs)
         ports = kwargs.get("ports", "5030-5080")
         sippts_output = kwargs.get("sippts_output", "nv-asterisk-data")
-        threads = kwargs.get("threads", DEFAULT_THREAD)
-        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
-        errors = kwargs.get("errors", DEFAULT_ERRORS)
-        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
-        vuln = {}
+
         with open("sippts_input.txt", "w") as f:
             for host in hosts:
                 f.write(f"{host.ip}\n")
@@ -38,7 +34,7 @@ class AsteriskVersionSubServiceClass(BaseSubServiceClass):
         subprocess.run(command, text=True, capture_output=True)
             
         with open(sippts_output) as f:
-            print(f.read())
+            self.print_output(f.read())
         os.remove(sippts_output)
         os.remove("sippts_input.txt")
 

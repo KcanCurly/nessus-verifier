@@ -1,8 +1,5 @@
 import smtplib
-import os
-from src.utilities.utilities import confirm_prompt, control_TLS, get_hosts_from_file, add_default_parser_arguments
-from src.utilities.utilities import error_handler, get_default_context_execution2, get_hosts_from_file2
-from src.services.consts import DEFAULT_ERRORS, DEFAULT_THREAD, DEFAULT_TIMEOUT, DEFAULT_VERBOSE
+from src.utilities.utilities import confirm_prompt, get_hosts_from_file2, get_hosts_from_file, add_default_parser_arguments, error_handler
 from src.services.serviceclass import BaseServiceClass
 from src.services.servicesubclass import BaseSubServiceClass
 
@@ -88,37 +85,6 @@ def sendmail(host, sender, receiver, subject, message):
                 pass
     return False
             
-def open_relay(hosts, confirm, subject, message, client1, client2, in_fake, out_fake, out_real, temp, timeout = 3):
-    message = message.format(**locals())
-    if not confirm:
-        print(f"Client1 is {client1}")
-        print(f"Client2 is {client2}")
-        print(f"In fake is {in_fake}")
-        print(f"Fake out is {out_fake}")
-        print(f"Real out is {out_real}")
-        print(f"Temp is {temp}")
-        print("Note: You can bypass this prompt by adding --confirm")
-        if not confirm_prompt("Do you want to continue with those emails?"):
-            return
-    
-    for host in hosts:
-        if sendmail(host, client1, client1, subject, message):
-            print(f"[+] Email sent from {client1} to {client1} on {host}")
-        if sendmail(host, client2, client1, subject, message):
-            print(f"[+] Email sent from {client2} to {client1} on {host}")
-        if sendmail(host, in_fake, client1, subject, message):
-            print(f"[+] Email sent from {in_fake} to {client1} on {host}")
-        if sendmail(host, out_real, client1, subject, message):
-            print(f"[+] Email sent from {out_real} to {client1} on {host}")
-        if sendmail(host, client1, out_real, subject, message):
-            print(f"[+] Email sent from {client1} to {out_real} on {host}")
-        if sendmail(host, in_fake, out_real, subject, message):
-            print(f"[+] Email sent from {in_fake} to {out_real} on {host}")
-        if sendmail(host, out_fake, client1, subject, message):
-            print(f"[+] Email sent from {out_fake} to {client1} on {host}")
-        if sendmail(host, out_fake, temp, subject, message):
-            print(f"[+] Email sent from {out_fake} to {temp} on {host}")
-
 def userenum_console(args):
     userenum_nv(get_hosts_from_file(args.target), args.domain, args.threads, args.timeout, args.errors, args.verbose)
 
@@ -152,14 +118,12 @@ class SMTPOpenRelaySubServiceClass(BaseSubServiceClass):
         parser.set_defaults(func=self.console)
 
     def console(self, args):
-        self.nv(get_hosts_from_file2(args.target), confirm=args.confirm, subject=args.subject, message=args.message, client1=args.client1, client2=args.client2, in_fake=args.in_fake, out_fake=args.out_fake, out_real=args.out_real, temp=args.temp, threads=args.threads, timeout=args.timeout, errors=args.errors, verbose=args.verbose)
+        self.nv(get_hosts_from_file2(args.target), confirm=args.confirm, subject=args.subject, message=args.message, client1=args.client1, client2=args.client2, in_fake=args.in_fake, out_fake=args.out_fake, out_real=args.out_real, temp=args.temp)
 
     @error_handler([])
     def nv(self, hosts, **kwargs):
-        threads = kwargs.get("threads", DEFAULT_THREAD)
-        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
-        errors = kwargs.get("errors", DEFAULT_ERRORS)
-        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
+        super().nv(hosts, kwargs=kwargs)
+
         confirm = kwargs.get("confirm", False)
         subject = kwargs.get("subject")
         message = kwargs.get("message")
@@ -200,14 +164,6 @@ class SMTPOpenRelaySubServiceClass(BaseSubServiceClass):
             if sendmail(host, out_fake, temp, subject, message):
                 print(f"[+] Email sent from {out_fake} to {temp} on {host} successfully")
 
-
-    @error_handler(["host"])
-    def single(self, host, **kwargs):
-        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
-        errors = kwargs.get("errors", DEFAULT_ERRORS)
-        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
-        ip = host.ip
-        port = host.port
 
 class SMTPServiceClass(BaseServiceClass):
     def __init__(self) -> None:

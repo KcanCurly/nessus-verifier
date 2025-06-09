@@ -13,7 +13,7 @@ class Listener(stomp.ConnectionListener):
     def on_message(self, headers, message):
         print('received a message "%s"' % message)
 
-def enumerate_nv(l: list[str], output: str = None, threads: int = 10, timeout: int = 3, verbose: bool = False, disable_visual_on_complete: bool = False):
+def enumerate_nv(l: list[str], output: str = "", threads: int = 10, timeout: int = 3, verbose: bool = False, disable_visual_on_complete: bool = False):
     for host in l:
         ip = host.split(":")[0]
         port = host.split(":")[1]

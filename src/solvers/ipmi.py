@@ -9,7 +9,13 @@ class IPMISolverClass(BaseSolverClass):
 
     @error_handler([])
     def solve(self, args):
-        self._get_hosts(args) # type: ignore
+        self.process_args(args)
+
+        if self.output:
+            if not self.output.endswith("/"):
+                self.output += "/"
+            self.output += "ipmi.txt" 
+
         if not self.hosts:
             return
         if self.is_nv:
@@ -37,15 +43,15 @@ class IPMISolverClass(BaseSolverClass):
                 creds[m[0]].append(f"{m[1]}:{m[2]}")
             
             if hashes:
-                print("IPMI hashes dumped:")
+                self.print_output("IPMI hashes dumped:")
                 for key, value in hashes.items():
-                    print(f"{key}:")
+                    self.print_output(f"{key}:")
                     for v in value:
-                        print(f"    {v}")
+                        self.print_output(f"    {v}")
 
             if creds:
-                print("IPMI Creds found:")
+                self.print_output("IPMI Creds found:")
                 for key, value in creds.items():
-                    print(f"{key}:")
+                    self.print_output(f"{key}:")
                     for v in value:
-                        print(f"    {v}")
+                        self.print_output(f"    {v}")

@@ -1,11 +1,8 @@
 import nmap
 import pymysql
 from src.utilities.utilities import Version_Vuln_Host_Data, get_default_context_execution2, error_handler, get_hosts_from_file2, add_default_parser_arguments
-from src.services.consts import DEFAULT_ERRORS, DEFAULT_THREAD, DEFAULT_TIMEOUT, DEFAULT_VERBOSE
 from src.services.serviceclass import BaseServiceClass
 from src.services.servicesubclass import BaseSubServiceClass
-
-
 
 class MYSQLPostSubServiceClass(BaseSubServiceClass):
     def __init__(self) -> None:
@@ -35,10 +32,8 @@ class MYSQLPostSubServiceClass(BaseSubServiceClass):
 
     @error_handler([])
     def nv(self, hosts, **kwargs):
-        threads = kwargs.get("threads", DEFAULT_THREAD)
-        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
-        errors = kwargs.get("errors", DEFAULT_ERRORS)
-        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
+        super().nv(hosts, kwargs=kwargs)
+
         username = kwargs.get("username", 'postgres')
         password = kwargs.get("password", '')
         sql = kwargs.get('sql', '')
@@ -160,27 +155,15 @@ class MYSQLPostSubServiceClass(BaseSubServiceClass):
                     for row in rows:
                         print("  " + " | ".join(str(cell) for cell in row))
 
-
-    @error_handler(["host"])
-    def single(self, host, **kwargs):
-        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
-        errors = kwargs.get("errors", DEFAULT_ERRORS)
-        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
-        ip = host.ip
-        port = host.port
-
 class MYSQLVersionSubServiceClass(BaseSubServiceClass):
     def __init__(self) -> None:
         super().__init__("version", "Checks version")
 
     @error_handler([])
     def nv(self, hosts, **kwargs):
-        threads = kwargs.get("threads", DEFAULT_THREAD)
-        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
-        errors = kwargs.get("errors", DEFAULT_ERRORS)
-        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
+        super().nv(hosts, kwargs=kwargs)
         versions = {}
-        results: list[Version_Vuln_Host_Data] = get_default_context_execution2("MySQL Version", threads, hosts, self.single, timeout=timeout, errors=errors, verbose=verbose)
+        results: list[Version_Vuln_Host_Data] = get_default_context_execution2("MySQL Version", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
         
         for r in results:
             if r.version not in versions:
@@ -188,19 +171,16 @@ class MYSQLVersionSubServiceClass(BaseSubServiceClass):
             versions[r.version].append(r.host)
 
         
-        if len(versions) > 0:
+        if versions:
             versions = dict(sorted(versions.items(), reverse=True))
-            print("Detected MySQL Versions:")
+            self.print_output("Detected MySQL Versions:")
             for key, value in versions.items():
-                print(f"{key}:")
+                self.print_output(f"{key}:")
                 for v in value:
-                    print(f"    {v}")
+                    self.print_output(f"    {v}")
 
     @error_handler(["host"])
     def single(self, host, **kwargs):
-        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
-        errors = kwargs.get("errors", DEFAULT_ERRORS)
-        verbose = kwargs.get("errors", DEFAULT_VERBOSE)
         ip = host.ip
         port = host.port
 

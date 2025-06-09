@@ -7,7 +7,13 @@ class SSHAuditSolverClass(BaseSolverClass):
         super().__init__("SSH Service Misconfigurations", 3)
 
     def solve(self, args):
-        super().solve(args)
+        self.process_args(args)
+
+        if self.output:
+            if not self.output.endswith("/"):
+                self.output += "/"
+            self.output += "ssh.txt" 
+
         if not self.hosts: 
             return
-        SSHAuditSubServiceClass().nv(self.hosts, threads=args.threads, timeout=args.timeout, errors=args.errors, verbose=args.verbose)
+        SSHAuditSubServiceClass().nv(self.hosts, threads=args.threads, timeout=args.timeout, errors=args.errors, verbose=args.verbose, output=self.output)

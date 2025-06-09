@@ -1,4 +1,4 @@
-from src.utilities.utilities import Version_Vuln_Host_Data, error_handler, get_header_from_url, add_default_parser_arguments, get_default_context_execution, add_default_solver_parser_arguments, get_cves
+from src.utilities.utilities import Version_Vuln_Host_Data, error_handler, get_header_from_url, get_default_context_execution, get_cves
 import re
 from packaging.version import parse
 from src.solvers.solverclass import BaseSolverClass
@@ -10,12 +10,26 @@ class ApacheSolverClass(BaseSolverClass):
         super().__init__("Apache", 11)
 
     def solve(self, args):
-        self._get_hosts(args) # type: ignore
+        self.process_args(args)
+        if self.output:
+            if not self.output.endswith("/"):
+                self.output += "/"
+            self.output += "apache.txt" 
+
         if not self.hosts:
             return
         if self.is_nv:
             self.solve_version(self.hosts, args.threads, args.timeout, args.errors, args.verbose)
 
+    def create_windowcatcher_action(self):
+        if self.args.create_actions:
+            with open(self.args.create_actions, "a") as f:
+                f.write("[[actions]]\n")
+                f.write('name = "Apache"\n')
+                f.write("command = \"\"\"\n")
+                f.write(f"clear; cat {self.args.output} | head -20\n")
+                f.write("\"\"\"\n")
+                f.write("output = old-apache")
 
     def solve_version(self, hosts, threads, timeout, errors, verbose):
         versions = {}
@@ -25,17 +39,17 @@ class ApacheSolverClass(BaseSolverClass):
                 versions[r.version] = set()
             versions[r.version].add(r.host)
 
-        if len(versions) > 0:
+        if versions:
             versions = dict(
                 sorted(versions.items(), key=lambda x: parse(x[0]), reverse=True)
             )
-            print("Detected Apache Versions:")
+            self.print_output("Detected Apache Versions:")
             for key, value in versions.items():
                 cves = get_cves(f"cpe:2.3:a:apache:http_server:{key}", cves_to_skip=shodan_cves_to_skip)
-                if cves: print(f"Apache/{key} ({", ".join(cves)}):")
-                else: print(f"Apache/{key}:")
+                if cves: self.print_output(f"Apache/{key} ({", ".join(cves)}):")
+                else: self.print_output(f"Apache/{key}:")
                 for v in value:
-                    print(f"    {v}")
+                    self.print_output(f"    {v}")
                     
     @error_handler(["host"])
     def solve_version_single(self, host, timeout, errors, verbose):

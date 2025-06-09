@@ -9,7 +9,13 @@ class VmwareSolverClass(BaseSolverClass):
         
     @error_handler([])
     def solve(self, args):
-        super().solve(args)
+        self.process_args(args)
+
+        if self.output:
+            if not self.output.endswith("/"):
+                self.output += "/"
+            self.output += "vmware.txt" 
+
         if not self.hosts: 
             return
         r = r"\[\+\] (.*) - Identified (.*)"
@@ -31,7 +37,7 @@ class VmwareSolverClass(BaseSolverClass):
 
         
         if versions:
-            print("Detected Vmware Versions:")
+            self.print_output("Detected Vmware Versions:")
             for key, value in versions.items():
                 cves = []
                 if "esxi" in key.lower(): 
@@ -46,9 +52,9 @@ class VmwareSolverClass(BaseSolverClass):
                         cves = get_cves(f"cpe:2.3:a:vmware:vcenter_server:{m.group(1)}")
                         
                 if cves: 
-                    print(f"{key} ({", ".join(cves)}):")
+                    self.print_output(f"{key} ({", ".join(cves)}):")
                 else: 
-                    print(f"{key}:")
+                    self.print_output(f"{key}:")
                 for v in value:
-                    print(f"{" " * args.space}{v}")
+                    self.print_output(f"{" " * args.space}{v}")
 

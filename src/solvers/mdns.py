@@ -6,10 +6,16 @@ class MDNSSolverClass(BaseSolverClass):
         super().__init__("NTP", 17)
 
     def solve(self, args):
-        self._get_hosts(args) # type: ignore
+        self.process_args(args)
+
+        if self.output:
+            if not self.output.endswith("/"):
+                self.output += "/"
+            self.output += "mdns.txt" 
+
         if not self.hosts:
             return
         if self.is_nv:
-            MDNSDiscoverySubServiceClass().nv(self.hosts, threads=args.threads, timeout=args.timeout, errors=args.errors, verbose=args.verbose)
+            MDNSDiscoverySubServiceClass().nv(self.hosts, threads=args.threads, timeout=args.timeout, errors=args.errors, verbose=args.verbose, output=self.output)
         else:
-            MDNSDiscoverySubServiceClass().nv(self.hosts, threads=args.threads, timeout=args.timeout, errors=args.errors, verbose=args.verbose)
+            MDNSDiscoverySubServiceClass().nv(self.hosts, threads=args.threads, timeout=args.timeout, errors=args.errors, verbose=args.verbose, output=self.output)

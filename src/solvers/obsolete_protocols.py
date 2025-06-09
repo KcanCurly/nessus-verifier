@@ -8,7 +8,13 @@ class ObsoleteProtocolSolverClass(BaseSolverClass):
 
     @error_handler([])
     def solve(self, args):
-        self._get_hosts(args) # type: ignore
+        self.process_args(args)
+
+        if self.output:
+            if not self.output.endswith("/"):
+                self.output += "/"
+            self.output += "obsolete_protocols.txt" 
+
         if not self.hosts: 
             return
 
@@ -47,31 +53,31 @@ class ObsoleteProtocolSolverClass(BaseSolverClass):
                 pass
         
         if vuln_echo:
-            print("Echo Protocol Detected:")
+            self.print_output("Echo Protocol Detected:")
             for value in vuln_echo:
-                print(f"{value}")
+                self.print_output(f"{value}")
                 
         if vuln_discard:
-            print("Discard Protocol Detected:")
+            self.print_output("Discard Protocol Detected:")
             for value in vuln_discard:
-                print(f"{value}")
+                self.print_output(f"{value}")
                 
         if vuln_daytime:
-            print("Daytime Protocol Detected:")
+            self.print_output("Daytime Protocol Detected:")
             for value in vuln_daytime:
-                print(f"{value}")
+                self.print_output(f"{value}")
                 
         if vuln_qotd:
-            print("QOTD Protocol Detected:")
+            self.print_output("QOTD Protocol Detected:")
             for value in vuln_qotd:
-                print(f"{value}")
+                self.print_output(f"{value}")
                 
         if vuln_chargen:
-            print("Chargen Protocol Detected:")
+            self.print_output("Chargen Protocol Detected:")
             for value in vuln_chargen:
-                print(f"{value}")
+                self.print_output(f"{value}")
                 
         if vuln_systat:
-            print("Systat Protocol Detected:")
+            self.print_output("Systat Protocol Detected:")
             for value in vuln_systat:
-                print(f"{value}")
+                self.print_output(f"{value}")
