@@ -9,14 +9,14 @@ shodan_cves_to_skip = ["CVE-2006-20001"]
 class ApacheSolverClass(BaseSolverClass):
     def __init__(self) -> None:
         super().__init__("Apache", 11)
+        self.output_filename_for_all = "apache.txt"
+        self.output_png_for_action = "old-apache.png"
+        self.action_title = "Apache"
 
     def solve(self, args):
         self.process_args(args)
-        if self.args.output:
-            if not self.args.output.endswith("/"):
-                self.args.output += "/"
-            self.args.output += "apache.txt"
-            self.output = self.args.output
+        if hasattr(args, "output_directory") and self.args.output_directory:
+            self.args.output += self.args.output_directory + "/" + self.output_filename_for_all
 
         if not self.hosts:
             return
@@ -28,10 +28,10 @@ class ApacheSolverClass(BaseSolverClass):
             with open(self.args.create_actions, "a") as f:
                 f.write("[[actions]]\n")
                 f.write('name = "Apache"\n')
-                if not self.output.startswith("/"):
-                    self.output = os.getcwd() + "/" + self.output
-                f.write(f"command = \"clear; cat {self.output} | head -20\"\n")
-                f.write("output = \"old-apache.png\"")
+                if not self.args.output.startswith("/"):
+                    self.args.output = os.getcwd() + "/" + self.args.output
+                f.write(f"command = \"clear; cat {self.args.output} | head -20\"\n")
+                f.write(f"output = \"{self.output_png_for_action}\"")
                 f.write("")
 
     def solve_version(self, hosts, threads, timeout, errors, verbose):

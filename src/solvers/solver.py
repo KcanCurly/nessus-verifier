@@ -53,8 +53,8 @@ def all_solver(args):
         os.makedirs(args.output)
 
     if args.create_actions:
-        if os.path.exists(args.create_actions):
-            os.remove(args.create_actions)
+        if os.path.exists(args.output):
+            os.remove(args.output)
 
     for k,v in solver_dict.items():
         zz = v() # type: ignore
@@ -84,9 +84,13 @@ def main():
     parser_all = subparsers.add_parser("all", help="Runs all solvers from json file")
     parser_all.add_argument("-f", "--file", type=str, default="output.ndjson", help="json file name (Default = output.ndjson)")
     parser_all.add_argument("-c", "--config", type=str, default="nv-config.toml", help="Config file (default: nv-config.toml).")
-    parser_all.add_argument("-a", "--create-actions", type=str, required=False, help="Creates action toml file for windowcatcher with given name. You MUST give -o argument as well.")
-    # parser_all.add_argument("-o", "--output", type=str, required=False, help="Output directory.")
-    add_default_parser_arguments(parser_all, False)
+    parser_all.add_argument("-a", "--create-actions", type=str, required=False, help="Creates action toml file for windowcatcher with given name.")
+    parser_all.add_argument("-od", "--output-directory", type=str, required=False, help="Output directory.")
+    parser_all.add_argument("-s", "--space", type=str, default=0, help="Amount of spaces to prepend when printing affected hosts. (Default = 0)")    
+    parser_all.add_argument("-th", "--threads", type=int, default=10, help="Amount of threads (Default = 10).")
+    parser_all.add_argument("-ti", "--timeout", type=int, default=5, help="Amount of timeout (Default = 5).")
+    parser_all.add_argument("-e", "--errors", type=int, choices=[1, 2], default = 0, help="1 - Print Errors\n2 - Print errors and prints stacktrace")
+    parser_all.add_argument("-v", "--verbose", action="store_true", help="Print Verbose")
     parser_all.set_defaults(func=all_solver)
     parser_all.set_defaults(is_all=True)
 
