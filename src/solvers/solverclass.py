@@ -51,9 +51,9 @@ class BaseSolverClass():
             with open(self.args.create_actions, "a") as f:
                 f.write("[[actions]]\n")
                 f.write(f'name = "{self.action_title}"\n')
-                if not self.args.output.startswith("/"):
-                    self.args.output = os.getcwd() + "/" + self.args.output
-                f.write(f"command = \"clear; cat {self.args.output} | head -20\"\n")
+                if not self.output.startswith("/"):
+                    self.output = os.getcwd() + "/" + self.output
+                f.write(f"command = \"clear; cat {self.output} | head -20\"\n")
                 f.write(f"output = \"{self.output_png_for_action}\"")
                 f.write("")
 
