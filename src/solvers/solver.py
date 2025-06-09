@@ -52,6 +52,10 @@ def all_solver(args):
             shutil.rmtree(args.output)
         os.makedirs(args.output)
 
+    if args.create_actions:
+        if os.path.exists(args.create_actions):
+            os.remove(args.create_actions)
+
     for k,v in solver_dict.items():
         zz = v() # type: ignore
         zz.solve(args)

@@ -1,3 +1,4 @@
+import os
 from src.utilities.utilities import Version_Vuln_Host_Data, error_handler, get_header_from_url, get_default_context_execution, get_cves
 import re
 from packaging.version import parse
@@ -27,9 +28,12 @@ class ApacheSolverClass(BaseSolverClass):
                 f.write("[[actions]]\n")
                 f.write('name = "Apache"\n')
                 f.write("command = \"\"\"\n")
+                if not self.args.output.startswith("/"):
+                    self.args.output = os.getcwd + self.args.output
                 f.write(f"clear; cat {self.args.output} | head -20\n")
                 f.write("\"\"\"\n")
                 f.write("output = old-apache")
+                f.write("")
 
     def solve_version(self, hosts, threads, timeout, errors, verbose):
         versions = {}
