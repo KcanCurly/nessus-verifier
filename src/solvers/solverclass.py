@@ -2,6 +2,12 @@ from src.utilities.utilities import Host, add_default_parser_arguments, add_defa
 import traceback
 import os
 
+class WindowCatcherData:
+    def __init__(self, name, code, output) -> None:
+        self.name = name
+        self.code = code
+        self.output = output
+
 class BaseSolverClass():
     def __init__(self, name:str, id: int) -> None:
         self.name = name
@@ -14,6 +20,7 @@ class BaseSolverClass():
         self.output_filename_for_all = ""
         self.output_png_for_action = ""
         self.action_title = ""
+
 
     def process_args(self, args):
         self.args = args
@@ -46,13 +53,28 @@ class BaseSolverClass():
     def solve(self, args):
         return
          
+    def create_windowcatcher_action_from_data(self, data: WindowCatcherData):
+        if self.args.create_actions:
+            if not os.path.isfile(self.output) or not os.path.getsize(self.output):
+                return
+
+            with open(self.args.create_actions, "a") as f:
+                f.write("[[actions]]\n")
+                f.write(f"name = \"{data.name}\"\n")
+                f.write(f"command = \"{data.code}\"\n")
+                f.write(f"output = \"{data.output}\"")
+                f.write("")
+
     def create_windowcatcher_action(self):
         if self.args.create_actions:
+            if not self.output.startswith("/"):
+                self.output = os.getcwd() + "/" + self.output
+            if not os.path.isfile(self.output) or not os.path.getsize(self.output):
+                return
+
             with open(self.args.create_actions, "a") as f:
                 f.write("[[actions]]\n")
                 f.write(f'name = "{self.action_title}"\n')
-                if not self.output.startswith("/"):
-                    self.output = os.getcwd() + "/" + self.output
                 f.write(f"command = \"clear; cat {self.output} | head -20\"\n")
                 f.write(f"output = \"{self.output_png_for_action}\"")
                 f.write("")
@@ -88,3 +110,4 @@ class BaseSolverClass():
             print(message)
             if print_traceback: 
                 traceback.print_exc()
+

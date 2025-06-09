@@ -5,14 +5,12 @@ from src.solvers.solverclass import BaseSolverClass
 class IBMWebSphereSolverClass(BaseSolverClass):
     def __init__(self) -> None:
         super().__init__("IBM WebSphere Version", 29)
+        self.output_filename_for_all = "ibmwebsphere.txt"
+        self.output_png_for_action = "old-ibmwebsphere.png"
+        self.action_title = "OldIbmwebsphere"
 
     def solve(self, args):
         self.process_args(args)
-
-        if self.output:
-            if not self.output.endswith("/"):
-                self.output += "/"
-            self.output += "ibmwebsphere.txt" 
 
         if not self.hosts:
             return
@@ -55,3 +53,4 @@ class IBMWebSphereSolverClass(BaseSolverClass):
                 self.print_output(f"{key}:")
                 for v in value:
                     self.print_output(f"    {v}")
+            self.create_windowcatcher_action()

@@ -6,14 +6,12 @@ from src.solvers.solverclass import BaseSolverClass
 class NoPasswordDBSolverClass(BaseSolverClass):
     def __init__(self) -> None:
         super().__init__("Database usage without password", 9)
+        self.output_filename_for_all = "nopasswddb.txt"
+        self.output_png_for_action = "nopasswddb.png"
+        self.action_title = "nopasswddb"
 
     def solve(self, args):
         self.process_args(args)
-
-        if self.output:
-            if not self.output.endswith("/"):
-                self.output += "/"
-            self.output += "nopasswddb.txt" 
 
         if not self.hosts:
             return
@@ -40,3 +38,4 @@ class NoPasswordDBSolverClass(BaseSolverClass):
             self.print_output("Elastic Unrestricted Access:")
             for r in results:
                 self.print_output(f"    {r}")
+            self.create_windowcatcher_action()

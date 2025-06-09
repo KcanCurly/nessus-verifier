@@ -6,14 +6,12 @@ from src.solvers.solverclass import BaseSolverClass
 class PythonSolverClass(BaseSolverClass):
     def __init__(self) -> None:
         super().__init__("Python Unsupported Version", 23)
+        self.output_filename_for_all = "old-python.txt"
+        self.output_png_for_action = "old-python.png"
+        self.action_title = "OldPython"
 
     def solve(self, args):
         self.process_args(args)
-
-        if self.output:
-            if not self.output.endswith("/"):
-                self.output += "/"
-            self.output += "python.txt" 
 
         if not self.hosts: 
             return
@@ -40,6 +38,7 @@ class PythonSolverClass(BaseSolverClass):
                     self.print_output(f"Python {key}:")
                 for v in value:
                     self.print_output(f"    {v}")
+            self.create_windowcatcher_action()
 
 
 

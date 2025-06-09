@@ -70,7 +70,7 @@ class PSQLDefaultSubServiceClass(BaseSubServiceClass):
         if results:
             self.print_output("PostgreSQL servers that allows user postgres with empty password authentication:")
             for r in results:
-                self.print_output(f"{r.host}: {", ".join(r.version)}")
+                self.print_output(f"{r.host}: Databases: {", ".join(r.version)}")
 
 
 

@@ -6,14 +6,12 @@ from src.solvers.solverclass import BaseSolverClass
 class JenkinsSolverClass(BaseSolverClass):
     def __init__(self) -> None:
         super().__init__("Jenkins Version", 35)
+        self.output_filename_for_all = "jenkins.txt"
+        self.output_png_for_action = "jenkins.png"
+        self.action_title = "Jenkins"
 
     def solve(self, args):
         self.process_args(args)
-
-        if self.output:
-            if not self.output.endswith("/"):
-                self.output += "/"
-            self.output += "jenkins.txt" 
 
         if not self.hosts:
             return
@@ -59,6 +57,7 @@ class JenkinsSolverClass(BaseSolverClass):
                         self.print_output(f"Jenkins {key}:")
                 for v in value:
                     self.print_output(f"    {v}")
+            self.create_windowcatcher_action()
                 
 
 def normalize_version(v, max_parts=3):

@@ -6,14 +6,12 @@ from packaging.version import parse
 class KibanaSolverClass(BaseSolverClass):
     def __init__(self) -> None:
         super().__init__("Kibana", 24)
+        self.output_filename_for_all = "kibana.txt"
+        self.output_png_for_action = "kibana.png"
+        self.action_title = "Kibana"
 
     def solve(self, args):
         self.process_args(args)
-
-        if self.output:
-            if not self.output.endswith("/"):
-                self.output += "/"
-            self.output += "kibana.txt" 
 
         if not self.hosts:
             return
@@ -55,4 +53,5 @@ class KibanaSolverClass(BaseSolverClass):
                 total_cves.extend(cves)
                 for v in value:
                     self.print_output(f"    {v}")
+            self.create_windowcatcher_action()
 

@@ -6,14 +6,12 @@ from src.solvers.solverclass import BaseSolverClass
 class GrafanaSolverClass(BaseSolverClass):
     def __init__(self) -> None:
         super().__init__("Grafana", 22)
+        self.output_filename_for_all = "grafana.txt"
+        self.output_png_for_action = "old-grafana.png"
+        self.action_title = "OldGrafana"
 
     def solve(self, args):
         self.process_args(args)
-
-        if self.output:
-            if not self.output.endswith("/"):
-                self.output += "/"
-            self.output += "grafana.txt" 
 
         if not self.hosts:
             return
@@ -52,4 +50,5 @@ class GrafanaSolverClass(BaseSolverClass):
                 else: self.print_output(f"Grafana {key}:")
                 for v in value:
                     self.print_output(f"    {v}")
+            self.create_windowcatcher_action()
 

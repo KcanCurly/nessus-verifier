@@ -6,14 +6,12 @@ from src.solvers.solverclass import BaseSolverClass
 class NginxSolverClass(BaseSolverClass):
     def __init__(self) -> None:
         super().__init__("Nginx Version", 12)
+        self.output_filename_for_all = "nginx.txt"
+        self.output_png_for_action = "nginx.png"
+        self.action_title = "Nginx"
 
     def solve(self, args):
         self.process_args(args)
-
-        if self.output:
-            if not self.output.endswith("/"):
-                self.output += "/"
-            self.output += "nginx.txt" 
 
         if not self.hosts:
             return
@@ -57,3 +55,4 @@ class NginxSolverClass(BaseSolverClass):
                     self.print_output(f"Nginx {key}:")
                 for v in value:
                     self.print_output(f"    {v}")
+            self.create_windowcatcher_action()

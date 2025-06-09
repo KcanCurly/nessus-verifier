@@ -5,14 +5,12 @@ from src.solvers.solverclass import BaseSolverClass
 class OpenSSLSolverClass(BaseSolverClass):
     def __init__(self) -> None:
         super().__init__("OpenSSL", 32)
+        self.output_filename_for_all = "old-openssl.txt"
+        self.output_png_for_action = "old-openssl.png"
+        self.action_title = "OldOpenssl"
 
     def solve(self, args):
         self.process_args(args)
-
-        if self.output:
-            if not self.output.endswith("/"):
-                self.output += "/"
-            self.output += "openssl.txt" 
 
         if not self.hosts: 
             return
@@ -42,6 +40,7 @@ class OpenSSLSolverClass(BaseSolverClass):
                     self.print_output(f"OpenSSL {key}")
                 for v in value:
                     self.print_output(f"    {v}")
+            self.create_windowcatcher_action()
                 
     @error_handler(["host"])
     def solve_version_single(self, host, timeout, errors, verbose):

@@ -6,15 +6,13 @@ from packaging.version import parse
 class TomcatSolverClass(BaseSolverClass):
     def __init__(self) -> None:
         super().__init__("Apache Tomcat Version", 10)
+        self.output_filename_for_all = "old-tomcat.txt"
+        self.output_png_for_action = "old-tomcat.png"
+        self.action_title = "OldTomcat"
         
     @error_handler([])
     def solve(self, args):
         self.process_args(args)
-
-        if self.output:
-            if not self.output.endswith("/"):
-                self.output += "/"
-            self.output += "tomcat.txt" 
 
         if not self.hosts: 
             return
@@ -50,6 +48,7 @@ class TomcatSolverClass(BaseSolverClass):
                     self.print_output("\nPOC:")
                     poc_printed = True
                 self.print_output("CVE-2025-24813 => https://github.com/absholi7ly/POC-CVE-2025-24813")
+            self.create_windowcatcher_action()
     
     @error_handler(["host"])
     def solve_version_single(self, host, timeout, errors, verbose):

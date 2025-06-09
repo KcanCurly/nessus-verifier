@@ -19,6 +19,9 @@ class TLS_Vuln_Data():
 class TLSSolverClass(BaseSolverClass):
     def __init__(self) -> None:
         super().__init__("TLS Misconfigurations", 1)
+        self.output_filename_for_all = "tls.txt"
+        self.output_png_for_action = "tls.png"
+        self.action_title = "TLS"
 
     def process_config(self, config: str) -> None:
         try:
@@ -33,11 +36,6 @@ class TLSSolverClass(BaseSolverClass):
 
     def solve(self, args):
         self.process_args(args)
-
-        if self.output:
-            if not self.output.endswith("/"):
-                self.output += "/"
-            self.output += "tls.txt" 
             
         if not self.hosts: 
             return
@@ -163,7 +161,6 @@ class TLSSolverClass(BaseSolverClass):
             self.print_output("Vulnerable TLS Ciphers on Hosts:")                
             for key, value in weak_ciphers.items():
                 self.print_output(f"    {key} - {", ".join(value)}")
-        
         
         if weak_versions: 
             self.print_output("Vulnerable TLS Versions on Hosts:")                

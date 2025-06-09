@@ -6,14 +6,12 @@ from src.solvers.solverclass import BaseSolverClass
 class PHPSolverClass(BaseSolverClass):
     def __init__(self) -> None:
         super().__init__("PHP", 21)
+        self.output_filename_for_all = "old-php.txt"
+        self.output_png_for_action = "old-php.png"
+        self.action_title = "OldPHP"
 
     def solve(self, args):
         self.process_args(args)
-
-        if self.output:
-            if not self.output.endswith("/"):
-                self.output += "/"
-            self.output += "php.txt" 
 
         if not self.hosts: 
             return
@@ -63,3 +61,4 @@ class PHPSolverClass(BaseSolverClass):
                     self.print_output(f"PHP/{key}:")
                 for v in value:
                     self.print_output(f"    {v}")
+            self.create_windowcatcher_action()

@@ -6,15 +6,13 @@ from src.utilities.utilities import error_handler
 class QueueJumperSolverClass(BaseSolverClass):
     def __init__(self) -> None:
         super().__init__("Queuejumper", 28)
+        self.output_filename_for_all = "queuejumper.txt"
+        self.output_png_for_action = "queuejumper.png"
+        self.action_title = "queuejumper"
 
     @error_handler([])
     def solve(self, args):
         self.process_args(args)
-
-        if self.output:
-            if not self.output.endswith("/"):
-                self.output += "/"
-            self.output += "queuejumper.txt" 
 
         if not self.hosts: 
             return
@@ -40,4 +38,5 @@ class QueueJumperSolverClass(BaseSolverClass):
             self.print_output("Vulnerable to CVE-2023-21554 (QueueJumper):")
             for v in vuln:
                 self.print_output(f"    {v}")
+            self.create_windowcatcher_action()
 

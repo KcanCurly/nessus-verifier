@@ -5,13 +5,12 @@ from src.solvers.solverclass import BaseSolverClass
 class ElasticsearchSolverClass(BaseSolverClass):
     def __init__(self) -> None:
         super().__init__("Elasticsearch", 25)
+        self.output_filename_for_all = "elastic.txt"
+        self.output_png_for_action = "elastic.png"
+        self.action_title = "Elastic"
 
     def solve(self, args):
         self.process_args(args)
-        if self.output:
-            if not self.output.endswith("/"):
-                self.output += "/"
-            self.output += "elastic.txt" 
 
         if not self.hosts:
             return
@@ -49,6 +48,7 @@ class ElasticsearchSolverClass(BaseSolverClass):
                 else: self.print_output(f"Elasticsearch {key}:")
                 for v in value:
                     self.print_output(f"    {v}")
+            self.create_windowcatcher_action()
     
 
     

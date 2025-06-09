@@ -6,15 +6,13 @@ import subprocess
 class VmwareSolverClass(BaseSolverClass):
     def __init__(self) -> None:
         super().__init__("VMWare Product Versions", 13)
+        self.output_filename_for_all = "old-vmware.txt"
+        self.output_png_for_action = "old-vmware.png"
+        self.action_title = "OldVmware"
         
     @error_handler([])
     def solve(self, args):
         self.process_args(args)
-
-        if self.output:
-            if not self.output.endswith("/"):
-                self.output += "/"
-            self.output += "vmware.txt" 
 
         if not self.hosts: 
             return
@@ -57,4 +55,5 @@ class VmwareSolverClass(BaseSolverClass):
                     self.print_output(f"{key}:")
                 for v in value:
                     self.print_output(f"{" " * args.space}{v}")
+        self.create_windowcatcher_action()
 

@@ -7,23 +7,20 @@ from src.utilities.utilities import error_handler
 class TerminalSolverClass(BaseSolverClass):
     def __init__(self) -> None:
         super().__init__("Terminal Services Misconfigurations", 8)
+        self.output_filename_for_all = "terminal.txt"
+        self.output_png_for_action = "terminal.png"
+        self.action_title = "Terminal"
 
     @error_handler([])
     def solve(self, args):
         self.process_args(args)
-
-        if self.output:
-            if not self.output.endswith("/"):
-                self.output += "/"
-            self.output += "terminal.txt" 
 
         if not self.hosts: 
             return
         issue_re = r"\[-\] (.*) has issue (.*)"
 
         vuln = {}
-        
-        
+
         print("Running rdp-sec-check.pl, there will be no progression bar")
         for host in self.hosts:
             try:
@@ -46,3 +43,4 @@ class TerminalSolverClass(BaseSolverClass):
                 self.print_output(f"{key}")
                 for v in value:
                     self.print_output(f"    {v}")
+            self.create_windowcatcher_action()

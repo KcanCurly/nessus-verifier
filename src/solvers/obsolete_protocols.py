@@ -5,15 +5,14 @@ from src.utilities.utilities import error_handler
 class ObsoleteProtocolSolverClass(BaseSolverClass):
     def __init__(self) -> None:
         super().__init__("Obsolete Protocols", 18)
+        self.output_filename_for_all = "obsolete-protocols.txt"
+        self.output_png_for_action = "obsolete-protocols.png"
+        self.action_title = "ObsoleteProtocols"
+        self.is_action_done = False
 
     @error_handler([])
     def solve(self, args):
         self.process_args(args)
-
-        if self.output:
-            if not self.output.endswith("/"):
-                self.output += "/"
-            self.output += "obsolete_protocols.txt" 
 
         if not self.hosts: 
             return
@@ -56,28 +55,46 @@ class ObsoleteProtocolSolverClass(BaseSolverClass):
             self.print_output("Echo Protocol Detected:")
             for value in vuln_echo:
                 self.print_output(f"{value}")
+            if not self.is_action_done:
+                self.create_windowcatcher_action()
+                self.is_action_done = True
                 
         if vuln_discard:
             self.print_output("Discard Protocol Detected:")
             for value in vuln_discard:
                 self.print_output(f"{value}")
+            if not self.is_action_done:
+                self.create_windowcatcher_action()
+                self.is_action_done = True
                 
         if vuln_daytime:
             self.print_output("Daytime Protocol Detected:")
             for value in vuln_daytime:
                 self.print_output(f"{value}")
+            if not self.is_action_done:
+                self.create_windowcatcher_action()
+                self.is_action_done = True
                 
         if vuln_qotd:
             self.print_output("QOTD Protocol Detected:")
             for value in vuln_qotd:
                 self.print_output(f"{value}")
+            if not self.is_action_done:
+                self.create_windowcatcher_action()
+                self.is_action_done = True
                 
         if vuln_chargen:
             self.print_output("Chargen Protocol Detected:")
             for value in vuln_chargen:
                 self.print_output(f"{value}")
+            if not self.is_action_done:
+                self.create_windowcatcher_action()
+                self.is_action_done = True
                 
         if vuln_systat:
             self.print_output("Systat Protocol Detected:")
             for value in vuln_systat:
                 self.print_output(f"{value}")
+            if not self.is_action_done:
+                self.create_windowcatcher_action()
+                self.is_action_done = True
