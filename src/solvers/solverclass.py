@@ -24,6 +24,7 @@ class BaseSolverClass():
         self._get_hosts(args)
 
     def print_output(self, message):
+        print(message)
         if self.output:
             with open(self.output, "a") as f:
                 print(message, file=f)
