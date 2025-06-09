@@ -4,6 +4,7 @@ from src.solvers import grafana, mdns, openssl, php, python, tls, kibana, elasti
 from src.modules.nv_parse import GroupNessusScanOutput
 from src.solvers.solverclass import BaseSolverClass
 from src.utilities.utilities import add_default_parser_arguments 
+import os
 
 solver_dict: dict[int, type[BaseSolverClass]] = {
     0: actionables.ActionablesSolverClass,
@@ -45,6 +46,9 @@ solver_dict: dict[int, type[BaseSolverClass]] = {
 }
 
 def all_solver(args):
+    if args.output:
+        os.makedirs(os.path.dirname(args.output), exist_ok=True)
+
     for k,v in solver_dict.items():
         zz = v() # type: ignore
         zz.solve(args)
