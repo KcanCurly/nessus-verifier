@@ -20,6 +20,7 @@ class BaseSolverClass():
         self.output_filename_for_all = ""
         self.output_png_for_action = ""
         self.action_title = ""
+        self.windowcatcher_datas: list[WindowCatcherData] = []
 
 
     def process_args(self, args):

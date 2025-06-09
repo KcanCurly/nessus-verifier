@@ -2,9 +2,13 @@ import os
 from src.utilities.utilities import Version_Vuln_Host_Data, error_handler, get_header_from_url, get_default_context_execution, get_cves
 import re
 from packaging.version import parse
-from src.solvers.solverclass import BaseSolverClass
+from src.solvers.solverclass import BaseSolverClass, WindowCatcherData
 
 shodan_cves_to_skip = ["CVE-2006-20001"]
+
+class ApacheVersionWindowCatcherData(WindowCatcherData):
+    def __init__(self, name, code, output) -> None:
+        super().__init__(name, code, output)
 
 class ApacheSolverClass(BaseSolverClass):
     def __init__(self) -> None:
