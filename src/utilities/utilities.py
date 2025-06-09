@@ -284,6 +284,7 @@ def print_service_error(e_level, message):
         print_exc()
         
 
+
 def add_default_parser_arguments(parser, add_target_argument = True):
     if add_target_argument: 
         parser.add_argument("target", type=str, help="File name or targets seperated by space")
