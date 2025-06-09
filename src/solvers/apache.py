@@ -29,7 +29,7 @@ class ApacheSolverClass(BaseSolverClass):
                 f.write('name = "Apache"\n')
                 f.write("command = \"\"\"\n")
                 if not self.args.output.startswith("/"):
-                    self.args.output = os.getcwd + self.args.output
+                    self.args.output = os.getcwd() + self.args.output
                 f.write(f"clear; cat {self.args.output} | head -20\n")
                 f.write("\"\"\"\n")
                 f.write("output = old-apache")
