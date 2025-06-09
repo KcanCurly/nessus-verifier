@@ -21,6 +21,8 @@ class BaseSolverClass():
             self.process_config(args.config)
         if hasattr(args, "output"):
             self.output = self.args.output
+        if hasattr(args, "output_directory") and self.args.output_directory:
+            self.output += self.args.output_directory + "/" + self.output_filename_for_all
         self._get_hosts(args)
 
     def print_output(self, message):
