@@ -31,7 +31,7 @@ class ApacheSolverClass(BaseSolverClass):
                 if not self.output.startswith("/"):
                     self.output = os.getcwd() + "/" + self.output
                 f.write(f"command = \"clear; cat {self.output} | head -20\"\n")
-                f.write("output = \"old-apache\"")
+                f.write("output = \"old-apache.png\"")
                 f.write("")
 
     def solve_version(self, hosts, threads, timeout, errors, verbose):
