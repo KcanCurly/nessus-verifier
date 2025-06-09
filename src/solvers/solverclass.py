@@ -24,9 +24,8 @@ class BaseSolverClass():
         self._get_hosts(args)
 
     def print_output(self, message):
-        print(message)
-        if hasattr(self.args, "output") and self.args.output:
-            with open(self.args.output, "a") as f:
+        if self.output:
+            with open(self.output, "a") as f:
                 print(message, file=f)
 
     def process_config(self, config: str) -> None:
