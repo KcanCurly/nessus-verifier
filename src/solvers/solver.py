@@ -47,14 +47,14 @@ solver_dict: dict[int, type[BaseSolverClass]] = {
 }
 
 def all_solver(args):
-    if args.output:
-        if os.path.exists(args.output):
-            shutil.rmtree(args.output)
-        os.makedirs(args.output)
+    if args.output_directory:
+        if os.path.exists(args.output_directory):
+            shutil.rmtree(args.output_directory)
+        os.makedirs(args.output_directory)
 
     if args.create_actions:
-        if os.path.exists(args.output):
-            os.remove(args.output)
+        if os.path.exists(args.create_actions):
+            os.remove(args.create_actions)
 
     for k,v in solver_dict.items():
         zz = v() # type: ignore
