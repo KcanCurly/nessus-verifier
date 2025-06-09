@@ -50,6 +50,7 @@ class ApacheSolverClass(BaseSolverClass):
                 else: self.print_output(f"Apache/{key}:")
                 for v in value:
                     self.print_output(f"    {v}")
+            self.create_windowcatcher_action()
                     
     @error_handler(["host"])
     def solve_version_single(self, host, timeout, errors, verbose):
