@@ -1,4 +1,5 @@
 import argparse
+import shutil
 from src.solvers import grafana, mdns, openssl, php, python, tls, kibana, elastic, mongo, oracle, smb, ssh, snmp, tomcat, apache, nginx, vmware, openssh, smtp_relay, mssql, idrac, ipmi, terminal, cleartext, ibmwebsphere, obsolete_protocols, postgresql, nopasswddb, actionables, ftp, ntp, nfs, queuejumper, \
     openssl, webcgi_generic, hpilo, jenkins
 from src.modules.nv_parse import GroupNessusScanOutput
@@ -47,7 +48,9 @@ solver_dict: dict[int, type[BaseSolverClass]] = {
 
 def all_solver(args):
     if args.output:
-        os.makedirs(os.path.dirname(args.output), exist_ok=True)
+        if os.path.exists(args.output):
+            shutil.rmtree(args.output)
+        os.makedirs(args.output)
 
     for k,v in solver_dict.items():
         zz = v() # type: ignore
