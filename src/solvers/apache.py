@@ -30,7 +30,7 @@ class ApacheSolverClass(BaseSolverClass):
                 f.write('name = "Apache"\n')
                 if not self.output.startswith("/"):
                     self.output = os.getcwd() + "/" + self.output
-                f.write(f"command = \"clear; cat {self.output} | head -20"\\n")
+                f.write(f"command = \"clear; cat {self.output} | head -20\"\n")
                 f.write("output = old-apache")
                 f.write("")
 
