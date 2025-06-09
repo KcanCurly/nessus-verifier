@@ -28,9 +28,9 @@ class ApacheSolverClass(BaseSolverClass):
                 f.write("[[actions]]\n")
                 f.write('name = "Apache"\n')
                 f.write("command = \"\"\"\n")
-                if not self.args.output.startswith("/"):
-                    self.args.output = os.getcwd() + "/" + self.args.output
-                f.write(f"clear; cat {self.args.output} | head -20\n")
+                if not self.args.create_actions.startswith("/"):
+                    self.args.create_actions = os.getcwd() + "/" + self.args.create_actions
+                f.write(f"clear; cat {self.args.create_actions} | head -20\n")
                 f.write("\"\"\"\n")
                 f.write("output = old-apache")
                 f.write("")
