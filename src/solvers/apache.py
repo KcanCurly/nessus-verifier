@@ -15,7 +15,8 @@ class ApacheSolverClass(BaseSolverClass):
         if self.args.output:
             if not self.args.output.endswith("/"):
                 self.args.output += "/"
-            self.args.output += "apache.txt" 
+            self.args.output += "apache.txt"
+            self.output = self.args.output
 
         if not self.hosts:
             return
