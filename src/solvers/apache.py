@@ -12,10 +12,10 @@ class ApacheSolverClass(BaseSolverClass):
 
     def solve(self, args):
         self.process_args(args)
-        if self.output:
-            if not self.output.endswith("/"):
-                self.output += "/"
-            self.output += "apache.txt" 
+        if self.args.output:
+            if not self.args.output.endswith("/"):
+                self.args.output += "/"
+            self.args.output += "apache.txt" 
 
         if not self.hosts:
             return
