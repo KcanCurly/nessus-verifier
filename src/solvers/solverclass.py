@@ -19,7 +19,8 @@ class BaseSolverClass():
         self.args = args
         if hasattr(args, "is_all") and args.is_all: 
             self.process_config(args.config)
-        self.output = self.args.output
+        if hasattr(args, "output"):
+            self.output = self.args.output
         self._get_hosts(args)
 
     def print_output(self, message):
