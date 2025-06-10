@@ -89,7 +89,7 @@ class FTPAnonSubServiceClass(BaseSubServiceClass):
         if results:
             self.print_output("FTP Anonymous Access on Hosts:")               
             for a in results:
-                self.print_output(f"    {a}{" [TLS]" if a.is_TLS else ""}")
+                self.print_output(f"    {a.host}{" [TLS]" if a.is_TLS else ""}")
 
     @error_handler(["host"])
     def single(self, host, **kwargs):
