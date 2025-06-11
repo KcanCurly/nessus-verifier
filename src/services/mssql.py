@@ -302,7 +302,7 @@ class MSSQLPostSubServiceClass(BaseSubServiceClass):
                                         # Get first 5 rows
                                         cursor.execute(f"SELECT TOP {row_limit} * FROM {full_table_name}")
                                         rows = cursor.fetchall()
-                                        self.print_output(f"Host: {host} - Database: {database} - Table: {table} - Columns: {', '.join(columns)}")
+                                        self.print_output(f"Host: {host} - Database: {db} - Table: {table} - Columns: {', '.join(columns)}")
                                         if rows:
                                             for row in rows:
                                                 self.print_output(row)
