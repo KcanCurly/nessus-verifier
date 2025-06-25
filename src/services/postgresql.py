@@ -170,7 +170,7 @@ class PSQLPostSubServiceClass(BaseSubServiceClass):
                             cur.execute("SELECT datname FROM pg_database;")
                             dbs = [record[0] for record in cur]
                             for db in dbs:
-                                self.print_output(f"Host: {host} - Database: {database}")
+                                self.print_output(f"Host: {host} - Database: {db}")
                     continue
                 if tables:
                     db_params = {
@@ -250,7 +250,7 @@ class PSQLPostSubServiceClass(BaseSubServiceClass):
                                                 self.print_output("")
                                                 try:
                                                     cur.execute(f"SELECT {", ".join(db_columns)} FROM {db_table} LIMIT {row_limit};") # type: ignore
-                                                    self.print_output(f"Host: {host} - Database: {database} - Table: {db_table} - Columns: {", ".join(db_columns)} - Limit: {row_limit}")
+                                                    self.print_output(f"Host: {host} - Database: {db} - Table: {db_table} - Columns: {", ".join(db_columns)} - Limit: {row_limit}")
                                                     for v in cur:
                                                         self.print_output(v)
                                                     self.print_output("")
