@@ -23,6 +23,8 @@ def parse_nessus_file(file_path):
         for item in host.findall(".//ReportItem"):
             service_name = item.attrib.get('svc_name', '').lower()
             port = item.attrib.get('port', '')
+            if port == "0": # Skip port 0
+                continue
             
             if item.attrib.get("pluginID") == '24260' and item.attrib.get("pluginName") == "HyperText Transfer Protocol (HTTP) Information":
                 # Parse the plugin output to extract SSL information
