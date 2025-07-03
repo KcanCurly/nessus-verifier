@@ -41,6 +41,7 @@ class NTPMode6SubServiceClass(BaseSubServiceClass):
                 v = Version_Vuln_List_Host_Data(host, [])
                 found = False
                 for key, value in ntp_script.items():
+                    if not value: continue
                     v.version.append(value)
                     if value:
                         found = True
@@ -81,6 +82,7 @@ class NTPMonlistSubServiceClass(BaseSubServiceClass):
                 v = Version_Vuln_List_Host_Data(host, [])
                 found = False
                 for key, value in ntp_script.items():
+                    if not value: continue
                     v.version.append(value)
                     if value:
                         found = True
