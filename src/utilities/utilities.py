@@ -288,6 +288,7 @@ def print_service_error(e_level, message):
 def add_default_parser_arguments(parser, add_target_argument = True):
     if add_target_argument: 
         parser.add_argument("target", type=str, help="File name or targets seperated by space")
+    parser.add_argument("-a", "--create-actions", type=str, default=None, help="Creates action toml file for windowcatcher with given name.")
     parser.add_argument("-o", "--output", type=str, required=False, help="Output filename.")
     parser.add_argument("-s", "--space", type=str, default=0, help="Amount of spaces to prepend when printing affected hosts. (Default = 0)")    
     parser.add_argument("-th", "--threads", type=int, default=10, help="Amount of threads (Default = 10).")
