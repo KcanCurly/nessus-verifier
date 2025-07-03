@@ -183,7 +183,8 @@ class DNSAddDNSSubServiceClass(BaseSubServiceClass):
         txt_record_value  = kwargs.get("value", "")
         vuln = []
         for host in hosts:
-            ip, port = host.split(":")
+            ip = host.ip
+            port = host.port
             try:
                 reverse_name = dns.reversename.from_address(ip)
                 
