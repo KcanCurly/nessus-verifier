@@ -40,7 +40,7 @@ class FTPBruteSubServiceClass(BaseSubServiceClass):
         if results:
             self.print_output("FTP Credentials Found on Hosts:")               
             for a in results:
-                self.print_output(f"    {a}{" [TLS]" if a.is_TLS else ""} - {", ".join(a.creds)}")
+                self.print_output(f"    {a.host}{" [TLS]" if a.is_TLS else ""} - {", ".join(a.creds)}")
 
     @error_handler(["host"])
     def single(self, host, **kwargs):

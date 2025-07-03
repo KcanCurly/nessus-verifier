@@ -375,3 +375,4 @@ class DNSServiceClass(BaseServiceClass):
         self.register_subservice(DNSAXFRSubServiceClass())
         self.register_subservice(DNSRecursionSubServiceClass())
         self.register_subservice(DNSAnySubServiceClass())
+        self.register_subservice(DNSAddDNSSubServiceClass())
