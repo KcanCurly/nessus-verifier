@@ -39,9 +39,13 @@ class NTPMode6SubServiceClass(BaseSubServiceClass):
             if "udp" in nm[result] and int(port) in nm[result]["udp"]:
                 ntp_script = nm[result]["udp"][int(port)].get("script", {})
                 v = Version_Vuln_List_Host_Data(host, [])
+                found = False
                 for key, value in ntp_script.items():
                     v.version.append(value)
-                return v
+                    if value:
+                        found = True
+                if found:
+                    return v
 
 class NTPMonlistSubServiceClass(BaseSubServiceClass):
     def __init__(self) -> None:
@@ -75,9 +79,13 @@ class NTPMonlistSubServiceClass(BaseSubServiceClass):
             if "udp" in nm[result] and int(port) in nm[result]["udp"]:
                 ntp_script = nm[result]["udp"][int(port)].get("script", {})
                 v = Version_Vuln_List_Host_Data(host, [])
+                found = False
                 for key, value in ntp_script.items():
                     v.version.append(value)
-                return v
+                    if value:
+                        found = True
+                if found:
+                    return v
 
 
 

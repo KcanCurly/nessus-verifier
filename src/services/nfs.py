@@ -46,7 +46,7 @@ class NFSListServiceClass(BaseSubServiceClass):
                 v.content[line.split()[0]].append(line1.rsplit(maxsplit=1)[1])
 
                 
-        if v.content.keys:  # type: ignore
+        if len(v.content.keys) > 1:  # type: ignore
             return v
 
 class NFSServiceClass(BaseServiceClass):
