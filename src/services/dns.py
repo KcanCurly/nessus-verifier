@@ -161,6 +161,60 @@ class DNSAnySubServiceClass(BaseSubServiceClass):
             for v in vuln:
                 print(f"    {v}")
 
+
+class DNSAddDNSSubServiceClass(BaseSubServiceClass):
+    def __init__(self) -> None:
+        super().__init__("adddns", "Checks if we can add a dns record")
+
+    def helper_parse(self, subparsers):
+        parser = subparsers.add_parser(self.command_name, help = self.help_description)
+        parser.add_argument("target", type=str, help="File name or targets seperated by space")
+        parser.add_argument("-n", "--name", type=str, default="Pentest-TXT-Record", help="TXT Record name to be added (Default = Pentest-TXT-Record).")
+        parser.add_argument("-nv", "--value", type=str, default="Pentest-TXT-Record-Value", help="TXT Record name to be added (Default = Pentest-TXT-Record-Value).")
+        add_default_parser_arguments(parser, False)
+        parser.set_defaults(func=self.console)
+        
+    def nv(self, hosts, **kwargs):
+        threads = kwargs.get("threads", DEFAULT_THREAD)
+        timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
+        errors = kwargs.get("errors", DEFAULT_ERRORS)
+        verbose = kwargs.get("verbose", DEFAULT_VERBOSE)
+        txt_record_name = kwargs.get("name", "")
+        txt_record_value  = kwargs.get("value", "")
+        vuln = []
+        for host in hosts:
+            ip, port = host.split(":")
+            try:
+                reverse_name = dns.reversename.from_address(ip)
+                
+                # Perform the PTR query
+                resolver = dns.resolver.Resolver()
+                resolver.nameservers = [ip]
+                resolver.port = int(port)  # Specify the port for the resolver
+                
+                answers = resolver.resolve(reverse_name, 'PTR')
+                
+                for rdata in answers:
+                    domain = rdata.to_text()
+                    parts = domain.split('.')
+                    domain = '.'.join(parts[-3:])
+            except Exception as e:
+                if errors: print("Error: ", e)
+                continue
+            try:
+                u = dns.update.Update(domain)
+                u.add(txt_record_name, 3600, "TXT", txt_record_value)
+                r = dns.query.tcp(u, ip, port=int(port))
+                if dns.rcode.to_text(r.rcode()) == "NOERROR":
+                    vuln.append(host)
+            except Exception as e:
+                if errors: print("Error: ", e)
+                        
+        if len(vuln) > 0:
+            print(f"'TXT' record named {txt_record_name} was added with value of '{txt_record_value}' on hosts:")
+            for v in vuln:
+                print(f"    {v}")
+
 class DNSRecursionSubServiceClass(BaseSubServiceClass):
     def __init__(self) -> None:
         super().__init__("recursion", "Checks if recursion is enabled")
