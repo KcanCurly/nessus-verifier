@@ -18,7 +18,7 @@ class FTP_Brute_Vuln_Data():
 
 class FTPBruteSubServiceClass(BaseSubServiceClass):
     def __init__(self) -> None:
-        super().__init__("brute", "Checks if anonymous login is possible")
+        super().__init__("brute", "Brute login")
 
     def helper_parse(self, subparsers):
         parser = subparsers.add_parser(self.command_name, help = self.help_description)

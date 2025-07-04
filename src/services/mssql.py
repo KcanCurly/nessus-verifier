@@ -1,6 +1,6 @@
 import pymssql
 import nmap
-from src.utilities.utilities import Version_Vuln_Host_Data, get_cves, get_default_context_execution2, error_handler, get_hosts_from_file2, add_default_parser_arguments
+from src.utilities.utilities import Version_Vuln_Host_Data, get_cves, get_default_context_execution2, error_handler, get_hosts_from_file, get_hosts_from_file2, add_default_parser_arguments
 from src.services.consts import DEFAULT_ERRORS, DEFAULT_THREAD, DEFAULT_TIMEOUT, DEFAULT_VERBOSE
 from src.services.serviceclass import BaseServiceClass
 from src.services.servicesubclass import BaseSubServiceClass
@@ -168,6 +168,60 @@ def connect_to_server(ip, username, password, database, port, domain, login_time
             except Exception:
                 return None
     return conn
+
+class MSSQL_Brute_Vuln_Data():
+    def __init__(self, host: str, creds: list[str]):
+        self.host = host
+        self.creds = creds
+
+class MSSQLBruteSubServiceClass(BaseSubServiceClass):
+    def __init__(self) -> None:
+        super().__init__("brute", "Bruteforce")
+
+    def helper_parse(self, subparsers):
+        parser = subparsers.add_parser(self.command_name, help = self.help_description)
+        parser.add_argument("target", type=str, help="File name or targets seperated by space")
+        parser.add_argument("credential", type=str, help="File name or targets seperated by space, user:pass on each line")
+        parser.add_argument("--domain", default="a", type=str, help="Domain for windows authentication")
+        add_default_parser_arguments(parser, False)
+        parser.set_defaults(func=self.console)
+
+    def console(self, args):
+        self.nv(get_hosts_from_file2(args.target), creds=get_hosts_from_file(args.credential), threads=args.threads, timeout=args.timeout, errors=args.errors, domain=args.domain, verbose=args.verbose)
+
+    @error_handler([])
+    def nv(self, hosts, **kwargs):
+        super().nv(hosts, kwargs=kwargs)
+        creds = kwargs.get("creds", [])
+        domain = kwargs.get("domain", "")
+
+        results: list[MSSQL_Brute_Vuln_Data] = get_default_context_execution2("FTP Brute", self.threads, hosts, self.single, creds=creds, domain=domain, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
+        
+        if results:
+            self.print_output("MSSQL Credentials Found on Hosts:")               
+            for a in results:
+                self.print_output(f"    {a.host} - {", ".join(a.creds)}")
+
+    @error_handler(["host"])
+    def single(self, host, **kwargs):
+        creds = kwargs.get("creds", [])
+        domain = kwargs.get("domain", "")
+        ip = host.ip
+        port = host.port
+
+        c = []
+
+        for cred in creds:
+            username, password = cred.split(":")
+            if connect_to_server(ip, username, password, "master", str(port), domain, login_timeout=10):
+                c.append(f"{username}:{password}")
+        
+        if c:
+            return MSSQL_Brute_Vuln_Data(f"{ip}:{port}", c)
+        else:
+            return None
+
+
 
 class MSSQLPostSubServiceClass(BaseSubServiceClass):
     def __init__(self) -> None:
@@ -413,3 +467,4 @@ class MSSQLServiceClass(BaseServiceClass):
         super().__init__("mssql")
         self.register_subservice(MSSQLVersionSubServiceClass())
         self.register_subservice(MSSQLPostSubServiceClass())
+        self.register_subservice(MSSQLBruteSubServiceClass())
