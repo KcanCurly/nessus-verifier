@@ -97,7 +97,7 @@ class FortigateTemplate(SiteTemplateBase):
             password = "admin"
             hostname = hostname = SiteTemplateBase.get_dns_name(url)
 
-            res = requests.post(url + "/logincheck", data={"username" : username, "password": password})
+            res = requests.post(url + "/logincheck", data={"username" : username, "password": password}, verify=False)
             if not "Authentication failure" in res.text and not "Unable to contact server" in res.text:
                 self.on_success(url, hostname, username, password)
                 found = True
