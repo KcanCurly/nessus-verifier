@@ -13,7 +13,7 @@ from bs4 import BeautifulSoup, XMLParsedAsHTMLWarning
 import re
 import warnings
 import socket
-from src.url.templates import ArisconnectTemplate, FortigateTemplate, URL_STATUS, SiteTemplateBase
+from src.url.templates import ArisconnectTemplate, FortigateTemplate, URL_STATUS, GrafanaTemplate, HighAvailabilityManagementTemplate, IPECSIPPhoneTemplate, IRISIDICAMTemplate, LogparseTemplate, MyQTemplate, NetscalerConsoleTemplate, NexthinkConsoleTemplate, OpinnateTemplate, OracleLightsoutManagerTemplate, SiteTemplateBase, StoredIQTemplate, StorwareTemplate, SynergySkyTemplate, UNISPHERETemplate, WatsonTemplate, XormonTemplate, XoruxTemplate, ZabbixTemplate, iDRACTemplate
 
 disable_warnings(InsecureRequestWarning)
 warnings.filterwarnings("ignore", category=XMLParsedAsHTMLWarning)
@@ -461,7 +461,28 @@ def main():
     parser.add_argument("-v", "--verbose", action="store_true", help="Enable verbose output.")
     args = parser.parse_args()
 
-    templates: list[type[SiteTemplateBase]] = [ArisconnectTemplate, FortigateTemplate]
+    templates: list[type[SiteTemplateBase]] = [
+        ArisconnectTemplate, 
+        FortigateTemplate,
+        GrafanaTemplate,
+        HighAvailabilityManagementTemplate,
+        iDRACTemplate,
+        IPECSIPPhoneTemplate,
+        IRISIDICAMTemplate,
+        LogparseTemplate,
+        MyQTemplate,
+        NetscalerConsoleTemplate,
+        NexthinkConsoleTemplate,
+        OpinnateTemplate,
+        OracleLightsoutManagerTemplate,
+        StoredIQTemplate,
+        StorwareTemplate,
+        SynergySkyTemplate,
+        UNISPHERETemplate,
+        WatsonTemplate,
+        XormonTemplate,
+        XoruxTemplate,
+        ZabbixTemplate]
 
     max_threads = args.threads
     # If given url is a file, read it line by line and run the templates on each line
