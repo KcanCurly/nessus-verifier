@@ -8,7 +8,7 @@ from concurrent.futures import ThreadPoolExecutor
 from bs4 import BeautifulSoup, XMLParsedAsHTMLWarning
 import warnings
 from enum import Enum
-from src.url.url import error_lock, valid_lock, valid_url_lock, valid_template_lock, known_bads_lock, manual_lock, nv_error, nv_manual, nv_no_template, nv_no_valid, nv_valid
+
 
 disable_warnings(InsecureRequestWarning)
 warnings.filterwarnings("ignore", category=XMLParsedAsHTMLWarning)
@@ -21,6 +21,7 @@ class URL_STATUS(Enum):
     KNOWN_BAD = 4
 
 class SiteTemplateBase:
+    
     def __init__(self, name: str):
         self.name = name
 
@@ -31,12 +32,14 @@ class SiteTemplateBase:
         raise NotImplementedError("check() must be implemented by subclasses.")
     
     def on_success(self, url, hostname, username, password):
+        from src.url.url import error_lock, valid_lock, valid_url_lock, valid_template_lock, known_bads_lock, manual_lock, nv_error, nv_manual, nv_no_template, nv_no_valid, nv_valid
         with valid_lock:
             with open(nv_valid, "a") as file:
                 file.write(f"{url}{f" | {hostname}" if hostname else ""} => {self.name} => {username}:{password}\n")
         print(f"{url} => {self.name}{f" | {hostname}" if hostname else ""} => {username}:{password}")
 
     def on_failure(self, url, hostname):
+        from src.url.url import error_lock, valid_lock, valid_url_lock, valid_template_lock, known_bads_lock, manual_lock, nv_error, nv_manual, nv_no_template, nv_no_valid, nv_valid
         with valid_template_lock:
             with open(nv_no_valid, "a") as file:
                 file.write(f"{url}{f" | {hostname}" if hostname else ""} => {self.name}\n")
