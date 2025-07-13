@@ -46,6 +46,7 @@ setup(
             "nv-nuclei=src.modules.nv_nuclei:main",
             "nv-nc=src.modules.nv_nc:main",
             "nv-service=src.services.nv_services:main",
+            "nv-url=src.url.url:main",
         ],
     },
 )

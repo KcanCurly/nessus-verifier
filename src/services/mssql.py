@@ -195,7 +195,7 @@ class MSSQLBruteSubServiceClass(BaseSubServiceClass):
         creds = kwargs.get("creds", [])
         domain = kwargs.get("domain", "")
 
-        results: list[MSSQL_Brute_Vuln_Data] = get_default_context_execution2("FTP Brute", self.threads, hosts, self.single, creds=creds, domain=domain, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
+        results: list[MSSQL_Brute_Vuln_Data] = get_default_context_execution2("MSSQL Brute", self.threads, hosts, self.single, creds=creds, domain=domain, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
         
         if results:
             self.print_output("MSSQL Credentials Found on Hosts:")               
