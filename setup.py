@@ -13,6 +13,7 @@ setup(
     install_requires=[
         "argcomplete",
         "requests",
+        "bs4",
         "dnspython",
         "impacket",
         "pyaml",
