@@ -2,7 +2,7 @@ import pprint
 from pymongo import MongoClient
 import pymongo
 from packaging.version import parse
-from src.utilities.utilities import Version_Vuln_Host_Data, get_default_context_execution2, error_handler, get_hosts_from_file2, add_default_parser_arguments, Host, get_cves
+from src.utilities.utilities import Version_Vuln_Host_Data, get_default_context_execution2, error_handler, get_hosts_from_file, get_hosts_from_file2, add_default_parser_arguments, Host, get_cves
 from src.services.serviceclass import BaseServiceClass
 from src.services.servicesubclass import BaseSubServiceClass
 from traceback import print_exc
@@ -107,6 +107,55 @@ class MongoDBPostSubServiceClass(BaseSubServiceClass):
                     print_exc()
 
 
+class MongoDB_Brute_Vuln_Data():
+    def __init__(self, host: str, creds: list[str]):
+        self.host = host
+        self.creds = creds
+
+class MongoDBBruteSubServiceClass(BaseSubServiceClass):
+    def __init__(self) -> None:
+        super().__init__("brute", "Bruteforce")
+
+    def helper_parse(self, subparsers):
+        parser = subparsers.add_parser(self.command_name, help = self.help_description)
+        parser.add_argument("target", type=str, help="File name or targets seperated by space")
+        parser.add_argument("credential", type=str, help="File name or targets seperated by space, user:pass on each line")
+        add_default_parser_arguments(parser, False)
+        parser.set_defaults(func=self.console)
+
+    def console(self, args):
+        self.nv(get_hosts_from_file2(args.target), creds=get_hosts_from_file(args.credential), threads=args.threads, timeout=args.timeout, errors=args.errors, domain=args.domain, verbose=args.verbose)
+
+    @error_handler([])
+    def nv(self, hosts, **kwargs):
+        super().nv(hosts, kwargs=kwargs)
+        creds = kwargs.get("creds", [])
+        domain = kwargs.get("domain", "")
+
+        results: list[MongoDB_Brute_Vuln_Data] = get_default_context_execution2("MongoDB Brute", self.threads, hosts, self.single, creds=creds, domain=domain, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
+        
+        if results:
+            self.print_output("MongoDB Credentials Found on Hosts:")               
+            for a in results:
+                self.print_output(f"    {a.host} - {", ".join(a.creds)}")
+
+    @error_handler(["host"])
+    def single(self, host, **kwargs):
+        creds = kwargs.get("creds", [])
+        ip = host.ip
+        port = host.port
+
+        c = []
+
+        for cred in creds:
+            username, password = cred.split(":")
+            _ = MongoClient(ip, int(port), username=username, password=password)
+            c.append(f"{username}:{password}")
+        
+        if c:
+            return MongoDB_Brute_Vuln_Data(f"{ip}:{port}", c)
+        else:
+            return None
 
 
 class MongoDBUnauthSubServiceClass(BaseSubServiceClass):
@@ -181,3 +230,4 @@ class MongoDBServiceClass(BaseServiceClass):
         self.register_subservice(MongoDBVersionSubServiceClass())
         self.register_subservice(MongoDBUnauthSubServiceClass())
         self.register_subservice(MongoDBPostSubServiceClass())
+        self.register_subservice(MongoDBBruteSubServiceClass())

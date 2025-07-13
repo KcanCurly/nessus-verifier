@@ -32,6 +32,7 @@ setup(
         "packaging",
         "pika",
         "redis[hiredis]",
+        "BAC0",
     ],
     classifiers=[
         "Programming Language :: Python :: 3",

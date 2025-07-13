@@ -422,7 +422,8 @@ def authcheck(url, templates: list[type[SiteTemplateBase]], verbose, wasprocesse
 
     try:
         for template_cls in templates:
-            result: URL_STATUS = template_cls.check(url, response.text, False)
+            zz = template_cls() # type: ignore
+            result: URL_STATUS = zz.check(url, response.text, False)
             if result == URL_STATUS.VALID:
                 return
 
