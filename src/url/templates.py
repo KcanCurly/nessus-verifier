@@ -87,9 +87,10 @@ class FortigateTemplate(SiteTemplateBase):
         super().__init__("FortiGate")
 
     def check(self, url, source_code, verbose=False) -> URL_STATUS:
-        if "logon_merge.gif" in source_code or \
-            "ftnt-fortinet-grid" in source_code or \
-            "<title>FortiGate</title>" in source_code:
+        res = requests.get(url + "/login", verify=False, timeout=15)
+        if "logon_merge.gif" in res.text or \
+            "ftnt-fortinet-grid" in res.text or \
+            "<title>FortiGate</title>" in res.text:
             found = False
 
             username = "admin"
