@@ -113,6 +113,7 @@ class MYSQLPostSubServiceClass(BaseSubServiceClass):
                 
                 for col in columns:
                     print(col[0])  # Column name
+                return
 
             if database and table and column:
                 if database not in _databases:
