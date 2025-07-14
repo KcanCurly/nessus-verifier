@@ -119,7 +119,7 @@ class MYSQLPostSubServiceClass(BaseSubServiceClass):
                     if database not in _databases:
                         print(f"Database {database} not found")
                         return
-
+                    cursor.execute(f"USE `{database}`")
                     cursor.execute(f"SELECT {', '.join(column)} FROM `{table}` LIMIT {row_limit}")
                     rows = cursor.fetchall()
                     print(f"Host: {host} - Database: {database} - Table - {table} - Columns: {', '.join(column)}")
