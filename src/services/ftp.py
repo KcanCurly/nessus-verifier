@@ -135,6 +135,7 @@ class FTPVersionSubServiceClass(BaseSubServiceClass):
         
         if ip in nm.all_hosts():
             nmap_host = nm[ip]
+            print(nmap_host)
             if 'ftp' in nmap_host['tcp'][int(port)]['name'].lower():
                 product = nmap_host['tcp'][int(port)].get("product", "Service not found")
                 version = nmap_host['tcp'][int(port)].get('version', '')
