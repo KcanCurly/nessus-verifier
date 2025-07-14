@@ -81,7 +81,7 @@ class ActiveMQVersionSubServiceClass(BaseSubServiceClass):
         
         if ip in nm.all_hosts():
             nmap_host = nm[ip]
-            if 'activemq' in nmap_host['tcp'][int(port)]['name'].lower():
+            if 'apachemq' in nmap_host['tcp'][int(port)]['name'].lower():
                 product = nmap_host['tcp'][int(port)].get("product", "Service not found")
                 return f"{host}{f" - {product}" if product else ""}"
 
