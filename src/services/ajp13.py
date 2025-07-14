@@ -15,7 +15,7 @@ class AJP13GhostcatSubServiceClass(BaseSubServiceClass):
         threads = kwargs.get("threads", DEFAULT_THREAD)
 
         r = r"\[\-\] (.*) - Unable to read file"
-        print("Running metasploit ipmi dumphashes module, there will be no progression bar")
+        print("Running metasploit ghostcat module, there will be no progression bar")
         hashes = {}
         creds = {}
 
@@ -27,7 +27,7 @@ class AJP13GhostcatSubServiceClass(BaseSubServiceClass):
         result = subprocess.run(command, text=True, capture_output=True)
         matches = re.findall(r, result.stdout)
         for m in matches:
-            ips.remove(m)
+            ips.remove(m[0])
 
         if ips:
             self.print_output("Vulnerable to Ghostcat:")
