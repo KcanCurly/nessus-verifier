@@ -1,5 +1,5 @@
 import argparse
-from src.services import activemq, amqp, asterisk, chargen, daytime, discard, dns, echo, finger, ftp, ident, ldap, mongodb, ms_exchange, mssql, netstat, qotd, smb, ssh, snmp, nfs, rpc, smtp, snmp, systat, telnet, tftp, time, mssql, idrac, zookeeper, postgresql, mysql, redis
+from src.services import activemq, ajp13, amqp, asterisk, chargen, daytime, discard, dns, echo, finger, ftp, ident, ldap, mongodb, ms_exchange, mssql, netstat, qotd, smb, ssh, snmp, nfs, rpc, smtp, snmp, systat, telnet, tftp, time, mssql, idrac, zookeeper, postgresql, mysql, redis
 from src.services.serviceclass import BaseServiceClass
 from traceback import print_exc
 
@@ -36,6 +36,7 @@ service_dict: list[type[BaseServiceClass]] = [
     amqp.AMQPServiceClass,
     redis.RedisServiceClass,
     activemq.AMQPServiceClass,
+    ajp13.AJP13ServiceClass,
 ]
 
 
