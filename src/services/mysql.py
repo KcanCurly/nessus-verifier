@@ -107,7 +107,7 @@ class MYSQLPostSubServiceClass(BaseSubServiceClass):
                 if database not in _databases:
                     print(f"Database {database} not found")
                     return
-
+                cursor.execute(f"USE `{database}`")
                 cursor.execute(f"SHOW COLUMNS FROM `{table}`")
                 columns = cursor.fetchall()
                 
@@ -127,6 +127,7 @@ class MYSQLPostSubServiceClass(BaseSubServiceClass):
             
             for db in _databases:
                 print(f"\n=== Database: {db} ===")
+                cursor.execute(f"USE `{db}`")
                 try:
                     # Get tables via information_schema
                     cursor.execute("""
