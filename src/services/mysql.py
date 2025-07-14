@@ -29,6 +29,8 @@ class MYSQLPostSubServiceClass(BaseSubServiceClass):
                 databases=args.databases, database=args.database, tables=args.tables, table=args.table, 
                 columns=args.columns, column=args.column, threads=args.threads, timeout=args.timeout, 
                 errors=args.errors, verbose=args.verbose)
+        
+
 
     @error_handler([])
     def nv(self, hosts, **kwargs):
@@ -102,61 +104,54 @@ class MYSQLPostSubServiceClass(BaseSubServiceClass):
                 return
             
             if columns:
-                if database not in databases:
+                if database not in _databases:
                     print(f"Database {database} not found")
                     return
-                cursor.execute(f"USE `{database}`")
-                cursor.execute("SHOW TABLES")
-                tables = [table[0] for table in cursor.fetchall()]
-                if table not in tables:
-                    print(f"Table {table} not found in database {database}")
-                    return
-                cursor.execute(f"DESCRIBE {table}")
-                columns = [(col[0], col[1]) for col in cursor.fetchall()]
-                if columns:
-                    for c in columns:
-                        print(f"{c[0]}: {c[1]}")
+
+                cursor.execute(f"SHOW COLUMNS FROM `{table}`")
+                columns = cursor.fetchall()
+                
+                for col in columns:
+                    print(col[0])  # Column name
 
             if database and table and column:
-                if database not in databases:
+                if database not in _databases:
                     print(f"Database {database} not found")
                     return
-                cursor.execute(f"USE `{database}`")
-                cursor.execute("SHOW TABLES")
-                tables = [table[0] for table in cursor.fetchall()]
-                if table not in tables:
-                    print(f"Table {table} not found in database {database}")
-                    return
+
                 cursor.execute(f"SELECT {', '.join(column)} FROM `{table}` LIMIT {row_limit}")
                 rows = cursor.fetchall()
                 for row in rows:
                     print(row)
                 return
             
-            for db in databases:
-                print(f"\n🔹 Scanning Database: {db}")
+            for db in _databases:
+                print(f"\n=== Database: {db} ===")
+                try:
+                    # Get tables via information_schema
+                    cursor.execute("""
+                        SELECT table_name 
+                        FROM information_schema.tables 
+                        WHERE table_schema = %s
+                    """, (db,))
+                    tables = [t[0] for t in cursor.fetchall()]
 
-                # Switch to database
-                cursor.execute(f"USE `{db}`")
-
-                # Get list of all tables in the current database
-                cursor.execute("SHOW TABLES")
-                tables = [table[0] for table in cursor.fetchall()]
-
-                for table in tables:
-                    print(f"\n  📌 Table: {table}")
-
-                    # Fetch first 10 rows
-                    cursor.execute(f"SELECT * FROM `{table}` LIMIT {row_limit}")
-                    rows = cursor.fetchall()
-
-                    # Get column names
-                    col_names = [desc[0] for desc in cursor.description]
-                    print("  " + " | ".join(col_names))  # Print header
-
-                    for row in rows:
-                        print("  " + " | ".join(str(cell) for cell in row))
-
+                    for table in tables:
+                        print(f"\n--- Table: {table} ---")
+                        try:
+                            cursor.execute(f"SELECT * FROM `{db}`.`{table}` LIMIT 10")
+                            rows = cursor.fetchall()
+                            headers = [desc[0] for desc in cursor.description]
+                            print(" | ".join(headers))
+                            for row in rows:
+                                print(" | ".join(str(cell) for cell in row))
+                        except Exception as e:
+                            pass
+                            # print(f"[!] Error reading table {db}.{table}: {e}")
+                except Exception as e:
+                    pass
+                    # print(f"[!] Error listing tables in database {db}: {e}")
+                    
 class MYSQLVersionSubServiceClass(BaseSubServiceClass):
     def __init__(self) -> None:
         super().__init__("version", "Checks version")
