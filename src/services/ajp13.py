@@ -1,6 +1,6 @@
 import re
 import subprocess
-from src.utilities.utilities import error_handler, get_cves, get_default_context_execution2, Version_Vuln_Host_Data
+from src.utilities.utilities import Host, error_handler, get_cves, get_default_context_execution2, Version_Vuln_Host_Data
 from src.services.serviceclass import BaseServiceClass
 from src.services.servicesubclass import BaseSubServiceClass
 from src.services.consts import DEFAULT_ERRORS, DEFAULT_THREAD, DEFAULT_TIMEOUT, DEFAULT_VERBOSE
@@ -30,16 +30,19 @@ class AJP13GhostcatSubServiceClass(BaseSubServiceClass):
         print("Matches")
         print(matches.__dict__)
 
+        hosts2 = [h.str() for h in hosts]
+
         for m in matches:
             print("M")
             print(m)
             try:
-                hosts.remove(m[0])
+
+                hosts2.remove(m[0])
             except Exception as e:pass
 
-        if hosts:
+        if hosts2:
             self.print_output("Vulnerable to Ghostcat:")
-            for host in hosts:
+            for host in hosts2:
                 self.print_output(f"    {host}")
 
 
