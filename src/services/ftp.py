@@ -132,7 +132,7 @@ class FTPVersionSubServiceClass(BaseSubServiceClass):
         ip = host.ip
         port = host.port
         nm.scan(ip, port, arguments=f'-sV')
-        print(nm)
+        print(nm.__dict__)
         if ip in nm.all_hosts():
             nmap_host = nm[ip]
             print(nmap_host)
