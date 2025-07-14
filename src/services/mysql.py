@@ -58,101 +58,104 @@ class MYSQLPostSubServiceClass(BaseSubServiceClass):
             return
 
         for host in hosts:
-            conn = None
-            cursor = None
-            ip = host.ip
-            port = host.port
+            try:
+                conn = None
+                cursor = None
+                ip = host.ip
+                port = host.port
 
-            conn = pymysql.connect(
-                host=ip,
-                user=username,
-                password=password,
-                port=int(port)
-            )
-            cursor = conn.cursor()
+                conn = pymysql.connect(
+                    host=ip,
+                    user=username,
+                    password=password,
+                    port=int(port)
+                )
+                cursor = conn.cursor()
 
-            if sql:
-                cursor.execute(sql)
-                rows = cursor.fetchall()
-                for row in rows:
-                    print(row)
-                return
-
-            # Get list of all databases (excluding system databases)
-            cursor.execute("SHOW DATABASES")
-            _databases = [db[0] for db in cursor.fetchall()]
-            _databases = [db for db in _databases if db not in system_dbs]
-
-            if databases:
-                for db in _databases:
-                    print(db)
-                return
-            if tables:
-                if database not in _databases:
-                    print(f"Database {database} not found")
-                    return
-                cursor.execute("""
-                    SELECT table_name 
-                    FROM information_schema.tables 
-                    WHERE table_schema = %s
-                """, (database,))
-
-                tables = cursor.fetchall()
-                for table in tables:
-                    print(table[0])
-
-                return
-            
-            if columns:
-                if database not in _databases:
-                    print(f"Database {database} not found")
-                    return
-                cursor.execute(f"USE `{database}`")
-                cursor.execute(f"SHOW COLUMNS FROM `{table}`")
-                columns = cursor.fetchall()
-                
-                for col in columns:
-                    print(col[0])  # Column name
-                return
-
-            if database and table and column:
-                if database not in _databases:
-                    print(f"Database {database} not found")
+                if sql:
+                    cursor.execute(sql)
+                    rows = cursor.fetchall()
+                    for row in rows:
+                        print(row)
                     return
 
-                cursor.execute(f"SELECT {', '.join(column)} FROM `{table}` LIMIT {row_limit}")
-                rows = cursor.fetchall()
-                for row in rows:
-                    print(row)
-                return
-            
-            for db in _databases:
-                print(f"\n=== Database: {db} ===")
-                cursor.execute(f"USE `{db}`")
-                try:
-                    # Get tables via information_schema
+                # Get list of all databases (excluding system databases)
+                cursor.execute("SHOW DATABASES")
+                _databases = [db[0] for db in cursor.fetchall()]
+                _databases = [db for db in _databases if db not in system_dbs]
+
+                if databases:
+                    for db in _databases:
+                        print(db)
+                    return
+                if tables:
+                    if database not in _databases:
+                        print(f"Database {database} not found")
+                        return
                     cursor.execute("""
                         SELECT table_name 
                         FROM information_schema.tables 
                         WHERE table_schema = %s
-                    """, (db,))
-                    tables = [t[0] for t in cursor.fetchall()]
+                    """, (database,))
 
+                    tables = cursor.fetchall()
                     for table in tables:
-                        print(f"\n--- Table: {table} ---")
-                        try:
-                            cursor.execute(f"SELECT * FROM `{db}`.`{table}` LIMIT 10")
-                            rows = cursor.fetchall()
-                            headers = [desc[0] for desc in cursor.description]
-                            print(" | ".join(headers))
-                            for row in rows:
-                                print(" | ".join(str(cell) for cell in row))
-                        except Exception as e:
-                            pass
-                            # print(f"[!] Error reading table {db}.{table}: {e}")
-                except Exception as e:
-                    pass
-                    # print(f"[!] Error listing tables in database {db}: {e}")
+                        print(table[0])
+
+                    return
+                
+                if columns:
+                    if database not in _databases:
+                        print(f"Database {database} not found")
+                        return
+                    cursor.execute(f"USE `{database}`")
+                    cursor.execute(f"SHOW COLUMNS FROM `{table}`")
+                    columns = cursor.fetchall()
+                    
+                    for col in columns:
+                        print(col[0])  # Column name
+                    return
+
+                if database and table and column:
+                    if database not in _databases:
+                        print(f"Database {database} not found")
+                        return
+
+                    cursor.execute(f"SELECT {', '.join(column)} FROM `{table}` LIMIT {row_limit}")
+                    rows = cursor.fetchall()
+                    for row in rows:
+                        print(row)
+                    return
+                
+                for db in _databases:
+                    print(f"\n=== Database: {db} ===")
+                    cursor.execute(f"USE `{db}`")
+                    try:
+                        # Get tables via information_schema
+                        cursor.execute("""
+                            SELECT table_name 
+                            FROM information_schema.tables 
+                            WHERE table_schema = %s
+                        """, (db,))
+                        tables = [t[0] for t in cursor.fetchall()]
+
+                        for table in tables:
+                            print(f"\n--- Table: {table} ---")
+                            try:
+                                cursor.execute(f"SELECT * FROM `{db}`.`{table}` LIMIT 10")
+                                rows = cursor.fetchall()
+                                headers = [desc[0] for desc in cursor.description]
+                                print(" | ".join(headers))
+                                for row in rows:
+                                    print(" | ".join(str(cell) for cell in row))
+                            except Exception as e:
+                                pass
+                                # print(f"[!] Error reading table {db}.{table}: {e}")
+                    except Exception as e:
+                        pass
+                        # print(f"[!] Error listing tables in database {db}: {e}")
+            except Exception as e:
+                pass
                     
 class MYSQLVersionSubServiceClass(BaseSubServiceClass):
     def __init__(self) -> None:
