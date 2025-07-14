@@ -89,5 +89,5 @@ class ActiveMQVersionSubServiceClass(BaseSubServiceClass):
 
 class AMQPServiceClass(BaseServiceClass):
     def __init__(self) -> None:
-        super().__init__("amqp")
+        super().__init__("activemq")
         self.register_subservice(ActiveMQVersionSubServiceClass())
