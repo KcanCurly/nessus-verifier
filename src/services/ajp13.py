@@ -16,8 +16,6 @@ class AJP13GhostcatSubServiceClass(BaseSubServiceClass):
 
         r = r"\[\-\] (.*) - Unable to read file"
         print("Running metasploit ghostcat module, there will be no progression bar")
-        hashes = {}
-        creds = {}
 
         ips = [h.ip for h in hosts]
 
@@ -27,12 +25,12 @@ class AJP13GhostcatSubServiceClass(BaseSubServiceClass):
         result = subprocess.run(command, text=True, capture_output=True)
         matches = re.findall(r, result.stdout)
         for m in matches:
-            ips.remove(m[0])
+            hosts.remove(m[0])
 
-        if ips:
+        if hosts:
             self.print_output("Vulnerable to Ghostcat:")
-            for ip in ips:
-                self.print_output(f"    {ip}")
+            for host in hosts:
+                self.print_output(f"    {host}")
 
 
 
