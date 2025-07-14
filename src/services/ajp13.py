@@ -24,8 +24,18 @@ class AJP13GhostcatSubServiceClass(BaseSubServiceClass):
 
         result = subprocess.run(command, text=True, capture_output=True)
         matches = re.findall(r, result.stdout)
+
+        print("Hosts:")
+        print(hosts)
+        print("Matches")
+        print(matches.__dict__)
+
         for m in matches:
-            hosts.remove(m[0])
+            print("M")
+            print(m)
+            try:
+                hosts.remove(m[0])
+            except Exception as e:pass
 
         if hosts:
             self.print_output("Vulnerable to Ghostcat:")
