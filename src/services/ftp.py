@@ -4,6 +4,7 @@ from ftplib import FTP_TLS
 from src.utilities.utilities import error_handler, get_hosts_from_file, get_hosts_from_file2, get_default_context_execution2, add_default_parser_arguments, Host
 from src.services.serviceclass import BaseServiceClass
 from src.services.servicesubclass import BaseSubServiceClass
+import nmap
 
 class FTP_Anon_Vuln_Data():
     def __init__(self, host: Host, is_TLS: bool):
@@ -109,9 +110,38 @@ class FTPAnonSubServiceClass(BaseSubServiceClass):
             l = ftp.login()
             if "230" in l:
                 return FTP_Anon_Vuln_Data(host, True)
+            
+class FTPVersionSubServiceClass(BaseSubServiceClass):
+    def __init__(self) -> None:
+        super().__init__("version", "Checks version")
+
+    @error_handler([])
+    def nv(self, hosts, **kwargs):
+        super().nv(hosts, kwargs=kwargs)
+
+        results = get_default_context_execution2("FTP Version", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
+                        
+        if results:
+            self.print_output("FTP Version:")               
+            for a in results:
+                self.print_output(f"    {a}")
+
+    @error_handler(["host"])
+    def single(self, host, **kwargs):
+        nm = nmap.PortScanner()
+        ip = host.ip
+        port = host.port
+        nm.scan(ip, port, arguments=f'-sV')
+        
+        if ip in nm.all_hosts():
+            nmap_host = nm[ip]
+            if 'ftp' in nmap_host['tcp'][int(port)]['name'].lower():
+                product = nmap_host['tcp'][int(port)].get("product", "Service not found")
+                return f"{host}{f" - {product}" if product else ""}"
 
 class FTPServiceClass(BaseServiceClass):
     def __init__(self) -> None:
         super().__init__("ftp")
         self.register_subservice(FTPAnonSubServiceClass())
         self.register_subservice(FTPBruteSubServiceClass())
+        self.register_subservice(FTPVersionSubServiceClass())

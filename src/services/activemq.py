@@ -57,69 +57,37 @@ def main():
     else:
         parser.print_help()
 
-class ActiveMQBruteSubServiceClass(BaseSubServiceClass):
+class ActiveMQVersionSubServiceClass(BaseSubServiceClass):
     def __init__(self) -> None:
-        super().__init__("brute", "brute")
+        super().__init__("version", "Checks version")
 
     @error_handler([])
-    def nv(self, hosts, **kwargs) -> None:
+    def nv(self, hosts, **kwargs):
         super().nv(hosts, kwargs=kwargs)
 
-        nm = nmap.PortScanner()
-        results: list[Version_Vuln_Host_Data] = get_default_context_execution2("ActiveMQ Brute", self.threads, hosts, self.single, nm=nm, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
-
-        versions = {}
-
-        for r in results:
-            if r.version not in versions:
-                versions[r.version] = set()
-            versions[r.version].add(r.host)
-
-        if versions:
-            versions = dict(sorted(versions.items(), reverse=True))
-            self.print_output("Detected AMQP Versions:")
-            
-            for key, value in versions.items():
-                extra, pure_version = key.rsplit(" ", 1)
-
-                cpe = ""
-                cves = []
-                if "rabbitmq" in key.lower():
-                    cpe = f"cpe:2.3:a:vmware:rabbitmq:{pure_version}"
-                if cpe: 
-                    cves = get_cves(cpe)
-                if cves: 
-                    self.print_output(f"{extra} {pure_version} ({", ".join(cves)}):")
-                else:
-                    self.print_output(f"{extra} {pure_version}:")
-
-                for v in value:
-                    self.print_output(f"    {v}")
-
-
-
+        results = get_default_context_execution2("ActiveMQ Version", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
+                        
+        if results:
+            self.print_output("ActiveMQ Version:")               
+            for a in results:
+                self.print_output(f"    {a}")
 
     @error_handler(["host"])
     def single(self, host, **kwargs):
-        nm:nmap.PortScanner = kwargs.get("nm") # type: ignore
+        nm = nmap.PortScanner()
         ip = host.ip
         port = host.port
-
-        nm.scan(ip, port, arguments=f'--script amqp-info')
+        nm.scan(ip, port, arguments=f'-sV')
+        
         if ip in nm.all_hosts():
             nmap_host = nm[ip]
-            if 'tcp' in nmap_host and int(port) in nmap_host['tcp']:
-                tcp_info = nmap_host['tcp'][int(port)]
-                product_name = None
-                version_number = None
-                product_name = tcp_info['product']
-                version_number = tcp_info['version']
-                z = product_name + " " + version_number
-                return Version_Vuln_Host_Data(host, z)
+            if 'activemq' in nmap_host['tcp'][int(port)]['name'].lower():
+                product = nmap_host['tcp'][int(port)].get("product", "Service not found")
+                return f"{host}{f" - {product}" if product else ""}"
 
 
 
 class AMQPServiceClass(BaseServiceClass):
     def __init__(self) -> None:
         super().__init__("amqp")
-        self.register_subservice(AMQPVersionSubServiceClass())
+        self.register_subservice(ActiveMQVersionSubServiceClass())
