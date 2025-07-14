@@ -128,27 +128,35 @@ class FTPVersionSubServiceClass(BaseSubServiceClass):
 
     @error_handler(["host"])
     def single(self, host, **kwargs):
-        nm = nmap.PortScanner()
-        ip = host.ip
-        port = host.port
-        nm.scan(ip, port, arguments=f'-sV')
+        try:
+            print(1)
+            nm = nmap.PortScanner()
+            print(2)
+            ip = host.ip
+            print(3)
+            port = host.port
+            print(4)
+            nm.scan(ip, port, arguments=f'-sV')
+            print(5)
 
-        nmap_host = nm[ip]
-        print(1)
-        print(nm.__dict__)
-        print(2)
-        print(nmap_host.__dict__)
-        print(3)
-        print(nmap_host['tcp'].__dict__)
-        print(4)
-        print(nmap_host['tcp'][int(port)].__dict__)
+            nmap_host = nm[ip]
+            print(1)
+            print(nm.__dict__)
+            print(2)
+            print(nmap_host.__dict__)
+            print(3)
+            print(nmap_host['tcp'].__dict__)
+            print(4)
+            print(nmap_host['tcp'][int(port)].__dict__)
 
-        if 'ftp' in nmap_host['tcp'][int(port)]['name'].lower():
-            print("lol")
-        product = nmap_host['tcp'][int(port)].get("product", "Service not found")
-        version = nmap_host['tcp'][int(port)].get('version', '')
-        print(f"{host} - {product} {version}")
-        return f"{host} - {product} {version}"
+            if 'ftp' in nmap_host['tcp'][int(port)]['name'].lower():
+                print("lol")
+            product = nmap_host['tcp'][int(port)].get("product", "Service not found")
+            version = nmap_host['tcp'][int(port)].get('version', '')
+            print(f"{host} - {product} {version}")
+            return f"{host} - {product} {version}"
+        except Exception as e:
+            print(f"Exception: {e}")
 
 class FTPServiceClass(BaseServiceClass):
     def __init__(self) -> None:
