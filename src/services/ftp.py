@@ -134,7 +134,13 @@ class FTPVersionSubServiceClass(BaseSubServiceClass):
         nm.scan(ip, port, arguments=f'-sV')
 
         nmap_host = nm[ip]
+        print(1)
+        print(nm.__dict__)
+        print(2)
+        print(nmap_host.__dict__)
+        print(3)
         print(nmap_host['tcp'].__dict__)
+        print(4)
         print(nmap_host['tcp'][int(port)].__dict__)
 
         if 'ftp' in nmap_host['tcp'][int(port)]['name'].lower():
