@@ -86,7 +86,7 @@ class MYSQLPostSubServiceClass(BaseSubServiceClass):
 
                 if databases:
                     for db in _databases:
-                        print(db)
+                        print(f"Host: {host} - Database: {db}")
                     return
                 if tables:
                     if database not in _databases:
@@ -100,8 +100,7 @@ class MYSQLPostSubServiceClass(BaseSubServiceClass):
 
                     tables = cursor.fetchall()
                     for table in tables:
-                        print(table[0])
-
+                        print(f"Host: {host} - Database: {database} - Table - {table[0]}")
                     return
                 
                 if columns:
@@ -113,7 +112,7 @@ class MYSQLPostSubServiceClass(BaseSubServiceClass):
                     columns = cursor.fetchall()
                     
                     for col in columns:
-                        print(col[0])  # Column name
+                        print(f"Host: {host} - Database: {database} - Table - {table} - Column: {col[0]}")
                     return
 
                 if database and table and column:
@@ -123,6 +122,7 @@ class MYSQLPostSubServiceClass(BaseSubServiceClass):
 
                     cursor.execute(f"SELECT {', '.join(column)} FROM `{table}` LIMIT {row_limit}")
                     rows = cursor.fetchall()
+                    print(f"Host: {host} - Database: {database} - Table - {table} - Columns: {', '.join(column)}")
                     for row in rows:
                         print(row)
                     return
@@ -146,6 +146,7 @@ class MYSQLPostSubServiceClass(BaseSubServiceClass):
                                 rows = cursor.fetchall()
                                 headers = [desc[0] for desc in cursor.description]
                                 print(" | ".join(headers))
+                                print(f"Host: {host} - Database: {db} - Table - {table}")
                                 for row in rows:
                                     print(" | ".join(str(cell) for cell in row))
                             except Exception as e:
