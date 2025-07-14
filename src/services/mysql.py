@@ -78,25 +78,27 @@ class MYSQLPostSubServiceClass(BaseSubServiceClass):
 
             # Get list of all databases (excluding system databases)
             cursor.execute("SHOW DATABASES")
-            databases = [db[0] for db in cursor.fetchall()]
-            databases = [db for db in databases if db not in system_dbs]
+            _databases = [db[0] for db in cursor.fetchall()]
+            _databases = [db for db in _databases if db not in system_dbs]
 
             if databases:
-                for db in databases:
+                for db in _databases:
                     print(db)
                 return
             if tables:
-                if database not in databases:
+                if database not in _databases:
                     print(f"Database {database} not found")
                     return
-                cursor.execute(f"USE `{database}`")
-                cursor.execute("SHOW TABLES")
-                tables = [table[0] for table in cursor.fetchall()]
-                if tables:
-                    for t in tables:
-                        print(t)
-                else:
-                    print(f"No tables found in database {database}")
+                cursor.execute("""
+                    SELECT table_name 
+                    FROM information_schema.tables 
+                    WHERE table_schema = %s
+                """, (database,))
+
+                tables = cursor.fetchall()
+                for table in tables:
+                    print(table[0])
+
                 return
             
             if columns:
