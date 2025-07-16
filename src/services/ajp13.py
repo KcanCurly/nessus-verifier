@@ -28,7 +28,7 @@ class AJP13GhostcatSubServiceClass(BaseSubServiceClass):
         print("Hosts:")
         print(hosts)
         print("Matches")
-        print(matches.__dict__)
+        # print(matches.__dict__)
 
         hosts2 = [h.str() for h in hosts]
 
