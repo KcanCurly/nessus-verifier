@@ -30,7 +30,7 @@ class AJP13GhostcatSubServiceClass(BaseSubServiceClass):
         print("Matches")
         # print(matches.__dict__)
 
-        hosts2 = [h.str() for h in hosts]
+        hosts2 = [f"{h.ip}:{h.port}"for h in hosts]
 
         for m in matches:
             print("M")
