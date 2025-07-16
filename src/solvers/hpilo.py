@@ -44,7 +44,7 @@ class HPiLOSolverClass(BaseSolverClass):
                 if cves: print(f"HP iLO {key} ({", ".join(cves)}):")
                 else: print(f"HP iLO {key}:")
                 """
-                self.print_output(f"HP iLO {key}:")
+                self.print_output(f"HPE {key}:")
                 for v in value:
                     self.print_output(f"    {v}")
             self.create_windowcatcher_action()

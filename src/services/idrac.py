@@ -64,7 +64,7 @@ class IDRACVersionSubServiceClass(BaseSubServiceClass):
         if versions_unknown:
             self.print_output("Detected iDRAC versions:")
             for key, value in versions_unknown.items():
-                self.print_output(f"{key}:")
+                self.print_output(f"iDRAC {key}:")
                 for v in value:
                     self.print_output(f"    {v}")
 
