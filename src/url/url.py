@@ -344,6 +344,9 @@ def authcheck(url, templates: list[type[SiteTemplateBase]], verbose, wasprocesse
         'User-Agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
     }
     hostname = None
+
+    templates2 = [zzz() for zzz in templates] # type: ignore
+
     try:
         response = requests.get(url, allow_redirects=True, headers=headers, verify=False, timeout=15)
 
@@ -366,6 +369,15 @@ def authcheck(url, templates: list[type[SiteTemplateBase]], verbose, wasprocesse
         except:pass
 
         if response.status_code >= 400:
+            if response.status_code == 404:
+                try:
+                    for t in templates2:
+                        if t.need404:
+                            result: URL_STATUS = t.check(url, response.text, False)
+                            if result == URL_STATUS.VALID:
+                                return
+                except Exception as e:
+                    pass
             if not is_solved: 
                 zz = solve_http_status(url)
                 if zz: 

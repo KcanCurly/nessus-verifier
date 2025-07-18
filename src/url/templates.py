@@ -25,6 +25,7 @@ class SiteTemplateBase:
     
     def __init__(self, name: str):
         self.name = name
+        self.need404 = False
 
     def check(self, url, source_code, verbose = False) -> URL_STATUS:
         """
@@ -760,6 +761,7 @@ class ZabbixTemplate(SiteTemplateBase):
 class SoftwareAGTemplate(SiteTemplateBase):
     def __init__(self):
         super().__init__("IBM Software AG")
+        self.need404 = True
 
     def check(self, url, source_code, verbose=False) -> URL_STATUS:
         res = requests.post(url)
