@@ -32,6 +32,7 @@ nv_no_template = "nv-url-no-template.txt"
 nv_error = "nv-url-error.txt"
 nv_manual = "nv-url-manual.txt"
 nv_known_Bad = "nv-url-known-bad.txt"
+nv_version = "nv_version.txt"
 
 urls_to_try = [
     "/auth/admin/master/console",
@@ -75,6 +76,13 @@ urls_to_try = [
     "/download",
     "/stats",
     ]
+
+def extract_version(url, response):
+    # response = requests.get(url, allow_redirects=True, verify=False, timeout=15)
+    if response.headers["Server"].startswith("Jetty"):
+        with valid_lock:
+            with open(nv_version, "a") as file:
+                file.write(f"{url} => {response.headers["Server"]}\n")
 
 def check_if_loginpage_exists(response):
     try:
@@ -349,6 +357,7 @@ def authcheck(url, templates: list[type[SiteTemplateBase]], verbose, wasprocesse
 
     try:
         response = requests.get(url, allow_redirects=True, headers=headers, verify=False, timeout=15)
+        extract_version(url, response)
 
         # Find if there was a redirect thru meta tag
         match = re.search(r'<meta .*;URL=(.*)"\s*', response.text, re.IGNORECASE)
