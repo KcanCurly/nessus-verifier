@@ -16,16 +16,28 @@ def identify_service_single(host,**kwargs):
     )
     print(result.stdout)
 
-    pattern  = re.compile(r"^(\d+/tcp|\d+/udp)\s+open\s+(\S+)\s+(.*)$")
-    match = pattern.search(result.stdout)
-    if match:
-        return {
-            "ip": ip,
-            "port": match.group(1),
-            "protocol": match.group(2),
-            "service": match.group(3),
-            "version": match.group(4).strip()
-        }
+    for line in result.stdout.splitlines():
+        if line.startswith(port):
+            try:
+                parts = line.split(maxsplit=3)
+                if parts[1] == "open":
+                    return {
+                        "ip": ip,
+                        "port": port,
+                        "protocol": parts[0].split("/")[1],
+                        "service": parts[2],
+                        "version": parts[3]
+                    }
+            except:
+                parts = line.split(maxsplit=2)
+                if parts[1] == "open":
+                    return {
+                        "ip": ip,
+                        "port": port,
+                        "protocol": parts[0].split("/")[1],
+                        "service": parts[2],
+                        "version": ""
+                    }
 
 
 def identify_service(hosts, output, threads, verbose = False):
