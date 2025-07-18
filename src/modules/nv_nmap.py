@@ -14,6 +14,7 @@ def identify_service_single(host,**kwargs):
         stderr=subprocess.DEVNULL,
         text=True
     )
+    print(result.stdout)
 
     pattern  = re.compile(r"^(\d+/tcp|\d+/udp)\s+open\s+(\S+)\s+(.*)$")
     match = pattern.search(result.stdout)
