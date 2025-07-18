@@ -84,6 +84,7 @@ def extract_version(url, response):
         with valid_lock:
             with open(nv_version, "a") as file:
                 file.write(f"{url} => {response.headers["Server"]}\n")
+    print(response.text)
     if "/administrator" in response.text:
         response = requests.get(url + "/administrator", allow_redirects=True, verify=False, timeout=15)
         print(1)
