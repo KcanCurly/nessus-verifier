@@ -52,10 +52,10 @@ def identify_service(hosts, output, output2, threads, verbose = False):
     for item in results:
         left = item["ip"] + ":" + item["port"]
         right = item["service"] + " " + item["version"]
-        if output2 and (item["service"] == "tcpwrapped" or item["service"].endswith("?")):
+        if output2 and (item["service"] == "tcpwrapped" or item["service"] == "unknown" or item["service"].endswith("?")):
             with open(output2, "a") as f:
                 f.write(left + "\n")
-        if output and not (item["service"] == "tcpwrapped" or item["service"].endswith("?")):
+        if output and not (item["service"] == "tcpwrapped" or item["service"] == "unknown" or item["service"].endswith("?")):
             with open(output, "a") as f:
                 f.write(left + " => " + item["service"] + "\n")
         
