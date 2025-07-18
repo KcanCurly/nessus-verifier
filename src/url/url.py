@@ -404,7 +404,6 @@ def authcheck(url, templates: list[type[SiteTemplateBase]], verbose, wasprocesse
                 try:
                     for t in templates2:
                         if t.need404:
-                            print(t.name)
                             result: URL_STATUS = t.check(url, response.text, False)
                             if result == URL_STATUS.VALID:
                                 return
