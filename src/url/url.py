@@ -86,7 +86,7 @@ def extract_version(url, response):
                 file.write(f"{url} => {response.headers["Server"]}\n")
     if "/administrator" in response.text:
         response = requests.get(url + "/administrator", allow_redirects=True, verify=False, timeout=15)
-        rrr = re.search(r'<span class="loginversionText" id="VersionInfo">(.*)', response.text)
+        rrr = re.search(r'<span class="loginversionText" id="VersionInfo">(.*)', response.text, flags=re.IGNORECASE)
         if rrr:
             v = rrr.group(1)
             with valid_lock:
