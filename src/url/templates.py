@@ -82,6 +82,32 @@ class ArisconnectTemplate(SiteTemplateBase):
             return URL_STATUS.VALID
         else:
             return URL_STATUS.NOT_RECOGNIZED
+        
+class FlexNetPublishTemplate(SiteTemplateBase):
+    def __init__(self):
+        super().__init__("FlexNetPublish")
+
+    def check(self, url, source_code, verbose=False) -> URL_STATUS:
+        if '<meta http-equiv="refresh" content="0; url=login">' in source_code:
+            found = False
+            hostname = hostname = SiteTemplateBase.get_dns_name(url)
+
+            username = "admin"
+            password = "admin"
+
+            res = requests.post(url + "/handlesignin", verify=False, data={"username":username, "password":password}, allow_redirects=False)
+
+            if not "You successfully signed in" in res.text:
+                    self.on_success(url, hostname, username, password)
+                    found = True
+
+            if not found:
+                self.on_failure(url, hostname)
+
+                return URL_STATUS.NOT_VALID
+            return URL_STATUS.VALID
+        else:
+            return URL_STATUS.NOT_RECOGNIZED
 
 class FortigateTemplate(SiteTemplateBase):
     def __init__(self):
@@ -154,6 +180,32 @@ class HighAvailabilityManagementTemplate(SiteTemplateBase):
             res = requests.post(url + "/login", allow_redirects=False, verify=False, data={"username":username, "password": password, "Login": "Login"})
 
             if res.headers["Location"] == "/manage":
+                self.on_success(url, hostname, username, password)
+                found = True
+
+            if not found:
+                self.on_failure(url, hostname)
+
+                return URL_STATUS.NOT_VALID
+            return URL_STATUS.VALID
+        else:
+            return URL_STATUS.NOT_RECOGNIZED
+        
+class JHipsterRegistryManagementTemplate(SiteTemplateBase):
+    def __init__(self):
+        super().__init__("JHipster Registry")
+
+    def check(self, url, source_code, verbose=False) -> URL_STATUS:
+        if "Pacemaker/Corosync Configuration" in source_code:
+            found = False
+            hostname = hostname = SiteTemplateBase.get_dns_name(url)
+
+            username = "admin"
+            password = "admin"
+
+            res = requests.post(url + "/authenticate", verify=False, data={"username":username, "password":password})
+
+            if res.status_code not in [401]:
                 self.on_success(url, hostname, username, password)
                 found = True
 
@@ -704,3 +756,32 @@ class ZabbixTemplate(SiteTemplateBase):
             return URL_STATUS.VALID
         else:
             return URL_STATUS.NOT_RECOGNIZED
+        
+class SoftwareAGTemplate(SiteTemplateBase):
+    def __init__(self):
+        super().__init__("IBM Software AG")
+
+    def check(self, url, source_code, verbose=False) -> URL_STATUS:
+        res = requests.post(url)
+
+        if res.headers.get("Server") == "SoftwareAG-Runtime":
+            found = False
+            hostname = hostname = SiteTemplateBase.get_dns_name(url)
+
+            username = "Administrator"
+            password = "manage"
+
+            res = requests.get(url + "/spm/", verify=False, auth=(username, password))
+
+            if res.status_code not in [401]:
+                    self.on_success(url, hostname, username, password)
+                    found = True
+
+            if not found:
+                self.on_failure(url, hostname)
+
+                return URL_STATUS.NOT_VALID
+            return URL_STATUS.VALID
+        else:
+            return URL_STATUS.NOT_RECOGNIZED
+        

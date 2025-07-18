@@ -73,6 +73,7 @@ urls_to_try = [
     "/jsp",
     "/home",
     "/download",
+    "/stats",
     ]
 
 def check_if_loginpage_exists(response):
