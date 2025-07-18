@@ -7,7 +7,9 @@ import dns.reversename
 import dns.update
 import dns.zone
 import re
-from src.utilities.utilities import error_handler, get_hosts_from_file2, add_default_parser_arguments
+
+import nmap
+from src.utilities.utilities import Version_Vuln_Host_Data, error_handler, get_default_context_execution2, get_hosts_from_file2, add_default_parser_arguments
 from src.services.consts import DEFAULT_ERRORS, DEFAULT_THREAD, DEFAULT_TIMEOUT, DEFAULT_VERBOSE
 from src.services.serviceclass import BaseServiceClass
 from src.services.servicesubclass import BaseSubServiceClass
@@ -161,6 +163,34 @@ class DNSAnySubServiceClass(BaseSubServiceClass):
             for v in vuln:
                 print(f"    {v}")
 
+class DNSVersionSubServiceClass(BaseSubServiceClass):
+    def __init__(self) -> None:
+        super().__init__("version", "Checks version")
+
+    @error_handler([])
+    def nv(self, hosts, **kwargs):
+        super().nv(hosts, kwargs=kwargs)
+
+        results = get_default_context_execution2("DNS Version", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
+                        
+        if results:
+            self.print_output("DNS Version:")               
+            for a in results:
+                self.print_output(f"    {a}")
+
+    @error_handler(["host"])
+    def single(self, host, **kwargs):
+        nm = nmap.PortScanner()
+        ip = host.ip
+        port = host.port
+        nm.scan(ip, port, arguments=f'-sV')
+        
+        if ip in nm.all_hosts():
+            nmap_host = nm[ip]
+            if 'dns' in nmap_host['tcp'][int(port)]['name'].lower():
+                product = nmap_host['tcp'][int(port)].get("product", "Service not found")
+                version = nmap_host['tcp'][int(port)].get('version', '')
+                return f"{host}{f" - {product} {version}" if product else ""}"
 
 class DNSAddDNSSubServiceClass(BaseSubServiceClass):
     def __init__(self) -> None:
@@ -377,3 +407,4 @@ class DNSServiceClass(BaseServiceClass):
         self.register_subservice(DNSRecursionSubServiceClass())
         self.register_subservice(DNSAnySubServiceClass())
         self.register_subservice(DNSAddDNSSubServiceClass())
+        self.register_subservice(DNSVersionSubServiceClass())

@@ -84,18 +84,23 @@ def extract_version(url, response):
         with valid_lock:
             with open(nv_version, "a") as file:
                 file.write(f"{url} => {response.headers["Server"]}\n")
-    print(response.text)
+
     if "/administrator" in response.text:
         response = requests.get(url + "/administrator", allow_redirects=True, verify=False, timeout=15)
-        print(1)
         rrr = re.search(r'<span class="loginversionText" id="VersionInfo">(.*)', response.text, flags=re.IGNORECASE)
         if rrr:
-            print(2)
             v = rrr.group(1)
             with valid_lock:
-                print(3)
                 with open(nv_version, "a") as file:
                     file.write(f"{url} => Informatica {v}\n")
+
+    if '"couchdb":"Welcome"' in response.text and '"couchbase":' in response.text:
+        rrr = re.search(r'"couchbase":"(.*)"', response.text, flags=re.IGNORECASE)
+        if rrr:
+            v = rrr.group(1)
+            with valid_lock:
+                with open(nv_version, "a") as file:
+                    file.write(f"{url} => Couchbase {v}\n")
 
 
 def check_if_loginpage_exists(response):
