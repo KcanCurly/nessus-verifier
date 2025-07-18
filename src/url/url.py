@@ -84,6 +84,15 @@ def extract_version(url, response):
         with valid_lock:
             with open(nv_version, "a") as file:
                 file.write(f"{url} => {response.headers["Server"]}\n")
+    if "/administrator" in response.text:
+        response = requests.get(url + "/administrator", allow_redirects=True, verify=False, timeout=15)
+        rrr = re.search(r'<span class="loginversionText" id="VersionInfo">(.*)', response.text)
+        if rrr:
+            v = rrr.group(1)
+            with valid_lock:
+                with open(nv_version, "a") as file:
+                    file.write(f"{url} => Informatica {v}\n")
+
 
 def check_if_loginpage_exists(response):
     try:
