@@ -76,6 +76,9 @@ urls_to_try = [
     "/download",
     "/stats",
     "/commands",
+    "/conf",
+    "/logs/",
+    "/static"
     ]
 
 def extract_version(url, response):

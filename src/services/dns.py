@@ -176,21 +176,42 @@ class DNSVersionSubServiceClass(BaseSubServiceClass):
         if results:
             self.print_output("DNS Version:")               
             for a in results:
-                self.print_output(f"    {a}")
+                self.print_output(f"    {a["ip"]}:{a["port"]} - {a["service"]} {a["version"]}")
 
     @error_handler(["host"])
     def single(self, host, **kwargs):
-        nm = nmap.PortScanner()
         ip = host.ip
         port = host.port
-        nm.scan(ip, port, arguments=f'-sV')
-        
-        if ip in nm.all_hosts():
-            nmap_host = nm[ip]
-            if 'dns' in nmap_host['tcp'][int(port)]['name'].lower():
-                product = nmap_host['tcp'][int(port)].get("product", "Service not found")
-                version = nmap_host['tcp'][int(port)].get('version', '')
-                return f"{host}{f" - {product} {version}" if product else ""}"
+
+        result = subprocess.run(
+            ["nmap", "-sV", "-p", port, "--version-all", ip],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.DEVNULL,
+            text=True
+        )
+
+        for line in result.stdout.splitlines():
+            if line.startswith(port):
+                try:
+                    parts = line.split(maxsplit=3)
+                    if parts[1] == "open":
+                        return {
+                            "ip": ip,
+                            "port": port,
+                            "protocol": parts[0].split("/")[1],
+                            "service": parts[2],
+                            "version": parts[3]
+                        }
+                except:
+                    parts = line.split(maxsplit=2)
+                    if parts[1] == "open":
+                        return {
+                            "ip": ip,
+                            "port": port,
+                            "protocol": parts[0].split("/")[1],
+                            "service": parts[2],
+                            "version": ""
+                        }
 
 class DNSAddDNSSubServiceClass(BaseSubServiceClass):
     def __init__(self) -> None:
