@@ -1,41 +1,51 @@
+import re
+import subprocess
 from src.utilities.utilities import error_handler, get_default_context_execution2, get_hosts_from_file2
 import nmap
 import argparse
 
 @error_handler(["host"])
 def identify_service_single(host,**kwargs):
-    nm = kwargs["nm"]
-
     ip = host.ip
     port = host.port
-    nm.scan(ip, port, "-sV", timeout=3600)
-    if ip in nm.all_hosts():
-        nmap_host = nm[ip]
-        srv = nmap_host['tcp'][int(port)]['name']
-        if srv:
-            print(f"{host} => {srv}")
-            return f"{host} => {srv}"
+    result = subprocess.run(
+        ["nmap", "-sV", "-p", port, "--version-all", ip],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.DEVNULL,
+        text=True
+    )
+
+    pattern  = re.compile(r"^(\d+/tcp|\d+/udp)\s+open\s+(\S+)\s+(.*)$")
+    match = pattern.search(result.stdout)
+    if match:
+        return {
+            "ip": ip,
+            "port": match.group(1),
+            "protocol": match.group(2),
+            "service": match.group(3),
+            "version": match.group(4).strip()
+        }
+
 
 def identify_service(hosts, output, threads, verbose = False):
     hosts = get_hosts_from_file2(hosts)
-    nm = nmap.PortScanner()
-    
-    results: list[str] = get_default_context_execution2("nmap", threads, hosts, identify_service_single, nm=nm, verbose=verbose)
 
-    result_dict = {}
+    results = get_default_context_execution2("nmap", threads, hosts, identify_service_single, verbose=verbose)
 
     for item in results:
-        left, right = item.split(" => ")  # Split string into two parts
-        result_dict.setdefault(right, []).append(left)  # Add to dictionary
+        left = item["ip"] + " " + item["port"]
+        right = item["service"] + " " + item["version"]
+        print(left + " => " + right)
 
-    with open(output, "w") as f:
-        for a, b in result_dict.items():
-            print(a, file=f)
-            print("*" * 20, file=f)
-            for c in b:
-                print(c, file=f)
-            print(file=f)
-            print(file=f)
+    
+    #with open(output, "w") as f:
+    #    for a, b in result_dict.items():
+    #        print(a, file=f)
+    #        print("*" * 20, file=f)
+    #        for c in b:
+    #            print(c, file=f)
+    #        print(file=f)
+    #        print(file=f)
         
         
 def main():
