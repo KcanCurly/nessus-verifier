@@ -758,7 +758,7 @@ class ZabbixTemplate(SiteTemplateBase):
         else:
             return URL_STATUS.NOT_RECOGNIZED
         
-class SoftwareAGTemplate(SiteTemplateBase):
+class IBMSoftwareAGTemplate(SiteTemplateBase):
     def __init__(self):
         super().__init__("IBM Software AG")
         self.need404 = True

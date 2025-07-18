@@ -13,7 +13,7 @@ from bs4 import BeautifulSoup, XMLParsedAsHTMLWarning
 import re
 import warnings
 import socket
-from src.url.templates import ArisconnectTemplate, FortigateTemplate, URL_STATUS, GrafanaTemplate, HighAvailabilityManagementTemplate, IPECSIPPhoneTemplate, IRISIDICAMTemplate, LogparseTemplate, MyQTemplate, NetscalerConsoleTemplate, NexthinkConsoleTemplate, OpinnateTemplate, OracleLightsoutManagerTemplate, SiteTemplateBase, StoredIQTemplate, StorwareTemplate, SynergySkyTemplate, UNISPHERETemplate, WatsonTemplate, XormonTemplate, XoruxTemplate, ZabbixTemplate, iDRACTemplate
+from src.url.templates import ArisconnectTemplate, FlexNetPublishTemplate, FortigateTemplate, URL_STATUS, GrafanaTemplate, HighAvailabilityManagementTemplate, IBMSoftwareAGTemplate, IPECSIPPhoneTemplate, IRISIDICAMTemplate, JHipsterRegistryManagementTemplate, LogparseTemplate, MyQTemplate, NetscalerConsoleTemplate, NexthinkConsoleTemplate, OpinnateTemplate, OracleLightsoutManagerTemplate, SiteTemplateBase, StoredIQTemplate, StorwareTemplate, SynergySkyTemplate, UNISPHERETemplate, WatsonTemplate, XormonTemplate, XoruxTemplate, ZabbixTemplate, iDRACTemplate
 
 disable_warnings(InsecureRequestWarning)
 warnings.filterwarnings("ignore", category=XMLParsedAsHTMLWarning)
@@ -372,9 +372,8 @@ def authcheck(url, templates: list[type[SiteTemplateBase]], verbose, wasprocesse
             if response.status_code == 404:
                 try:
                     for t in templates2:
-                        print(t.name)
-                        print(t.need404)
                         if t.need404:
+                            print(t.name)
                             result: URL_STATUS = t.check(url, response.text, False)
                             if result == URL_STATUS.VALID:
                                 return
@@ -497,7 +496,10 @@ def main():
         WatsonTemplate,
         XormonTemplate,
         XoruxTemplate,
-        ZabbixTemplate]
+        ZabbixTemplate,
+        FlexNetPublishTemplate,
+        JHipsterRegistryManagementTemplate,
+        IBMSoftwareAGTemplate,]
 
     max_threads = args.threads
     # If given url is a file, read it line by line and run the templates on each line
