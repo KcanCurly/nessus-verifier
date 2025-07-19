@@ -4,7 +4,7 @@ from src.solvers import grafana, mdns, openssl, php, python, tls, kibana, elasti
     openssl, webcgi_generic, hpilo, jenkins
 from src.modules.nv_parse import GroupNessusScanOutput
 from src.solvers.solverclass import BaseSolverClass
-from src.utilities.utilities import add_default_parser_arguments 
+from src.utilities.utilities import nvd_api_key
 import os
 
 solver_dict: dict[int, type[BaseSolverClass]] = {
@@ -87,6 +87,7 @@ def main():
     parser_all.add_argument("-a", "--create-actions", type=str, default=None, help="Creates action toml file for windowcatcher with given name.")
     parser_all.add_argument("-od", "--output-directory", type=str, required=False, help="Output directory.")
     parser_all.add_argument("-s", "--space", type=str, default=0, help="Amount of spaces to prepend when printing affected hosts. (Default = 0)")    
+    parser_all.add_argument("--nvd-api-key", type=str, help="NVD API Key for getting cves.")
     parser_all.add_argument("-th", "--threads", type=int, default=10, help="Amount of threads (Default = 10).")
     parser_all.add_argument("-ti", "--timeout", type=int, default=5, help="Amount of timeout (Default = 5).")
     parser_all.add_argument("-e", "--errors", type=int, choices=[1, 2], default = 0, help="1 - Print Errors\n2 - Print errors and prints stacktrace")
@@ -102,6 +103,8 @@ def main():
     args = parser.parse_args()
     
     if hasattr(args, "func"):
+        global nvd_api_key
+        nvd_api_key = args.nvd_api_key
         args.func(args)
     else:
         parser.print_help()

@@ -14,6 +14,9 @@ from rich.live import Live
 import os
 from datetime import datetime
 from traceback import print_exc
+import nvdlib
+
+nvd_api_key = ""
 
 @dataclass
 class Host:
@@ -293,6 +296,7 @@ def add_default_parser_arguments(parser, add_target_argument = True):
     parser.add_argument("-s", "--space", type=str, default=0, help="Amount of spaces to prepend when printing affected hosts. (Default = 0)")    
     parser.add_argument("-th", "--threads", type=int, default=10, help="Amount of threads (Default = 10).")
     parser.add_argument("-ti", "--timeout", type=int, default=5, help="Amount of timeout (Default = 5).")
+    parser.add_argument("--nvd-api-key", type=str, help="NVD API Key for getting cves.")
     parser.add_argument("-e", "--errors", type=int, choices=[1, 2], default = 0, help="1 - Print Errors\n2 - Print errors and prints stacktrace")
     parser.add_argument("-v", "--verbose", action="store_true", help="Print Verbose")
 
@@ -313,6 +317,13 @@ def get_url_response(url, timeout=5, redirect = True):
         except Exception:
             return None
         
+def get_cves2(cpe, sort_by_epss = False, limit = 30, cves_to_skip = []):
+    try:
+        z = nvdlib.searchCVE(cpeName = cpe, key=nvd_api_key,limit = 10)
+        return [a.id for a in z if a.id not in cves_to_skip]
+    except Exception:
+        return []
+
 def get_cves(cpe, sort_by_epss = False, limit = 30, cves_to_skip = []):        
     try:
         params = {

@@ -33,6 +33,7 @@ setup(
         "pika",
         "redis[hiredis]",
         "BAC0",
+        "nvdlib",
     ],
     classifiers=[
         "Programming Language :: Python :: 3",
