@@ -65,9 +65,14 @@ class SSHVersionSubServiceClass(BaseSubServiceClass):
             )
             self.print_output("SSH Versions:")
             for key, value in versions.items():
-                key1 = key.replace("p1", "")
-                key1 = key1.replace("p2", "")
-                cves = get_cves(f"cpe:2.3:a:openbsd:openssh:{key1}", cves_to_skip=shodan_cves_to_skip)
+                major = key
+                minor = ""
+                p_index = key.find('p')
+                if p_index != -1:
+                    major = key[:p_index]
+                    minor = major = key[p_index:]
+
+                cves = get_cves(f"cpe:2.3:a:openbsd:openssh:{major}{minor if minor else ''}", cves_to_skip=shodan_cves_to_skip)
 
                 if cves: self.print_output(f"OpenSSH {key} ({", ".join(cves)}):")
                 else: self.print_output(f"OpenSSH {key}:")
