@@ -70,7 +70,7 @@ class SSHVersionSubServiceClass(BaseSubServiceClass):
                 p_index = key.find('p')
                 if p_index != -1:
                     major = key[:p_index]
-                    minor = major = key[p_index:]
+                    minor  = key[p_index:]
                 print(f"cpe:2.3:a:openbsd:openssh:{major}{f":{minor}" if minor else ''}")
                 cves = get_cves(f"cpe:2.3:a:openbsd:openssh:{major}{f":{minor}" if minor else ''}", cves_to_skip=shodan_cves_to_skip)
 
