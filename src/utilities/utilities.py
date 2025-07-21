@@ -325,6 +325,8 @@ def get_cves2(cpe, sort_by_epss = False, limit = 30, cves_to_skip = []):
         return []
 
 def get_cves(cpe, sort_by_epss = False, limit = 30, cves_to_skip = []):        
+    return get_cves2(cpe, cves_to_skip=cves_to_skip)
+
     try:
         params = {
             "cpe23": cpe,
