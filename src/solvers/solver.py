@@ -4,7 +4,7 @@ from src.solvers import grafana, mdns, openssl, php, python, tls, kibana, elasti
     openssl, webcgi_generic, hpilo, jenkins
 from src.modules.nv_parse import GroupNessusScanOutput
 from src.solvers.solverclass import BaseSolverClass
-from src.utilities.utilities import nvd_api_key
+import src.utilities.utilities
 import os
 
 solver_dict: dict[int, type[BaseSolverClass]] = {
@@ -104,11 +104,7 @@ def main():
     
     if hasattr(args, "func"):
         if hasattr(args, "nvd_api_key") and args.nvd_api_key is not None:
-            print("y")
-            print(args.nvd_api_key)
-            global nvd_api_key
-            nvd_api_key = args.nvd_api_key
-            print(nvd_api_key)
+            src.utilities.utilities.nvd_api_key = args.nvd_api_key
         args.func(args)
     else:
         parser.print_help()
