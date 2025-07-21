@@ -126,7 +126,11 @@ class FortigateTemplate(SiteTemplateBase):
             hostname = hostname = SiteTemplateBase.get_dns_name(url)
 
             res = requests.post(url + "/logincheck", data={"username" : username, "password": password}, verify=False)
-            if not "Authentication failure" in res.text and not "Unable to contact server" in res.text and res.text != "0":
+            if (
+                "Authentication failure" not in res.text and
+                "Unable to contact server" not in res.text and
+                res.text.strip() != "0"
+            ):
                 self.on_success(url, hostname, username, password)
                 found = True
                         
@@ -152,7 +156,7 @@ class GrafanaTemplate(SiteTemplateBase):
             extra = "/login"
 
 
-            res = requests.post(url + extra, json={"user" : username, "password": password})
+            res = requests.post(url + extra, json={"user" : username, "password": password}, verify=False)
 
             if "Logged in" in res.text:
                 self.on_success(url, hostname, username, password)
@@ -565,7 +569,7 @@ class StorwareTemplate(SiteTemplateBase):
             username = "admin"
             password = "vPr0tect"
             extra = "/api/session/login"
-            res = requests.post(url + extra, json={"login" : username, "password": password})
+            res = requests.post(url + extra, json={"login" : username, "password": password}, verify=False)
 
             if res.status_code not in ["401"]:
                     self.on_success(url, hostname, username, password)
@@ -764,7 +768,7 @@ class IBMSoftwareAGTemplate(SiteTemplateBase):
         self.need404 = True
 
     def check(self, url, source_code, verbose=False) -> URL_STATUS:
-        res = requests.post(url)
+        res = requests.post(url, verify=False)
 
         if res.headers.get("Server") == "SoftwareAG-Runtime":
             found = False
