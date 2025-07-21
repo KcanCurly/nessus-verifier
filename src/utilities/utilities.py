@@ -319,7 +319,7 @@ def get_url_response(url, timeout=5, redirect = True):
         
 def get_cves2(cpe, sort_by_epss = False, limit = 30, cves_to_skip = []):
     try:
-        z = nvdlib.searchCVE(cpeName = cpe, key=nvd_api_key,limit = 10)
+        z = nvdlib.searchCVE(cpeName = cpe, limit = 10)
         print(z)
         return [a.id for a in z if a.id not in cves_to_skip]
     except Exception as e:
