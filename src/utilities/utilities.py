@@ -322,7 +322,8 @@ def get_cves2(cpe, sort_by_epss = False, limit = 30, cves_to_skip = []):
         z = nvdlib.searchCVE(cpeName = cpe, key=nvd_api_key,limit = 10)
         print(z)
         return [a.id for a in z if a.id not in cves_to_skip]
-    except Exception:
+    except Exception as e:
+        print(f"Cve search for {cpe} failed: {e}")
         return []
 
 def get_cves(cpe, sort_by_epss = False, limit = 30, cves_to_skip = []):        
