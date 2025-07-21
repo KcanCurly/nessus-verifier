@@ -32,7 +32,7 @@ nv_no_template = "nv-url-no-template.txt"
 nv_error = "nv-url-error.txt"
 nv_manual = "nv-url-manual.txt"
 nv_known_Bad = "nv-url-known-bad.txt"
-nv_version = "nv_version.txt"
+nv_version = "nv-url-version.txt"
 
 urls_to_try = [
     "/auth/admin/master/console",
@@ -78,7 +78,10 @@ urls_to_try = [
     "/commands",
     "/conf",
     "/logs/",
-    "/static"
+    "/static",
+    "/jenkins",
+    "/report",
+    "/reports",
     ]
 
 def extract_version(url, response):
