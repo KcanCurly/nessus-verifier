@@ -61,7 +61,7 @@ class SSHVersionSubServiceClass(BaseSubServiceClass):
         
         if versions:
             versions = dict(
-                sorted(versions.items(), key=lambda x: parse(remove_extra(x[0])), reverse=True)
+                sorted(versions.items(), key=lambda x: x[0], reverse=True)
             )
             self.print_output("SSH Versions:")
             for key, value in versions.items():
