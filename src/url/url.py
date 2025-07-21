@@ -83,27 +83,32 @@ urls_to_try = [
 
 def extract_version(url, response):
     # response = requests.get(url, allow_redirects=True, verify=False, timeout=15)
-    if response.headers["Server"].startswith("Jetty"):
-        with valid_lock:
-            with open(nv_version, "a") as file:
-                file.write(f"{url} => {response.headers["Server"]}\n")
-
-    if "/administrator" in response.text:
-        response = requests.get(url + "/administrator", allow_redirects=True, verify=False, timeout=15)
-        rrr = re.search(r'<span class="loginversionText" id="VersionInfo">(.*)', response.text, flags=re.IGNORECASE)
-        if rrr:
-            v = rrr.group(1)
+    try:
+        if response.headers["Server"].startswith("Jetty"):
             with valid_lock:
                 with open(nv_version, "a") as file:
-                    file.write(f"{url} => Informatica {v}\n")
+                    file.write(f"{url} => {response.headers["Server"]}\n")
+    except:pass
 
-    if '"couchdb":"Welcome"' in response.text and '"couchbase":' in response.text:
-        rrr = re.search(r'"couchbase":"(.*)"', response.text, flags=re.IGNORECASE)
-        if rrr:
-            v = rrr.group(1)
-            with valid_lock:
-                with open(nv_version, "a") as file:
-                    file.write(f"{url} => Couchbase {v}\n")
+    try:
+        if "/administrator" in response.text:
+            response = requests.get(url + "/administrator", allow_redirects=True, verify=False, timeout=15)
+            rrr = re.search(r'<span class="loginversionText" id="VersionInfo">(.*)', response.text, flags=re.IGNORECASE)
+            if rrr:
+                v = rrr.group(1)
+                with valid_lock:
+                    with open(nv_version, "a") as file:
+                        file.write(f"{url} => Informatica {v}\n")
+    except:pass
+    try:
+        if '"couchdb":"Welcome"' in response.text and '"couchbase":' in response.text:
+            rrr = re.search(r'"couchbase":"(.*)"', response.text, flags=re.IGNORECASE)
+            if rrr:
+                v = rrr.group(1)
+                with valid_lock:
+                    with open(nv_version, "a") as file:
+                        file.write(f"{url} => Couchbase {v}\n")
+    except:pass
 
 
 def check_if_loginpage_exists(response):
