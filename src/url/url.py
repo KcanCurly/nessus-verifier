@@ -1,5 +1,6 @@
 import argparse
 from ast import For
+from collections import defaultdict
 import importlib.resources
 import os
 import importlib.util
@@ -508,6 +509,44 @@ def authcheck(url, templates: list[type[SiteTemplateBase]], verbose, wasprocesse
                 file.write(f"{url}{f" | {hostname}" if hostname else ""} => {e.__class__.__name__} {e}\n")
                 return
 
+def groupup(filename):
+    # Dictionary to group URLs by title
+    grouped_urls = defaultdict(list)
+
+    # Read the file line by line
+    try:
+        with open(filename, "r") as file:
+            for line in file:
+                line = line.strip()
+                if not line:
+                    continue  # Skip empty lines
+
+                # Split the line into URL and title
+                if " => " in line:
+                    url, title = line.split(" => ", 1)
+                    grouped_urls[title].append(url)
+                else:
+                    # URLs without a title go into a special "No Title" group
+                    grouped_urls["No Title"].append(line)
+
+        # Format the grouped URLs
+        output_lines = []
+        for title, urls in grouped_urls.items():
+            output_lines.append(f"{title}:\n")
+            output_lines.append("-----\n")
+            output_lines.extend(f"{url}\n" for url in urls)
+            output_lines.append("\n")  # Add a blank line between groups
+
+        # Output to file or stdout
+
+        try:
+            with open(filename, "w") as output_file:
+                output_file.writelines(output_lines)
+            # print(f"Grouped URLs have been written to '{filename}'.")
+        except Exception as e:
+            print(f"Error writing to file '{filename}': {e}")
+    except FileNotFoundError:
+        pass
 
 
 def main():
@@ -553,7 +592,14 @@ def main():
 
             with ThreadPoolExecutor(max_threads) as executor:
                 executor.map(lambda url: authcheck(url, templates, args.verbose), lines)
-   
+        groupup(nv_error)
+        groupup(nv_known_Bad)
+        groupup(nv_manual)
+        groupup(nv_no_template)
+        groupup(nv_no_valid)
+        groupup(nv_valid)
+        groupup(nv_version)
+
     # If given url is simply a website, run the templates on the website
     else:
         authcheck(args.t, templates, args.verbose)
