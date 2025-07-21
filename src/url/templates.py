@@ -791,3 +791,34 @@ class IBMSoftwareAGTemplate(SiteTemplateBase):
         else:
             return URL_STATUS.NOT_RECOGNIZED
         
+class PiranhaManagementTemplate(SiteTemplateBase):
+    def __init__(self):
+        super().__init__("Piranha Management")
+        self.need404 = True
+
+    def check(self, url, source_code, verbose=False) -> URL_STATUS:
+        res = requests.post(url, verify=False)
+
+        if "piranha management" in source_code.lower():
+            found = False
+            hostname = hostname = SiteTemplateBase.get_dns_name(url)
+
+            username = "admin"
+            password = "admin"
+            soup = BeautifulSoup(source_code, "html.parser")
+            token = soup.find("input", {"name": "__RequestVerificationToken"})["value"] # type: ignore
+
+            res = requests.get(url + "/login", verify=False, data={"Login":username, "Password": password, "__RequestVerificationToken": token})
+
+            if res.status_code not in [302]:
+                    self.on_success(url, hostname, username, password)
+                    found = True
+
+            if not found:
+                self.on_failure(url, hostname)
+
+                return URL_STATUS.NOT_VALID
+            return URL_STATUS.VALID
+        else:
+            return URL_STATUS.NOT_RECOGNIZED
+        

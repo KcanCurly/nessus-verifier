@@ -13,7 +13,7 @@ from bs4 import BeautifulSoup, XMLParsedAsHTMLWarning
 import re
 import warnings
 import socket
-from src.url.templates import ArisconnectTemplate, FlexNetPublishTemplate, FortigateTemplate, URL_STATUS, GrafanaTemplate, HighAvailabilityManagementTemplate, IBMSoftwareAGTemplate, IPECSIPPhoneTemplate, IRISIDICAMTemplate, JHipsterRegistryManagementTemplate, LogparseTemplate, MyQTemplate, NetscalerConsoleTemplate, NexthinkConsoleTemplate, OpinnateTemplate, OracleLightsoutManagerTemplate, SiteTemplateBase, StoredIQTemplate, StorwareTemplate, SynergySkyTemplate, UNISPHERETemplate, WatsonTemplate, XormonTemplate, XoruxTemplate, ZabbixTemplate, iDRACTemplate
+from src.url.templates import ArisconnectTemplate, FlexNetPublishTemplate, FortigateTemplate, URL_STATUS, GrafanaTemplate, HighAvailabilityManagementTemplate, IBMSoftwareAGTemplate, IPECSIPPhoneTemplate, IRISIDICAMTemplate, JHipsterRegistryManagementTemplate, LogparseTemplate, MyQTemplate, NetscalerConsoleTemplate, NexthinkConsoleTemplate, OpinnateTemplate, OracleLightsoutManagerTemplate, PiranhaManagementTemplate, SiteTemplateBase, StoredIQTemplate, StorwareTemplate, SynergySkyTemplate, UNISPHERETemplate, WatsonTemplate, XormonTemplate, XoruxTemplate, ZabbixTemplate, iDRACTemplate
 
 disable_warnings(InsecureRequestWarning)
 warnings.filterwarnings("ignore", category=XMLParsedAsHTMLWarning)
@@ -431,6 +431,11 @@ def authcheck(url, templates: list[type[SiteTemplateBase]], verbose, wasprocesse
                 with open(nv_known_Bad, "a") as file:
                     file.write(f"{url}{f" | {hostname}" if hostname else ""} => Empty or 'OK'\n")
             return
+    except requests.exceptions.ConnectTimeout as e:
+        with error_lock:
+            with open(nv_error, "a") as file:
+                file.write(f"{url}{f" | {hostname}" if hostname else ""} => ConnectTimeout\n")
+        return
     except Exception as e:
         with error_lock:
             with open(nv_error, "a") as file:
@@ -534,7 +539,8 @@ def main():
         ZabbixTemplate,
         FlexNetPublishTemplate,
         JHipsterRegistryManagementTemplate,
-        IBMSoftwareAGTemplate,]
+        IBMSoftwareAGTemplate,
+        PiranhaManagementTemplate]
 
     max_threads = args.threads
     # If given url is a file, read it line by line and run the templates on each line
