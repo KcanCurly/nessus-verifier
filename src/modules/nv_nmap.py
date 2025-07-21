@@ -45,7 +45,7 @@ def identify_service(hosts, output, output2, threads, verbose = False):
     results = get_default_context_execution2("nmap", threads, hosts, identify_service_single, verbose=verbose)
 
     for item in results:
-        left = item["ip"] + " " + item["port"]
+        left = item["ip"] + ":" + item["port"]
         right = item["service"] + " " + item["version"]
         print(left + " => " + right)
 
@@ -63,8 +63,8 @@ def identify_service(hosts, output, output2, threads, verbose = False):
 def main():
     parser = argparse.ArgumentParser(description="Nmap scanner for nessus unknown ports.")
     parser.add_argument("-f", "--file", type=str, required=True, help="Path to a file containing a list of hosts, each in 'ip:port' format, one per line.")
-    parser.add_argument("-o", "--output", type=str, required=False, help="Output file.")
-    parser.add_argument("-uo", "--unknown-output", type=str, required=False, help="Output file for unknowns.")
+    parser.add_argument("-o", "--output", type=str, default="nv-known.txt", help="Output file for knowns (Default: nv-known.txt).")
+    parser.add_argument("-uo", "--unknown-output", type=str, default="nv-unknown.txt", help="Output file for unknowns (Default: nv-unknown.txt).")
     parser.add_argument("--threads", type=int, default=10, help="Amount of threads (Default = 10).")
     args = parser.parse_args()
     

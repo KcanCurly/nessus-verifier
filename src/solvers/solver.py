@@ -103,8 +103,9 @@ def main():
     args = parser.parse_args()
     
     if hasattr(args, "func"):
-        global nvd_api_key
-        nvd_api_key = args.nvd_api_key
+        if hasattr(args, "nvd_api_key") and args.nvd_api_key is not None:
+            global nvd_api_key
+            nvd_api_key = args.nvd_api_key
         args.func(args)
     else:
         parser.print_help()
