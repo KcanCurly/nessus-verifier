@@ -63,6 +63,9 @@ def all_solver(args):
             subprocess.run(command)
             command = ["nv-service", "dns", "any", os.path.join(args.directory, "dns", h)]
             subprocess.run(command)
+        if os.path.exists(os.path.join(args.directory, "mdns", h)):
+            command = ["nv-service", "mdns", "discovery", os.path.join(args.directory, "mdns", h)]
+            subprocess.run(command)
         if os.path.exists(os.path.join(args.directory, "snmp", h)):
             command = ["nv-service", "snmp", "default", os.path.join(args.directory, "snmp", h)]
             subprocess.run(command)

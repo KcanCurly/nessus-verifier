@@ -1,5 +1,4 @@
 from src.utilities.utilities import error_handler, get_default_context_execution2, get_hosts_from_file2, Version_Vuln_Host_Data
-import nmap
 import argparse
 import socket
 
