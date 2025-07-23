@@ -25,8 +25,9 @@ class SMBOSVersionSubServiceClass(BaseSubServiceClass):
         print("Running nxc, there will be no progression bar")
 
         result = " ".join(h.ip for h in hosts)
-        command = ["nxc", "smb", result]
-        print(command)
+        result2 = [h.ip for h in hosts]
+        command = ["nxc", "smb"]
+        command.extend(result2)
 
         result = subprocess.run(command, text=True, capture_output=True)
         print("a", result.stdout)
