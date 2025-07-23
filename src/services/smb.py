@@ -22,12 +22,15 @@ class SMBOSVersionSubServiceClass(BaseSubServiceClass):
 
         r = r"\[\+\] (.*)\s+-.*likely  (.*)\)"
 
-        print("Running metasploit ipmi dumphashes module, there will be no progression bar")
+        print("Running metasploit smb_version module, there will be no progression bar")
 
         result = ", ".join(h.ip for h in hosts)
         command = ["msfconsole", "-q", "-x", f"color false; use auxiliary/scanner/smb/smb_version; set RHOSTS {result}; set THREADS 10; run; exit"]
 
         result = subprocess.run(command, text=True, capture_output=True)
+        print(result.stdout)
+
+        obsoletes = ["server 2012", "windows 8"]
 
         matches = re.findall(r, result.stdout)
         for m in matches:
