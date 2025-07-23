@@ -22,12 +22,14 @@ class SMBOSVersionSubServiceClass(BaseSubServiceClass):
 
         r = r"\[\+\] (.*)\s+-.*likely  (.*)\)"
 
-        print("Running metasploit smb_version module, there will be no progression bar")
+        print("Running nxc, there will be no progression bar")
 
         result = " ".join(h.ip for h in hosts)
         command = ["nxc", "smb", result]
 
         result = subprocess.run(command, text=True, capture_output=True)
+        print("a", result.stdout)
+        print("b", result.stderr)
         for line in result.stdout:
             try:
                 parts = line.split()
