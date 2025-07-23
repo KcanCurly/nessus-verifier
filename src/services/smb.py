@@ -24,7 +24,7 @@ class SMBOSVersionSubServiceClass(BaseSubServiceClass):
 
         print("Running metasploit smb_version module, there will be no progression bar")
 
-        result = ", ".join(h.ip for h in hosts)
+        result = " ".join(h.ip for h in hosts)
         command = ["nxc", "smb", result]
 
         result = subprocess.run(command, text=True, capture_output=True)
