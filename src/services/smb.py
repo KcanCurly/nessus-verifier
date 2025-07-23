@@ -26,6 +26,7 @@ class SMBOSVersionSubServiceClass(BaseSubServiceClass):
 
         result = " ".join(h.ip for h in hosts)
         command = ["nxc", "smb", result]
+        print(command)
 
         result = subprocess.run(command, text=True, capture_output=True)
         print("a", result.stdout)
