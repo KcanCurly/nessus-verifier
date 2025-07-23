@@ -74,6 +74,10 @@ class SMBOSVersionSubServiceClass(BaseSubServiceClass):
                 print(f"{ip} => {version}")
                 if "Server 2012" in version:
                     obs.append(f"{ip} => {version}")
+                    continue
+                if "Server 2008" in version:
+                    obs.append(f"{ip} => {version}")
+                    continue
             except Exception:
                 pass
 
