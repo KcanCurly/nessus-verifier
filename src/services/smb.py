@@ -26,14 +26,15 @@ class SMBOSVersionSubServiceClass(BaseSubServiceClass):
     def single(self, host, **kwargs):
         ip = host.ip
         port = host.port
-
+        print(f"{ip}: 1")
         # Get NetBIOS of the remote computer
         command = ["nmblookup", "-A", ip]
         result = subprocess.run(command, text=True, capture_output=True, timeout=self.timeout)
         netbios_re = r"\s+(.*)\s+<20>"
-        
+        print(f"{ip}: 2")
         s = re.search(netbios_re, result.stdout)
         if s:
+            print(f"{ip}: 3")
             nbname = s.group()
             conn = pysmbconn.SMBConnection('', '', '', nbname, is_direct_tcp=True)
             if conn.connect(ip, 445): 
@@ -45,7 +46,7 @@ class SMBOSVersionSubServiceClass(BaseSubServiceClass):
                 print(f"[+] LANMAN: {lanman}")
                 print(f"[+] Domain: {domain}")
                 conn.logoff()
-
+        print(f"{ip}: 4")
         conn = SMBConnection(ip, ip, sess_port=int(port), timeout=self.timeout)
         os_version = conn.getServerOS()
         lanman = conn.getServerLanMan()
@@ -54,6 +55,7 @@ class SMBOSVersionSubServiceClass(BaseSubServiceClass):
         print(f"[+] OS Version: {os_version}")
         print(f"[+] LANMAN: {lanman}")
         print(f"[+] Domain: {domain}")
+        print(f"{ip}: 5")
         conn.logoff()
 
 
