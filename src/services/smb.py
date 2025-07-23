@@ -41,7 +41,7 @@ class SMBOSVersionSubServiceClass(BaseSubServiceClass):
                 if ip == "nxc":
                     continue
                 version = parts[5:-5]
-                version = "".join(version)
+                version = " ".join(version)
                 if not "Windows" in version:
                     continue
                 print(f"{ip} => {version}")
