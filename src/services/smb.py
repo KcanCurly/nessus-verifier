@@ -20,8 +20,10 @@ class SMBOSVersionSubServiceClass(BaseSubServiceClass):
     def nv(self, hosts, **kwargs):
         super().nv(hosts, kwargs=kwargs)
 
+        results = get_default_context_execution2("SMB OS Version", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
+
     @error_handler(["host"])
-    def single_guest(self, host, **kwargs):
+    def single(self, host, **kwargs):
         ip = host.ip
         port = host.port
 
@@ -38,6 +40,7 @@ class SMBOSVersionSubServiceClass(BaseSubServiceClass):
                 os_version = conn.getServerOS()
                 lanman = conn.getServerLanMan()
                 domain = conn.getServerDomain()
+                print(f"{ip}:")
                 print(f"[+] OS Version: {os_version}")
                 print(f"[+] LANMAN: {lanman}")
                 print(f"[+] Domain: {domain}")
