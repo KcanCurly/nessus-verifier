@@ -30,9 +30,8 @@ class SMBOSVersionSubServiceClass(BaseSubServiceClass):
         command.extend(result2)
 
         result = subprocess.run(command, text=True, capture_output=True)
-        print("a", result.stdout)
-        print("b", result.stderr)
-        for line in result.stdout:
+
+        for line in result.stdout.splitlines():
             try:
                 parts = line.split()
                 ip = parts[1]
