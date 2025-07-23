@@ -46,6 +46,17 @@ class SMBOSVersionSubServiceClass(BaseSubServiceClass):
                 print(f"[+] Domain: {domain}")
                 conn.logoff()
 
+        conn = SMBConnection(ip, ip, sess_port=int(port), timeout=self.timeout)
+        os_version = conn.getServerOS()
+        lanman = conn.getServerLanMan()
+        domain = conn.getServerDomain()
+        print(f"{ip}:")
+        print(f"[+] OS Version: {os_version}")
+        print(f"[+] LANMAN: {lanman}")
+        print(f"[+] Domain: {domain}")
+        conn.logoff()
+
+
 class SMBNullGuestSubServiceClass(BaseSubServiceClass):
     def __init__(self) -> None:
         super().__init__("nullguest", "Checks Null/Guest Share Access")
