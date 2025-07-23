@@ -27,6 +27,16 @@ class SMBOSVersionSubServiceClass(BaseSubServiceClass):
         ip = host.ip
         port = host.port
         print(f"{ip}: 1")
+        conn = SMBConnection(ip, ip, sess_port=int(port), timeout=self.timeout)
+        os_version = conn.getServerOS()
+        lanman = conn.getServerLanMan()
+        domain = conn.getServerDomain()
+        print(f"{ip}:")
+        print(f"[+] OS Version: {os_version}")
+        print(f"[+] LANMAN: {lanman}")
+        print(f"[+] Domain: {domain}")
+        print(f"{ip}: 5")
+        conn.logoff()
         # Get NetBIOS of the remote computer
         command = ["nmblookup", "-A", ip]
         result = subprocess.run(command, text=True, capture_output=True, timeout=self.timeout)
@@ -47,16 +57,7 @@ class SMBOSVersionSubServiceClass(BaseSubServiceClass):
                 print(f"[+] Domain: {domain}")
                 conn.logoff()
         print(f"{ip}: 4")
-        conn = SMBConnection(ip, ip, sess_port=int(port), timeout=self.timeout)
-        os_version = conn.getServerOS()
-        lanman = conn.getServerLanMan()
-        domain = conn.getServerDomain()
-        print(f"{ip}:")
-        print(f"[+] OS Version: {os_version}")
-        print(f"[+] LANMAN: {lanman}")
-        print(f"[+] Domain: {domain}")
-        print(f"{ip}: 5")
-        conn.logoff()
+
 
 
 class SMBNullGuestSubServiceClass(BaseSubServiceClass):
