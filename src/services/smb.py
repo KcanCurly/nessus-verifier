@@ -12,6 +12,37 @@ class NullGuest_Vuln_Data():
         self.null_files = null_files
         self.guest_files = guest_files
 
+class SMBOSVersionSubServiceClass(BaseSubServiceClass):
+    def __init__(self) -> None:
+        super().__init__("os-version", "Checks Version")
+
+    @error_handler(["host"])
+    def nv(self, hosts, **kwargs):
+        super().nv(hosts, kwargs=kwargs)
+
+    @error_handler(["host"])
+    def single_guest(self, host, **kwargs):
+        ip = host.ip
+        port = host.port
+
+        # Get NetBIOS of the remote computer
+        command = ["nmblookup", "-A", ip]
+        result = subprocess.run(command, text=True, capture_output=True, timeout=self.timeout)
+        netbios_re = r"\s+(.*)\s+<20>"
+        
+        s = re.search(netbios_re, result.stdout)
+        if s:
+            nbname = s.group()
+            conn = pysmbconn.SMBConnection('', '', '', nbname, is_direct_tcp=True)
+            if conn.connect(ip, 445): 
+                os_version = conn.getServerOS()
+                lanman = conn.getServerLanMan()
+                domain = conn.getServerDomain()
+                print(f"[+] OS Version: {os_version}")
+                print(f"[+] LANMAN: {lanman}")
+                print(f"[+] Domain: {domain}")
+                conn.logoff()
+
 class SMBNullGuestSubServiceClass(BaseSubServiceClass):
     def __init__(self) -> None:
         super().__init__("nullguest", "Checks Null/Guest Share Access")
@@ -168,3 +199,4 @@ class SMBServiceClass(BaseServiceClass):
         self.register_subservice(SMBv1SubServiceClass())
         self.register_subservice(SMBSignSubServiceClass())
         self.register_subservice(SMBNullGuestSubServiceClass())
+        self.register_subservice(SMBOSVersionSubServiceClass())
