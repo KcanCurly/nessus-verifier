@@ -1704,7 +1704,9 @@
 
 - name: Grafana
   id: 22
-  plugin-ids: [186028, 184129, 184357, 190601, 181464, 208027, 183776, 211633, 211576, 9765, 192023, 181419, 193176, 215000]
+  plugin-ids: [186028, 184129, 184357, 190601, 181464, 208027, 183776, 211633, 211576, 9765, 192023, 181419, 193176, 215000, 240850, 242132]
+  # 242132 - Grafana Labs < 10.4.17+security-01, 11.2.8+security-01, 11.3.5+security-01, 11.4.3+security-01, 11.5.3+security-01, 11.6.0+security-01 Improper Authorization (CVE-2025-3454)
+  # 240850 - Grafana Labs < 11.6.2 Improper Input Validation (CVE-2025-1088)
   # 215000 - Grafana Labs 10.4.x < 10.4.15 / 11.0.x < 11.0.11 / 11.1.x < 11.1.11 / 11.2.x < 11.2.6 / 11.3.x < 11.3.3 / 11.4.x < 11.4.1, 11.5.0 (cve-2024-11741)
   # 186028 - Grafana Enterprise Datasource Network Restrictions Bypass (CVE-2023-4399)
   # 184129 - Grafana Labs Security Bypass (CVE-2023-4822)

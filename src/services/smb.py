@@ -12,6 +12,32 @@ class NullGuest_Vuln_Data():
         self.null_files = null_files
         self.guest_files = guest_files
 
+class SMBNullSessionSubServiceClass(BaseSubServiceClass):
+    def __init__(self) -> None:
+        super().__init__("null-session", "Checks null ession")
+
+    @error_handler(["host"])
+    def nv(self, hosts, **kwargs):
+        super().nv(hosts, kwargs=kwargs)
+
+        results = get_default_context_execution2("SMB Null Session Check", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
+
+        if results:
+            for r in results:
+                print(r)
+
+    @error_handler(["host"])
+    def single(self, host, **kwargs):
+
+        ip = host.ip
+        port = host.port
+
+        command = ["impacket-DumpNTLMInfo", ip]
+        result = subprocess.run(command, text=True, capture_output=True)
+        for line in result.stdout.splitlines():
+            if "Null" in line:
+                return f"{ip} => {line}"
+
 class SMBOSVersionSubServiceClass(BaseSubServiceClass):
     def __init__(self) -> None:
         super().__init__("os-version", "Checks Version")
@@ -215,3 +241,4 @@ class SMBServiceClass(BaseServiceClass):
         self.register_subservice(SMBSignSubServiceClass())
         self.register_subservice(SMBNullGuestSubServiceClass())
         self.register_subservice(SMBOSVersionSubServiceClass())
+        self.register_subservice(SMBNullSessionSubServiceClass())
