@@ -53,6 +53,8 @@ def all_solver(args):
             subprocess.run(command)
             command = ["nv-service", "smb", "os-version", os.path.join(args.directory, "cifs", h)]
             subprocess.run(command)
+            command = ["nv-service", "smb", "null-session", os.path.join(args.directory, "cifs", h)]
+            subprocess.run(command)
         if os.path.exists(os.path.join(args.directory, "ftp", h)):
             command = ["nv-service", "ftp", "anonymous", os.path.join(args.directory, "ftp", h)]
             subprocess.run(command)

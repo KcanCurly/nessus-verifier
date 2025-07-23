@@ -23,6 +23,7 @@ class SMBNullSessionSubServiceClass(BaseSubServiceClass):
         results = get_default_context_execution2("SMB Null Session Check", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
 
         if results:
+            print("Null session allowed:")
             for r in results:
                 print(r)
 
@@ -35,7 +36,7 @@ class SMBNullSessionSubServiceClass(BaseSubServiceClass):
         command = ["impacket-DumpNTLMInfo", ip]
         result = subprocess.run(command, text=True, capture_output=True)
         for line in result.stdout.splitlines():
-            if "Null" in line:
+            if "Null" in line and "True" in line:
                 return f"{ip} => {line}"
 
 class SMBOSVersionSubServiceClass(BaseSubServiceClass):
