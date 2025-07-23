@@ -20,43 +20,18 @@ class SMBOSVersionSubServiceClass(BaseSubServiceClass):
     def nv(self, hosts, **kwargs):
         super().nv(hosts, kwargs=kwargs)
 
-        results = get_default_context_execution2("SMB OS Version", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
+        r = r"\[\+\] (.*)\s+-.*likely  (.*)\)"
 
-    @error_handler(["host"])
-    def single(self, host, **kwargs):
-        ip = host.ip
-        port = host.port
-        print(f"{ip}: 1")
-        conn = SMBConnection(ip, ip, sess_port=int(port), timeout=self.timeout)
-        os_version = conn.getServerOS()
-        lanman = conn.getServerLanMan()
-        domain = conn.getServerDomain()
-        print(f"{ip}:")
-        print(f"[+] OS Version: {os_version}")
-        print(f"[+] LANMAN: {lanman}")
-        print(f"[+] Domain: {domain}")
-        print(f"{ip}: 5")
-        conn.logoff()
-        # Get NetBIOS of the remote computer
-        command = ["nmblookup", "-A", ip]
-        result = subprocess.run(command, text=True, capture_output=True, timeout=self.timeout)
-        netbios_re = r"\s+(.*)\s+<20>"
-        print(f"{ip}: 2")
-        s = re.search(netbios_re, result.stdout)
-        if s:
-            print(f"{ip}: 3")
-            nbname = s.group()
-            conn = pysmbconn.SMBConnection('', '', '', nbname, is_direct_tcp=True)
-            if conn.connect(ip, 445): 
-                os_version = conn.getServerOS()
-                lanman = conn.getServerLanMan()
-                domain = conn.getServerDomain()
-                print(f"{ip}:")
-                print(f"[+] OS Version: {os_version}")
-                print(f"[+] LANMAN: {lanman}")
-                print(f"[+] Domain: {domain}")
-                conn.logoff()
-        print(f"{ip}: 4")
+        print("Running metasploit ipmi dumphashes module, there will be no progression bar")
+
+        result = ", ".join(h.ip for h in hosts)
+        command = ["msfconsole", "-q", "-x", f"color false; use auxiliary/scanner/smb/smb_version; set RHOSTS {result}; set THREADS 10; run; exit"]
+
+        result = subprocess.run(command, text=True, capture_output=True)
+
+        matches = re.findall(r, result.stdout)
+        for m in matches:
+            print(f"{m[0]} => {m[1]}")
 
 
 
