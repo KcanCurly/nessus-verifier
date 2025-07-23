@@ -45,7 +45,7 @@ class SMBOSVersionSubServiceClass(BaseSubServiceClass):
                 if not "Windows" in version:
                     continue
                 print(f"{ip} => {version}")
-                if any(keyword in version for keyword in obsoletes):
+                if "Server 2012" in version:
                     obs.append(f"{ip} => {version}")
             except Exception:
                 pass
