@@ -31,16 +31,31 @@ class SMBOSVersionSubServiceClass(BaseSubServiceClass):
 
         result = subprocess.run(command, text=True, capture_output=True)
 
+        obsoletes = ["Server 2012", "Windows 8.1", "Windows 7", "Windows 10"]
+        obs = []
+
         for line in result.stdout.splitlines():
             try:
                 parts = line.split()
                 ip = parts[1]
+                if ip == "nxc":
+                    continue
                 version = parts[5:-5]
+                version = "".join(version)
+                if not "Windows" in version:
+                    continue
                 print(f"{ip} => {version}")
+                if any(keyword in version for keyword in obsoletes):
+                    obs.append(f"{ip} => {version}")
             except Exception:
                 pass
 
-        obsoletes = ["server 2012", "windows 8"]
+        if obs:
+            print("Obsolete Windows versions:")
+            for o in obs:
+                print(o)
+
+        
 
 
 class SMBNullGuestSubServiceClass(BaseSubServiceClass):
