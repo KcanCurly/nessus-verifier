@@ -240,7 +240,7 @@ class DNSAddDNSSubServiceClass(BaseSubServiceClass):
             port = host.port
 
             try:
-                u = dns.update.UpdateMessage(domain)
+                u = dns.update.UpdateMessage(f"{domain}.")
                 u.add(txt_record_name, 3600, "TXT", f'"{txt_record_value}"')
                 r = dns.query.tcp(u, ip, port=int(port))
                 print(r)
