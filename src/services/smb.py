@@ -58,7 +58,6 @@ class SMBOSVersionSubServiceClass(BaseSubServiceClass):
 
         result = subprocess.run(command, text=True, capture_output=True)
 
-        obsoletes = ["Server 2012", "Windows 8.1", "Windows 7", "Windows 10"]
         obs = []
 
         for line in result.stdout.splitlines():
