@@ -243,7 +243,7 @@ class DNSAddDNSSubServiceClass(BaseSubServiceClass):
                 u = dns.update.UpdateMessage(domain)
                 u.add(txt_record_name, 3600, "TXT", f'"{txt_record_value}"')
                 r = dns.query.tcp(u, ip, port=int(port))
-                print(r.answer)
+                print(r)
                 if dns.rcode.to_text(r.rcode()) == "NOERROR":
                     vuln.append(host)
             except Exception as e:
