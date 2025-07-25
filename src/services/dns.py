@@ -241,7 +241,7 @@ class DNSAddDNSSubServiceClass(BaseSubServiceClass):
 
             try:
                 u = dns.update.UpdateMessage(domain)
-                u.add(txt_record_name, 3600, "TXT", txt_record_value)
+                u.add(txt_record_name, 3600, "TXT", f'"{txt_record_value}"')
                 r = dns.query.tcp(u, ip, port=int(port))
                 print(r.answer)
                 if dns.rcode.to_text(r.rcode()) == "NOERROR":
