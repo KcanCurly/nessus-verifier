@@ -2,7 +2,8 @@
   id: -1
   plugin-ids: [142960, 10114, 34850, 51192, 12085, 11213, 98048, 136929, 
   57582, 24244, 10759, 12224, 18391, 44135, 85582, 42057, 26194, 47831,
-  10407]
+  10407, 10263]
+  # 10263 - SMTP Server Detection
   # 142960 - HSTS Missing From HTTPS Server (RFC 6797)
   # 10114 - ICMP Timestamp Request Remote Date Disclosure
   # 34850 - Web Server Uses Basic Authentication Without HTTPS

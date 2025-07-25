@@ -31,7 +31,6 @@ class ObsoleteProtocolSolverClass(BaseSolverClass):
                 
                 if host.ip in nm.all_hosts():
                     nmap_host = nm[host.ip]
-                    print(nmap_host)
                     if nmap_host.has_tcp(int(host.port)) and nmap_host['tcp'][int(host.port)]['state'] == 'open':
                         n = nmap_host['tcp'][int(host.port)]['name'].lower()
                         match n:
