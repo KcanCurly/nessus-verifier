@@ -88,9 +88,9 @@ class SSHBruteSubServiceClass(BaseSubServiceClass):
             SSHBruteSubServiceClass.overall_progress.start_task(SSHBruteSubServiceClass.overall_task_id)
             with ThreadPoolExecutor(threads) as executor:
                 for host in hosts:
-                    task_id = SSHBruteSubServiceClass.progress.add_task("brute", start=False, taskid=f"{host[0]}:{host[1]}", status="status")
+                    task_id = SSHBruteSubServiceClass.progress.add_task("brute", start=False, taskid=f"{host.ip}:{host.port}", status="status")
                     SSHBruteSubServiceClass.progress.update(task_id, visible=False)
-                    executor.submit(self.single, task_id, host[0], host[1], creds)
+                    executor.submit(self.single, task_id, host.ip, host.port, creds)
 
 
 
