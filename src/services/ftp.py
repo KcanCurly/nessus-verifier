@@ -39,7 +39,7 @@ class FTPBruteSubServiceClass(BaseSubServiceClass):
         results: list[FTP_Brute_Vuln_Data] = get_default_context_execution2("FTP Brute", self.threads, hosts, self.single, creds=creds, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
         
         if results:
-            self.print_output("FTP Credentials Found on Hosts:")               
+            self.print_output("FTP Credentials Found on Hosts:")
             for a in results:
                 self.print_output(f"    {a.host}{" [TLS]" if a.is_TLS else ""} - {", ".join(a.creds)}")
 

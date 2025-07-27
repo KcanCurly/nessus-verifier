@@ -47,9 +47,9 @@ class KibanaSolverClass(BaseSolverClass):
             for key, value in versions.items():
                 cves = get_cves(f"cpe:2.3:a:elastic:kibana:{key}")
                 if cves: 
-                    self.print_output(f"{key} ({", ".join(cves)}):")
+                    self.print_output(f"Kibana {key} ({", ".join(cves)}):")
                 else: 
-                    self.print_output(f"{key}:")
+                    self.print_output(f"Kibana {key}:")
                 total_cves.extend(cves)
                 for v in value:
                     self.print_output(f"    {v}")

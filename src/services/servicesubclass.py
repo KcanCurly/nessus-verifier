@@ -28,6 +28,9 @@ class BaseSubServiceClass():
         self.errors = kwargs.get("errors", DEFAULT_ERRORS)
         self.verbose = kwargs.get("verbose", DEFAULT_VERBOSE)
         self.output = kwargs.get("output", "")
+        if self.output:
+            with open(self.output, "w") as f:
+                pass
 
     @error_handler([])
     def print_output(self, message):
