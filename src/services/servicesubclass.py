@@ -33,8 +33,9 @@ class BaseSubServiceClass():
                 pass
 
     @error_handler([])
-    def print_output(self, message):
-        print(message)
+    def print_output(self, message, normal_print = True):
+        if normal_print:
+            print(message)
         if self.output:
             with open(self.output, "a") as f:
                 print(message, file=f)

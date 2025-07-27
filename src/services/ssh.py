@@ -110,13 +110,12 @@ class SSHBruteSubServiceClass(BaseSubServiceClass):
                         if not found_so_far: found_so_far = f"[green]Found -> [/green]"
                         else: found_so_far += "[green], [/green]"
                         found_so_far += f"[green]{username}:{password}[/green]"
-                        self.print_output(message[4:])
+                        self.print_output(message[4:], normal_print=False)
                         
                     SSHBruteSubServiceClass.progress.update(task_id, status=f"[yellow]Trying Credentials {i+1}/{cred_len}[/yellow] {found_so_far}", advance=1)
                     SSHBruteSubServiceClass.overall_progress.update(SSHBruteSubServiceClass.overall_task_id, advance=1)
                 if not found_so_far:
                     SSHBruteSubServiceClass.progress.update(task_id, visible=False)
-            print("pre5")
         except Exception as e:
             SSHBruteSubServiceClass.progress.update(task_id, status=f"[red]Error {e}[/red]")
 
