@@ -96,18 +96,15 @@ class SSHBruteSubServiceClass(BaseSubServiceClass):
         try:
             SSHBruteSubServiceClass.progress.update(task_id, status=f"[yellow]Processing[/yellow]", total=cred_len, visible=True)
             SSHBruteSubServiceClass.progress.start_task(task_id)
-            print("pre1")
             if not self.pre_check(task_id, ip, port):
-                print("pre2")
                 SSHBruteSubServiceClass.progress.update(task_id, status=f"[red]Precheck Failed[/red]", visible=False)
                 SSHBruteSubServiceClass.overall_progress.update(SSHBruteSubServiceClass.overall_task_id, advance=1)
                 return
             
             else:
-                print("pre3")
                 found_so_far = ""
-                for i, (username, password) in enumerate(creds):
-                    print("pre4")
+                for i, cred in enumerate(creds):
+                    username, password = cred.split(":")
                     message = self.check_ssh_connection(task_id, ip, port, username, password)
                     if message and message.startswith("[+]"):
                         if not found_so_far: found_so_far = f"[green]Found -> [/green]"
