@@ -59,7 +59,7 @@ class SSHBruteSubServiceClass(BaseSubServiceClass):
     overall_task_id = overall_progress.add_task("", start=False)
 
     progress_group = Group(
-        Panel(progress, title="SSHWHIRL", expand=False),
+        Panel(progress, title="SSH Brute", expand=False),
         overall_progress,
     )
     
@@ -80,8 +80,6 @@ class SSHBruteSubServiceClass(BaseSubServiceClass):
         super().nv(hosts, kwargs=kwargs)
         creds = kwargs.get("creds", [])
         threads = kwargs.get("threads", [])
-
-
         
         with Live(SSHBruteSubServiceClass.progress_group):
             SSHBruteSubServiceClass.overall_progress.update(SSHBruteSubServiceClass.overall_task_id, total=len(hosts)*len(creds))
@@ -92,21 +90,24 @@ class SSHBruteSubServiceClass(BaseSubServiceClass):
                     SSHBruteSubServiceClass.progress.update(task_id, visible=False)
                     executor.submit(self.single, task_id, host.ip, host.port, creds)
 
-
-
     @error_handler(["host"])
     def single(self, task_id, ip, port, creds):
         cred_len = len(creds)
         try:
             SSHBruteSubServiceClass.progress.update(task_id, status=f"[yellow]Processing[/yellow]", total=cred_len, visible=True)
             SSHBruteSubServiceClass.progress.start_task(task_id)
+            print("pre1")
             if not self.pre_check(task_id, ip, port):
+                print("pre2")
                 SSHBruteSubServiceClass.progress.update(task_id, status=f"[red]Precheck Failed[/red]", visible=False)
                 SSHBruteSubServiceClass.overall_progress.update(SSHBruteSubServiceClass.overall_task_id, advance=1)
                 return
+            
             else:
+                print("pre3")
                 found_so_far = ""
                 for i, (username, password) in enumerate(creds):
+                    print("pre4")
                     message = self.check_ssh_connection(task_id, ip, port, username, password)
                     if message and message.startswith("[+]"):
                         if not found_so_far: found_so_far = f"[green]Found -> [/green]"
@@ -118,7 +119,7 @@ class SSHBruteSubServiceClass(BaseSubServiceClass):
                     SSHBruteSubServiceClass.overall_progress.update(SSHBruteSubServiceClass.overall_task_id, advance=1)
                 if not found_so_far:
                     SSHBruteSubServiceClass.progress.update(task_id, visible=False)
-            
+            print("pre5")
         except Exception as e:
             SSHBruteSubServiceClass.progress.update(task_id, status=f"[red]Error {e}[/red]")
 
@@ -146,6 +147,7 @@ class SSHBruteSubServiceClass(BaseSubServiceClass):
             return True
 
         except Exception as e:
+            SSHBruteSubServiceClass.progress.update(task_id, status=f"[red]Pre-check exception {e}[/red]")
             return False
         
     def check_ssh_connection(self, task_id, host, port, username, password, retry_count=0):
