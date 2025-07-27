@@ -428,3 +428,4 @@ class SSHServiceClass(BaseServiceClass):
         self.register_subservice(SSHAuditSubServiceClass())
         self.register_subservice(SSHVersionSubServiceClass())
         self.register_subservice(SSHCommandSubServiceClass())
+        self.register_subservice(SSHBruteSubServiceClass())
