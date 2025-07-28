@@ -551,11 +551,13 @@ def groupup(filename):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Witnesschangeme - Website Default Credentials Authentication Checker")
-    parser.add_argument("-f", default="urls.txt", help="Target URL/file to test.")
+    parser = argparse.ArgumentParser(description="Website Default Credentials Authentication Checker")
+    parser.add_argument("-t", default="urls.txt", help="Target URL/file to test.")
+    parser.add_argument("--group-up", action="store_true", help="Groups up the output files if there was a problem on main function.")
     parser.add_argument("--threads", type=int, default=10, help="Number of threads to use. (Default = 10)")
     parser.add_argument("--dns-ip", type=str, help="DNS ip to do reverse DNS lookup")
     parser.add_argument("-v", "--verbose", action="store_true", help="Enable verbose output.")
+
     args = parser.parse_args()
 
     templates: list[type[SiteTemplateBase]] = [
@@ -585,6 +587,16 @@ def main():
         IBMSoftwareAGTemplate,
         PiranhaManagementTemplate]
 
+    if args.group_up:
+        groupup(nv_error)
+        groupup(nv_known_Bad)
+        groupup(nv_manual)
+        groupup(nv_no_template)
+        groupup(nv_no_valid)
+        groupup(nv_valid)
+        groupup(nv_version)
+
+
     max_threads = args.threads
     # If given url is a file, read it line by line and run the templates on each line
     if os.path.isfile(args.t):
@@ -592,14 +604,7 @@ def main():
             lines = [line.strip() for line in file]  # Strip newline characters
 
             with ThreadPoolExecutor(max_threads) as executor:
-                # executor.map(lambda url: authcheck(url, templates, args.verbose), lines)
-
-                futures = [executor.submit(authcheck, url, templates, args.verbose) for url in lines]
-                for future in as_completed(futures):  # Total timeout for all
-                    try:
-                        result = future.result(timeout=60)  # Timeout per task
-                    except TimeoutError:
-                        pass
+                  executor.map(lambda url: authcheck(url, templates, args.verbose), lines)
 
 
         groupup(nv_error)
