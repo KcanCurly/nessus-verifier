@@ -595,6 +595,7 @@ def main():
         groupup(nv_no_valid)
         groupup(nv_valid)
         groupup(nv_version)
+        return
 
 
     max_threads = args.threads
