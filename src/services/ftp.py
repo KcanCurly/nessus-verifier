@@ -1,7 +1,18 @@
 from ftplib import FTP
 from ftplib import Error
 from ftplib import FTP_TLS
-from src.utilities.utilities import error_handler, get_hosts_from_file, get_hosts_from_file2, get_default_context_execution2, add_default_parser_arguments, Host
+from src.utilities.utilities import add_default_parser_arguments, get_default_context_execution2, error_handler, get_cves, Host, normalize_line_endings, get_hosts_from_file, get_hosts_from_file2
+from src.services.serviceclass import BaseServiceClass
+from src.services.servicesubclass import BaseSubServiceClass
+import argparse
+from concurrent.futures import ThreadPoolExecutor
+import threading
+import time
+from rich.live import Live
+from rich.progress import TextColumn, Progress, BarColumn, TimeElapsedColumn
+from rich.table import Column
+from rich.console import Group
+from rich.panel import Panel
 from src.services.serviceclass import BaseServiceClass
 from src.services.servicesubclass import BaseSubServiceClass
 import nmap
@@ -18,6 +29,22 @@ class FTP_Brute_Vuln_Data():
         self.creds = creds
 
 class FTPBruteSubServiceClass(BaseSubServiceClass):
+    text_column1 = TextColumn("{task.fields[taskid]}", table_column=Column(ratio=1), style= "bold")
+    text_column2 = TextColumn("{task.fields[status]}", table_column=Column(ratio=1), style= "dim")
+
+    progress = Progress(
+        text_column1, BarColumn(), text_column2, refresh_per_second= 1)
+
+    overall_progress = Progress(
+        TimeElapsedColumn(), BarColumn(), TextColumn("{task.completed}/{task.total}")
+    )
+    overall_task_id = overall_progress.add_task("", start=False)
+
+    progress_group = Group(
+        Panel(progress, title="FTP Brute", expand=False),
+        overall_progress,
+    )
+
     def __init__(self) -> None:
         super().__init__("brute", "Brute login")
 
@@ -36,46 +63,71 @@ class FTPBruteSubServiceClass(BaseSubServiceClass):
         super().nv(hosts, kwargs=kwargs)
         creds = kwargs.get("creds", [])
 
-        results: list[FTP_Brute_Vuln_Data] = get_default_context_execution2("FTP Brute", self.threads, hosts, self.single, creds=creds, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
+        creds = kwargs.get("creds", [])
+        threads = kwargs.get("threads", [])
         
-        if results:
-            self.print_output("FTP Credentials Found on Hosts:")
-            for a in results:
-                self.print_output(f"    {a.host}{" [TLS]" if a.is_TLS else ""} - {", ".join(a.creds)}")
+        with Live(FTPBruteSubServiceClass.progress_group):
+            FTPBruteSubServiceClass.overall_progress.update(FTPBruteSubServiceClass.overall_task_id, total=len(hosts)*len(creds))
+            FTPBruteSubServiceClass.overall_progress.start_task(FTPBruteSubServiceClass.overall_task_id)
+            with ThreadPoolExecutor(threads) as executor:
+                for host in hosts:
+                    task_id = FTPBruteSubServiceClass.progress.add_task("brute", start=False, taskid=f"{host.ip}:{host.port}", status="status")
+                    FTPBruteSubServiceClass.progress.update(task_id, visible=False)
+                    executor.submit(self.single, task_id, host, creds=creds)
 
     @error_handler(["host"])
-    def single(self, host, **kwargs):
+    def single(self, task_id, host, **kwargs):
         creds = kwargs.get("creds", [])
         ip = host.ip
         port = host.port
+        cred_len = len(creds)
 
         vuln = FTP_Brute_Vuln_Data(host, False, [])
 
-        for cred in creds:
-            try:
-                username, password = cred.split(":")
-                ftp = FTP()
-                ftp.connect(ip, int(port), timeout=self.timeout)
-                l = ftp.login(username, password)
-                if "230" in l:
-                    vuln.creds.append(f"{username}:{password}")
-                    ftp.close()
-            except Error:
+        try:
+            FTPBruteSubServiceClass.progress.update(task_id, status=f"[yellow]Processing[/yellow]", total=cred_len, visible=True)
+            FTPBruteSubServiceClass.progress.start_task(task_id)
+            found_so_far = ""
+
+            for i, cred in enumerate(creds):
                 try:
-                    ftp = FTP_TLS()
+                    username, password = cred.split(":")
+                    ftp = FTP()
                     ftp.connect(ip, int(port), timeout=self.timeout)
                     l = ftp.login(username, password)
                     if "230" in l:
-                        vuln.is_TLS = True
-                        vuln.creds.append(f"{username}:{password}")
+                        if not found_so_far: found_so_far = f"[green]Found -> [/green]"
+                        else: found_so_far += "[green], [/green]"
+                        found_so_far += f"[green]{username}:{password}[/green]"
+                        self.print_output(f"{username}:{password}", normal_print=False)
                         ftp.close()
-                    else: 
-                        ftp.close()
-                except Exception:
-                    ftp.close()
+                except Error:
+                    try:
+                        ftp = FTP_TLS()
+                        ftp.connect(ip, int(port), timeout=self.timeout)
+                        l = ftp.login(username, password)
+                        if "230" in l:
+                            if not found_so_far: found_so_far = f"[green]Found -> [/green]"
+                            else: found_so_far += "[green], [/green]"
+                            found_so_far += f"[green]{username}:{password} (TLS)[/green]"
 
-        if vuln.creds: 
-            return vuln
+                            self.print_output(f"{username}:{password} (TLS)", normal_print=False)
+
+                            ftp.close()
+                        else: 
+                            ftp.close()
+                    except Exception:
+                        ftp.close()
+
+                FTPBruteSubServiceClass.progress.update(task_id, status=f"[yellow]Trying Credentials {i+1}/{cred_len}[/yellow] {found_so_far}", advance=1)
+                FTPBruteSubServiceClass.overall_progress.update(FTPBruteSubServiceClass.overall_task_id, advance=1)
+
+            if not found_so_far:
+                FTPBruteSubServiceClass.progress.update(task_id, visible=False)
+
+        except Exception as e:
+            FTPBruteSubServiceClass.progress.update(task_id, status=f"[red]Error {e}[/red]")
+
 
 class FTPAnonSubServiceClass(BaseSubServiceClass):
     def __init__(self) -> None:

@@ -1,7 +1,10 @@
+import threading
 from src.utilities.utilities import add_default_parser_arguments, get_hosts_from_file2, error_handler
 from src.services.consts import DEFAULT_ERRORS, DEFAULT_THREAD, DEFAULT_TIMEOUT, DEFAULT_VERBOSE
 from src.services.serviceclass import BaseServiceClass as base_service
 from dataclasses import dataclass
+
+lock = threading.Lock()
 
 class BaseSubServiceClass():
     def __init__(self, command_name: str, help_description: str) -> None:
@@ -37,8 +40,9 @@ class BaseSubServiceClass():
         if normal_print:
             print(message)
         if self.output:
-            with open(self.output, "a") as f:
-                print(message, file=f)
+            with lock:
+                with open(self.output, "a") as f:
+                    print(message, file=f)
 
 class ExampleSubServiceClass(BaseSubServiceClass):
     def __init__(self) -> None:

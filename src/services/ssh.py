@@ -22,8 +22,6 @@ shodan_cves_to_skip = ["CVE-2008-3844", "CVE-2007-2768"]
 protocol_pattern = r"Remote protocol version (.*),"
 software_pattern = r"remote software version (.*)"
 
-lock = threading.Lock()  # Lock for writing to the result file
-
 class Audit_Vuln_Data():
     def __init__(self, host: Host, is_vuln: bool, is_terrapin: bool, vuln_kex: list[str], vuln_mac: list[str], vuln_key: list[str], vuln_cipher):
         self.host = host

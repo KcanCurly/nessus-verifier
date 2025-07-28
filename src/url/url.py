@@ -5,11 +5,12 @@ import importlib.resources
 import os
 import importlib.util
 import importlib
+import concurrent.futures
 import requests
 from urllib3.exceptions import InsecureRequestWarning
 from urllib3 import disable_warnings
 import threading
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ThreadPoolExecutor, as_completed, TimeoutError
 from bs4 import BeautifulSoup, XMLParsedAsHTMLWarning
 import re
 import warnings
@@ -93,7 +94,15 @@ def extract_version(url, response):
                 with open(nv_version, "a") as file:
                     file.write(f"{url} => {response.headers["Server"]}\n")
     except:pass
-
+    try:
+        if '"couchdb":"Welcome"' in response.text and '"couchbase":' in response.text:
+            rrr = re.search(r'"couchbase":"(.*)"', response.text, flags=re.IGNORECASE)
+            if rrr:
+                v = rrr.group(1)
+                with valid_lock:
+                    with open(nv_version, "a") as file:
+                        file.write(f"{url} => Couchbase {v}\n")
+    except:pass
     try:
         if "/administrator" in response.text:
             response = requests.get(url + "/administrator", allow_redirects=True, verify=False, timeout=15)
@@ -104,15 +113,7 @@ def extract_version(url, response):
                     with open(nv_version, "a") as file:
                         file.write(f"{url} => Informatica {v}\n")
     except:pass
-    try:
-        if '"couchdb":"Welcome"' in response.text and '"couchbase":' in response.text:
-            rrr = re.search(r'"couchbase":"(.*)"', response.text, flags=re.IGNORECASE)
-            if rrr:
-                v = rrr.group(1)
-                with valid_lock:
-                    with open(nv_version, "a") as file:
-                        file.write(f"{url} => Couchbase {v}\n")
-    except:pass
+
 
 
 def check_if_loginpage_exists(response):
@@ -551,7 +552,7 @@ def groupup(filename):
 
 def main():
     parser = argparse.ArgumentParser(description="Witnesschangeme - Website Default Credentials Authentication Checker")
-    parser.add_argument("-t", required=True, help="Target URL/file to test.")
+    parser.add_argument("target", default="urls.txt", help="Target URL/file to test.")
     parser.add_argument("--threads", type=int, default=10, help="Number of threads to use. (Default = 10)")
     parser.add_argument("--dns-ip", type=str, help="DNS ip to do reverse DNS lookup")
     parser.add_argument("-v", "--verbose", action="store_true", help="Enable verbose output.")
@@ -586,12 +587,21 @@ def main():
 
     max_threads = args.threads
     # If given url is a file, read it line by line and run the templates on each line
-    if os.path.isfile(args.t):
-        with open(args.t, "r") as file:
+    if os.path.isfile(args.target):
+        with open(args.target, "r") as file:
             lines = [line.strip() for line in file]  # Strip newline characters
 
             with ThreadPoolExecutor(max_threads) as executor:
-                executor.map(lambda url: authcheck(url, templates, args.verbose), lines)
+                # executor.map(lambda url: authcheck(url, templates, args.verbose), lines)
+                
+                futures = [executor.submit(authcheck, url, templates, args.verbose) for url in lines]
+                for future in as_completed(futures):  # Total timeout for all
+                    try:
+                        result = future.result(timeout=60)  # Timeout per task
+                    except TimeoutError:
+                        pass
+
+
         groupup(nv_error)
         groupup(nv_known_Bad)
         groupup(nv_manual)
@@ -602,7 +612,7 @@ def main():
 
     # If given url is simply a website, run the templates on the website
     else:
-        authcheck(args.t, templates, args.verbose)
+        authcheck(args.target, templates, args.verbose)
     
 
 if __name__ == "__main__":
