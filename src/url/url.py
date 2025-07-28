@@ -552,7 +552,7 @@ def groupup(filename):
 
 def main():
     parser = argparse.ArgumentParser(description="Witnesschangeme - Website Default Credentials Authentication Checker")
-    parser.add_argument("target", default="urls.txt", help="Target URL/file to test.")
+    parser.add_argument("-f", default="urls.txt", help="Target URL/file to test.")
     parser.add_argument("--threads", type=int, default=10, help="Number of threads to use. (Default = 10)")
     parser.add_argument("--dns-ip", type=str, help="DNS ip to do reverse DNS lookup")
     parser.add_argument("-v", "--verbose", action="store_true", help="Enable verbose output.")
@@ -587,13 +587,13 @@ def main():
 
     max_threads = args.threads
     # If given url is a file, read it line by line and run the templates on each line
-    if os.path.isfile(args.target):
-        with open(args.target, "r") as file:
+    if os.path.isfile(args.t):
+        with open(args.t, "r") as file:
             lines = [line.strip() for line in file]  # Strip newline characters
 
             with ThreadPoolExecutor(max_threads) as executor:
                 # executor.map(lambda url: authcheck(url, templates, args.verbose), lines)
-                
+
                 futures = [executor.submit(authcheck, url, templates, args.verbose) for url in lines]
                 for future in as_completed(futures):  # Total timeout for all
                     try:
