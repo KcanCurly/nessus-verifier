@@ -4,7 +4,7 @@ from src.services.serviceclass import BaseServiceClass
 from src.services.servicesubclass import BaseSubServiceClass
 
 class NFS_Vuln_Data():
-    def __init__(self, host: str, content: dict[str, list[str]]):
+    def __init__(self, host: str, content: str):
         self.host = host
         self.content = content
 
@@ -24,11 +24,9 @@ class NFSListServiceClass(BaseSubServiceClass):
         if results:
             self.print_output("Readable NFS List:")
             for r in results:
-                self.print_output(r.host)
-                for k,v in r.content.items():
-                    self.print_output(f"    {k}:")
-                    for n in v:
-                        self.print_output(f"        {n}")
+                self.print_output(f"{r.host}:")
+                self.print_output(f"{r.content}")
+                self.print_output("")
 
     @error_handler(["host"])
     def single(self, host, **kwargs):
@@ -36,7 +34,7 @@ class NFSListServiceClass(BaseSubServiceClass):
         port = host.port
 
         showmount_result = subprocess.run(showmount_cmd + [ip], text=True, capture_output=True)
-        v = NFS_Vuln_Data(f"{ip}:{port}", dict[str, list[str]]())
+        v = NFS_Vuln_Data(f"{ip}:{port}", "")
         for line in showmount_result.stdout.splitlines():
             nfs_folder = line.split()[0]
             nfs_folder = nfs_folder.replace("/", "")
@@ -44,13 +42,9 @@ class NFSListServiceClass(BaseSubServiceClass):
 
             nfsls_result = subprocess.run(c, text=True, capture_output=True)
 
-            v.content = dict[str, list[str]]()
-            v.content[nfs_folder] = []
-            for line1 in nfsls_result.stdout.splitlines():
-                v.content[nfs_folder].append(line1.rsplit(maxsplit=1)[1])
-
+            v.content = nfsls_result.stdout
                 
-        if len(v.content.keys) > 1:  # type: ignore
+        if v.content:  # type: ignore
             return v
 
 class NFSServiceClass(BaseServiceClass):
