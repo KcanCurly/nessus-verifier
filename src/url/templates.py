@@ -828,7 +828,7 @@ class FujitsuWebServerTemplate(SiteTemplateBase):
         self.need404 = True
 
     def check(self, url, source_code, verbose=False) -> URL_STATUS:
-        res = requests.post(url + "/redfish/v1", verify=False)
+        res = requests.get(url + "/redfish/v1", verify=False)
 
         if res.status_code in [200]:
             found = False
