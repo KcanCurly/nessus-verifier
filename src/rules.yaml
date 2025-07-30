@@ -26,10 +26,11 @@
 
 - name: Actionables
   id: 0
-  plugin-ids: [131734, 150163, 142594]
+  plugin-ids: [131734, 150163, 142594, 184452]
   # 131734 - Apache Solr Config API Velocity Template RCE (Direct Check)
   # 150163 - VMware vCenter Server Virtual SAN Health Check plug-in RCE (CVE-2021-21985) (direct check)
   # 142594 - Oracle WebLogic Server RCE (CVE-2020-14882)
+  # 184452 - Cisco IOS XE Unauthenticated Remote Command Execution (CVE-2023-20198) (Direct Check)
 
 - name: TLS Misconfigurations
   id: 1

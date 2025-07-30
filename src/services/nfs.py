@@ -36,10 +36,13 @@ class NFSListServiceClass(BaseSubServiceClass):
         port = host.port
 
         result = subprocess.run(showmount_cmd + [ip], text=True, capture_output=True)
+        print(result)
         v = NFS_Vuln_Data(host, dict[str, list[str]]())
         for line in result.stdout.splitlines():
             c = ["nfs-ls", f"nfs://{ip}{line.split()[0]}"]
+            print(c)
             result = subprocess.run(c, text=True, capture_output=True)
+            print(result)
             v.content = dict[str, list[str]]()
             v.content[line.split()[0]] = []
             for line1 in result.stdout.splitlines():

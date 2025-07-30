@@ -53,3 +53,7 @@ executeThread.interrupt();
                 for host in hosts:
                     print(host)
 
+            hosts = self.subhosts.get("Cisco IOS XE Unauthenticated Remote Command Execution (CVE-2023-20198) (Direct Check)")
+            if hosts:
+                print("https://github.com/smokeintheshell/CVE-2023-20198")
+
