@@ -35,18 +35,19 @@ class NFSListServiceClass(BaseSubServiceClass):
         ip = host.ip
         port = host.port
 
-        result = subprocess.run(showmount_cmd + [ip], text=True, capture_output=True)
-        print(result)
-        v = NFS_Vuln_Data(host, dict[str, list[str]]())
-        for line in result.stdout.splitlines():
-            c = ["nfs-ls", f"nfs://{ip}{line.split()[0]}"]
-            print(c)
-            result = subprocess.run(c, text=True, capture_output=True)
-            print(result)
+        showmount_result = subprocess.run(showmount_cmd + [ip], text=True, capture_output=True)
+        v = NFS_Vuln_Data(f"{ip}:{port}", dict[str, list[str]]())
+        for line in showmount_result.stdout.splitlines():
+            nfs_folder = line.split()[0]
+            nfs_folder = nfs_folder.replace("/", "")
+            c = ["nfs-ls", f"nfs://{ip}/{nfs_folder}"]
+
+            nfsls_result = subprocess.run(c, text=True, capture_output=True)
+
             v.content = dict[str, list[str]]()
-            v.content[line.split()[0]] = []
-            for line1 in result.stdout.splitlines():
-                v.content[line.split()[0]].append(line1.rsplit(maxsplit=1)[1])
+            v.content[nfs_folder] = []
+            for line1 in nfsls_result.stdout.splitlines():
+                v.content[nfs_folder].append(line1.rsplit(maxsplit=1)[1])
 
                 
         if len(v.content.keys) > 1:  # type: ignore
