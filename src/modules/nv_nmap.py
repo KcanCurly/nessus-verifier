@@ -55,7 +55,7 @@ def identify_service(hosts, output, output2, threads, verbose = False):
         left = item["ip"] + ":" + item["port"]
         right = item["service"] + " " + item["version"]
         if output2 and (item["service"] == "tcpwrapped" or item["service"] == "unknown" or item["service"].endswith("?")):
-            if not item["service"] in v.keys:
+            if not item["service"] in v.keys():
                 v[item["service"]] = []
             v[item["service"]].append(left)
             with open(output2, "a") as f:

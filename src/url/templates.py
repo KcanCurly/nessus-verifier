@@ -822,3 +822,32 @@ class PiranhaManagementTemplate(SiteTemplateBase):
         else:
             return URL_STATUS.NOT_RECOGNIZED
         
+class FujitsuWebServerTemplate(SiteTemplateBase):
+    def __init__(self):
+        super().__init__("Fujitsu Webserver")
+        self.need404 = True
+
+    def check(self, url, source_code, verbose=False) -> URL_STATUS:
+        res = requests.post(url + "/redfish/v1", verify=False)
+
+        if res.status_code in [200]:
+            found = False
+            hostname = hostname = SiteTemplateBase.get_dns_name(url)
+
+            username = "admin"
+            password = "admin"
+
+
+            res = requests.post(url + "/SessionService/Sessions", verify=False, data={"UserName":username, "Password": password})
+
+            if res.status_code in [200, 2001]:
+                    self.on_success(url, hostname, username, password)
+                    found = True
+
+            if not found:
+                self.on_failure(url, hostname)
+
+                return URL_STATUS.NOT_VALID
+            return URL_STATUS.VALID
+        else:
+            return URL_STATUS.NOT_RECOGNIZED
