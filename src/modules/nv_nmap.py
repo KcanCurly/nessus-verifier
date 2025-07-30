@@ -64,7 +64,17 @@ def identify_service(hosts, output, output2, threads, verbose = False):
             with open(output, "a") as f:
                 f.write(left + " => " + item["service"] + "\n")
 
+
+
     for k, a in v.items():
+        if k == "http":
+            with open(f"urls.txt", "a") as f:
+                f.writelines("http://" + line + "\n" for line in a)
+                continue
+        if k == "ssl/https":
+            with open(f"urls.txt", "a") as f:
+                f.writelines("https://" + line + "\n" for line in a)
+                continue
         with open(f"{k}.txt", "w") as f:
             f.writelines(line + "\n" for line in a)
         
