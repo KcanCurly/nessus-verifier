@@ -63,20 +63,16 @@ def identify_service(hosts, output, output2, threads, verbose = False):
         if output and not (item["service"] == "tcpwrapped" or item["service"] == "unknown" or item["service"].endswith("?")):
             with open(output, "a") as f:
                 f.write(left + " => " + item["service"] + "\n")
-
-
-
-    for k, a in v.items():
-        if k == "http":
-            with open(f"urls.txt", "a") as f:
-                f.writelines("http://" + line + "\n" for line in a)
-                continue
-        if k == "ssl/https":
-            with open(f"urls.txt", "a") as f:
-                f.writelines("https://" + line + "\n" for line in a)
-                continue
-        with open(f"{k}.txt", "w") as f:
-            f.writelines(line + "\n" for line in a)
+            if item["service"] == "http":
+                with open(f"urls.txt", "a") as f:
+                    f.write("http://" + left + "\n")
+            elif item["service"] == "ssl/https":
+                with open(f"urls.txt", "a") as f:
+                    f.writelines("https://" + left + "\n")
+            else:
+                s = item["service"].replace("/", "-")
+                with open(f"{s}.txt", "a") as f:
+                    f.writelines(left + "\n")
         
         
 def main():
