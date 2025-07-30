@@ -830,7 +830,7 @@ class FujitsuWebServerTemplate(SiteTemplateBase):
     def check(self, url, source_code, verbose=False) -> URL_STATUS:
         res = requests.get(url + "/redfish/v1", verify=False)
 
-        if res.status_code in [200]:
+        if "fujitsu" in res.text:
             found = False
             hostname = hostname = SiteTemplateBase.get_dns_name(url)
 
@@ -840,7 +840,7 @@ class FujitsuWebServerTemplate(SiteTemplateBase):
 
             res = requests.post(url + "/SessionService/Sessions", verify=False, data={"UserName":username, "Password": password})
 
-            if res.status_code in [200, 2001]:
+            if res.status_code in [200, 201]:
                     self.on_success(url, hostname, username, password)
                     found = True
 
