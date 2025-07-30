@@ -65,7 +65,7 @@ def identify_service(hosts, output, output2, threads, verbose = False):
                 f.write(left + " => " + item["service"] + "\n")
 
     for k, a in v.items():
-        with open(f"{k}.txt", "w"):
+        with open(f"{k}.txt", "w") as f:
             f.writelines(line + "\n" for line in a)
         
         
