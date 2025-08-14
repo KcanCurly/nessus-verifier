@@ -66,7 +66,7 @@ def identify_service(hosts, output, output2, threads, verbose = False):
             if item["service"] == "http":
                 with open(f"urls.txt", "a") as f:
                     f.write("http://" + left + "\n")
-            elif item["service"] == "ssl/https":
+            elif item["service"] == "ssl/https" or item["service"] == "ssl/http":
                 with open(f"urls.txt", "a") as f:
                     f.writelines("https://" + left + "\n")
             else:

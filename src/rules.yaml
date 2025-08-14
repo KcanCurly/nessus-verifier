@@ -2,7 +2,8 @@
   id: -1
   plugin-ids: [142960, 10114, 34850, 51192, 12085, 11213, 98048, 136929, 
   57582, 24244, 10759, 12224, 18391, 44135, 85582, 42057, 26194, 47831,
-  10407, 10263]
+  10407, 10263, 10437]
+  # 10437 - NFS Share Export List
   # 10263 - SMTP Server Detection
   # 142960 - HSTS Missing From HTTPS Server (RFC 6797)
   # 10114 - ICMP Timestamp Request Remote Date Disclosure
@@ -63,7 +64,6 @@
 - name: SMTP - Open Relay Test
   id: 2
   plugin-ids: [10263, 18017, 10262, 11852]
-  # 10263 - SMTP Server Detection
   # 18017 - MTA Open Mail Relaying Allowed (internal)
   # 10262 - MTA Open Mail Relaying Allowed
   # 11852 - MTA Open Mail Relaying Allowed (thorough test)
@@ -174,7 +174,9 @@
   800622, 800602, 800617, 800609, 800612, 800783, 800620, 800605, 800606, 201848, 213078, 232528, 211503,
   186366, 197847, 161181, 162502, 160891, 152183, 182811, 173256, 111068, 197827, 132413, 160894, 197843,
   197823, 197820, 148405, 147163, 121121, 106975, 103782, 88936, 106712, 194473, 152182, 147164, 235034, 
-  237499, 237498]
+  237499, 237498, 241705, 241680]
+  # 241680 - Apache Tomcat 9.0.0.M1 < 9.0.107 multiple vulnerabilities
+  # 241705  - Apache Tomcat 10.1.0.M1 < 10.1.43 multiple vulnerabilities
   # 237498 - Apache Tomcat 9.0.0.M1 < 9.0.105
   # 237499 - Apache Tomcat 10.1.0.M1 < 10.1.41
   # 235034 - Apache Tomcat 9.0.0.M1 < 9.0.104 multiple vulnerabilities
@@ -1241,7 +1243,6 @@
   id: 15
   plugin-ids: [42256, 10437, 11356, 15984]
   # 42256 - NFS Shares World Readable
-  # 10437 - NFS Share Export List
   # 11356 - NFS Exported Share Information Disclosure
   # 15984 - NFS Share User Mountable
 
@@ -1707,7 +1708,11 @@
 
 - name: Grafana
   id: 22
-  plugin-ids: [186028, 184129, 184357, 190601, 181464, 208027, 183776, 211633, 211576, 9765, 192023, 181419, 193176, 215000, 240850, 242132]
+  plugin-ids: [186028, 184129, 184357, 190601, 181464, 208027, 183776, 211633, 211576, 9765, 192023, 181419, 193176, 215000, 240850, 242132,
+  241364, 242626, 241355]
+  # 241355 - Grafana Labs 10.4.x < 10.4.19, 11.2.x < 11.2.10, 11.3.x < 11.3.7, 11.4 < 11.4.5, 11.5 < 11.5.5, 11.6 < 11.6.2, 12.0.x < 12.0.1 Improper Access Control (CVE-2025-3580)
+  # 242626 - Grafana Labs Integration URL Exposed to Viewers (CVE-2025-3415)
+  # 241364 - Grafana Labs 11.1.0 < 11.2.8+security-01, 11.3.5+security-01, 11.4.3+security-01, 11.5.3+security-01, 11.6.0+security-01 XSS (CVE-2025-2703)
   # 242132 - Grafana Labs < 10.4.17+security-01, 11.2.8+security-01, 11.3.5+security-01, 11.4.3+security-01, 11.5.3+security-01, 11.6.0+security-01 Improper Authorization (CVE-2025-3454)
   # 240850 - Grafana Labs < 11.6.2 Improper Input Validation (CVE-2025-1088)
   # 215000 - Grafana Labs 10.4.x < 10.4.15 / 11.0.x < 11.0.11 / 11.1.x < 11.1.11 / 11.2.x < 11.2.6 / 11.3.x < 11.3.3 / 11.4.x < 11.4.1, 11.5.0 (cve-2024-11741)
