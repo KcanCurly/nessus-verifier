@@ -26,11 +26,7 @@ class BaseSolverClass():
     def get_latest_version(self, print_title = True):
         if not self.eol_product_name:
             return
-        versions = get_latest_version(self.eol_product_name)
-        if versions:
-            if print_title: print("Latest version for", self.eol_product_name)
-            for v in versions:
-                print(v)
+        return get_latest_version(self.eol_product_name)
 
 
     def process_args(self, args):

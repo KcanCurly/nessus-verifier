@@ -319,10 +319,12 @@ def get_url_response(url, timeout=5, redirect = True):
         
 def get_poc_cve_github_link(cve):
     year = cve.split("-")[1]
+    "https://raw.githubusercontent.com/nomi-sec/PoC-in-GitHub/refs/heads/master/{year}/{cve}.json"
     link = f"https://github.com/nomi-sec/PoC-in-GitHub/blob/master/{year}/{cve}.json"
-    resp = requests.head(link, verify=False)
+    resp = requests.get("https://raw.githubusercontent.com/nomi-sec/PoC-in-GitHub/refs/heads/master/{year}/{cve}.json", verify=False)
     if resp.status_code in [200]:
-        return link
+        resp = resp.json()
+        return [repo["html_url"] for repo in resp]
 
     
 

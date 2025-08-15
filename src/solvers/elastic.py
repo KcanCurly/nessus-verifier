@@ -45,19 +45,25 @@ class ElasticsearchSolverClass(BaseSolverClass):
             self.print_output("Elastic versions detected:")
             for key, value in versions.items():
                 cves = get_cves(f"cpe:2.3:a:elastic:elasticsearch:{key}")
-                if cves: 
-                    for cve in cves:
-                        all_cves.add(cve)
+                if cves:
+                    all_cves.update(cves)
                     self.print_output(f"Elasticsearch {key} ({", ".join(cves)}):")
                 else: self.print_output(f"Elasticsearch {key}:")
                 for v in value:
                     self.print_output(f"    {v}")
             self.create_windowcatcher_action()
-            self.get_latest_version()
+            latest_versions = self.get_latest_version()
+            if latest_versions:
+                self.print_output(f"Latest version for {self.eol_product_name}")
+                for version in latest_versions:
+                    self.print_output(version)
+
             for cve in all_cves:
-                link = get_poc_cve_github_link(cve)
-                if link:
-                    print(f"{cve}: {link}")
+                links = get_poc_cve_github_link(cve)
+                if links:
+                    self.print_output(f"{cve}:")
+                    for link in links:
+                        self.print_output(link)
     
 
     

@@ -1,4 +1,4 @@
-from src.utilities.utilities import Version_Vuln_Host_Data, error_handler, get_url_response, get_default_context_execution, get_cves
+from src.utilities.utilities import Version_Vuln_Host_Data, error_handler, get_poc_cve_github_link, get_url_response, get_default_context_execution, get_cves
 import re
 from packaging.version import parse
 from src.solvers.solverclass import BaseSolverClass
@@ -38,7 +38,7 @@ class GrafanaSolverClass(BaseSolverClass):
             if r.version not in versions:
                 versions[r.version] = set()
             versions[r.version].add(r.host)
-        
+        all_cves =set()
         if versions:
             versions = dict(
                 sorted(versions.items(), key=lambda x: parse(x[0]), reverse=True)
@@ -46,9 +46,23 @@ class GrafanaSolverClass(BaseSolverClass):
             self.print_output("Detected Grafana Versions:")
             for key, value in versions.items():
                 cves = get_cves(f"cpe:2.3:a:grafana:grafana:{key}")
-                if cves: self.print_output(f"Grafana {key} ({", ".join(cves)}):")
+                if cves: 
+                    all_cves.update(cves)
+                    self.print_output(f"Grafana {key} ({", ".join(cves)}):")
                 else: self.print_output(f"Grafana {key}:")
                 for v in value:
                     self.print_output(f"    {v}")
             self.create_windowcatcher_action()
+            latest_versions = self.get_latest_version()
+            if latest_versions:
+                self.print_output(f"Latest version for {self.eol_product_name}")
+                for version in latest_versions:
+                    self.print_output(version)
+
+            for cve in all_cves:
+                links = get_poc_cve_github_link(cve)
+                if links:
+                    self.print_output(f"{cve}:")
+                    for link in links:
+                        self.print_output(link)
 
