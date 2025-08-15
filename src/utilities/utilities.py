@@ -317,7 +317,13 @@ def get_url_response(url, timeout=5, redirect = True):
         except Exception:
             return None
         
-def get_cves2(cpe, sort_by_epss = False, limit = 30, cves_to_skip = []):
+def get_latest_version(product):
+    resp = requests.get(f"https://endoflife.date/api/v1/products/{product}").json()
+    print(resp)
+
+
+
+def get_cves2(cpe, sort_by_epss = False, limit = 10, cves_to_skip = []):
     try:
         z = nvdlib.searchCVE(cpeName = cpe, key=nvd_api_key, limit = limit)
         return [a.id for a in z if a.id not in cves_to_skip]
@@ -325,7 +331,7 @@ def get_cves2(cpe, sort_by_epss = False, limit = 30, cves_to_skip = []):
         print(f"Cve search for {cpe} failed: {e}")
         return []
 
-def get_cves(cpe, sort_by_epss = False, limit = 30, cves_to_skip = []):        
+def get_cves(cpe, sort_by_epss = False, limit = 10, cves_to_skip = []):        
     return get_cves2(cpe, cves_to_skip=cves_to_skip)
 
     try:

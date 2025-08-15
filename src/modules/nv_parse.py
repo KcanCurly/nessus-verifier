@@ -3,11 +3,11 @@ import os
 import argparse
 import re
 import yaml
-from dataclasses import dataclass
 import json
+import cidr_man
 
 # Function to parse the Nessus file (.nessus format) and extract services and associated hosts
-def parse_nessus_file(file_path):
+def parse_nessus_file(file_path, include = None, exclude = None):
     tree = ET.parse(file_path)
     root = tree.getroot()
 
@@ -18,6 +18,14 @@ def parse_nessus_file(file_path):
     # Iterate through all host elements in the XML
     for host in root.findall(".//Report/ReportHost"):
         host_ip = host.attrib['name']  # Extract the host IP
+
+        if include:
+            if not any(cidr_man.CIDR(host_ip) in net for net in include):
+                continue
+
+        if exclude:
+            if any(cidr_man.CIDR(host_ip) in net for net in exclude):
+                continue
 
         # Iterate through all the services (plugins) for this host
         for item in host.findall(".//ReportItem"):
@@ -184,7 +192,7 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
             print(a.name, file=f)
             for h in a.hosts:
                 print(f"    {h}", file=f)
-            # if len(a.sub_hosts.items()) == 1: continue
+            if len(a.sub_hosts.items()) == 1: continue
             print(file=f)
             for key,value in a.sub_hosts.items():
                 print(f"    {key}", file=f)
@@ -203,10 +211,23 @@ def main():
     parser.add_argument('--skip-ignored', action="store_true", help='Do not write ignored vulnerabilities to txt output.')
     parser.add_argument('-o', '--output-file', type=str, required=False, default="output.txt", help='Vulnerability Groups output file name txt (Default: output.txt).')
     parser.add_argument('-oj', '--output-json-file', type=str, required=False, default="output.ndjson", help='Vulnerability Groups output file name json (Default: output.ndjson).')
+    parser.add_argument('--include-list', type=str, required=False, help='Only process IPs that is in the given file.')
+    parser.add_argument('--exclude-list', type=str, required=False, help='Only process IPs that is NOT in the given file.')
     args = parser.parse_args()
 
+    include = None
+    exclude = None
+
+    if args.include_list:
+        with open(args.include_list, "r") as f:
+            include = [cidr_man.CIDR(i) for i in f]
+
+    if args.exclude_list:
+        with open(args.exclude_list, "r") as f:
+            exclude = [cidr_man.CIDR(i) for i in f]
+
     # Parse for services and urls
-    services, urls = parse_nessus_file(args.file)
+    services, urls = parse_nessus_file(args.file, include, exclude)
     save_services(services)
     save_urls(urls)
     

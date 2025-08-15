@@ -1,5 +1,5 @@
 import re
-from src.utilities.utilities import Host, Version_Vuln_Host_Data, error_handler, get_cves, get_url_response, get_default_context_execution
+from src.utilities.utilities import Host, Version_Vuln_Host_Data, error_handler, get_cves, get_url_response, get_default_context_execution, get_latest_version
 from src.solvers.solverclass import BaseSolverClass
 from packaging.version import parse
 
@@ -57,6 +57,7 @@ class KibanaSolverClass(BaseSolverClass):
                 total_cves.extend(cves)
                 for v in value:
                     self.print_output(f"    {v}")
+            get_latest_version("kibana")
             self.create_windowcatcher_action()
 
         public_exploit_written = False
