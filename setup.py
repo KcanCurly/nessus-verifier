@@ -34,6 +34,7 @@ setup(
         "redis[hiredis]",
         "BAC0",
         "nvdlib",
+        "cidr_man",
     ],
     classifiers=[
         "Programming Language :: Python :: 3",
