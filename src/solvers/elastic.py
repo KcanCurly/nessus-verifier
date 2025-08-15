@@ -8,6 +8,7 @@ class ElasticsearchSolverClass(BaseSolverClass):
         self.output_filename_for_all = "elastic.txt"
         self.output_png_for_action = "elastic.png"
         self.action_title = "Elastic"
+        self.eol_product_name = "elasticsearch"
 
     def solve(self, args):
         self.process_args(args)
@@ -49,7 +50,7 @@ class ElasticsearchSolverClass(BaseSolverClass):
                 for v in value:
                     self.print_output(f"    {v}")
             self.create_windowcatcher_action()
-            get_latest_version("elasticsearch")
+            self.get_latest_version()
     
 
     

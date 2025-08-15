@@ -318,8 +318,16 @@ def get_url_response(url, timeout=5, redirect = True):
             return None
         
 def get_latest_version(product):
-    resp = requests.get(f"https://endoflife.date/api/v1/products/{product}").json()
-    print(resp)
+    try:
+        resp = requests.get(f"https://endoflife.date/api/v1/products/{product}").json()
+        non_eol_releases = [
+            release for release in resp["result"]["releases"]
+            if not release.get("isEol", True)
+        ]
+
+        return [r['latest']['name'] for r in non_eol_releases]
+    except Exception as e:
+        return None
 
 
 

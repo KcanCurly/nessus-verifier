@@ -1,4 +1,4 @@
-from src.utilities.utilities import Host, add_default_parser_arguments, add_default_solver_parser_arguments, find_scan, get_hosts_from_file2
+from src.utilities.utilities import Host, add_default_parser_arguments, add_default_solver_parser_arguments, find_scan, get_hosts_from_file2, get_latest_version
 import traceback
 import os
 
@@ -21,6 +21,16 @@ class BaseSolverClass():
         self.output_png_for_action = ""
         self.action_title = ""
         self.windowcatcher_datas: list[WindowCatcherData] = []
+        self.eol_product_name = ""
+
+    def get_latest_version(self):
+        if not self.eol_product_name:
+            return
+        versions = get_latest_version(self.eol_product_name)
+        if versions:
+            print("Latest version for", self.eol_product_name)
+            for v in versions:
+                print(v)
 
 
     def process_args(self, args):
