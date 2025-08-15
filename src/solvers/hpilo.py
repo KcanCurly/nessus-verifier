@@ -44,8 +44,8 @@ class HPiLOSolverClass(BaseSolverClass):
             for key, value in versions.items():
                 major, minor = key.split(" - ")
                 major = major.replace("iLO ", "")
-                cpe1 = f"cpe:2.3:o:hpe:integrated_lights-out_{major}:{minor}"
-                cpe2 = f"cpe:2.3:o:hpe:integrated_lights-out_{major}_firmware:{minor}"
+                cpe1 = f"cpe:2.3:o:hp:integrated_lights-out_{major}:{minor}"
+                cpe2 = f"cpe:2.3:o:hp:integrated_lights-out_{major}_firmware:{minor}"
                 cves = get_cves(cpe1)
                 if not cves:
                     cves = get_cves(cpe2)
