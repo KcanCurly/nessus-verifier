@@ -23,12 +23,12 @@ class BaseSolverClass():
         self.windowcatcher_datas: list[WindowCatcherData] = []
         self.eol_product_name = ""
 
-    def get_latest_version(self):
+    def get_latest_version(self, print_title = True):
         if not self.eol_product_name:
             return
         versions = get_latest_version(self.eol_product_name)
         if versions:
-            print("Latest version for", self.eol_product_name)
+            if print_title: print("Latest version for", self.eol_product_name)
             for v in versions:
                 print(v)
 

@@ -317,9 +317,18 @@ def get_url_response(url, timeout=5, redirect = True):
         except Exception:
             return None
         
+def get_poc_cve_github_link(cve):
+    year = cve.split("-")[1]
+    link = f"https://github.com/nomi-sec/PoC-in-GitHub/blob/master/{year}/{cve}.json"
+    resp = requests.head(link, verify=False)
+    if resp.status_code in [200]:
+        return link
+
+    
+
 def get_latest_version(product):
     try:
-        resp = requests.get(f"https://endoflife.date/api/v1/products/{product}").json()
+        resp = requests.get(f"https://endoflife.date/api/v1/products/{product}", verify=False).json()
         non_eol_releases = [
             release for release in resp["result"]["releases"]
             if not release.get("isEol", True)
@@ -328,8 +337,6 @@ def get_latest_version(product):
         return [r['latest']['name'] for r in non_eol_releases]
     except Exception as e:
         return None
-
-
 
 def get_cves2(cpe, sort_by_epss = False, limit = 10, cves_to_skip = []):
     try:

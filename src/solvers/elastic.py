@@ -1,4 +1,4 @@
-from src.utilities.utilities import Version_Vuln_Host_Data, error_handler, get_url_response, get_default_context_execution, get_cves, get_latest_version
+from src.utilities.utilities import Version_Vuln_Host_Data, error_handler, get_url_response, get_default_context_execution, get_cves, get_poc_cve_github_link
 from packaging.version import parse
 from src.solvers.solverclass import BaseSolverClass
 
@@ -37,7 +37,7 @@ class ElasticsearchSolverClass(BaseSolverClass):
             if r.version not in versions:
                 versions[r.version] = set()
             versions[r.version].add(r.host)
-        
+        all_cves =set()
         if versions:       
             versions = dict(
                 sorted(versions.items(), key=lambda x: parse(x[0]), reverse=True)
@@ -45,12 +45,19 @@ class ElasticsearchSolverClass(BaseSolverClass):
             self.print_output("Elastic versions detected:")
             for key, value in versions.items():
                 cves = get_cves(f"cpe:2.3:a:elastic:elasticsearch:{key}")
-                if cves: self.print_output(f"Elasticsearch {key} ({", ".join(cves)}):")
+                if cves: 
+                    for cve in cves:
+                        all_cves.add(cve)
+                    self.print_output(f"Elasticsearch {key} ({", ".join(cves)}):")
                 else: self.print_output(f"Elasticsearch {key}:")
                 for v in value:
                     self.print_output(f"    {v}")
             self.create_windowcatcher_action()
             self.get_latest_version()
+            for cve in all_cves:
+                link = get_poc_cve_github_link(cve)
+                if link:
+                    print(f"{cve}: {link}")
     
 
     
