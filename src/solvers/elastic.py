@@ -1,4 +1,4 @@
-from src.utilities.utilities import Version_Vuln_Host_Data, error_handler, get_url_response, get_default_context_execution, add_default_solver_parser_arguments, get_cves
+from src.utilities.utilities import Version_Vuln_Host_Data, error_handler, get_url_response, get_default_context_execution, get_cves, get_latest_version
 from packaging.version import parse
 from src.solvers.solverclass import BaseSolverClass
 
@@ -14,8 +14,8 @@ class ElasticsearchSolverClass(BaseSolverClass):
 
         if not self.hosts:
             return
-        if self.is_nv:
-            self.solve_version(self.hosts, args.threads, args.timeout, args.errors, args.verbose)
+
+        self.solve_version(self.hosts, args.threads, args.timeout, args.errors, args.verbose)
 
 
     @error_handler(["host"])
@@ -49,6 +49,7 @@ class ElasticsearchSolverClass(BaseSolverClass):
                 for v in value:
                     self.print_output(f"    {v}")
             self.create_windowcatcher_action()
+            get_latest_version("elasticsearch")
     
 
     
