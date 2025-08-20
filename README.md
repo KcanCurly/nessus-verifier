@@ -8,7 +8,7 @@ To install:
 
 ```
 cd ~
-sudo apt update && sudo apt install -y sslscan sshpass ssh-audit dnsutils dnsrecon nmap metasploit-framework ident-user-enum smbclient samba samba-common-bin tnscmd10g libnfs-utils cpanminus git pipx libpq5 libpq-dev sippts cpanminus pipx
+sudo apt update && sudo apt install -y sslscan sshpass ssh-audit dnsutils dnsrecon nmap metasploit-framework ident-user-enum smbclient samba samba-common-bin tnscmd10g libnfs-utils cpanminus git pipx libpq5 libpq-dev sippts pipx
 pipx install git+https://github.com/KcanCurly/nessus-verifier
 sudo cpanm --notest Encoding::BER
 git clone https://github.com/CiscoCXSecurity/rdp-sec-check
@@ -24,21 +24,19 @@ nv-solver all -f output.ndjson
 ## Implemented Applications
 * QOTD
   * Checks usage
-  * Bannger grab
+  * Banner grab
 * Netstat
   * Checks usage
-  * Bannger grab
+  * Banner grab
 * Systat
   * Checks usage
-  * Bannger grab
+  * Banner grab
 * Telnet
   * Checks usage and product version
-  * Bannger grab
+  * Banner grab
 * FTP
-  * Check Anonymous access
+  * Check anonymous access
   * Check common/default credentials
-  * Check TSL/SSL versions and ciphers and bits
-  * Check if anonymous and local users are forced to use SSL
 * SSH
   * Check common/default credentials
   * Check hostkey/kex/mac/ciphers and protocol version
