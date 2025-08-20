@@ -8,10 +8,8 @@ To install:
 
 ```
 cd ~
-sudo apt update && sudo apt install -y sslscan sshpass ssh-audit dnsutils dnsrecon nmap metasploit-framework ident-user-enum smbclient samba samba-common-bin tnscmd10g libnfs-utils cpanminus git pipx libpq5 libpq-dev sippts pipx
+sudo apt update && sudo apt install -y sslscan sshpass ssh-audit dnsutils dnsrecon nmap metasploit-framework ident-user-enum smbclient samba samba-common-bin tnscmd10g libnfs-utils git pipx libpq5 libpq-dev sippts
 pipx install git+https://github.com/KcanCurly/nessus-verifier
-sudo cpanm --notest Encoding::BER
-git clone https://github.com/CiscoCXSecurity/rdp-sec-check
 ```
 
 ## Usage
