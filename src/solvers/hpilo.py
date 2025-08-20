@@ -44,16 +44,19 @@ class HPiLOSolverClass(BaseSolverClass):
             for key, value in versions.items():
                 major, minor = key.split(" - ")
                 major = major.replace("iLO ", "")
-                cpe1 = f"cpe:2.3:o:hp:integrated_lights-out_{major}:{minor}"
-                cpe2 = f"cpe:2.3:o:hp:integrated_lights-out_{major}_firmware:{minor}"
-                cves = get_cves(cpe1)
-                if not cves:
-                    cves = get_cves(cpe2)
-                if cves:
-                    all_cves.update(cves)
-                    self.print_output(f"HPE {key} ({", ".join(cves)}):")
+                if int(major) <= 4:
+                    self.print_output(f"HPE {key} (EOL):")
                 else:
-                    self.print_output(f"HPE {key}:")
+                    cpe1 = f"cpe:2.3:o:hp:integrated_lights-out_{major}:{minor}"
+                    cpe2 = f"cpe:2.3:o:hp:integrated_lights-out_{major}_firmware:{minor}"
+                    cves = get_cves(cpe1)
+                    if not cves:
+                        cves = get_cves(cpe2)
+                    if cves:
+                        all_cves.update(cves)
+                        self.print_output(f"HPE {key} ({", ".join(cves)}):")
+                    else:
+                        self.print_output(f"HPE {key}:")
                 for v in value:
                     self.print_output(f"    {v}")
             self.create_windowcatcher_action()
@@ -64,4 +67,8 @@ class HPiLOSolverClass(BaseSolverClass):
                     self.print_output(f"{cve}:")
                     for link in links:
                         self.print_output(link)
+            self.print_output("Latest version")
+            self.print_output("http://www.hpe.com/support/ilo5")
+            self.print_output("http://www.hpe.com/support/ilo6")
+            self.print_output("http://www.hpe.com/support/ilo7")
                 

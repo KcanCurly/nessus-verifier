@@ -50,6 +50,8 @@ class IBMWebSphereSolverClass(BaseSolverClass):
             versions = dict(sorted(versions.items(), reverse=True))
             self.print_output("Detected IBM WebSphere Versions:")
             for key, value in versions.items():
+                f"cpe:2.3:a:ibm:websphere_application_server:{key}:*:*:*:liberty"
+                f"cpe:2.3:a:ibm:websphere_application_server:{key}"
                 self.print_output(f"{key}:")
                 for v in value:
                     self.print_output(f"    {v}")

@@ -41,7 +41,6 @@ setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
-    python_requires=">=3.12",
     entry_points={
         "console_scripts": [
             "nv-parse=src.modules.nv_parse:main",
