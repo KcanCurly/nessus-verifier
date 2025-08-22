@@ -98,6 +98,7 @@ class VmwareSolverClass(BaseSolverClass):
             return
         
         esxi_map = fetch_esxi_mapping()
+        vcenter_map = fetch_vcenter_mapping()
 
         r = r"\[\+\] (.*) - Identified (.*)"
         versions = {}
@@ -153,6 +154,7 @@ class VmwareSolverClass(BaseSolverClass):
                                 vv = "7.0"
                             if version.startswith("8"):
                                 vv = "8.0"
+                            u = vcenter_map[build]
                             cves = get_cves(f"cpe:2.3:a:vmware:vcenter_server:{vv}:{u}")
                             print(cves)
                         
