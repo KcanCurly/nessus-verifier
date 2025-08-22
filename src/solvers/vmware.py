@@ -1,7 +1,60 @@
+from sympy import false, true
 from src.solvers.solverclass import BaseSolverClass
 from src.utilities.utilities import error_handler, get_cves
 import re
 import subprocess
+import requests
+from bs4 import BeautifulSoup
+
+def fetch_vcenter_mapping():
+    url = "https://knowledge.broadcom.com/external/article/326316/build-numbers-and-versions-of-vmware-vce.html"
+    r = requests.get(url)
+    soup = BeautifulSoup(r.text, "html.parser")
+    mapping = {}
+    # Loop through table rows
+    for row in soup.find_all("tr")[1:]:
+        cols = row.find_all(["td","th"]) # type: ignore
+        build = cols[...].text.strip() # type: ignore
+        version = cols[...].text.strip() # type: ignore
+        mapping[build] = version
+    return mapping
+
+def fetch_esxi_mapping():
+    url = "https://knowledge.broadcom.com/external/article/316595/build-numbers-and-versions-of-vmware-esx.html"
+    r = requests.get(url)
+    soup = BeautifulSoup(r.text, "html.parser")
+    mapping = {}
+    # Loop through table rows
+    catch_update_text = False
+    catch_build_text = False
+    catch_build_text_primed = False
+    last_update_text = ""
+    for row in soup.find_all("tr"):
+        # print(row)
+        tds =row.find_all("td")
+        for td in tds:
+            value = td.text
+            if catch_build_text_primed:
+                mapping[value] = last_update_text
+                catch_build_text = False
+                catch_build_text_primed = False
+                continue
+            if catch_build_text:
+                catch_build_text_primed = True
+                continue
+            if catch_update_text:
+                value = value.replace("ESXi 8.0", "").strip()
+                value = value.replace("ESXi 7.0", "").strip()
+                if "Update" in value:
+                    value = value.replace(" ", "_")
+                last_update_text = value
+                catch_update_text = False
+                catch_build_text = True
+                continue
+            if "esxi 7" in value.lower() or "esxi 8" in value.lower():
+                catch_update_text = True
+
+    return mapping
 
 class VmwareSolverClass(BaseSolverClass):
     def __init__(self) -> None:
@@ -16,6 +69,9 @@ class VmwareSolverClass(BaseSolverClass):
 
         if not self.hosts: 
             return
+        
+        esxi_map = fetch_esxi_mapping()
+
         r = r"\[\+\] (.*) - Identified (.*)"
         versions = {}
 
@@ -39,15 +95,32 @@ class VmwareSolverClass(BaseSolverClass):
             for key, value in versions.items():
                 cves = []
                 if "esxi" in key.lower(): 
-                    r = r"VMware ESXi (\d+\.\d+\.\d+)"
+                    r = r"VMware ESXi (\d+\.\d+\.\d+) (\d+)"
                     m = re.search(r, key)
-                    if m: 
-                        cves = get_cves(f"cpe:2.3:o:vmware:esxi:{m.group(1)}")
+                    if m:
+                        version = m.group(1)
+                        build = m.group(2)
+                        
+                        if version.startswith("6"):
+                            cves = ["EOL"]
+                        else:
+                            vv = ""
+                            if version.startswith("7"):
+                                vv = "7.0"
+                            if version.startswith("8"):
+                                vv = "8.0"
+                            u = esxi_map[build]
+                            cves = get_cves(f"cpe:2.3:o:vmware:esxi:{vv}:{u}")
                 if "vcenter server" in key.lower(): 
-                    r = r"VMware vCenter Server (\d+\.\d+\.\d+)"
+                    r = r"VMware vCenter Server (\d+\.\d+\.\d+) (\d+)"
                     m = re.search(r, key)
                     if m: 
-                        cves = get_cves(f"cpe:2.3:a:vmware:vcenter_server:{m.group(1)}")
+                        version = m.group(1)
+                        build = m.group(2)
+                        if version.startswith("6"):
+                            cves = ["EOL"]
+                        else:
+                            cves = get_cves(f"cpe:2.3:a:vmware:vcenter_server:{m.group(1)}")
                         
                 if cves: 
                     self.print_output(f"{key} ({", ".join(cves)}):")

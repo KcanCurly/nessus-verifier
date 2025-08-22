@@ -35,6 +35,7 @@ setup(
         "BAC0",
         "nvdlib",
         "cidr_man",
+        "nessus_file_reader"
     ],
     classifiers=[
         "Programming Language :: Python :: 3",

@@ -5,6 +5,7 @@ import re
 import yaml
 import json
 import cidr_man
+import nessus_file_reader as nfr
 
 # Function to parse the Nessus file (.nessus format) and extract services and associated hosts
 def parse_nessus_file(file_path, include = None, exclude = None):
@@ -192,7 +193,7 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
             print(a.name, file=f)
             for h in a.hosts:
                 print(f"    {h}", file=f)
-            if len(a.sub_hosts.items()) == 1: continue
+            if a.id > 35 and len(a.sub_hosts.items()) == 1: continue
             print(file=f)
             for key,value in a.sub_hosts.items():
                 print(f"    {key}", file=f)
@@ -236,6 +237,38 @@ def main():
     rules = group_up(output)
     write_to_file(rules, args)
     
+def main2():
+    parser = argparse.ArgumentParser(description="nessus-verifier.")
+    parser.add_argument("-f", "--file", type=str, required=True, help="Path to a Nessus file.")
+    parser.add_argument('--skip-ignored', action="store_true", help='Do not write ignored vulnerabilities to txt output.')
+    parser.add_argument('-o', '--output-file', type=str, required=False, default="output.txt", help='Vulnerability Groups output file name txt (Default: output.txt).')
+    parser.add_argument('-oj', '--output-json-file', type=str, required=False, default="output.ndjson", help='Vulnerability Groups output file name json (Default: output.ndjson).')
+    parser.add_argument('--include-list', type=str, required=False, help='Only process IPs that is in the given file.')
+    parser.add_argument('--exclude-list', type=str, required=False, help='Only process IPs that is NOT in the given file.')
+    args = parser.parse_args()
+
+    include = None
+    exclude = None
+
+    if args.include_list:
+        with open(args.include_list, "r") as f:
+            include = [cidr_man.CIDR(i) for i in f]
+
+    if args.exclude_list:
+        with open(args.exclude_list, "r") as f:
+            exclude = [cidr_man.CIDR(i) for i in f]
+
+    root = nfr.file.nessus_scan_file_root_element(args.file)
+
+    for report_host in nfr.scan.report_hosts(root):
+        report_items_per_host = nfr.host.report_items(report_host)
+        for report_item in report_items_per_host:
+            svc_name = nfr.plugin.report_item_value(report_item, 'svc_name')
+            cves = nfr.plugin.report_item_values(report_item, 'cve')
+            plugin_id = int(nfr.plugin.report_item_value(report_item, 'pluginID'))
+            risk_factor = nfr.plugin.report_item_value(report_item, 'risk_factor')
+            plugin_name = nfr.plugin.report_item_value(report_item, 'pluginName')
+            print('\t', svc_name, '  \t\t\t', cves, '  \t\t\t', plugin_name)
     
 if __name__ == "__main__":
     main()
