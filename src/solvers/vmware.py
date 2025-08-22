@@ -94,7 +94,7 @@ class VmwareSolverClass(BaseSolverClass):
             for key, value in versions.items():
                 cves = []
                 if "esxi" in key.lower(): 
-                    r = r"VMware ESXi (\d+\.\d+\.\d+) (\d+)"
+                    r = r"VMware ESXi (\d+\.\d+\.\d+) build-(\d+)"
                     m = re.search(r, key)
                     if m:
                         version = m.group(1)
