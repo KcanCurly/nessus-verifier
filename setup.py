@@ -35,7 +35,6 @@ setup(
         "BAC0",
         "nvdlib",
         "cidr_man",
-        "nessus_file_reader"
     ],
     classifiers=[
         "Programming Language :: Python :: 3",
@@ -51,6 +50,7 @@ setup(
             "nv-nc=src.modules.nv_nc:main",
             "nv-service=src.services.nv_services:main",
             "nv-url=src.url.url:main",
+            "nv-nessus=src.modules.nv_nessus:main",
         ],
     },
 )
