@@ -121,6 +121,7 @@ class VmwareSolverClass(BaseSolverClass):
             self.print_output("Detected Vmware Versions:")
             for key, value in versions.items():
                 cves = []
+                print(key)
                 if "esxi" in key.lower(): 
                     r = r"VMware ESXi (\d+\.\d+\.\d+) build-(\d+)"
                     m = re.search(r, key)
