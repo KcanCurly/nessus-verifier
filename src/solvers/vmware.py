@@ -7,15 +7,43 @@ from bs4 import BeautifulSoup
 
 def fetch_vcenter_mapping():
     url = "https://knowledge.broadcom.com/external/article/326316/build-numbers-and-versions-of-vmware-vce.html"
-    r = requests.get(url)
+    r = requests.get(url, verify=False)
     soup = BeautifulSoup(r.text, "html.parser")
     mapping = {}
     # Loop through table rows
-    for row in soup.find_all("tr")[1:]:
-        cols = row.find_all(["td","th"]) # type: ignore
-        build = cols[...].text.strip() # type: ignore
-        version = cols[...].text.strip() # type: ignore
-        mapping[build] = version
+    catch_update_text = False
+    catch_build_text_1 = False
+    catch_build_text_2 = False
+    catch_build_text_3 = False
+    last_update_text = ""
+    for row in soup.find_all("tr"):
+        # print(row)
+        tds =row.find_all("td")
+        for td in tds:
+            value = td.text
+            if catch_build_text_3:
+                mapping[value] = last_update_text
+                catch_build_text_3 = False
+                catch_build_text_2 = False
+                catch_build_text_1 = False
+                continue
+            if catch_build_text_2:
+                catch_build_text_3 = True
+                continue
+            if catch_build_text_1:
+                catch_build_text_2 = True
+                continue
+
+            if "vcenter server 7" in value.lower() or "vcenter server 8" in value.lower():
+                value = value.replace("vCenter Server 8.0.0", "").strip()
+                value = value.replace("vCenter Server 7.0.0", "").strip()
+                value = value.replace("vCenter Server 8.0", "").strip()
+                value = value.replace("vCenter Server 7.0", "").strip()
+                if "Update" in value:
+                    value = value.replace(" ", "_")
+                last_update_text = value
+                catch_build_text_1 = True
+
     return mapping
 
 def fetch_esxi_mapping():
@@ -116,10 +144,15 @@ class VmwareSolverClass(BaseSolverClass):
                     if m: 
                         version = m.group(1)
                         build = m.group(2)
-                        if version.startswith("6"):
+                        if version.startswith("6") or version.startswith("5"):
                             cves = ["EOL"]
                         else:
-                            cves = get_cves(f"cpe:2.3:a:vmware:vcenter_server:{m.group(1)}")
+                            vv = ""
+                            if version.startswith("7"):
+                                vv = "7.0"
+                            if version.startswith("8"):
+                                vv = "8.0"
+                            cves = get_cves(f"cpe:2.3:a:vmware:vcenter_server:{vv}:{u}")
                         
                 if cves: 
                     self.print_output(f"{key} ({", ".join(cves)}):")

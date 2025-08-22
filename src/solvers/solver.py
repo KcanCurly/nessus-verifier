@@ -86,7 +86,7 @@ def main():
     parser_all.add_argument("-c", "--config", type=str, default="nv-config.toml", help="Config file (default: nv-config.toml).")
     parser_all.add_argument("-a", "--create-actions", type=str, default=None, help="Creates action toml file for windowcatcher with given name.")
     parser_all.add_argument("-od", "--output-directory", type=str, required=False, help="Output directory.")
-    parser_all.add_argument("-s", "--space", type=str, default=0, help="Amount of spaces to prepend when printing affected hosts. (Default = 0)")    
+    parser_all.add_argument("-s", "--space", type=str, default=4, help="Amount of spaces to prepend when printing affected hosts. (Default = 4)")    
     parser_all.add_argument("--nvd-api-key", type=str, help="NVD API Key for getting cves.")
     parser_all.add_argument("-th", "--threads", type=int, default=10, help="Amount of threads (Default = 10).")
     parser_all.add_argument("-ti", "--timeout", type=int, default=5, help="Amount of timeout (Default = 5).")
