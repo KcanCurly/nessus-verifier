@@ -140,11 +140,9 @@ class VmwareSolverClass(BaseSolverClass):
                             u = esxi_map[build]
                             cves = get_cves(f"cpe:2.3:o:vmware:esxi:{vv}:{u}")
                 elif "vcenter server" in key.lower(): 
-                    print("v")
                     r = r"VMware vCenter Server (\d+\.\d+\.\d+) build-(\d+)"
                     m = re.search(r, key)
                     if m: 
-                        print("m")
                         version = m.group(1)
                         build = m.group(2)
                         if version.startswith("6") or version.startswith("5"):
@@ -154,7 +152,6 @@ class VmwareSolverClass(BaseSolverClass):
                             if version.startswith("7"):
                                 vv = "7.0"
                             if version.startswith("8"):
-                                print("8")
                                 vv = "8.0"
                             cves = get_cves(f"cpe:2.3:a:vmware:vcenter_server:{vv}:{u}")
                             print(cves)
