@@ -155,6 +155,7 @@ class VmwareSolverClass(BaseSolverClass):
                             if version.startswith("8"):
                                 vv = "8.0"
                             u = vcenter_map[build]
+                            print(u)
                             cves = get_cves(f"cpe:2.3:a:vmware:vcenter_server:{vv}:{u}")
                             print(cves)
                         
