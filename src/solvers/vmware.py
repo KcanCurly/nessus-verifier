@@ -159,6 +159,6 @@ class VmwareSolverClass(BaseSolverClass):
                 else: 
                     self.print_output(f"{key}:")
                 for v in value:
-                    self.print_output(f"{" " * args.space}{v}")
+                    self.print_output(f"{" " * 4}{v}")
         self.create_windowcatcher_action()
 
