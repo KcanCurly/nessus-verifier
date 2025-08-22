@@ -154,10 +154,9 @@ class VmwareSolverClass(BaseSolverClass):
                                 vv = "7.0"
                             if version.startswith("8"):
                                 vv = "8.0"
-                            u = vcenter_map[build]
+                            u = vcenter_map[build].lower()
                             print(u)
                             cves = get_cves(f"cpe:2.3:a:vmware:vcenter_server:{vv}:{u}")
-                            print(cves)
                         
                 if cves: 
                     self.print_output(f"{key} ({", ".join(cves)}):")
