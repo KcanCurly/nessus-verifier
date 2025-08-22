@@ -40,7 +40,7 @@ def fetch_vcenter_mapping():
                 value = value.replace("vCenter Server 8.0", "").strip()
                 value = value.replace("vCenter Server 7.0", "").strip()
                 if "Update" in value:
-                    value = value.replace(" ", "_")
+                    value = value.replace(" ", "")
                 last_update_text = value
                 catch_build_text_1 = True
 
