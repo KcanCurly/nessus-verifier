@@ -20,7 +20,7 @@ def fetch_vcenter_mapping():
 
 def fetch_esxi_mapping():
     url = "https://knowledge.broadcom.com/external/article/316595/build-numbers-and-versions-of-vmware-esx.html"
-    r = requests.get(url)
+    r = requests.get(url, verify=False)
     soup = BeautifulSoup(r.text, "html.parser")
     mapping = {}
     # Loop through table rows
@@ -100,7 +100,7 @@ class VmwareSolverClass(BaseSolverClass):
                         version = m.group(1)
                         build = m.group(2)
                         
-                        if version.startswith("6"):
+                        if version.startswith("5") or version.startswith("6"):
                             cves = ["EOL"]
                         else:
                             vv = ""
