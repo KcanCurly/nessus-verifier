@@ -1,4 +1,3 @@
-from sympy import false, true
 from src.solvers.solverclass import BaseSolverClass
 from src.utilities.utilities import error_handler, get_cves
 import re
