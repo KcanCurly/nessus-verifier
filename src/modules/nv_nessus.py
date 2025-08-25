@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 import argparse
-import ipaddress
 import xml.etree.ElementTree as ET
 
 import cidr_man
