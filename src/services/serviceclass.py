@@ -1,7 +1,11 @@
+from src.utilities.utilities import get_latest_version
+
+
 class BaseServiceClass():
     def __init__(self, name: str) -> None:
         self.name = name
         self.subservices= []
+        self.eol_product_name = ""
 
     def helper_parse(self, commandparser):
         parser_task1 = commandparser.add_parser(self.name)
@@ -13,6 +17,11 @@ class BaseServiceClass():
     def register_subservice(self, subservice):
         subservice._set_parent(self)
         self.subservices.append(subservice)
+
+    def print_latest_version(self, print_title = True):
+        if not self.eol_product_name:
+            return
+        return get_latest_version(self.eol_product_name)
 
 """
     def solve(self, args):

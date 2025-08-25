@@ -41,7 +41,7 @@ class AMQPVersionSubServiceClass(BaseSubServiceClass):
 
                 for v in value:
                     self.print_output(f"    {v}")
-
+            self.parent_service.print_latest_version()
 
 
 
@@ -68,4 +68,5 @@ class AMQPVersionSubServiceClass(BaseSubServiceClass):
 class AMQPServiceClass(BaseServiceClass):
     def __init__(self) -> None:
         super().__init__("amqp")
+        self.eol_product_name = "rabbitmq"
         self.register_subservice(AMQPVersionSubServiceClass())

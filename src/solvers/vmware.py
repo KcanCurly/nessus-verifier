@@ -18,7 +18,7 @@ def fetch_vcenter_mapping():
     last_update_text = ""
     for row in soup.find_all("tr"):
         # print(row)
-        tds =row.find_all("td")
+        tds =row.find_all("td") # type: ignore
         for td in tds:
             value = td.text
             if catch_build_text_3:
@@ -58,7 +58,7 @@ def fetch_esxi_mapping():
     last_update_text = ""
     for row in soup.find_all("tr"):
         # print(row)
-        tds =row.find_all("td")
+        tds =row.find_all("td") # type: ignore
         for td in tds:
             value = td.text
             if catch_build_text_primed:
@@ -89,6 +89,7 @@ class VmwareSolverClass(BaseSolverClass):
         self.output_filename_for_all = "old-vmware.txt"
         self.output_png_for_action = "old-vmware.png"
         self.action_title = "OldVmware"
+        self.eol_product_name = ""
         
     @error_handler([])
     def solve(self, args):
@@ -155,7 +156,6 @@ class VmwareSolverClass(BaseSolverClass):
                             if version.startswith("8"):
                                 vv = "8.0"
                             u = vcenter_map[build].lower()
-                            print(u)
                             cves = get_cves(f"cpe:2.3:a:vmware:vcenter_server:{vv}:{u}")
                         
                 if cves: 

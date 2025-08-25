@@ -24,9 +24,9 @@ class BaseSolverClass():
         self.eol_product_name = ""
 
     def get_latest_version(self, print_title = True):
-        if not self.eol_product_name:
-            return
-        return get_latest_version(self.eol_product_name)
+        if self.eol_product_name:
+            return get_latest_version(self.eol_product_name)
+
 
 
     def process_args(self, args):

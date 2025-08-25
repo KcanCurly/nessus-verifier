@@ -7,8 +7,6 @@ import dns.reversename
 import dns.update
 import dns.zone
 import re
-
-import nmap
 from src.utilities.utilities import Version_Vuln_Host_Data, error_handler, get_default_context_execution2, get_hosts_from_file2, add_default_parser_arguments
 from src.services.consts import DEFAULT_ERRORS, DEFAULT_THREAD, DEFAULT_TIMEOUT, DEFAULT_VERBOSE
 from src.services.serviceclass import BaseServiceClass
