@@ -41,7 +41,6 @@ class AMQPVersionSubServiceClass(BaseSubServiceClass):
 
                 for v in value:
                     self.print_output(f"    {v}")
-            self.parent_service.print_latest_version()
 
 
 

@@ -60,7 +60,6 @@ def main():
 class ActiveMQVersionSubServiceClass(BaseSubServiceClass):
     def __init__(self) -> None:
         super().__init__("version", "Checks version")
-        self.parent_service.eol_product_name
 
     @error_handler([])
     def nv(self, hosts, **kwargs):
@@ -72,7 +71,6 @@ class ActiveMQVersionSubServiceClass(BaseSubServiceClass):
             self.print_output("ActiveMQ Version:")               
             for a in results:
                 self.print_output(f"    {a}")
-            self.parent_service.print_latest_version()
 
 
     @error_handler(["host"])
