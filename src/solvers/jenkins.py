@@ -1,4 +1,4 @@
-from src.utilities.utilities import Host, Version_Vuln_Host_Data, error_handler, get_cves, get_url_response, get_default_context_execution, get_header_from_url
+from src.utilities.utilities import Host, Version_Vuln_Host_Data, error_handler, get_cves, get_poc_cve_github_link, get_url_response, get_default_context_execution, get_header_from_url
 import re
 from packaging.version import parse
 from src.solvers.solverclass import BaseSolverClass
@@ -9,6 +9,7 @@ class JenkinsSolverClass(BaseSolverClass):
         self.output_filename_for_all = "jenkins.txt"
         self.output_png_for_action = "jenkins.png"
         self.action_title = "Jenkins"
+        self.eol_product_name = "jenkins"
 
     def solve(self, args):
         self.process_args(args)
@@ -35,7 +36,7 @@ class JenkinsSolverClass(BaseSolverClass):
     def solve_version(self, hosts: list[Host], threads: int, timeout: int, errors, verbose):
         versions: dict[str, set[Host]] = {}
         results: list[Version_Vuln_Host_Data] = get_default_context_execution("Jenkins Version", threads, hosts, (self.solve_version_single, timeout, errors, verbose))
-                    
+        all_cves =set()
         for r in results:
             if r.version not in versions:
                 versions[r.version] = set()
@@ -48,7 +49,7 @@ class JenkinsSolverClass(BaseSolverClass):
             )
             for key, value in versions.items():
                 if compare_versions(key, "2.492") == -1:
-                    self.print_output(f"Jenkins/{key} (EOL):")
+                    self.print_output(f"Jenkins {key} (EOL):")
                 else:
                     cves = get_cves(f"cpe:2.3:a:jenkins:jenkins:{key}")
                     if cves: 
@@ -58,6 +59,18 @@ class JenkinsSolverClass(BaseSolverClass):
                 for v in value:
                     self.print_output(f"    {v}")
             self.create_windowcatcher_action()
+            for cve in all_cves:
+                links = get_poc_cve_github_link(cve)
+                if links:
+                    self.print_output(f"{cve}:")
+                    for link in links:
+                        self.print_output(link)
+            latest_versions = self.get_latest_version()
+            if latest_versions:
+                self.print_output(f"Latest version for {self.eol_product_name}")
+                for version in latest_versions:
+                    self.print_output(version)
+
                 
 
 def normalize_version(v, max_parts=3):

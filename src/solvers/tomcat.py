@@ -1,4 +1,4 @@
-from src.utilities.utilities import Version_Vuln_Host_Data, error_handler, get_url_response, get_default_context_execution, get_cves
+from src.utilities.utilities import Version_Vuln_Host_Data, error_handler, get_poc_cve_github_link, get_url_response, get_default_context_execution, get_cves
 from src.solvers.solverclass import BaseSolverClass
 import re
 from packaging.version import parse
@@ -9,6 +9,7 @@ class TomcatSolverClass(BaseSolverClass):
         self.output_filename_for_all = "old-tomcat.txt"
         self.output_png_for_action = "old-tomcat.png"
         self.action_title = "OldTomcat"
+        self.eol_product_name = "tomcat"
         
     @error_handler([])
     def solve(self, args):
@@ -22,7 +23,7 @@ class TomcatSolverClass(BaseSolverClass):
             if r.version not in versions:
                 versions[r.version] = set()
             versions[r.version].add(r.host)
-
+        all_cves =set()
         if versions:
             versions = dict(
                 sorted(versions.items(), key=lambda x: parse(x[0]), reverse=True)
@@ -35,9 +36,10 @@ class TomcatSolverClass(BaseSolverClass):
                 else:
                     cves = get_cves(f"cpe:2.3:a:apache:tomcat:{key}")
                     if cves: 
-                        self.print_output(f"Apache Tomcat/{key} ({", ".join(cves)}):")
+                        all_cves.update(cves)
+                        self.print_output(f"Apache Tomcat {key} ({", ".join(cves)}):")
                     else: 
-                        self.print_output(f"Apache Tomcat/{key}:")
+                        self.print_output(f"Apache Tomcat {key}:")
                     total_cves.extend(cves)
                 for v in value:
                     self.print_output(f"    {v}")
@@ -49,6 +51,17 @@ class TomcatSolverClass(BaseSolverClass):
                     poc_printed = True
                 self.print_output("CVE-2025-24813 => https://github.com/absholi7ly/POC-CVE-2025-24813")
             self.create_windowcatcher_action()
+            for cve in all_cves:
+                links = get_poc_cve_github_link(cve)
+                if links:
+                    self.print_output(f"{cve}:")
+                    for link in links:
+                        self.print_output(link)
+            latest_versions = self.get_latest_version()
+            if latest_versions:
+                self.print_output(f"Latest version for {self.eol_product_name}")
+                for version in latest_versions:
+                    self.print_output(version)
     
     @error_handler(["host"])
     def solve_version_single(self, host, timeout, errors, verbose):

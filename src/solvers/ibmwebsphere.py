@@ -1,5 +1,5 @@
 import re
-from src.utilities.utilities import Host, Version_Vuln_Host_Data, error_handler, get_url_response, get_default_context_execution
+from src.utilities.utilities import Host, Version_Vuln_Host_Data, error_handler, get_cves, get_poc_cve_github_link, get_url_response, get_default_context_execution
 from src.solvers.solverclass import BaseSolverClass
 
 class IBMWebSphereSolverClass(BaseSolverClass):
@@ -40,7 +40,7 @@ class IBMWebSphereSolverClass(BaseSolverClass):
     def solve_version(self, hosts, threads: int, timeout: int, errors: bool, verbose: bool):
         versions: dict[str, set[Host]] = {}
         results: list[Version_Vuln_Host_Data] = get_default_context_execution("IBM WebSphere Version", threads, hosts, (self.solve_version_single, timeout, errors, verbose))
-        
+        all_cves =set()
         for r in results:
             if r.version not in versions:
                 versions[r.version] = set()
@@ -50,9 +50,23 @@ class IBMWebSphereSolverClass(BaseSolverClass):
             versions = dict(sorted(versions.items(), reverse=True))
             self.print_output("Detected IBM WebSphere Versions:")
             for key, value in versions.items():
-                f"cpe:2.3:a:ibm:websphere_application_server:{key}:*:*:*:liberty"
-                f"cpe:2.3:a:ibm:websphere_application_server:{key}"
+                cpe1 = f"cpe:2.3:a:ibm:websphere_application_server:{key}:*:*:*:liberty"
+                cpe2 = f"cpe:2.3:a:ibm:websphere_application_server:{key}"
+                cves = get_cves(cpe1)
+                if not cves:
+                    cves = get_cves(cpe2)
+                if cves:
+                    all_cves.update(cves)
                 self.print_output(f"{key}:")
                 for v in value:
                     self.print_output(f"    {v}")
             self.create_windowcatcher_action()
+            for cve in all_cves:
+                links = get_poc_cve_github_link(cve)
+                if links:
+                    self.print_output(f"{cve}:")
+                    for link in links:
+                        self.print_output(link)
+            self.print_output("Latest version")
+            self.print_output("https://www.ibm.com/support/pages/recommended-updates-websphere-application-server")
+            

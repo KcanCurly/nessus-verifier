@@ -92,7 +92,7 @@ def extract_version(url, response):
         if response.headers["Server"].startswith("Jetty"):
             with valid_lock:
                 with open(nv_version, "a") as file:
-                    file.write(f"{url} => {response.headers["Server"]}\n")
+                    file.write(f"{url} => {response.headers['Server']}\n")
     except:pass
     try:
         if '"couchdb":"Welcome"' in response.text and '"couchbase":' in response.text:

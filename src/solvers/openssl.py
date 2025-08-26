@@ -1,4 +1,4 @@
-from src.utilities.utilities import Version_Vuln_Host_Data, error_handler, get_cves, get_header_from_url, get_default_context_execution
+from src.utilities.utilities import Version_Vuln_Host_Data, error_handler, get_cves, get_header_from_url, get_default_context_execution, get_poc_cve_github_link
 import re
 from src.solvers.solverclass import BaseSolverClass
 
@@ -8,6 +8,7 @@ class OpenSSLSolverClass(BaseSolverClass):
         self.output_filename_for_all = "old-openssl.txt"
         self.output_png_for_action = "old-openssl.png"
         self.action_title = "OldOpenssl"
+        self.eol_product_name = "openssl"
 
     def solve(self, args):
         self.process_args(args)
@@ -27,20 +28,33 @@ class OpenSSLSolverClass(BaseSolverClass):
             if r.version not in versions:
                 versions[r.version] = set()
             versions[r.version].add(r.host)
-
+        all_cves =set()
         if versions:
             versions = dict(sorted(versions.items(), reverse=True))
 
             self.print_output("Detected OpenSSL versions:")
             for key, value in versions.items():
                 cves = get_cves(f"cpe:2.3:a:openssl:openssl:{key}")
-                if cves: 
+                if cves:
+                    all_cves.update(cves)
                     self.print_output(f"OpenSSL {key} ({", ".join(cves)})")
                 else: 
                     self.print_output(f"OpenSSL {key}")
                 for v in value:
                     self.print_output(f"    {v}")
             self.create_windowcatcher_action()
+            
+            for cve in all_cves:
+                links = get_poc_cve_github_link(cve)
+                if links:
+                    self.print_output(f"{cve}:")
+                    for link in links:
+                        self.print_output(link)
+            latest_versions = self.get_latest_version()
+            if latest_versions:
+                self.print_output(f"Latest version for {self.eol_product_name}")
+                for version in latest_versions:
+                    self.print_output(version)
                 
     @error_handler(["host"])
     def solve_version_single(self, host, timeout, errors, verbose):

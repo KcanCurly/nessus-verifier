@@ -1,4 +1,4 @@
-from src.utilities.utilities import Version_Vuln_Host_Data, error_handler, get_header_from_url, get_default_context_execution
+from src.utilities.utilities import Version_Vuln_Host_Data, error_handler, get_header_from_url, get_default_context_execution, get_poc_cve_github_link
 import re
 from packaging.version import parse
 from src.solvers.solverclass import BaseSolverClass
@@ -9,6 +9,7 @@ class PythonSolverClass(BaseSolverClass):
         self.output_filename_for_all = "old-python.txt"
         self.output_png_for_action = "old-python.png"
         self.action_title = "OldPython"
+        self.eol_product_name = "python"
 
     def solve(self, args):
         self.process_args(args)
@@ -25,7 +26,7 @@ class PythonSolverClass(BaseSolverClass):
             if r.version not in versions:
                 versions[r.version] = set()
             versions[r.version].add(r.host)
-
+        all_cves =set()
         if versions:
             versions = dict(
                 sorted(versions.items(), key=lambda x: parse(x[0]), reverse=True)
@@ -39,6 +40,17 @@ class PythonSolverClass(BaseSolverClass):
                 for v in value:
                     self.print_output(f"    {v}")
             self.create_windowcatcher_action()
+            for cve in all_cves:
+                links = get_poc_cve_github_link(cve)
+                if links:
+                    self.print_output(f"{cve}:")
+                    for link in links:
+                        self.print_output(link)
+            latest_versions = self.get_latest_version()
+            if latest_versions:
+                self.print_output(f"Latest version for {self.eol_product_name}")
+                for version in latest_versions:
+                    self.print_output(version)
 
 
 

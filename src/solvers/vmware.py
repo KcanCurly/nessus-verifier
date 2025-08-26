@@ -1,5 +1,6 @@
 from src.solvers.solverclass import BaseSolverClass
-from src.utilities.utilities import error_handler, get_cves
+from src.utilities import utilities
+from src.utilities.utilities import error_handler, get_cves, get_poc_cve_github_link
 import re
 import subprocess
 import requests
@@ -118,7 +119,7 @@ class VmwareSolverClass(BaseSolverClass):
         except Exception as e:
             self._print_exception(e)
 
-        
+        all_cves =set()
         if versions:
             self.print_output("Detected Vmware Versions:")
             for key, value in versions.items():
@@ -159,10 +160,27 @@ class VmwareSolverClass(BaseSolverClass):
                             cves = get_cves(f"cpe:2.3:a:vmware:vcenter_server:{vv}:{u}")
                         
                 if cves: 
+                    all_cves.update(cves)
                     self.print_output(f"{key} ({", ".join(cves)}):")
                 else: 
                     self.print_output(f"{key}:")
                 for v in value:
                     self.print_output(f"{" " * 4}{v}")
-        self.create_windowcatcher_action()
+            self.create_windowcatcher_action()
+            for cve in all_cves:
+                links = get_poc_cve_github_link(cve)
+                if links:
+                    self.print_output(f"{cve}:")
+                    for link in links:
+                        self.print_output(link)
+            latest_versions = utilities.get_latest_version("vcenter")
+            if latest_versions:
+                self.print_output(f"Latest version for vcenter")
+                for version in latest_versions:
+                    self.print_output(version)
+            latest_versions = utilities.get_latest_version("esxi")
+            if latest_versions:
+                self.print_output(f"Latest version for esxi")
+                for version in latest_versions:
+                    self.print_output(version)
 
