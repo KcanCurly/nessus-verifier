@@ -429,36 +429,36 @@ def authcheck(url, templates: list[type[SiteTemplateBase]], verbose, wasprocesse
                 print(f"{url} => {response.status_code}")
             with error_lock:
                 with open(nv_error, "a") as file:
-                    file.write(f"{url}{f" | {hostname}" if hostname else ""} => {response.status_code}\n")
+                    file.write(f"{url}{f' | {hostname}' if hostname else ''} => {response.status_code}\n")
             return
         if response.headers.get("Content-Length") == "0" or response.text.lower() == "ok" or response.text.lower() == "hello world!":
             with known_bads_lock:
                 with open(nv_known_Bad, "a") as file:
-                    file.write(f"{url}{f" | {hostname}" if hostname else ""} => Empty or 'OK'\n")
+                    file.write(f"{url}{f' | {hostname}' if hostname else ''} => Empty or 'OK'\n")
             return
     except requests.exceptions.ConnectTimeout as e:
         with error_lock:
             with open(nv_error, "a") as file:
-                file.write(f"{url}{f" | {hostname}" if hostname else ""} => ConnectTimeout\n")
+                file.write(f"{url}{f' | {hostname}' if hostname else ''} => ConnectTimeout\n")
         return
     except Exception as e:
         with error_lock:
             with open(nv_error, "a") as file:
-                file.write(f"{url}{f" | {hostname}" if hostname else ""} => {e.__class__.__name__} {e}\n")
+                file.write(f"{url}{f' | {hostname}' if hostname else ''} => {e.__class__.__name__} {e}\n")
         return
     
     bad = check_if_known_Bad(response)
     if bad:
         with known_bads_lock:
             with open(nv_known_Bad, "a") as file:
-                file.write(f"{url}{f" | {hostname}" if hostname else ""} => {bad}\n")
+                file.write(f"{url}{f' | {hostname}' if hostname else ''} => {bad}\n")
         return
 
     manual = check_if_manual(response.text)
     if manual:
         with manual_lock:
             with open(nv_manual, "a") as file:
-                file.write(f"{url}{f" | {hostname}" if hostname else ""} => {manual}\n")
+                file.write(f"{url}{f' | {hostname}' if hostname else ''} => {manual}\n")
         return
 
     # NO AUTH
@@ -466,17 +466,17 @@ def authcheck(url, templates: list[type[SiteTemplateBase]], verbose, wasprocesse
         with valid_lock:
             with open(nv_valid, "a") as file:
                 file.write(f"{url} => GRAFANA NO AUTH\n")
-        print(f"{url}{f" | {hostname}" if hostname else ""} => Grafana NO AUTH")
+        print(f"{url}{f' | {hostname}' if hostname else ''} => Grafana NO AUTH")
     if "Loading Elastic" in response.text and "spaces/space_selector" in response.url:
         with valid_lock:
             with open(nv_valid, "a") as file:
                 file.write(f"{url} => ELASTIC NO AUTH\n")
-        print(f"{url}{f" | {hostname}" if hostname else ""} => Elastic NO AUTH")
+        print(f"{url}{f" | {hostname}" if hostname else ''} => Elastic NO AUTH")
     if "WebSphere Integrated Solutions Console" in response.text and "Password" not in response.text:
         with valid_lock:
             with open(nv_valid, "a") as file:
                 file.write(f"{url} => WebSphere Integrated Solutions Console NO AUTH\n")
-        print(f"{url}{f" | {hostname}" if hostname else ""} => WebSphere Integrated Solutions Console NO AUTH")
+        print(f"{url}{f' | {hostname}' if hostname else ''} => WebSphere Integrated Solutions Console NO AUTH")
 
 
     try:
@@ -496,18 +496,18 @@ def authcheck(url, templates: list[type[SiteTemplateBase]], verbose, wasprocesse
         with valid_url_lock:
             with open(nv_no_template, "a") as file:
                 lin = check_if_loginpage_exists(response.text)
-                file.write(f"{url}{f" => {title}" if title else ""}{f" (Login)" if lin else ""}\n")
+                file.write(f"{url}{f' => {title}' if title else ''}{f' (Login)' if lin else ''}\n")
                 return
 
     except TimeoutError as timeout:
         with error_lock:
             with open(nv_error, "a") as file:
-                file.write(f"{url}{f" | {hostname}" if hostname else ""} => Timeout\n")
+                file.write(f"{url}{f' | {hostname}' if hostname else ''} => Timeout\n")
                 return
     except Exception as e:
         with error_lock:
             with open(nv_error, "a") as file:
-                file.write(f"{url}{f" | {hostname}" if hostname else ""} => {e.__class__.__name__} {e}\n")
+                file.write(f"{url}{f' | {hostname}' if hostname else ''} => {e.__class__.__name__} {e}\n")
                 return
 
 def groupup(filename):
