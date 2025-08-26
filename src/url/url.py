@@ -471,7 +471,7 @@ def authcheck(url, templates: list[type[SiteTemplateBase]], verbose, wasprocesse
         with valid_lock:
             with open(nv_valid, "a") as file:
                 file.write(f"{url} => ELASTIC NO AUTH\n")
-        print(f"{url}{f" | {hostname}" if hostname else ''} => Elastic NO AUTH")
+        print(f"{url}{f' | {hostname}' if hostname else ''} => Elastic NO AUTH")
     if "WebSphere Integrated Solutions Console" in response.text and "Password" not in response.text:
         with valid_lock:
             with open(nv_valid, "a") as file:
