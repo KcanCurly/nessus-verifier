@@ -16,6 +16,7 @@ class ApacheSolverClass(BaseSolverClass):
         self.output_filename_for_all = "apache.txt"
         self.output_png_for_action = "old-apache.png"
         self.action_title = "Apache"
+        self.eol_product_name = "apache-http-server"
 
     def solve(self, args):
         self.process_args(args)

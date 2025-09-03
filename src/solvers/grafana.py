@@ -9,6 +9,7 @@ class GrafanaSolverClass(BaseSolverClass):
         self.output_filename_for_all = "grafana.txt"
         self.output_png_for_action = "old-grafana.png"
         self.action_title = "OldGrafana"
+        self.eol_product_name = "grafana"
 
     def solve(self, args):
         self.process_args(args)

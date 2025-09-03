@@ -700,32 +700,3 @@ One or more of the following weak encryption methods is supported: 40 Bit, 56 Bi
 Solution:
 Navigate to System Properties -> Remote. Select the option for "Allow connection only from computers running Remote Desktop with Network Level Authentication (more secure)".
 """
-
-if __name__ == "__main__":
-    # test for now
-    parser = argparse.ArgumentParser()# maybe add description?
-    # rdpy.py [options] target(s)
-    parser.add_argument('--port', default=3389, type=int,
-        help='RDP listening port')
-    parser.add_argument('--timeout', default=10, type=int,
-        help='Connection timeout (in seconds)')
-    parser.add_argument('-d', '--description', action='store_true',
-        help='Display detailed vunlerability description information')
-    parser.add_argument('hostname', nargs='+', type=str)
-    args = parser.parse_args()
-    alive = 0
-    for h in args.hostname:
-        rdpc = RDPConfig(h, args.port, args.timeout)
-        if rdpc.alive:
-            alive += 1
-        rdpc.run_tests()
-        rdpc.results()
-        print('--------------------------------------------------\n')
-    print('Total Hosts:     %s' % len(args.hostname))
-    print('Listening Hosts: %s' % alive)
-    print()
-    if args.description:
-        print('--------------------------------------------------\n')
-        print(issue_descriptions)
-        print()
-
