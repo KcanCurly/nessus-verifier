@@ -51,6 +51,7 @@ class PSQLBruteSubServiceClass(BaseSubServiceClass):
                 }
                 with psycopg.connect(**db_params) as con: # type: ignore
                     with con.cursor() as cur:
+                        cur.execute("SELECT datname FROM pg_database;")
                         creds.append(f"{u}:{p}")
 
             except Exception:
