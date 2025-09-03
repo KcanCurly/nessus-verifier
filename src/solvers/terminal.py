@@ -10,9 +10,8 @@ class TerminalSolverClass(BaseSolverClass):
         self.action_title = "Terminal"
 
     @error_handler([])
-    def solve(self, args):
+    def solve(self, args, errors = 2):
         self.process_args(args)
-        errors = 2
 
         if not self.hosts: 
             return
