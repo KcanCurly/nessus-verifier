@@ -34,13 +34,14 @@ class PSQLBruteSubServiceClass(BaseSubServiceClass):
     @error_handler(["host"])
     def single(self, host, **kwargs):
         creds = kwargs.get("creds", [])
+        valid = []
 
         ip = host.ip
         port = host.port
 
 
         for cred in creds:
-            u, p = cred.split(":")
+            u, p = cred.split(":", 1)
 
             try:
                 db_params = {
@@ -51,13 +52,12 @@ class PSQLBruteSubServiceClass(BaseSubServiceClass):
                 }
                 with psycopg.connect(**db_params) as con: # type: ignore
                     with con.cursor() as cur:
-                        cur.execute("SELECT datname FROM pg_database;")
-                        creds.append(f"{u}:{p}")
+                        valid.append(f"{u}:{p}")
 
             except Exception:
                 pass
-        if creds: 
-            return f"{host} - {",".join(creds)}"
+        if valid: 
+            return f"{host} - {",".join(valid)}"
 
 class PSQLDefaultSubServiceClass(BaseSubServiceClass):
     def __init__(self) -> None:
