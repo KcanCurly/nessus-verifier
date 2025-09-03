@@ -581,7 +581,7 @@ def encryption_support(rdpsocket):
         except ConnectionError:
             pass # do nothing, should be an unsupported request
         except ResponseError:
-            raise # something went wrong
+            pass # something went wrong
     return methods, levels
 
 
