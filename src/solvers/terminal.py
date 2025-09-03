@@ -12,6 +12,7 @@ class TerminalSolverClass(BaseSolverClass):
     @error_handler([])
     def solve(self, args):
         self.process_args(args)
+        errors = 2
 
         if not self.hosts: 
             return
