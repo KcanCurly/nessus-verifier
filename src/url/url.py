@@ -15,10 +15,30 @@ from bs4 import BeautifulSoup, XMLParsedAsHTMLWarning
 import re
 import warnings
 import socket
+from rich.live import Live
+from rich.progress import TextColumn, Progress, BarColumn, TimeElapsedColumn
+from rich.table import Column
+from rich.console import Group
+from rich.panel import Panel
 from src.url.templates import ArisconnectTemplate, FlexNetPublishTemplate, FortigateTemplate, URL_STATUS, FujitsuWebServerTemplate, GrafanaTemplate, HighAvailabilityManagementTemplate, IBMSoftwareAGTemplate, IPECSIPPhoneTemplate, IRISIDICAMTemplate, JHipsterRegistryManagementTemplate, LogparseTemplate, MyQTemplate, NetscalerConsoleTemplate, NexthinkConsoleTemplate, OpinnateTemplate, OracleLightsoutManagerTemplate, PiranhaManagementTemplate, SiteTemplateBase, StoredIQTemplate, StorwareTemplate, SynergySkyTemplate, UNISPHERETemplate, WatsonTemplate, XormonTemplate, XoruxTemplate, ZabbixTemplate, iDRACTemplate
 
 disable_warnings(InsecureRequestWarning)
 warnings.filterwarnings("ignore", category=XMLParsedAsHTMLWarning)
+
+text_column1 = TextColumn("{task.fields[taskid]}", table_column=Column(ratio=1), style= "bold")
+
+progress = Progress(
+    text_column1, refresh_per_second= 1)
+
+overall_progress = Progress(
+    TimeElapsedColumn(), BarColumn(), TextColumn("{task.completed}/{task.total}")
+)
+overall_task_id = overall_progress.add_task("", start=False)
+
+progress_group = Group(
+    Panel(progress, title="URL Check", expand=False),
+    overall_progress,
+)
 
 # Locks for file writing
 error_lock = threading.Lock()
@@ -598,17 +618,32 @@ def main():
         groupup(nv_valid)
         groupup(nv_version)
         return
+    
+
 
 
     max_threads = args.threads
+
+
     # If given url is a file, read it line by line and run the templates on each line
     if os.path.isfile(args.t):
         with open(args.t, "r") as file:
-            lines = [line.strip() for line in file]  # Strip newline characters
+            hosts = [line.strip() for line in file]  # Strip newline characters
 
+        with Live(progress_group):
+            overall_progress.update(overall_task_id, total=len(hosts))
+            overall_progress.start_task(overall_task_id)
             with ThreadPoolExecutor(max_threads) as executor:
-                  executor.map(lambda url: authcheck(url, templates, args.verbose), lines)
+                for host in hosts:
+                    task_id = progress.add_task("url", taskid=f"{host}", status="status")
+                    progress.update(task_id, visible=True)
 
+                    def on_done(fut):
+                        progress.update(task_id, visible=False)
+                        overall_progress.update(overall_task_id, advance=1)
+
+                    fut = executor.submit(authcheck, host, templates, task_id, args.verbose)
+                    fut.add_done_callback(on_done)
 
         groupup(nv_error)
         groupup(nv_known_Bad)
@@ -622,6 +657,12 @@ def main():
     else:
         authcheck(args.target, templates, args.verbose)
     
+def on_done(fut, task_id):
+    try:
+        result = fut.result()
+        print(f"Task finished with: {result}")
+    except Exception as e:
+        print(f"Task failed: {e}")
 
 if __name__ == "__main__":
     main()

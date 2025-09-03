@@ -63,7 +63,7 @@
 
 - name: SMTP - Open Relay Test
   id: 2
-  plugin-ids: [10263, 18017, 10262, 11852]
+  plugin-ids: [18017, 10262, 11852]
   # 18017 - MTA Open Mail Relaying Allowed (internal)
   # 10262 - MTA Open Mail Relaying Allowed
   # 11852 - MTA Open Mail Relaying Allowed (thorough test)
