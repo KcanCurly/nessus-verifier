@@ -2,7 +2,6 @@ import asyncio
 import subprocess
 import re
 import asyncssh
-from packaging.version import parse
 from src.utilities.utilities import add_default_parser_arguments, get_default_context_execution2, error_handler, get_cves, Host, normalize_line_endings, get_hosts_from_file, get_hosts_from_file2
 from src.services.serviceclass import BaseServiceClass
 from src.services.servicesubclass import BaseSubServiceClass
@@ -78,7 +77,7 @@ class SSHBruteSubServiceClass(BaseSubServiceClass):
         threads = kwargs.get("threads", [])
         
         with Live(SSHBruteSubServiceClass.progress_group):
-            SSHBruteSubServiceClass.overall_progress.update(SSHBruteSubServiceClass.overall_task_id, total=len(hosts)*len(creds))
+            SSHBruteSubServiceClass.overall_progress.update(SSHBruteSubServiceClass.overall_task_id, total=len(hosts))
             SSHBruteSubServiceClass.overall_progress.start_task(SSHBruteSubServiceClass.overall_task_id)
             with ThreadPoolExecutor(threads) as executor:
                 for host in hosts:
@@ -100,7 +99,7 @@ class SSHBruteSubServiceClass(BaseSubServiceClass):
             else:
                 found_so_far = ""
                 for i, cred in enumerate(creds):
-                    username, password = cred.split(":")
+                    username, password = cred.split(":", 1)
                     message = self.check_ssh_connection(task_id, ip, port, username, password)
                     if message and message.startswith("[+]"):
                         if not found_so_far: found_so_far = f"[green]Found -> [/green]"
@@ -109,10 +108,12 @@ class SSHBruteSubServiceClass(BaseSubServiceClass):
                         self.print_output(message[4:], normal_print=False)
                         
                     SSHBruteSubServiceClass.progress.update(task_id, status=f"[yellow]Trying Credentials {i+1}/{cred_len}[/yellow] {found_so_far}", advance=1)
-                    SSHBruteSubServiceClass.overall_progress.update(SSHBruteSubServiceClass.overall_task_id, advance=1)
+                    
                 if not found_so_far:
                     SSHBruteSubServiceClass.progress.update(task_id, visible=False)
+                SSHBruteSubServiceClass.overall_progress.update(SSHBruteSubServiceClass.overall_task_id, advance=1)
         except Exception as e:
+            SSHBruteSubServiceClass.overall_progress.update(SSHBruteSubServiceClass.overall_task_id, advance=1)
             SSHBruteSubServiceClass.progress.update(task_id, status=f"[red]Error {e}[/red]")
 
     def pre_check(self, task_id, host, port):

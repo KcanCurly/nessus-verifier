@@ -16,7 +16,7 @@ class TFTPBruteSubServiceClass(BaseSubServiceClass):
         nmap_file = "/usr/share/nmap/nselib/data/tftplist.txt"
         result = ", ".join(host.ip for host in hosts)
         vuln = {}
-
+        print("Running metasploit tftpbrute module, there will be no progression bar")
         command = ["msfconsole", "-q", "-x", f"color false; use auxiliary/scanner/tftp/tftpbrute; set RHOSTS {result}; set THREADS {self.threads}; set ConnectTimeout {self.timeout}; run; exit"]
         result = subprocess.run(command, text=True, capture_output=True)
         
