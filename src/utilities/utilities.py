@@ -408,7 +408,7 @@ def error_handler(variables):
                             pass
                     
                     variable_values.append(f"{var}={value}")
-                
+                print(f"Error in function '{function_name}': {e}")
 
                 value = kwargs.get("errors", None)
                 if value in [1, 2]:
