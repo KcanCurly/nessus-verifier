@@ -353,6 +353,8 @@ def check_if_known_Bad(response: requests.Response):
         return "Graylog Web Interface" # No default password
     if '"NAME":"CentOS Linux","ID":"centos"' in response.text:
         return "CentOS Web Interface" # No default password
+    if '{"couchdb":"Welcome"}' in response.text:
+        return "CouchDB Welcome"
 
 def check_if_manual(response):
     if "Sign in to RStudio" in response:
