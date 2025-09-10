@@ -104,6 +104,7 @@ urls_to_try = [
     "/jenkins",
     "/report",
     "/reports",
+    "/wb"
     ]
 
 def extract_version(url, response):
