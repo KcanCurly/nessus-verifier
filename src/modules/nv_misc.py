@@ -7,11 +7,11 @@ def main():
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     cve_parser = subparsers.add_parser("cve", help="Search for cves for given cpe")
-    cve_parser.add_argument("cpe", required=True, type=str, help="cpe to search")
+    cve_parser.add_argument("cpe", type=str, help="cpe to search")
     cve_parser.add_argument("-c", "--count", type=int, default=10, help="cve limit (Default: 10)")
 
     latest_parser = subparsers.add_parser("latest", help="Search for latest application version")
-    latest_parser.add_argument("app", required=True, type=str, help="application name to search")
+    latest_parser.add_argument("app", type=str, help="application name to search")
     
 
     args = parser.parse_args()
