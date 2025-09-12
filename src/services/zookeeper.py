@@ -56,8 +56,7 @@ class ZookeeperEnumServiceClass(BaseSubServiceClass):
             versions = dict(sorted(versions.items(), reverse=True))
             self.print_output("Apache Zookeeper Versions:")
             for k,v in versions.items():
-                self.print_output(f"{k}:")
-                print(f"{k}:")
+                self.print_output(f"Apache Zookeeper {k.strip()}:")
                 for a in v:
                     self.print_output(f"    {a}")
                     

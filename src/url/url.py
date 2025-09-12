@@ -104,7 +104,9 @@ urls_to_try = [
     "/jenkins",
     "/report",
     "/reports",
-    "/wb"
+    "/wb",
+    "/zabbix",
+    "/i"
     ]
 
 def extract_version(url, response):
@@ -133,6 +135,15 @@ def extract_version(url, response):
                 with valid_lock:
                     with open(nv_version, "a") as file:
                         file.write(f"{url} => Informatica {v}\n")
+    except:pass
+    try:
+        if "Oracle APEX Version" in response.text:
+            rrr = re.search(r'Oracle APEX Version: (.*)', response.text, flags=re.IGNORECASE)
+            if rrr:
+                v = rrr.group(1)
+                with valid_lock:
+                    with open(nv_version, "a") as file:
+                        file.write(f"{url} => Oracle APEX Version {v}\n")
     except:pass
 
 
@@ -387,6 +398,14 @@ def solve_http_status(url):
         if response.status_code in [200]:
             return response.url
 
+def is_login_page(url):
+    response = requests.get(url, allow_redirects=True, verify=False, timeout=15)
+    soup = BeautifulSoup(response.text, "html.parser")
+    password_input = soup.find("input", {"type": "password"})
+    submit_button = soup.find("button", {"type": "submit"}) or soup.find("input", {"type": "submit"})
+    if password_input and submit_button:
+        return True
+    return False
 
 # TO DO:
 def find_title(url, response):
@@ -645,7 +664,7 @@ def main():
                         progress.update(task_id, visible=False)
                         overall_progress.update(overall_task_id, advance=1)
 
-                    fut = executor.submit(authcheck, host, templates, task_id, args.verbose)
+                    fut = executor.submit(authcheck, host, templates, args.verbose)
                     fut.add_done_callback(on_done)
 
         groupup(nv_error)
