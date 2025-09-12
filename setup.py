@@ -51,6 +51,7 @@ setup(
             "nv-service=src.services.nv_services:main",
             "nv-url=src.url.url:main",
             "nv-nessus=src.modules.nv_nessus:main",
+            "nv-misc=src.modules.nv_misc:main",
         ],
     },
 )
