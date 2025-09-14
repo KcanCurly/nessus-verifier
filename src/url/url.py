@@ -680,11 +680,10 @@ def authcheck(url, templates: list[type[SiteTemplateBase]], verbose, wasprocesse
                         return
                     
         if response.status_code >= 400:
-            if response.status_code in [401]:
-                if check_basic_auth(response):
-                    with _401_lock:
-                        with open(NV_401, "a") as file:
-                            file.write(f"{url}{f' | {hostname}' if hostname else ''}\n")
+            if check_basic_auth(response):
+                with _401_lock:
+                    with open(NV_401, "a") as file:
+                        file.write(f"{url}{f' | {hostname}' if hostname else ''}\n")
             if response.status_code in [404]:
                 try:
                     for t in templates2:
