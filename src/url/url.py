@@ -1,11 +1,6 @@
 import argparse
-from ast import For
 from collections import defaultdict
-import importlib.resources
 import os
-import importlib.util
-import importlib
-import concurrent.futures
 import requests
 from urllib3.exceptions import InsecureRequestWarning
 from urllib3 import disable_warnings
@@ -47,14 +42,122 @@ valid_url_lock = threading.Lock()
 valid_template_lock = threading.Lock()
 known_bads_lock = threading.Lock()
 manual_lock = threading.Lock()
+_401_lock = threading.Lock()
+_valid_url_lock = threading.Lock()
 
-nv_valid = "nv-url-valid.txt"
-nv_no_valid = "nv-url-no-valid.txt"
-nv_no_template = "nv-url-no-template.txt"
-nv_error = "nv-url-error.txt"
-nv_manual = "nv-url-manual.txt"
-nv_known_Bad = "nv-url-known-bad.txt"
-nv_version = "nv-url-version.txt"
+NV_VALID_URL = "nv-url-valid-url.txt"
+NV_SUCCESS = "nv-url-success.txt"
+NV_NOT_VALID = "nv-url-no-valid.txt"
+NV_NO_TEMPLATE = "nv-url-no-template.txt"
+NV_ERROR = "nv-url-error.txt"
+NV_MANUAL = "nv-url-manual.txt"
+NV_BAD = "nv-url-known-bad.txt"
+NV_VERSION = "nv-url-version.txt"
+NV_401 = "nv-url-401-basic.txt"
+REQUESTS_TIMEOUT = 15
+
+chatgpt_admin_paths = [
+    "/admin",
+    "/administrator",
+    "/admin/login",
+    "/admin.php",
+    "/adminpanel",
+    "/admin_area",
+    "/admincp",
+    "/admin-console",
+    "/admin/login.php",
+    "/admin/index.php",
+    "/login",
+    "/signin",
+    "/signin.php",
+    "/user",
+    "/user/login",
+    "/account",
+    "/accounts",
+    "/auth",
+    "/authenticate",
+    "/session",
+    "/dashboard",
+    "/dashboard/login",
+    "/controlpanel",
+    "/control-panel",
+    "/cpanel",
+    "/manager",
+    "/manage",
+    "/backend",
+    "/backend/login",
+    "/backend-admin",
+    "/portal",
+    "/portal/login",
+    "/console",
+    "/system",
+    "/system-admin",
+    "/webadmin",
+    "/adm",
+    "/moderator",
+    "/moderation",
+    "/root",
+    "/panel",
+    "/siteadmin",
+    "/site-admin",
+    "/admin_area/login",
+    "/administrator/index.php",
+    "/user/register",
+    "/register",
+    "/signup",
+    "/wp-admin",
+    "/wp-login.php",
+    "/xmlrpc.php",
+    "/wp-content",
+    "/wordpress/wp-admin",
+    "/wp/wp-admin",
+    "/phpmyadmin",
+    "/phpMyAdmin",
+    "/pma",
+    "/dbadmin",
+    "/database",
+    "/mysql",
+    "/sql",
+    "/webmail",
+    "/roundcube",
+    "/webmail/login",
+    "/owa",
+    "/exchange",
+    "/autodiscover",
+    "/joomla/administrator",
+    "/administrator/components",
+    "/drupal/user/login",
+    "/user/login",
+    "/admincp.php",
+    "/panel.php",
+    "/manage.php",
+    "/adminconsole",
+    "/auth/login",
+    "/sso",
+    "/saml",
+    "/oauth",
+    "/app",
+    "/apps",
+    "/service",
+    "/services",
+    "/api",
+    "/api/v1",
+    "/api/v2",
+    "/rest",
+    "/restapi",
+    "/swagger",
+    "/swagger-ui",
+    "/docs",
+    "/documentation",
+    "/uploads",
+    "/backup",
+    "/backups",
+    "/old",
+    "/private",
+    "/secure",
+    "/adminka",
+    "/management",
+]
 
 urls_to_try = [
     "/auth/admin/master/console",
@@ -106,7 +209,7 @@ urls_to_try = [
     "/reports",
     "/wb",
     "/zabbix",
-    "/i"
+    "/i",
     ]
 
 def extract_version(url, response):
@@ -114,8 +217,9 @@ def extract_version(url, response):
     try:
         if response.headers["Server"].startswith("Jetty"):
             with valid_lock:
-                with open(nv_version, "a") as file:
+                with open(NV_VERSION, "a") as file:
                     file.write(f"{url} => {response.headers['Server']}\n")
+            return True
     except:pass
     try:
         if '"couchdb":"Welcome"' in response.text and '"couchbase":' in response.text:
@@ -123,8 +227,9 @@ def extract_version(url, response):
             if rrr:
                 v = rrr.group(1)
                 with valid_lock:
-                    with open(nv_version, "a") as file:
+                    with open(NV_VERSION, "a") as file:
                         file.write(f"{url} => Couchbase {v}\n")
+                return True
     except:pass
     try:
         if "/administrator" in response.text:
@@ -133,8 +238,9 @@ def extract_version(url, response):
             if rrr:
                 v = rrr.group(1)
                 with valid_lock:
-                    with open(nv_version, "a") as file:
+                    with open(NV_VERSION, "a") as file:
                         file.write(f"{url} => Informatica {v}\n")
+                return True
     except:pass
     try:
         if "Oracle APEX Version" in response.text:
@@ -142,9 +248,11 @@ def extract_version(url, response):
             if rrr:
                 v = rrr.group(1)
                 with valid_lock:
-                    with open(nv_version, "a") as file:
+                    with open(NV_VERSION, "a") as file:
                         file.write(f"{url} => Oracle APEX Version {v}\n")
+                return True
     except:pass
+    return False
 
 
 
@@ -157,10 +265,12 @@ def check_if_loginpage_exists(response):
         return False
     except: return False
 
+def check_if_known_bad_non_login(response: requests.Response):
+    pass
+
 def check_if_known_Bad(response: requests.Response):
     for header, value in response.headers.items():
         if "ClickHouse" in header: return "ClickHouse"
-
     if "Dynatrace Managed" in response.text:
         return "Dynatrace Managed"
     if "ExchangeService Service" in response.text:
@@ -392,14 +502,7 @@ def find_login(response):
         return "/ui/#/login"
     return None
 
-def solve_http_status(url):
-    for u in urls_to_try:
-        response = requests.get(url + u, allow_redirects=True, verify=False, timeout=15)
-        if response.status_code in [200]:
-            return response.url
-
-def is_login_page(url):
-    response = requests.get(url, allow_redirects=True, verify=False, timeout=15)
+def is_login_page(response):
     soup = BeautifulSoup(response.text, "html.parser")
     password_input = soup.find("input", {"type": "password"})
     submit_button = soup.find("button", {"type": "submit"}) or soup.find("input", {"type": "submit"})
@@ -407,12 +510,75 @@ def is_login_page(url):
         return True
     return False
 
+def real_check(url, response, templates, hostname):
+    bad = check_if_known_bad_non_login(response)
+    if bad:
+        with known_bads_lock:
+            with open(NV_BAD, "a") as file:
+                file.write(f"{url}{f' | {hostname}' if hostname else ''} => {bad}\n")
+        return
+    is_login = is_login_page(response)
+
+    # If it is login page, we check if its known bad
+    if is_login:
+        bad = check_if_known_Bad(response)
+        if bad:
+            with known_bads_lock:
+                with open(NV_BAD, "a") as file:
+                    file.write(f"{url}{f' | {hostname}' if hostname else ''} => {bad}\n")
+            return
+        # If it is not bad, then we check if it requires manual review
+        manual = check_if_manual(response.text)
+        if manual:
+            with manual_lock:
+                with open(NV_MANUAL, "a") as file:
+                    file.write(f"{url}{f' | {hostname}' if hostname else ''} => {manual}\n")
+            return
+        # NO AUTH
+        if "Grafana" in response.text and "login" not in response.url:
+            with valid_lock:
+                with open(NV_SUCCESS, "a") as file:
+                    file.write(f"{url} => GRAFANA NO AUTH\n")
+            print(f"{url}{f' | {hostname}' if hostname else ''} => Grafana NO AUTH")
+            return
+        if "Loading Elastic" in response.text and "spaces/space_selector" in response.url:
+            with valid_lock:
+                with open(NV_SUCCESS, "a") as file:
+                    file.write(f"{url} => ELASTIC NO AUTH\n")
+            print(f"{url}{f' | {hostname}' if hostname else ''} => Elastic NO AUTH")
+            return
+        if "WebSphere Integrated Solutions Console" in response.text and "Password" not in response.text:
+            with valid_lock:
+                with open(NV_SUCCESS, "a") as file:
+                    file.write(f"{url} => WebSphere Integrated Solutions Console NO AUTH\n")
+            print(f"{url}{f' | {hostname}' if hostname else ''} => WebSphere Integrated Solutions Console NO AUTH")
+            return
+
+        for template_cls in templates:
+            try:
+                zz = template_cls() # type: ignore
+                result: URL_STATUS = zz.check(url, response.text, False)
+                if result == URL_STATUS.VALID:
+                    return
+
+            except TimeoutError as timeout:
+                with error_lock:
+                    with open(NV_ERROR, "a") as file:
+                        file.write(f"{url}{f' | {hostname}' if hostname else ''} => Timeout\n")
+                        return
+            except Exception as e:
+                with error_lock:
+                    with open(NV_ERROR, "a") as file:
+                        file.write(f"{url}{f' | {hostname}' if hostname else ''} => {e.__class__.__name__} {e}\n")
+                        return
 # TO DO:
 def find_title(url, response):
     soup = BeautifulSoup(response, 'html.parser')
     title_tag = soup.title
     if title_tag and title_tag.string:
         return title_tag.string.strip()
+    
+
 
     if "/cgi/login.cgi" in response and "Insyde Software" in response:
         return "Veritas Remote Management"
@@ -421,7 +587,25 @@ def find_title(url, response):
     
     return ""
 
-def authcheck(url, templates: list[type[SiteTemplateBase]], verbose, wasprocessed = False, is_solved = False):
+def check_basic_auth(resp):
+    """
+    Check if a URL requires HTTP Basic Authentication.
+    
+    Returns:
+        (requires_auth: bool)
+    """
+    try:
+        if resp.status_code == 401:
+            # Check for WWW-Authenticate header
+            www_auth = resp.headers.get("WWW-Authenticate", "")
+            if www_auth:
+                return True
+        else:
+            return False
+    except Exception as e:
+        return False
+
+def authcheck(url, templates: list[type[SiteTemplateBase]], verbose, wasprocessed = False):
     headers = {
         'User-Agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
     }
@@ -429,9 +613,14 @@ def authcheck(url, templates: list[type[SiteTemplateBase]], verbose, wasprocesse
 
     templates2 = [zzz() for zzz in templates] # type: ignore
 
+    
+
     try:
         response = requests.get(url, allow_redirects=True, headers=headers, verify=False, timeout=15)
-        extract_version(url, response)
+        if not wasprocessed:
+            with _valid_url_lock:
+                with open(NV_BAD, "a") as file:
+                    file.write(f"{url}{f' | {hostname}' if hostname else ''} => Empty or 'OK'\n")
 
         # Find if there was a redirect thru meta tag
         match = re.search(r'<meta .*;URL=(.*)"\s*', response.text, re.IGNORECASE)
@@ -440,8 +629,10 @@ def authcheck(url, templates: list[type[SiteTemplateBase]], verbose, wasprocesse
             redirect_url = redirect_url.strip("'")
             redirect_url = redirect_url.strip("\"")
             redirect_url = redirect_url.strip(".")
-            authcheck(url + redirect_url, templates, verbose, wasprocessed)
+            authcheck(url + redirect_url, templates, verbose, True)
             return
+        
+        # We try to find dns of the ip
         try:
             pattern = r'https?://(.*):'
             match_hostname = re.match(pattern, url)
@@ -451,8 +642,50 @@ def authcheck(url, templates: list[type[SiteTemplateBase]], verbose, wasprocesse
                 hostname, _, _ = socket.gethostbyaddr(ip)
         except:pass
 
+        if response.headers.get("Content-Length") == "0" or response.text.lower() == "ok" or response.text.lower() == "hello world!":
+            with known_bads_lock:
+                with open(NV_BAD, "a") as file:
+                    file.write(f"{url}{f' | {hostname}' if hostname else ''} => Empty or 'OK'\n")
+            return
+
+        # We first check if there is any version on the page, if so we find it and return
+        vv = extract_version(url, response)
+        if vv: return
+
+
+
+        # If we get 200 we first check if its bad before we check login, if it is not bad we try to look for a login page
+        if response.status_code in [200]:
+            bad = check_if_known_bad_non_login(response)
+            if bad:
+                with known_bads_lock:
+                    with open(NV_BAD, "a") as file:
+                        file.write(f"{url}{f' | {hostname}' if hostname else ''} => {bad}\n")
+                return
+            is_login = is_login_page(response)
+
+            # If it is login page, we check if its known bad
+            if is_login:
+                real_check(url, response, templates2, hostname)
+            else:
+                # If there was no login page we try to enumerate common directories to find a login page
+                for u in urls_to_try:
+                    response = requests.get(url + u, allow_redirects=True, verify=False, timeout=REQUESTS_TIMEOUT)
+                    if check_basic_auth(response):
+                        with _401_lock:
+                            with open(NV_401, "a") as file:
+                                file.write(f"{url}{f' | {hostname}' if hostname else ''}\n")
+                    if response.status_code in [200] and is_login_page(response):
+                        real_check(url, response, templates2, hostname)
+                        return
+                    
         if response.status_code >= 400:
-            if response.status_code == 404:
+            if response.status_code in [401]:
+                if check_basic_auth(response):
+                    with _401_lock:
+                        with open(NV_401, "a") as file:
+                            file.write(f"{url}{f' | {hostname}' if hostname else ''}\n")
+            if response.status_code in [404]:
                 try:
                     for t in templates2:
                         if t.need404:
@@ -461,96 +694,34 @@ def authcheck(url, templates: list[type[SiteTemplateBase]], verbose, wasprocesse
                                 return
                 except Exception as e:
                     pass
-            if not is_solved: 
-                zz = solve_http_status(url)
-                if zz: 
-                    authcheck(zz, templates, verbose, wasprocessed, True)
+            for u in urls_to_try:
+                response = requests.get(url + u, allow_redirects=True, verify=False, timeout=15)
+                if response.status_code in [200] and is_login_page(response):
+                    real_check(url, response, templates2, hostname)
                     return
 
             if verbose:
                 print(f"{url} => {response.status_code}")
             with error_lock:
-                with open(nv_error, "a") as file:
+                with open(NV_ERROR, "a") as file:
                     file.write(f"{url}{f' | {hostname}' if hostname else ''} => {response.status_code}\n")
             return
-        if response.headers.get("Content-Length") == "0" or response.text.lower() == "ok" or response.text.lower() == "hello world!":
-            with known_bads_lock:
-                with open(nv_known_Bad, "a") as file:
-                    file.write(f"{url}{f' | {hostname}' if hostname else ''} => Empty or 'OK'\n")
-            return
+
     except requests.exceptions.ConnectTimeout as e:
         with error_lock:
-            with open(nv_error, "a") as file:
+            with open(NV_ERROR, "a") as file:
                 file.write(f"{url}{f' | {hostname}' if hostname else ''} => ConnectTimeout\n")
         return
+    except requests.exceptions.ReadTimeout as e:
+        with error_lock:
+            with open(NV_ERROR, "a") as file:
+                file.write(f"{url}{f' | {hostname}' if hostname else ''} => ReadTimeout\n")
+        return
     except Exception as e:
         with error_lock:
-            with open(nv_error, "a") as file:
+            with open(NV_ERROR, "a") as file:
                 file.write(f"{url}{f' | {hostname}' if hostname else ''} => {e.__class__.__name__} {e}\n")
         return
-    
-    bad = check_if_known_Bad(response)
-    if bad:
-        with known_bads_lock:
-            with open(nv_known_Bad, "a") as file:
-                file.write(f"{url}{f' | {hostname}' if hostname else ''} => {bad}\n")
-        return
-
-    manual = check_if_manual(response.text)
-    if manual:
-        with manual_lock:
-            with open(nv_manual, "a") as file:
-                file.write(f"{url}{f' | {hostname}' if hostname else ''} => {manual}\n")
-        return
-
-    # NO AUTH
-    if "Grafana" in response.text and "login" not in response.url:
-        with valid_lock:
-            with open(nv_valid, "a") as file:
-                file.write(f"{url} => GRAFANA NO AUTH\n")
-        print(f"{url}{f' | {hostname}' if hostname else ''} => Grafana NO AUTH")
-    if "Loading Elastic" in response.text and "spaces/space_selector" in response.url:
-        with valid_lock:
-            with open(nv_valid, "a") as file:
-                file.write(f"{url} => ELASTIC NO AUTH\n")
-        print(f"{url}{f' | {hostname}' if hostname else ''} => Elastic NO AUTH")
-    if "WebSphere Integrated Solutions Console" in response.text and "Password" not in response.text:
-        with valid_lock:
-            with open(nv_valid, "a") as file:
-                file.write(f"{url} => WebSphere Integrated Solutions Console NO AUTH\n")
-        print(f"{url}{f' | {hostname}' if hostname else ''} => WebSphere Integrated Solutions Console NO AUTH")
-
-
-    try:
-        for template_cls in templates:
-            zz = template_cls() # type: ignore
-            result: URL_STATUS = zz.check(url, response.text, False)
-            if result == URL_STATUS.VALID:
-                return
-
-        title = find_title(url, response.text)
-        # vmware esxi    # In website was not identified, so we tried to identify it:
-        if not wasprocessed:
-            if """<meta http-equiv="refresh" content="0;URL='/ui'"/>""" in response.text:
-                authcheck(url + "/ui", templates, verbose, True)
-                return
-
-        with valid_url_lock:
-            with open(nv_no_template, "a") as file:
-                lin = check_if_loginpage_exists(response.text)
-                file.write(f"{url}{f' => {title}' if title else ''}{f' (Login)' if lin else ''}\n")
-                return
-
-    except TimeoutError as timeout:
-        with error_lock:
-            with open(nv_error, "a") as file:
-                file.write(f"{url}{f' | {hostname}' if hostname else ''} => Timeout\n")
-                return
-    except Exception as e:
-        with error_lock:
-            with open(nv_error, "a") as file:
-                file.write(f"{url}{f' | {hostname}' if hostname else ''} => {e.__class__.__name__} {e}\n")
-                return
 
 def groupup(filename):
     # Dictionary to group URLs by title
@@ -632,13 +803,13 @@ def main():
         ]
 
     if args.group_up:
-        groupup(nv_error)
-        groupup(nv_known_Bad)
-        groupup(nv_manual)
-        groupup(nv_no_template)
-        groupup(nv_no_valid)
-        groupup(nv_valid)
-        groupup(nv_version)
+        groupup(NV_ERROR)
+        groupup(NV_BAD)
+        groupup(NV_MANUAL)
+        groupup(NV_NO_TEMPLATE)
+        groupup(NV_NOT_VALID)
+        groupup(NV_SUCCESS)
+        groupup(NV_VERSION)
         return
     
 
@@ -667,24 +838,19 @@ def main():
                     fut = executor.submit(authcheck, host, templates, args.verbose)
                     fut.add_done_callback(on_done)
 
-        groupup(nv_error)
-        groupup(nv_known_Bad)
-        groupup(nv_manual)
-        groupup(nv_no_template)
-        groupup(nv_no_valid)
-        groupup(nv_valid)
-        groupup(nv_version)
+        groupup(NV_ERROR)
+        groupup(NV_BAD)
+        groupup(NV_MANUAL)
+        groupup(NV_NO_TEMPLATE)
+        groupup(NV_NOT_VALID)
+        groupup(NV_SUCCESS)
+        groupup(NV_VERSION)
 
     # If given url is simply a website, run the templates on the website
     else:
         authcheck(args.target, templates, args.verbose)
     
-def on_done(fut, task_id):
-    try:
-        result = fut.result()
-        print(f"Task finished with: {result}")
-    except Exception as e:
-        print(f"Task failed: {e}")
+
 
 if __name__ == "__main__":
     main()
