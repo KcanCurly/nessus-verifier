@@ -342,8 +342,13 @@ def get_latest_version(product):
 
 def get_cves2(cpe, sort_by_epss = False, limit = 10, cves_to_skip = []):
     try:
-        z = nvdlib.searchCVE(cpeName = cpe, key=nvd_api_key, limit = limit)
-        return [a.id for a in z if a.id not in cves_to_skip]
+        z = nvdlib.searchCVE(cpeName = cpe, key=nvd_api_key)
+        sorted_z = sorted(
+        z,
+            key=lambda x: (int(x.split("-")[1]), int(x.split("-")[2])),
+            reverse=True
+        )
+        return [a.id for a in sorted_z[0:limit] if a.id not in cves_to_skip]
     except Exception as e:
         print(f"Cve search for {cpe} failed: {e}")
         return []
