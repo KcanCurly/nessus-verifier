@@ -661,11 +661,12 @@ def authcheck(url, templates: list[type[SiteTemplateBase]], verbose, wasprocesse
             return
         
         comments = extract_comment(response)
-        with comment_lock:
-            with open(NV_COMMENTS, "a") as file:
-                file.write(f"{url}{f' | {hostname}' if hostname else ''}\n")
-                for c in comments:
-                    file.write(f"{c}\n")
+        if comments:
+            with comment_lock:
+                with open(NV_COMMENTS, "a") as file:
+                    file.write(f"{url}{f' | {hostname}' if hostname else ''}\n")
+                    for c in comments:
+                        file.write(f"{c}\n")
 
         # We first check if there is any version on the page, if so we find it and return
         vv = extract_version(url, response)
