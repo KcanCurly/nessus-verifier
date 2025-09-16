@@ -728,11 +728,11 @@ def authcheck(url, templates: list[type[SiteTemplateBase]], verbose, wasprocesse
                 file.write(f"{url}{f' | {hostname}' if hostname else ''} => {e.__class__.__name__} {e}\n")
         return
     
-def start_authcheck(url, templates, verbose, task_id):
+def start_authcheck(url, templates, task_id, verbose):
     progress.update(task_id, visible=True)
     progress.start_task(task_id)
     authcheck(url, templates, verbose, False)
-    progress.update(task_id, visible=False)
+    progress.remove_task(task_id)
     overall_progress.update(overall_task_id, advance=1)
 
 def groupup(filename):
