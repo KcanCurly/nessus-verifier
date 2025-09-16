@@ -583,6 +583,9 @@ def find_title(url, response):
     soup = BeautifulSoup(response, 'html.parser')
     title_tag = soup.title
     if title_tag and title_tag.string:
+        t = title_tag.string.strip()
+        if t.startswith("BIG-IP"):
+            return "BIG-IP"
         return title_tag.string.strip()
     
 
@@ -591,6 +594,8 @@ def find_title(url, response):
         return "Veritas Remote Management"
     if "https://tomcat.apache.org" in response:
         return "Tomcat (No Version)"
+    
+
     
     return ""
 
