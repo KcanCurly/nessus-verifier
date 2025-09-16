@@ -45,6 +45,7 @@ manual_lock = threading.Lock()
 _401_lock = threading.Lock()
 _valid_url_lock = threading.Lock()
 comment_lock = threading.Lock()
+no_template_lock = threading.Lock()
 
 NV_VALID_URL = "nv-url-valid-url.txt"
 NV_SUCCESS = "nv-url-success.txt"
@@ -572,6 +573,11 @@ def real_check(url, response, templates, hostname):
                     with open(NV_ERROR, "a") as file:
                         file.write(f"{url}{f' | {hostname}' if hostname else ''} => {e.__class__.__name__} {e}\n")
                         return
+        with no_template_lock:
+            with open(NV_NO_TEMPLATE, "a") as file:
+                title = find_title(None, response)
+                file.write(f"{url}{f' | {hostname}' if hostname else ''}{f' => {title}' if title else ''}\n")
+
 # TO DO:
 def find_title(url, response):
     soup = BeautifulSoup(response, 'html.parser')
