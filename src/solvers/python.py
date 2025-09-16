@@ -34,7 +34,7 @@ class PythonSolverClass(BaseSolverClass):
             self.print_output("Detected Python versions:")
             for key, value in versions.items():
                 if parse(key) < parse("3.9"):
-                    self.print_output(f"{key} (EOL):")
+                    self.print_output(f"Python {key} (EOL):")
                 else: 
                     self.print_output(f"Python {key}:")
                 for v in value:

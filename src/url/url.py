@@ -6,7 +6,7 @@ from urllib3.exceptions import InsecureRequestWarning
 from urllib3 import disable_warnings
 import threading
 from concurrent.futures import ThreadPoolExecutor, as_completed, TimeoutError
-from bs4 import BeautifulSoup, XMLParsedAsHTMLWarning
+from bs4 import BeautifulSoup, XMLParsedAsHTMLWarning, Comment
 import re
 import warnings
 import socket
@@ -44,6 +44,7 @@ known_bads_lock = threading.Lock()
 manual_lock = threading.Lock()
 _401_lock = threading.Lock()
 _valid_url_lock = threading.Lock()
+comment_lock = threading.Lock()
 
 NV_VALID_URL = "nv-url-valid-url.txt"
 NV_SUCCESS = "nv-url-success.txt"
@@ -54,6 +55,7 @@ NV_MANUAL = "nv-url-manual.txt"
 NV_BAD = "nv-url-known-bad.txt"
 NV_VERSION = "nv-url-version.txt"
 NV_401 = "nv-url-401-basic.txt"
+NV_COMMENTS = "nv-url-comments.txt"
 REQUESTS_TIMEOUT = 15
 
 chatgpt_admin_paths = [
@@ -587,6 +589,12 @@ def find_title(url, response):
     
     return ""
 
+def extract_comment(response):
+    soup = BeautifulSoup(response.text, "html.parser")
+
+    # Find all HTML comments
+    return [c.strip() for c in soup.find_all(string=lambda text: isinstance(text, Comment))] # type: ignore
+
 def check_basic_auth(resp):
     """
     Check if a URL requires HTTP Basic Authentication.
@@ -613,25 +621,9 @@ def authcheck(url, templates: list[type[SiteTemplateBase]], verbose, wasprocesse
 
     templates2 = [zzz() for zzz in templates] # type: ignore
 
-    
-
     try:
         response = requests.get(url, allow_redirects=True, headers=headers, verify=False, timeout=15)
-        if not wasprocessed:
-            with _valid_url_lock:
-                with open(NV_BAD, "a") as file:
-                    file.write(f"{url}{f' | {hostname}' if hostname else ''} => Empty or 'OK'\n")
 
-        # Find if there was a redirect thru meta tag
-        match = re.search(r'<meta .*;URL=(.*)"\s*', response.text, re.IGNORECASE)
-        if match:
-            redirect_url = match.group(1)
-            redirect_url = redirect_url.strip("'")
-            redirect_url = redirect_url.strip("\"")
-            redirect_url = redirect_url.strip(".")
-            authcheck(url + redirect_url, templates, verbose, True)
-            return
-        
         # We try to find dns of the ip
         try:
             pattern = r'https?://(.*):'
@@ -642,17 +634,32 @@ def authcheck(url, templates: list[type[SiteTemplateBase]], verbose, wasprocesse
                 hostname, _, _ = socket.gethostbyaddr(ip)
         except:pass
 
+        # Find if there was a redirect thru meta tag
+        match = re.search(r'<meta .*;URL=(.*)"\s*', response.text, re.IGNORECASE)
+        if match:
+            redirect_url = match.group(1)
+            redirect_url = redirect_url.strip("'")
+            redirect_url = redirect_url.strip("\"")
+            redirect_url = redirect_url.strip(".")
+            authcheck(url + redirect_url, templates, verbose, True)
+            return
+
         if response.headers.get("Content-Length") == "0" or response.text.lower() == "ok" or response.text.lower() == "hello world!":
             with known_bads_lock:
                 with open(NV_BAD, "a") as file:
                     file.write(f"{url}{f' | {hostname}' if hostname else ''} => Empty or 'OK'\n")
             return
+        
+        comments = extract_comment(response)
+        with comment_lock:
+            with open(NV_COMMENTS, "a") as file:
+                file.write(f"{url}{f' | {hostname}' if hostname else ''}\n")
+                for c in comments:
+                    file.write(f"{c}\n")
 
         # We first check if there is any version on the page, if so we find it and return
         vv = extract_version(url, response)
         if vv: return
-
-
 
         # If we get 200 we first check if its bad before we check login, if it is not bad we try to look for a login page
         if response.status_code in [200]:
@@ -721,6 +728,13 @@ def authcheck(url, templates: list[type[SiteTemplateBase]], verbose, wasprocesse
             with open(NV_ERROR, "a") as file:
                 file.write(f"{url}{f' | {hostname}' if hostname else ''} => {e.__class__.__name__} {e}\n")
         return
+    
+def start_authcheck(url, templates, verbose, task_id):
+    progress.update(task_id, visible=True)
+    progress.start_task(task_id)
+    authcheck(url, templates, verbose, False)
+    progress.update(task_id, visible=False)
+    overall_progress.update(overall_task_id, advance=1)
 
 def groupup(filename):
     # Dictionary to group URLs by title
@@ -827,15 +841,10 @@ def main():
             overall_progress.start_task(overall_task_id)
             with ThreadPoolExecutor(max_threads) as executor:
                 for host in hosts:
-                    task_id = progress.add_task("url", taskid=f"{host}", status="status")
-                    progress.update(task_id, visible=True)
+                    task_id = progress.add_task("url", taskid=f"{host}", status="status", start=False)
+                    progress.update(task_id, visible=False)
+                    executor.submit(start_authcheck, host, templates, task_id, args.verbose)
 
-                    def on_done(fut):
-                        progress.update(task_id, visible=False)
-                        overall_progress.update(overall_task_id, advance=1)
-
-                    fut = executor.submit(authcheck, host, templates, args.verbose)
-                    fut.add_done_callback(on_done)
 
         groupup(NV_ERROR)
         groupup(NV_BAD)
@@ -848,7 +857,6 @@ def main():
     # If given url is simply a website, run the templates on the website
     else:
         authcheck(args.target, templates, args.verbose)
-    
 
 
 if __name__ == "__main__":
