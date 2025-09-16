@@ -556,9 +556,8 @@ def real_check(url, response, templates, hostname):
             print(f"{url}{f' | {hostname}' if hostname else ''} => WebSphere Integrated Solutions Console NO AUTH")
             return
 
-        for template_cls in templates:
+        for zz in templates:
             try:
-                zz = template_cls() # type: ignore
                 result: URL_STATUS = zz.check(url, response.text, False)
                 if result == URL_STATUS.VALID:
                     return
