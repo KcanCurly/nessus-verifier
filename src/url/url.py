@@ -575,7 +575,7 @@ def real_check(url, response, templates, hostname):
                         return
         with no_template_lock:
             with open(NV_NO_TEMPLATE, "a") as file:
-                title = find_title(None, response)
+                title = find_title(None, response.text)
                 file.write(f"{url}{f' | {hostname}' if hostname else ''}{f' => {title}' if title else ''}\n")
 
 # TO DO:
