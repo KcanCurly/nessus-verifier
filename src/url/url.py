@@ -46,6 +46,7 @@ _401_lock = threading.Lock()
 _valid_url_lock = threading.Lock()
 comment_lock = threading.Lock()
 no_template_lock = threading.Lock()
+js_lock = threading.Lock()
 
 NV_VALID_URL = "nv-url-valid-url.txt"
 NV_SUCCESS = "nv-url-success.txt"
@@ -55,8 +56,10 @@ NV_ERROR = "nv-url-error.txt"
 NV_MANUAL = "nv-url-manual.txt"
 NV_BAD = "nv-url-known-bad.txt"
 NV_VERSION = "nv-url-version.txt"
-NV_401 = "nv-url-401-basic.txt"
+NV_401 = "nv-url-401-basic-digest.txt"
 NV_COMMENTS = "nv-url-comments.txt"
+NV_REQUIRE_JS = "nv-url-js.txt"
+
 REQUESTS_TIMEOUT = 15
 
 chatgpt_admin_paths = [
@@ -573,10 +576,10 @@ def real_check(url, response, templates, hostname):
                     with open(NV_ERROR, "a") as file:
                         file.write(f"{url}{f' | {hostname}' if hostname else ''} => {e.__class__.__name__} {e}\n")
                         return
-        with no_template_lock:
-            with open(NV_NO_TEMPLATE, "a") as file:
-                title = find_title(None, response.text)
-                file.write(f"{url}{f' | {hostname}' if hostname else ''}{f' => {title}' if title else ''}\n")
+    with no_template_lock:
+        with open(NV_NO_TEMPLATE, "a") as file:
+            title = find_title(None, response.text)
+            file.write(f"{url}{f' | {hostname}' if hostname else ''}{f' => {title}' if title else ''}\n")
 
 # TO DO:
 def find_title(url, response):
@@ -666,7 +669,14 @@ def authcheck(url, templates: list[type[SiteTemplateBase]], verbose, wasprocesse
                 with open(NV_COMMENTS, "a") as file:
                     file.write(f"{url}{f' | {hostname}' if hostname else ''}\n")
                     for c in comments:
+
                         file.write(f"{c}\n")
+
+        if "enable JavaScript" in response.text:
+            with js_lock:
+                with open(NV_REQUIRE_JS, "a") as file:
+                    file.write(f"{url}{f' | {hostname}' if hostname else ''}\n")
+            return
 
         # We first check if there is any version on the page, if so we find it and return
         vv = extract_version(url, response)
