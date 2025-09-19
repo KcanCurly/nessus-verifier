@@ -507,8 +507,6 @@ def find_login(response):
     return None
 
 
-
-def real_check(url, response, templates, hostname):
     bad = check_if_known_Bad(response)
     if bad:
         with known_bads_lock:
@@ -675,7 +673,6 @@ def authcheck(url, templates: list[type[SiteTemplateBase]], verbose, wasprocesse
                 with open(NV_COMMENTS, "a") as file:
                     file.write(f"{url}{f' | {hostname}' if hostname else ''}\n")
                     for c in comments:
-
                         file.write(f"{c}\n")
 
 
@@ -684,7 +681,7 @@ def authcheck(url, templates: list[type[SiteTemplateBase]], verbose, wasprocesse
             with _401_lock:
                 with open(NV_401, "a") as file:
                     file.write(f"{url}{f' | {hostname}' if hostname else ''}\n")
-            return True
+            return
 
         # We first check if there is any version on the page, if so we find it and return
         vv = extract_version(url, response)
@@ -696,7 +693,7 @@ def authcheck(url, templates: list[type[SiteTemplateBase]], verbose, wasprocesse
             with known_bads_lock:
                 with open(NV_BAD, "a") as file:
                     file.write(f"{url}{f' | {hostname}' if hostname else ''} => {bad}\n")
-            return True
+            return
         
         # If it is not bad, then we check if it requires manual review
         manual = check_if_manual(response.text)
@@ -704,43 +701,43 @@ def authcheck(url, templates: list[type[SiteTemplateBase]], verbose, wasprocesse
             with manual_lock:
                 with open(NV_MANUAL, "a") as file:
                     file.write(f"{url}{f' | {hostname}' if hostname else ''} => {manual}\n")
-            return True
+            return
         # NO AUTH
         if "Grafana" in response.text and "login" not in response.url:
             with valid_lock:
                 with open(NV_SUCCESS, "a") as file:
                     file.write(f"{url} => GRAFANA NO AUTH\n")
             print(f"{url}{f' | {hostname}' if hostname else ''} => Grafana NO AUTH")
-            return True
+            return
         if "Loading Elastic" in response.text and "spaces/space_selector" in response.url:
             with valid_lock:
                 with open(NV_SUCCESS, "a") as file:
                     file.write(f"{url} => ELASTIC NO AUTH\n")
             print(f"{url}{f' | {hostname}' if hostname else ''} => Elastic NO AUTH")
-            return True
+            return
         if "WebSphere Integrated Solutions Console" in response.text and "Password" not in response.text:
             with valid_lock:
                 with open(NV_SUCCESS, "a") as file:
                     file.write(f"{url} => WebSphere Integrated Solutions Console NO AUTH\n")
             print(f"{url}{f' | {hostname}' if hostname else ''} => WebSphere Integrated Solutions Console NO AUTH")
-            return True
+            return
 
-        for zz in templates:
+        for zz in templates2:
             try:
                 result: URL_STATUS = zz.check(url, response.text, False)
                 if result == URL_STATUS.VALID:
-                    return True
+                    return
 
             except TimeoutError as timeout:
                 with error_lock:
                     with open(NV_ERROR, "a") as file:
                         file.write(f"{url}{f' | {hostname}' if hostname else ''} => Timeout\n")
-                        return True
+                        return
             except Exception as e:
                 with error_lock:
                     with open(NV_ERROR, "a") as file:
                         file.write(f"{url}{f' | {hostname}' if hostname else ''} => {e.__class__.__name__} {e}\n")
-                        return True
+                        return
                     
         for u in urls_to_try:
             response = requests.get(url + u, allow_redirects=True, verify=False, timeout=REQUESTS_TIMEOUT)
@@ -749,7 +746,7 @@ def authcheck(url, templates: list[type[SiteTemplateBase]], verbose, wasprocesse
                     with open(NV_NO_TEMPLATE, "a") as file:
                         title = find_title(None, response.text)
                         file.write(f"{url}{u}{f' | {hostname}' if hostname else ''}{f' => {title}' if title else ''}\n")
-                    return True
+                return
                 
         with error_lock:
             with open(NV_ERROR, "a") as file:
