@@ -508,13 +508,7 @@ def find_login(response):
         return "/ui/#/login"
     return None
 
-def is_login_page(response):
-    soup = BeautifulSoup(response.text, "html.parser")
-    password_input = soup.find("input", {"type": "password"})
-    submit_button = soup.find("button", {"type": "submit"}) or soup.find("input", {"type": "submit"})
-    if password_input and submit_button:
-        return True
-    return False
+
 
 def real_check(url, response, templates, hostname):
     bad = check_if_known_bad_non_login(response)
@@ -522,8 +516,14 @@ def real_check(url, response, templates, hostname):
         with known_bads_lock:
             with open(NV_BAD, "a") as file:
                 file.write(f"{url}{f' | {hostname}' if hostname else ''} => {bad}\n")
-        return
-    is_login = is_login_page(response)
+        return True
+    
+    if check_basic_auth(response):
+        with _401_lock:
+            with open(NV_401, "a") as file:
+                file.write(f"{url}{f' | {hostname}' if hostname else ''}\n")
+        return True
+    is_login = check_if_loginpage_exists(response)
 
     # If it is login page, we check if its known bad
     if is_login:
@@ -532,54 +532,56 @@ def real_check(url, response, templates, hostname):
             with known_bads_lock:
                 with open(NV_BAD, "a") as file:
                     file.write(f"{url}{f' | {hostname}' if hostname else ''} => {bad}\n")
-            return
+            return True
         # If it is not bad, then we check if it requires manual review
         manual = check_if_manual(response.text)
         if manual:
             with manual_lock:
                 with open(NV_MANUAL, "a") as file:
                     file.write(f"{url}{f' | {hostname}' if hostname else ''} => {manual}\n")
-            return
+            return True
         # NO AUTH
         if "Grafana" in response.text and "login" not in response.url:
             with valid_lock:
                 with open(NV_SUCCESS, "a") as file:
                     file.write(f"{url} => GRAFANA NO AUTH\n")
             print(f"{url}{f' | {hostname}' if hostname else ''} => Grafana NO AUTH")
-            return
+            return True
         if "Loading Elastic" in response.text and "spaces/space_selector" in response.url:
             with valid_lock:
                 with open(NV_SUCCESS, "a") as file:
                     file.write(f"{url} => ELASTIC NO AUTH\n")
             print(f"{url}{f' | {hostname}' if hostname else ''} => Elastic NO AUTH")
-            return
+            return True
         if "WebSphere Integrated Solutions Console" in response.text and "Password" not in response.text:
             with valid_lock:
                 with open(NV_SUCCESS, "a") as file:
                     file.write(f"{url} => WebSphere Integrated Solutions Console NO AUTH\n")
             print(f"{url}{f' | {hostname}' if hostname else ''} => WebSphere Integrated Solutions Console NO AUTH")
-            return
+            return True
 
         for zz in templates:
             try:
                 result: URL_STATUS = zz.check(url, response.text, False)
                 if result == URL_STATUS.VALID:
-                    return
+                    return True
 
             except TimeoutError as timeout:
                 with error_lock:
                     with open(NV_ERROR, "a") as file:
                         file.write(f"{url}{f' | {hostname}' if hostname else ''} => Timeout\n")
-                        return
+                        return True
             except Exception as e:
                 with error_lock:
                     with open(NV_ERROR, "a") as file:
                         file.write(f"{url}{f' | {hostname}' if hostname else ''} => {e.__class__.__name__} {e}\n")
-                        return
+                        return True
     with no_template_lock:
         with open(NV_NO_TEMPLATE, "a") as file:
             title = find_title(None, response.text)
             file.write(f"{url}{f' | {hostname}' if hostname else ''}{f' => {title}' if title else ''}\n")
+        return True
+    return False
 
 # TO DO:
 def find_title(url, response):
@@ -635,7 +637,7 @@ def authcheck(url, templates: list[type[SiteTemplateBase]], verbose, wasprocesse
     templates2 = [zzz() for zzz in templates] # type: ignore
 
     try:
-        response = requests.get(url, allow_redirects=True, headers=headers, verify=False, timeout=15)
+        response = requests.get(url, allow_redirects=True, headers=headers, verify=False, timeout=REQUESTS_TIMEOUT)
 
         # We try to find dns of the ip
         try:
@@ -690,22 +692,16 @@ def authcheck(url, templates: list[type[SiteTemplateBase]], verbose, wasprocesse
                     with open(NV_BAD, "a") as file:
                         file.write(f"{url}{f' | {hostname}' if hostname else ''} => {bad}\n")
                 return
-            is_login = is_login_page(response)
+            did_process = real_check(url, response, templates2, hostname)
 
             # If it is login page, we check if its known bad
-            if is_login:
-                real_check(url, response, templates2, hostname)
+            if did_process:
+                return
             else:
                 # If there was no login page we try to enumerate common directories to find a login page
                 for u in urls_to_try:
-                    response = requests.get(url + u, allow_redirects=True, verify=False, timeout=REQUESTS_TIMEOUT)
-                    if check_basic_auth(response):
-                        with _401_lock:
-                            with open(NV_401, "a") as file:
-                                file.write(f"{url}{f' | {hostname}' if hostname else ''}\n")
-                    if response.status_code in [200] and is_login_page(response):
-                        real_check(url, response, templates2, hostname)
-                        return
+                    real_check(url, response, templates2, hostname)
+                return
                     
         if response.status_code >= 400:
             if check_basic_auth(response):
@@ -723,7 +719,7 @@ def authcheck(url, templates: list[type[SiteTemplateBase]], verbose, wasprocesse
                     pass
             for u in urls_to_try:
                 response = requests.get(url + u, allow_redirects=True, verify=False, timeout=15)
-                if response.status_code in [200] and is_login_page(response):
+                if response.status_code in [200] and check_if_loginpage_exists(response):
                     real_check(url, response, templates2, hostname)
                     return
 
