@@ -216,6 +216,7 @@ urls_to_try = [
     "/wb",
     "/zabbix",
     "/i",
+    "/desktop",
     ]
 
 def extract_version(url, response):
@@ -270,9 +271,6 @@ def check_if_loginpage_exists(response):
         if has_password: return True
         return False
     except: return False
-
-def check_if_known_bad_non_login(response: requests.Response):
-    pass
 
 def check_if_known_Bad(response: requests.Response):
     for header, value in response.headers.items():
@@ -511,7 +509,7 @@ def find_login(response):
 
 
 def real_check(url, response, templates, hostname):
-    bad = check_if_known_bad_non_login(response)
+    bad = check_if_known_Bad(response)
     if bad:
         with known_bads_lock:
             with open(NV_BAD, "a") as file:
@@ -659,6 +657,12 @@ def authcheck(url, templates: list[type[SiteTemplateBase]], verbose, wasprocesse
             authcheck(url + redirect_url, templates, verbose, True)
             return
 
+        if "enable JavaScript" in response.text:
+            with js_lock:
+                with open(NV_REQUIRE_JS, "a") as file:
+                    file.write(f"{url}{f' | {hostname}' if hostname else ''}\n")
+            return
+
         if response.headers.get("Content-Length") == "0" or response.text.lower() == "ok" or response.text.lower() == "hello world!":
             with known_bads_lock:
                 with open(NV_BAD, "a") as file:
@@ -674,61 +678,82 @@ def authcheck(url, templates: list[type[SiteTemplateBase]], verbose, wasprocesse
 
                         file.write(f"{c}\n")
 
-        if "enable JavaScript" in response.text:
-            with js_lock:
-                with open(NV_REQUIRE_JS, "a") as file:
+
+        # Check basic auth
+        if check_basic_auth(response):
+            with _401_lock:
+                with open(NV_401, "a") as file:
                     file.write(f"{url}{f' | {hostname}' if hostname else ''}\n")
-            return
+            return True
 
         # We first check if there is any version on the page, if so we find it and return
         vv = extract_version(url, response)
         if vv: return
 
-        # If we get 200 we first check if its bad before we check login, if it is not bad we try to look for a login page
-        if response.status_code in [200]:
-            bad = check_if_known_bad_non_login(response)
-            if bad:
-                with known_bads_lock:
-                    with open(NV_BAD, "a") as file:
-                        file.write(f"{url}{f' | {hostname}' if hostname else ''} => {bad}\n")
-                return
-            did_process = real_check(url, response, templates2, hostname)
+        # Check bads
+        bad = check_if_known_Bad(response)
+        if bad:
+            with known_bads_lock:
+                with open(NV_BAD, "a") as file:
+                    file.write(f"{url}{f' | {hostname}' if hostname else ''} => {bad}\n")
+            return True
+        
+        # If it is not bad, then we check if it requires manual review
+        manual = check_if_manual(response.text)
+        if manual:
+            with manual_lock:
+                with open(NV_MANUAL, "a") as file:
+                    file.write(f"{url}{f' | {hostname}' if hostname else ''} => {manual}\n")
+            return True
+        # NO AUTH
+        if "Grafana" in response.text and "login" not in response.url:
+            with valid_lock:
+                with open(NV_SUCCESS, "a") as file:
+                    file.write(f"{url} => GRAFANA NO AUTH\n")
+            print(f"{url}{f' | {hostname}' if hostname else ''} => Grafana NO AUTH")
+            return True
+        if "Loading Elastic" in response.text and "spaces/space_selector" in response.url:
+            with valid_lock:
+                with open(NV_SUCCESS, "a") as file:
+                    file.write(f"{url} => ELASTIC NO AUTH\n")
+            print(f"{url}{f' | {hostname}' if hostname else ''} => Elastic NO AUTH")
+            return True
+        if "WebSphere Integrated Solutions Console" in response.text and "Password" not in response.text:
+            with valid_lock:
+                with open(NV_SUCCESS, "a") as file:
+                    file.write(f"{url} => WebSphere Integrated Solutions Console NO AUTH\n")
+            print(f"{url}{f' | {hostname}' if hostname else ''} => WebSphere Integrated Solutions Console NO AUTH")
+            return True
 
-            # If it is login page, we check if its known bad
-            if did_process:
-                return
-            else:
-                # If there was no login page we try to enumerate common directories to find a login page
-                for u in urls_to_try:
-                    real_check(url, response, templates2, hostname)
-                return
+        for zz in templates:
+            try:
+                result: URL_STATUS = zz.check(url, response.text, False)
+                if result == URL_STATUS.VALID:
+                    return True
+
+            except TimeoutError as timeout:
+                with error_lock:
+                    with open(NV_ERROR, "a") as file:
+                        file.write(f"{url}{f' | {hostname}' if hostname else ''} => Timeout\n")
+                        return True
+            except Exception as e:
+                with error_lock:
+                    with open(NV_ERROR, "a") as file:
+                        file.write(f"{url}{f' | {hostname}' if hostname else ''} => {e.__class__.__name__} {e}\n")
+                        return True
                     
-        if response.status_code >= 400:
-            if check_basic_auth(response):
-                with _401_lock:
-                    with open(NV_401, "a") as file:
-                        file.write(f"{url}{f' | {hostname}' if hostname else ''}\n")
-            if response.status_code in [404]:
-                try:
-                    for t in templates2:
-                        if t.need404:
-                            result: URL_STATUS = t.check(url, response.text, False)
-                            if result == URL_STATUS.VALID:
-                                return
-                except Exception as e:
-                    pass
-            for u in urls_to_try:
-                response = requests.get(url + u, allow_redirects=True, verify=False, timeout=15)
-                if response.status_code in [200] and check_if_loginpage_exists(response):
-                    real_check(url, response, templates2, hostname)
-                    return
-
-            if verbose:
-                print(f"{url} => {response.status_code}")
-            with error_lock:
-                with open(NV_ERROR, "a") as file:
-                    file.write(f"{url}{f' | {hostname}' if hostname else ''} => {response.status_code}\n")
-            return
+        for u in urls_to_try:
+            response = requests.get(url + u, allow_redirects=True, verify=False, timeout=REQUESTS_TIMEOUT)
+            if response.status_code in [200] and check_if_loginpage_exists(response):
+                with no_template_lock:
+                    with open(NV_NO_TEMPLATE, "a") as file:
+                        title = find_title(None, response.text)
+                        file.write(f"{url}{u}{f' | {hostname}' if hostname else ''}{f' => {title}' if title else ''}\n")
+                    return True
+                
+        with error_lock:
+            with open(NV_ERROR, "a") as file:
+                file.write(f"{url}{f' | {hostname}' if hostname else ''} => {response.status_code}\n")
 
     except requests.exceptions.ConnectTimeout as e:
         with error_lock:
