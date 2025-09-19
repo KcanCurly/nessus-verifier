@@ -723,21 +723,9 @@ def authcheck(url, templates: list[type[SiteTemplateBase]], verbose, wasprocesse
             return
 
         for zz in templates2:
-            try:
-                result: URL_STATUS = zz.check(url, response.text, False)
-                if result == URL_STATUS.VALID:
-                    return
-
-            except TimeoutError as timeout:
-                with error_lock:
-                    with open(NV_ERROR, "a") as file:
-                        file.write(f"{url}{f' | {hostname}' if hostname else ''} => Timeout\n")
-                        return
-            except Exception as e:
-                with error_lock:
-                    with open(NV_ERROR, "a") as file:
-                        file.write(f"{url}{f' | {hostname}' if hostname else ''} => {e.__class__.__name__} {e}\n")
-                        return
+            result: URL_STATUS = zz.check(url, response.text, False)
+            if result == URL_STATUS.VALID:
+                return
                     
         for u in urls_to_try:
             response = requests.get(url + u, allow_redirects=True, verify=False, timeout=REQUESTS_TIMEOUT)
@@ -748,9 +736,14 @@ def authcheck(url, templates: list[type[SiteTemplateBase]], verbose, wasprocesse
                         file.write(f"{url}{u}{f' | {hostname}' if hostname else ''}{f' => {title}' if title else ''}\n")
                 return
                 
-        with error_lock:
-            with open(NV_ERROR, "a") as file:
-                file.write(f"{url}{f' | {hostname}' if hostname else ''} => {response.status_code}\n")
+        if response.status_code in [200]:
+            with open(NV_NO_TEMPLATE, "a") as file:
+                title = find_title(None, response.text)
+                file.write(f"{url}{u}{f' | {hostname}' if hostname else ''}{f' => {title}' if title else ''}\n")
+        else:
+            with error_lock:
+                with open(NV_ERROR, "a") as file:
+                    file.write(f"{url}{f' | {hostname}' if hostname else ''} => {response.status_code}\n")
 
     except requests.exceptions.ConnectTimeout as e:
         with error_lock:
@@ -761,6 +754,11 @@ def authcheck(url, templates: list[type[SiteTemplateBase]], verbose, wasprocesse
         with error_lock:
             with open(NV_ERROR, "a") as file:
                 file.write(f"{url}{f' | {hostname}' if hostname else ''} => ReadTimeout\n")
+        return
+    except requests.exceptions.ConnectionError as e:
+        with error_lock:
+            with open(NV_ERROR, "a") as file:
+                file.write(f"{url}{f' | {hostname}' if hostname else ''} => ConnectionError\n")
         return
     except Exception as e:
         with error_lock:
