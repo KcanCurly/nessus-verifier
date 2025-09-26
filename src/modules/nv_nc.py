@@ -74,7 +74,7 @@ def main():
     subparsers = parser.add_subparsers(dest="command")  # Create subparsers
     parser_ssl = subparsers.add_parser("ssl", help="Runs with ssl")
     parser_ssl.add_argument("-f", "--file", type=str, required=True, help="Path to a file containing a list of hosts, each in 'ip:port' format, one per line.")
-    parser_ssl.add_argument("-o", "--output", type=str, default="nv-nc-output.txt", help="Output file. (Default: nv-nc-output.txt)")
+    parser_ssl.add_argument("-o", "--output", type=str, default="nv-nc-ssl-output.txt", help="Output file. (Default: nv-nc-ssl-output.txt)")
     parser_ssl.add_argument("--message", type=str, default="info", help="Message to send for bannger grab.")
     parser_ssl.add_argument("--timeout", type=int, default=3, help="Timeout for socket connection (default: 3 seconds).")
     parser_ssl.add_argument("--threads", type=int, default=10, help="Amount of threads (Default = 10).")
