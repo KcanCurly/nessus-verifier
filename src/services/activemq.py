@@ -39,7 +39,7 @@ def main():
     
     subparsers = parser.add_subparsers(dest="command")  # Create subparsers
     
-    parser_all = subparsers.add_parser("all", help="Runs all modules (Except post module")
+    parser_all = subparsers.add_parser("all", help="Runs all modules (Except post module)")
     parser_all.add_argument("-f", "--file", type=str, required=True, help="input file name")
     parser_all.add_argument("-u", "--username", type=str, default="postgres", help="Username (Default = postgres)")
     parser_all.add_argument("-p", "--password", type=str, default="", help="Username (Default = '')")
