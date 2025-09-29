@@ -1252,7 +1252,7 @@
   
 - name: NFS
   id: 15
-  plugin-ids: [42256, 10437, 11356, 15984]
+  plugin-ids: [42256, 11356, 15984]
   # 42256 - NFS Shares World Readable
   # 11356 - NFS Exported Share Information Disclosure
   # 15984 - NFS Share User Mountable
@@ -1281,7 +1281,7 @@
 
 - name: iDRAC
   id: 19
-  plugin-ids: [161798, 213382, 213383, 51185, 136341, 162428, 189899, 159643, 193888, 182918, 
+  plugin-ids: [161798, 213382, 213383, 136341, 162428, 189899, 159643, 193888, 182918, 
   205387, 148955, 167509, 144756, 501906, 90265, 177843, 161799, 119833, 167508, 202259, 
   174982, 131730, 161800, 148956, 111604, 109208, 501895, 501923, 501894, 161797, 80442, 
   135187, 501929, 501926, 501914, 122887, 94515, 87013, 501904, 139206, 68905, 70411, 501924, 
@@ -1290,7 +1290,6 @@
   # 161798 - Dell EMC iDRAC8 < 2.80.80.80 / Dell EMC iDRAC9 < 4.40.40.00 (DSA-2021-177)
   # 213382 - Dell iDRAC Detected
   # 213383 - Dell iDRAC Device Detection
-  # 51185 - Dell Integrated Remote Access Controller (iDRAC) Detection
   # 136341 - Dell EMC Data Protection Central Installed (Linux)
   # 162428 - Dell EMC iDRAC8 < 2.83.83.83 / Dell EMC iDRAC9 < 5.10.30.00 (DSA-2022-154)
   # 189899 - Dell iDRAC Service Module < 5.3.0.0 Privilege Escalation
@@ -1811,7 +1810,7 @@
 - name: Elasticsearch
   id: 25
   plugin-ids: [112040, 117665, 192892, 214589, 112043, 112045, 112038, 121249, 112046, 
-  112041, 101025, 200480, 112044, 112037, 118799, 112042, 119499, 112039, 122973, 109941, 9778]
+  112041, 200480, 112044, 112037, 118799, 112042, 119499, 112039, 122973, 109941, 9778]
   # 112040 - Elasticsearch ESA-2017-10
   # 117665 - Elasticsearch ESA-2018-15
   # 192892 - Elasticsearch 8.4.0 < 8.11.1 DoS (ESA-2024-05)
@@ -1822,7 +1821,6 @@
   # 121249 - Elasticsearch ESA-2018-19
   # 112046 - Elasticsearch ESA-2018-11
   # 112041 - Elasticsearch ESA-2017-15
-  # 101025 - Elasticsearch Unrestricted Access Information Disclosure
   # 200480 - Elasticsearch 8.13.1 <= 8.13.4 DoS (ESA-2024-14)
   # 112044 - Elasticsearch ESA-2018-07
   # 112037 - Elasticsearch ESA-2017-03

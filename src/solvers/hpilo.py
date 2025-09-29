@@ -32,7 +32,8 @@ class HPiLOSolverClass(BaseSolverClass):
     def solve_version(self, hosts, threads, timeout, errors, verbose):
         versions: dict[str, set[Host]] = {}
         results: list[Version_Vuln_Host_Data] = get_default_context_execution("HP iLO Version", threads, hosts, (self.solve_version_single, timeout, errors, verbose))
-        all_cves =set()
+        all_cves = set()
+
         for r in results:
             if r.version not in versions:
                 versions[r.version] = set()
@@ -42,6 +43,7 @@ class HPiLOSolverClass(BaseSolverClass):
             self.print_output("Detected HP iLO versions:")
             versions = dict(sorted(versions.items(), reverse=True))
             for key, value in versions.items():
+                cves = []
                 major, minor = key.split(" - ")
                 major = major.replace("iLO ", "")
                 if int(major) <= 4:
@@ -49,9 +51,10 @@ class HPiLOSolverClass(BaseSolverClass):
                 else:
                     cpe1 = f"cpe:2.3:o:hp:integrated_lights-out_{major}:{minor}"
                     cpe2 = f"cpe:2.3:o:hp:integrated_lights-out_{major}_firmware:{minor}"
-                    cves = get_cves(cpe1)
-                    if not cves:
-                        cves = get_cves(cpe2)
+                    if self.print_cves:
+                        cves = get_cves(cpe1)
+                        if not cves:
+                            cves = get_cves(cpe2)
                     if cves:
                         all_cves.update(cves)
                         self.print_output(f"HPE {key} ({", ".join(cves)}):")

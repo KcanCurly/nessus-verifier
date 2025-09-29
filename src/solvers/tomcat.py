@@ -31,10 +31,12 @@ class TomcatSolverClass(BaseSolverClass):
             total_cves = []
             self.print_output("Detected Apache Tomcat Versions:")
             for key, value in versions.items():
+                cves = []
                 if key.startswith("8"): 
                     self.print_output(f"Apache Tomcat/{key} (EOL):")
                 else:
-                    cves = get_cves(f"cpe:2.3:a:apache:tomcat:{key}")
+                    if self.print_cves:
+                        cves = get_cves(f"cpe:2.3:a:apache:tomcat:{key}")
                     if cves: 
                         all_cves.update(cves)
                         self.print_output(f"Apache Tomcat {key} ({", ".join(cves)}):")

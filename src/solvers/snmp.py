@@ -11,6 +11,7 @@ class SNMPSolverClass(BaseSolverClass):
     def solve(self, args):
         self.process_args(args)
 
+
         if not self.hosts: 
             return
         SNMPDefaultSubServiceClass().nv(self.hosts, threads=args.threads, timeout=args.timeout, errors=args.errors, verbose=args.verbose, output=self.output)

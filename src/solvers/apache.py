@@ -34,13 +34,16 @@ class ApacheSolverClass(BaseSolverClass):
                 versions[r.version] = set()
             versions[r.version].add(r.host)
         all_cves = set()
+
         if versions:
             versions = dict(
                 sorted(versions.items(), key=lambda x: parse(x[0]), reverse=True)
             )
             self.print_output("Detected Apache Versions:")
             for key, value in versions.items():
-                cves = get_cves(f"cpe:2.3:a:apache:http_server:{key}", cves_to_skip=shodan_cves_to_skip)
+                cves = []
+                if self.print_cves:
+                    cves = get_cves(f"cpe:2.3:a:apache:http_server:{key}", cves_to_skip=shodan_cves_to_skip)
                 if cves: 
                     self.print_output(f"Apache/{key} ({", ".join(cves)}):")
                 else: self.print_output(f"Apache/{key}:")

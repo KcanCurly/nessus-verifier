@@ -34,7 +34,8 @@ class KibanaSolverClass(BaseSolverClass):
         versions: dict[str, set[Host]] = {}
         results: list[Version_Vuln_Host_Data] = get_default_context_execution("Kibana Version", threads, hosts, (self.solve_version_single, timeout, errors, verbose))
         
-        all_cves =set()
+        all_cves = set()
+        
 
         for r in results:
             if r.version not in versions:
@@ -48,7 +49,9 @@ class KibanaSolverClass(BaseSolverClass):
 
             self.print_output("Detected Kibana Versions:")
             for key, value in versions.items():
-                cves = get_cves(f"cpe:2.3:a:elastic:kibana:{key}")
+                cves = []
+                if self.print_cves:
+                    cves = get_cves(f"cpe:2.3:a:elastic:kibana:{key}")
                 if cves: 
                     all_cves.update(cves)
                     self.print_output(f"Kibana {key} ({", ".join(cves)}):")

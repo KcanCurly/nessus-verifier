@@ -40,7 +40,8 @@ class IBMWebSphereSolverClass(BaseSolverClass):
     def solve_version(self, hosts, threads: int, timeout: int, errors: bool, verbose: bool):
         versions: dict[str, set[Host]] = {}
         results: list[Version_Vuln_Host_Data] = get_default_context_execution("IBM WebSphere Version", threads, hosts, (self.solve_version_single, timeout, errors, verbose))
-        all_cves =set()
+        all_cves = set()
+
         for r in results:
             if r.version not in versions:
                 versions[r.version] = set()
@@ -50,14 +51,18 @@ class IBMWebSphereSolverClass(BaseSolverClass):
             versions = dict(sorted(versions.items(), reverse=True))
             self.print_output("Detected IBM WebSphere Versions:")
             for key, value in versions.items():
+                cves = []
                 cpe1 = f"cpe:2.3:a:ibm:websphere_application_server:{key}:*:*:*:liberty"
                 cpe2 = f"cpe:2.3:a:ibm:websphere_application_server:{key}"
-                cves = get_cves(cpe1)
-                if not cves:
-                    cves = get_cves(cpe2)
+                if self.print_cves:
+                    cves = get_cves(cpe1)
+                    if not cves:
+                        cves = get_cves(cpe2)
                 if cves:
                     all_cves.update(cves)
-                self.print_output(f"{key}:")
+                    self.print_output(f"{key} ({", ".join(cves)}):")
+                else:
+                    self.print_output(f"{key}:")
                 for v in value:
                     self.print_output(f"    {v}")
             self.create_windowcatcher_action()

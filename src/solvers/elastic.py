@@ -37,14 +37,17 @@ class ElasticsearchSolverClass(BaseSolverClass):
             if r.version not in versions:
                 versions[r.version] = set()
             versions[r.version].add(r.host)
-        all_cves =set()
+        all_cves = set()
+
         if versions:       
             versions = dict(
                 sorted(versions.items(), key=lambda x: parse(x[0]), reverse=True)
             )
             self.print_output("Elastic versions detected:")
             for key, value in versions.items():
-                cves = get_cves(f"cpe:2.3:a:elastic:elasticsearch:{key}")
+                cves = []
+                if self.print_cves:
+                    cves = get_cves(f"cpe:2.3:a:elastic:elasticsearch:{key}")
                 if cves:
                     all_cves.update(cves)
                     self.print_output(f"Elasticsearch {key} ({", ".join(cves)}):")

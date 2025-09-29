@@ -36,7 +36,7 @@ class JenkinsSolverClass(BaseSolverClass):
     def solve_version(self, hosts: list[Host], threads: int, timeout: int, errors, verbose):
         versions: dict[str, set[Host]] = {}
         results: list[Version_Vuln_Host_Data] = get_default_context_execution("Jenkins Version", threads, hosts, (self.solve_version_single, timeout, errors, verbose))
-        all_cves =set()
+        all_cves = set()
         for r in results:
             if r.version not in versions:
                 versions[r.version] = set()
@@ -48,10 +48,12 @@ class JenkinsSolverClass(BaseSolverClass):
                 sorted(versions.items(), key=lambda x: parse(x[0]), reverse=True)
             )
             for key, value in versions.items():
+                cves = []
                 if compare_versions(key, "2.492") == -1:
                     self.print_output(f"Jenkins {key} (EOL):")
                 else:
-                    cves = get_cves(f"cpe:2.3:a:jenkins:jenkins:{key}")
+                    if self.print_cves:
+                        cves = get_cves(f"cpe:2.3:a:jenkins:jenkins:{key}")
                     if cves: 
                         self.print_output(f"Jenkins {key} ({", ".join(cves)}):")
                     else: 

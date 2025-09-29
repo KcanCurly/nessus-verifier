@@ -55,7 +55,9 @@ class PHPSolverClass(BaseSolverClass):
             )
             self.print_output("Detected PHP versions:")
             for key, value in versions.items():
-                cves = get_cves(f"cpe:2.3:a:php:php:{key}")
+                cves = []
+                if self.print_cves:
+                    cves = get_cves(f"cpe:2.3:a:php:php:{key}")
                 if cves: 
                     self.print_output(f"PHP {key} ({", ".join(cves)}):")
                 else: 
