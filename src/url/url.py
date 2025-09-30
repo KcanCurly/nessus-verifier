@@ -165,6 +165,12 @@ chatgpt_admin_paths = [
     "/management",
 ]
 
+info_urls = [
+    "/config",
+    "/pipeline",
+    "/pipelines"
+]
+
 urls_to_try = [
     "/auth/admin/master/console",
     "/admin",
@@ -217,6 +223,7 @@ urls_to_try = [
     "/zabbix",
     "/i",
     "/desktop",
+    "/controller",
     ]
 
 def extract_version(url, response):
@@ -267,7 +274,7 @@ def check_if_loginpage_exists(response):
     try:
         soup = BeautifulSoup(response.text, 'html.parser')
         input_fields = soup.find_all('input')
-        has_password = any(field.get('type') == 'password' for field in input_fields) # type: ignore
+        has_password = any(field.get('type') == 'password' or field.get('type') == 'submit' or field.get('type') == 'username' or field.get('type') == 'email' for field in input_fields) # type: ignore
         if has_password: return True
         return False
     except: return False
@@ -659,7 +666,6 @@ def authcheck(url, templates: list[type[SiteTemplateBase]], verbose, wasprocesse
             with js_lock:
                 with open(NV_REQUIRE_JS, "a") as file:
                     file.write(f"{url}{f' | {hostname}' if hostname else ''}\n")
-            return
 
         if response.headers.get("Content-Length") == "0" or response.text.lower() == "ok" or response.text.lower() == "hello world!":
             with known_bads_lock:
@@ -724,7 +730,7 @@ def authcheck(url, templates: list[type[SiteTemplateBase]], verbose, wasprocesse
 
         for zz in templates2:
             result: URL_STATUS = zz.check(url, response.text, False)
-            if result == URL_STATUS.VALID:
+            if result != URL_STATUS.NOT_RECOGNIZED:
                 return
                     
         for u in urls_to_try:
