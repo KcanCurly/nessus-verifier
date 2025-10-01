@@ -224,6 +224,8 @@ urls_to_try = [
     "/i",
     "/desktop",
     "/controller",
+    "/solaris",
+    "/platform-ui",
     ]
 
 def extract_version(url, response):
