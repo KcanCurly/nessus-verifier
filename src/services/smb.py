@@ -139,20 +139,26 @@ class SMBNullGuestSubServiceClass(BaseSubServiceClass):
         ip = host.ip
         port = host.port
 
-        guest_vuln = {}
-
-        conn = pysmbconn.SMBConnection('guest', '', '', '', is_direct_tcp=True)
-        if conn.connect(ip, 445): 
-            shares = conn.listShares()
-            for share in shares:
-                try:
-                    files = conn.listPath(share.name, "/")
-                    guest_vuln[share.name] = []
-                    for file in files:
-                        if file.filename == "." or file.filename == "..": continue
-                        guest_vuln[share.name].append(file.filename)
-                except Exception: pass
-        return NullGuest_Vuln_Data(host, None, guest_vuln)
+        # Get NetBIOS of the remote computer
+        command = ["nmblookup", "-A", ip]
+        result = subprocess.run(command, text=True, capture_output=True, timeout=self.timeout)
+        netbios_re = r"\s+(.*)\s+<20>"
+        
+        s = re.search(netbios_re, result.stdout)
+        if s:
+            nbname = s.group()
+            conn = pysmbconn.SMBConnection('guest', '', '', nbname, is_direct_tcp=True)
+            if conn.connect(ip, 445): 
+                shares = conn.listShares()
+                for share in shares:
+                    try:
+                        files = conn.listPath(share.name, "/")
+                        guest_vuln[share.name] = []
+                        for file in files:
+                            if file.filename == "." or file.filename == "..": continue
+                            guest_vuln[share.name].append(file.filename)
+                    except Exception: pass
+            return NullGuest_Vuln_Data(host, None, guest_vuln)
         
     @error_handler(["host"])
     def single_null(self, host, **kwargs):
@@ -160,18 +166,26 @@ class SMBNullGuestSubServiceClass(BaseSubServiceClass):
         port = host.port
 
         null_vuln = {}
-        conn = pysmbconn.SMBConnection('', '', '', '', is_direct_tcp=True)
-        if conn.connect(ip, 445): 
-            shares = conn.listShares()
-            for share in shares:
-                try:
-                    files = conn.listPath(share.name, "/")
-                    null_vuln[share.name] = []
-                    for file in files:
-                        if file.filename == "." or file.filename == "..": continue
-                        null_vuln[share.name].append(file.filename)
-                except Exception: pass
-        return NullGuest_Vuln_Data(host, null_vuln, None)
+        # Get NetBIOS of the remote computer
+        command = ["nmblookup", "-A", ip]
+        result = subprocess.run(command, text=True, capture_output=True, timeout=self.timeout)
+        netbios_re = r"\s+(.*)\s+<20>"
+        
+        s = re.search(netbios_re, result.stdout)
+        if s:
+            nbname = s.group()
+            conn = pysmbconn.SMBConnection('', '', '', nbname, is_direct_tcp=True)
+            if conn.connect(ip, 445): 
+                shares = conn.listShares()
+                for share in shares:
+                    try:
+                        files = conn.listPath(share.name, "/")
+                        null_vuln[share.name] = []
+                        for file in files:
+                            if file.filename == "." or file.filename == "..": continue
+                            null_vuln[share.name].append(file.filename)
+                    except Exception: pass
+            return NullGuest_Vuln_Data(host, null_vuln, None)
 
 class SMBSignSubServiceClass(BaseSubServiceClass):
     def __init__(self) -> None:
