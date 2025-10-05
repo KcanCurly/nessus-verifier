@@ -39,7 +39,7 @@ class BaseSolverClass():
             self.output = self.args.output
         if hasattr(args, "output_directory") and self.args.output_directory:
             self.output += self.args.output_directory + "/" + self.output_filename_for_all
-        if hasattr(args, "print_cve") and args.print_cves:
+        if hasattr(args, "print_cve") and args.print_cve:
             self.print_cves = True
         if hasattr(args, "print_latest_version") and args.print_latest_version:
             self.print_latest_version = True
