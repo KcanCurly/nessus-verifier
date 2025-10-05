@@ -175,14 +175,15 @@ class VmwareSolverClass(BaseSolverClass):
                     self.print_output(f"{cve}:")
                     for link in links:
                         self.print_output(link)
-            latest_versions = utilities.get_latest_version("vcenter")
-            if latest_versions:
-                self.print_output(f"Latest version for vcenter")
-                for version in latest_versions:
-                    self.print_output(version)
-            latest_versions = utilities.get_latest_version("esxi")
-            if latest_versions:
-                self.print_output(f"Latest version for esxi")
-                for version in latest_versions:
-                    self.print_output(version)
+            if self.print_latest_version:
+                latest_versions = utilities.get_latest_version("vcenter")
+                if latest_versions:
+                    self.print_output(f"Latest version for vcenter")
+                    for version in latest_versions:
+                        self.print_output(version)
+                latest_versions = utilities.get_latest_version("esxi")
+                if latest_versions:
+                    self.print_output(f"Latest version for esxi")
+                    for version in latest_versions:
+                        self.print_output(version)
 

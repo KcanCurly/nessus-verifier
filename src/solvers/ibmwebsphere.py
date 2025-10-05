@@ -72,6 +72,7 @@ class IBMWebSphereSolverClass(BaseSolverClass):
                     self.print_output(f"{cve}:")
                     for link in links:
                         self.print_output(link)
-            self.print_output("Latest version")
-            self.print_output("https://www.ibm.com/support/pages/recommended-updates-websphere-application-server")
+            if self.print_latest_version:
+                self.print_output("Latest version")
+                self.print_output("https://www.ibm.com/support/pages/recommended-updates-websphere-application-server")
             

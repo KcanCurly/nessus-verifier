@@ -71,8 +71,9 @@ class PHPSolverClass(BaseSolverClass):
                     self.print_output(f"{cve}:")
                     for link in links:
                         self.print_output(link)
-            latest_versions = self.get_latest_version()
-            if latest_versions:
-                self.print_output(f"Latest version for {self.eol_product_name}")
-                for version in latest_versions:
-                    self.print_output(version)
+            if self.print_latest_version:
+                latest_versions = self.get_latest_version()
+                if latest_versions:
+                    self.print_output(f"Latest version for {self.eol_product_name}")
+                    for version in latest_versions:
+                        self.print_output(version)
