@@ -42,11 +42,10 @@ class ApacheSolverClass(BaseSolverClass):
             for key, value in versions.items():
                 cves = []
                 if self.print_cves:
-                    print("Y")
                     cves = get_cves(f"cpe:2.3:a:apache:http_server:{key}", cves_to_skip=shodan_cves_to_skip)
                 if cves: 
-                    self.print_output(f"Apache/{key} ({", ".join(cves)}):")
-                else: self.print_output(f"Apache/{key}:")
+                    self.print_output(f"Apache {key} ({", ".join(cves)}):")
+                else: self.print_output(f"Apache {key}:")
                 for v in value:
                     self.print_output(f"    {v}")
             self.create_windowcatcher_action()
