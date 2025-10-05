@@ -23,8 +23,7 @@ class ApacheSolverClass(BaseSolverClass):
 
         if not self.hosts:
             return
-        if self.is_nv:
-            self.solve_version(self.hosts, args.threads, args.timeout, args.errors, args.verbose)
+        self.solve_version(self.hosts, args.threads, args.timeout, args.errors, args.verbose)
 
     def solve_version(self, hosts, threads, timeout, errors, verbose):
         versions = {}
