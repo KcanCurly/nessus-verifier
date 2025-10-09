@@ -515,7 +515,7 @@ class OracleLightsoutManagerTemplate(SiteTemplateBase):
                         match = re.search(r'"loginToken", "(.*?)"\);', script.string) # type: ignore
                         login_token = match.group(1) # type: ignore
 
-                        res = requests.post(base_url + extra1, timeout=10, data={"username" : username, "password": password, "loginToken": login_token}, verify=False, timeout=15, cookies=cookies)
+                        res = requests.post(base_url + extra1, data={"username" : username, "password": password, "loginToken": login_token}, verify=False, timeout=15, cookies=cookies)
 
                         if "/iPages/suntab.asp" in res.text and res.status_code == 200:
                             self.on_success(url, hostname, username, password)
