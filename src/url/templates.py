@@ -70,7 +70,7 @@ class ArisconnectTemplate(SiteTemplateBase):
             username = "system"
             password = "manager"
 
-            res = requests.post(url + "/copernicus/default/service/login", verify=False, data={"schema": "0", "alias":username, "password": password})
+            res = requests.post(url + "/copernicus/default/service/login", verify=False, timeout=10, data={"schema": "0", "alias":username, "password": password})
             
             if "SUCCESSFUL" in res.text:
                 self.on_success(url, hostname, username, password)
@@ -96,7 +96,7 @@ class FlexNetPublishTemplate(SiteTemplateBase):
             username = "admin"
             password = "admin"
 
-            res = requests.post(url + "/handlesignin", verify=False, data={"username":username, "password":password}, allow_redirects=False)
+            res = requests.post(url + "/handlesignin", verify=False, timeout=10, data={"username":username, "password":password}, allow_redirects=False)
 
             if not "You successfully signed in" in res.text:
                     self.on_success(url, hostname, username, password)
@@ -125,7 +125,7 @@ class FortigateTemplate(SiteTemplateBase):
             password = "admin"
             hostname = hostname = SiteTemplateBase.get_dns_name(url)
 
-            res = requests.post(url + "/logincheck", data={"username" : username, "password": password}, verify=False)
+            res = requests.post(url + "/logincheck", timeout=10, data={"username" : username, "password": password}, verify=False)
             if (
                 "Authentication failure" not in res.text and
                 "Unable to contact server" not in res.text and
@@ -156,7 +156,7 @@ class GrafanaTemplate(SiteTemplateBase):
             extra = "/login"
 
 
-            res = requests.post(url + extra, json={"user" : username, "password": password}, verify=False)
+            res = requests.post(url + extra, timeout=10, json={"user" : username, "password": password}, verify=False)
 
             if "Logged in" in res.text:
                 self.on_success(url, hostname, username, password)
@@ -182,7 +182,7 @@ class HighAvailabilityManagementTemplate(SiteTemplateBase):
             username = "hacluster"
             password = "hacluster"
 
-            res = requests.post(url + "/login", allow_redirects=False, verify=False, data={"username":username, "password": password, "Login": "Login"})
+            res = requests.post(url + "/login", allow_redirects=False, timeout=10, verify=False, data={"username":username, "password": password, "Login": "Login"})
 
             if res.headers["Location"] == "/manage":
                 self.on_success(url, hostname, username, password)
@@ -208,7 +208,7 @@ class JHipsterRegistryManagementTemplate(SiteTemplateBase):
             username = "admin"
             password = "admin"
 
-            res = requests.post(url + "/authenticate", verify=False, data={"username":username, "password":password})
+            res = requests.post(url + "/authenticate", verify=False, timeout=10, data={"username":username, "password":password})
 
             if res.status_code not in [401]:
                 self.on_success(url, hostname, username, password)
@@ -243,7 +243,7 @@ class iDRACTemplate(SiteTemplateBase):
                 match = re.match(pattern, url)
                 base_url = match.group(1) # type: ignore
 
-            res = requests.post(base_url + extra, verify=False, headers={"user":username, "password": password}) # type: ignore
+            res = requests.post(base_url + extra, verify=False, timeout=10, headers={"user":username, "password": password}) # type: ignore
 
             if '"authResult" : 7' in res.text:
                     self.on_success(url, hostname, username, password)
@@ -269,7 +269,7 @@ class IPECSIPPhoneTemplate(SiteTemplateBase):
             username = "admin"
             password = "ipkts"
 
-            res = requests.get(url + "/web/home.asp", verify=False, auth=HTTPDigestAuth(username, password))
+            res = requests.get(url + "/web/home.asp", verify=False, timeout=10, auth=HTTPDigestAuth(username, password))
 
             if not "Unauthorized" in res.text:
                     self.on_success(url, hostname, username, password)
@@ -300,7 +300,7 @@ class IRISIDICAMTemplate(SiteTemplateBase):
             match = re.match(pattern, url)
             base_url = match.group(1) # type: ignore
 
-            res = requests.post(base_url + extra, allow_redirects=False, verify=False, data={"username":username, "password": password, "logoutBtn": "1"})
+            res = requests.post(base_url + extra, allow_redirects=False, timeout=10, verify=False, data={"username":username, "password": password, "logoutBtn": "1"})
 
             if "Invalid username or password" not in res.text:
                     self.on_success(url, hostname, username, password)
@@ -326,7 +326,7 @@ class LogparseTemplate(SiteTemplateBase):
             username = "admin"
             password = "admin"
 
-            res = requests.post(url, allow_redirects=False, verify=False, data={"eposta":username, "password": password, "login": ""})
+            res = requests.post(url, allow_redirects=False, timeout=10, verify=False, data={"eposta":username, "password": password, "login": ""})
 
             if "Kullanıc adı veya şifreyi hatalı girdiniz" not in res.text:
                     self.on_success(url, hostname, username, password)
@@ -401,7 +401,7 @@ class NetscalerConsoleTemplate(SiteTemplateBase):
             match = re.match(pattern, url)
             base_url = match.group(1) # type: ignore
 
-            res = requests.post(base_url + extra, verify=False, headers={"NITRO_WEB_APPLICATION": "true", "Content-Type": "application/x-www-form-urlencoded"}, data=f"object=%7B%22login%22%3A%7B%22username%22%3A%22{username}%22%2C%22password%22%3A%22{password}%22%7D%7D")
+            res = requests.post(base_url + extra, verify=False, timeout=10, headers={"NITRO_WEB_APPLICATION": "true", "Content-Type": "application/x-www-form-urlencoded"}, data=f"object=%7B%22login%22%3A%7B%22username%22%3A%22{username}%22%2C%22password%22%3A%22{password}%22%7D%7D")
 
             if not "Invalid username or password" in res.text:
                     self.on_success(url, hostname, username, password)
@@ -430,14 +430,14 @@ class NexthinkConsoleTemplate(SiteTemplateBase):
 
             token_re = r"name=\"csrf_nexthink_token\" value=\"(.*)\" " 
 
-            res1 = requests.get(url, verify=False)
+            res1 = requests.get(url, timeout=10, verify=False)
 
             match = re.search(token_re, res1.text)
 
             if match:
                 token = match.group(1)
 
-                res = requests.post(url + "/", verify=False, data={"csrf_nexthink_token":token, "username": username, "password": password, "login": "Sign+In"})
+                res = requests.post(url + "/", verify=False, timeout=10, data={"csrf_nexthink_token":token, "username": username, "password": password, "login": "Sign+In"})
 
                 if not "Authentication failed! Your username and/or password is invalid" in res.text:
                         self.on_success(url, hostname, username, password)
@@ -469,7 +469,7 @@ class OpinnateTemplate(SiteTemplateBase):
             match = re.match(pattern, url)
             base_url = match.group(1) # type: ignore
 
-            res = requests.post(base_url + extra, verify=False, data={"username":username, "password": password})
+            res = requests.post(base_url + extra, verify=False, timeout=10, data={"username":username, "password": password})
 
             if 'Login Succesfull' in res.text:
                     self.on_success(url, hostname, username, password)
@@ -515,7 +515,7 @@ class OracleLightsoutManagerTemplate(SiteTemplateBase):
                         match = re.search(r'"loginToken", "(.*?)"\);', script.string) # type: ignore
                         login_token = match.group(1) # type: ignore
 
-                        res = requests.post(base_url + extra1, data={"username" : username, "password": password, "loginToken": login_token}, verify=False, timeout=15, cookies=cookies)
+                        res = requests.post(base_url + extra1, timeout=10, data={"username" : username, "password": password, "loginToken": login_token}, verify=False, timeout=15, cookies=cookies)
 
                         if "/iPages/suntab.asp" in res.text and res.status_code == 200:
                             self.on_success(url, hostname, username, password)
@@ -543,7 +543,7 @@ class StoredIQTemplate(SiteTemplateBase):
             username = "admin"
             password = "admin"
 
-            res = requests.post(url + "/login", verify=False, data={"email":username, "password": password})
+            res = requests.post(url + "/login", verify=False, timeout=10, data={"email":username, "password": password})
 
             if "Log in failed" not in res.text:
                     self.on_success(url, hostname, username, password)
@@ -569,7 +569,7 @@ class StorwareTemplate(SiteTemplateBase):
             username = "admin"
             password = "vPr0tect"
             extra = "/api/session/login"
-            res = requests.post(url + extra, json={"login" : username, "password": password}, verify=False)
+            res = requests.post(url + extra, timeout=10, json={"login" : username, "password": password}, verify=False)
 
             if res.status_code not in ["401"]:
                     self.on_success(url, hostname, username, password)
@@ -595,7 +595,7 @@ class SynergySkyTemplate(SiteTemplateBase):
             username = "admin@localhost"
             password = "Newpassword6"
 
-            res = requests.get(url + "/config", verify=False, auth=(username, password))
+            res = requests.get(url + "/config", timeout=10, verify=False, auth=(username, password))
 
             if res.status_code in [200]:
                     self.on_success(url, hostname, username, password)
@@ -649,7 +649,7 @@ class WatsonTemplate(SiteTemplateBase):
             username = "admin"
             password = "admin"
 
-            res = requests.post(url, verify=False, data={"username":username, "password": password})
+            res = requests.post(url, verify=False, timeout=10, data={"username":username, "password": password})
 
             if not "Authentication failed" in res.text:
                     self.on_success(url, hostname, username, password)
@@ -675,7 +675,7 @@ class XormonTemplate(SiteTemplateBase):
             username = "admin@xormon.com"
             password = "xorux4you"
 
-            res = requests.post(url + "/login", verify=False, data={"username":username, "password":password})
+            res = requests.post(url + "/login", timeout=10, verify=False, data={"username":username, "password":password})
 
             if res.status_code != "401":
                     self.on_success(url, hostname, username, password)
@@ -701,7 +701,7 @@ class XoruxTemplate(SiteTemplateBase):
             username = "admin"
             password = "admin"
 
-            res = requests.get(url + "/lpar2rrd/", verify=False, auth=(username, password))
+            res = requests.get(url + "/lpar2rrd/", timeout=10, verify=False, auth=(username, password))
 
             if not "Unauthorized" in res.text:
                 self.on_success(url, hostname, username, password)
@@ -712,7 +712,7 @@ class XoruxTemplate(SiteTemplateBase):
 
             found = False
 
-            res = requests.get(url + "/stor2rrd/", verify=False, auth=(username, password))
+            res = requests.get(url + "/stor2rrd/", timeout=10, verify=False, auth=(username, password))
 
             if not "Unauthorized" in res.text:
                 self.on_success(url, hostname, username, password)
@@ -722,7 +722,7 @@ class XoruxTemplate(SiteTemplateBase):
 
             found = False
 
-            res = requests.post(url + "/xormon/login", verify=False, data={"username":"admin@xormon.com", "password":"xorux4you"})
+            res = requests.post(url + "/xormon/login", timeout=10, verify=False, data={"username":"admin@xormon.com", "password":"xorux4you"})
 
             if res.status_code not in (401, 404):
                 self.on_success(url, hostname, username, password)
@@ -748,7 +748,7 @@ class ZabbixTemplate(SiteTemplateBase):
             username = "Admin"
             password = "zabbix"
 
-            res = requests.post(url + "/index.php", verify=False, data={"name":username, "password": password, "enter": "Sign+in"})
+            res = requests.post(url + "/index.php", timeout=10, verify=False, data={"name":username, "password": password, "enter": "Sign+in"})
 
             if not "Incorrect user name or password or account is temporarily blocked" in res.text:
                     self.on_success(url, hostname, username, password)
@@ -768,7 +768,7 @@ class IBMSoftwareAGTemplate(SiteTemplateBase):
         self.need404 = True
 
     def check(self, url, source_code, verbose=False) -> URL_STATUS:
-        res = requests.post(url, verify=False)
+        res = requests.post(url, timeout=10, verify=False)
 
         if res.headers.get("Server") == "SoftwareAG-Runtime":
             found = False
@@ -777,7 +777,7 @@ class IBMSoftwareAGTemplate(SiteTemplateBase):
             username = "Administrator"
             password = "manage"
 
-            res = requests.get(url + "/spm/", verify=False, auth=(username, password))
+            res = requests.get(url + "/spm/", timeout=10, verify=False, auth=(username, password))
 
             if res.status_code not in [401]:
                     self.on_success(url, hostname, username, password)
@@ -797,7 +797,7 @@ class PiranhaManagementTemplate(SiteTemplateBase):
         self.need404 = True
 
     def check(self, url, source_code, verbose=False) -> URL_STATUS:
-        res = requests.post(url, verify=False)
+        res = requests.post(url, timeout=10, verify=False)
 
         if "piranha management" in source_code.lower():
             found = False
@@ -808,7 +808,7 @@ class PiranhaManagementTemplate(SiteTemplateBase):
             soup = BeautifulSoup(source_code, "html.parser")
             token = soup.find("input", {"name": "__RequestVerificationToken"})["value"] # type: ignore
 
-            res = requests.get(url + "/login", verify=False, data={"Login":username, "Password": password, "__RequestVerificationToken": token})
+            res = requests.get(url + "/login", verify=False, timeout=10, data={"Login":username, "Password": password, "__RequestVerificationToken": token})
 
             if res.status_code not in [302]:
                     self.on_success(url, hostname, username, password)
@@ -828,7 +828,7 @@ class FujitsuWebServerTemplate(SiteTemplateBase):
         self.need404 = True
 
     def check(self, url, source_code, verbose=False) -> URL_STATUS:
-        res = requests.get(url + "/redfish/v1", verify=False)
+        res = requests.get(url + "/redfish/v1", timeout=10, verify=False)
 
         if "fujitsu" in res.text:
             found = False
@@ -838,7 +838,7 @@ class FujitsuWebServerTemplate(SiteTemplateBase):
             password = "admin"
 
 
-            res = requests.post(url + "/SessionService/Sessions", verify=False, data={"UserName":username, "Password": password})
+            res = requests.post(url + "/SessionService/Sessions", timeout=10, verify=False, data={"UserName":username, "Password": password})
 
             if res.status_code in [200, 201]:
                     self.on_success(url, hostname, username, password)
