@@ -278,7 +278,7 @@ class MSSQLVersionSubServiceClass(BaseSubServiceClass):
                 if cpe: 
                     cves = get_cves(cpe)
                 if cves: 
-                    self.print_output(f"{extra} {key} ({", ".join(cves)}):")
+                    self.print_output(f"{extra} {pure_version} ({", ".join(cves)}):")
                 else:
                     if not cpe:
                         self.print_output(f"{extra} {pure_version} (EOL):")
