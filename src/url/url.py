@@ -241,11 +241,23 @@ urls_to_try = [
 def extract_version(url, response):
     # response = requests.get(url, allow_redirects=True, verify=False, timeout=15)
     try:
-        if response.headers["Server"].startswith("Jetty"):
-            with valid_lock:
-                with open(NV_VERSION, "a") as file:
-                    file.write(f"{url} => {response.headers['Server']}\n")
-            return True
+        if "Server" in response.headers:
+            s = response.headers["Server"]
+            if s.startswith("Jetty"):
+                s = s.replace("Jetty")
+                s = s.replace("(")
+                s = s.replace(")")
+                with valid_lock:
+                    with open(NV_VERSION, "a") as file:
+                        file.write(f"{url} => {s}\n")
+                return True
+            else:
+                has_numbers = any(char.isdigit() for char in s)
+                if has_numbers:
+                    with valid_lock:
+                        with open(NV_VERSION, "a") as file:
+                            file.write(f"{url} => {s}\n")
+                    return True
     except:pass
     try:
         if '"couchdb":"Welcome"' in response.text and '"couchbase":' in response.text:
@@ -616,8 +628,7 @@ def authcheck(url, templates: list[type[SiteTemplateBase]], verbose, wasprocesse
             return
 
         # We first check if there is any version on the page, if so we find it and return
-        vv = extract_version(response.url, response)
-        if vv: return
+        extract_version(response.url, response)
 
         # Check bads
         bad = check_if_known_Bad(response)
