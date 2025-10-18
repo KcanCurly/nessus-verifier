@@ -1,6 +1,7 @@
 import argparse
 from collections import defaultdict
 import os
+import time
 import requests
 from urllib3.exceptions import InsecureRequestWarning
 from urllib3 import disable_warnings
@@ -662,6 +663,7 @@ def authcheck(url, templates: list[type[SiteTemplateBase]], verbose, wasprocesse
         with driver_lock:
             try:
                 driver.get(url)
+                time.sleep(30)
                 page_source = driver.page_source
                 if check_if_loginpage_exists(page_source):
                     with login_page_lock:
@@ -831,7 +833,6 @@ def main():
         options.add_argument("--disable-dev-shm-usage")
         options.add_argument("--window-size=1920,1080")
         driver = webdriver.Firefox(options=options)
-        driver.implicitly_wait(30)
 
         with Live(progress_group):
             overall_progress.update(overall_task_id, total=len(hosts))

@@ -865,7 +865,7 @@ class NetGearTemplate(SiteTemplateBase):
             password = "password"
 
 
-            res = requests.post(url, timeout=10, verify=False, data={"pwd": password})
+            res = requests.post(url + "/base/main_login.html", timeout=10, verify=False, data={"pwd": password})
 
             if "Set-Cookie" in res.headers:
                     self.on_success(url, hostname, "", password)
