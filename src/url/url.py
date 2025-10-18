@@ -47,11 +47,10 @@ known_bads_lock = threading.Lock()
 manual_lock = threading.Lock()
 _401_lock = threading.Lock()
 _valid_url_lock = threading.Lock()
-comment_lock = threading.Lock()
 no_template_lock = threading.Lock()
-js_lock = threading.Lock()
 login_page_lock = threading.Lock()
 non_login_page_lock = threading.Lock()
+maybe_something_lock = threading.Lock()
 
 NV_VALID_URL = "nv-url-valid-url.txt"
 NV_SUCCESS = "nv-url-success.txt"
@@ -62,10 +61,9 @@ NV_MANUAL = "nv-url-manual.txt"
 NV_BAD = "nv-url-known-bad.txt"
 NV_VERSION = "nv-url-version.txt"
 NV_401 = "nv-url-401-basic-digest.txt"
-NV_COMMENTS = "nv-url-comments.txt"
-NV_REQUIRE_JS = "nv-url-js.txt"
 NV_LOGIN_PAGE = "nv-url-login-pages.txt"
 NV_NON_LOGIN_PAGE = "nv-url-non-login-pages.txt"
+NV_MAYBE_SOMETHING = "nv-url-maybe-something.txt"
 
 REQUESTS_TIMEOUT = 15
 
@@ -175,12 +173,6 @@ chatgpt_admin_paths = [
     "/management",
 ]
 
-info_urls = [
-    "/config",
-    "/pipeline",
-    "/pipelines"
-]
-
 urls_to_try = [
     "/auth/admin/master/console",
     "/admin",
@@ -236,6 +228,10 @@ urls_to_try = [
     "/controller",
     "/solaris",
     "/platform-ui",
+    "/config",
+    "/pipeline",
+    "/pipelines",
+    "/sql.zip",
     ]
 
 def extract_version(url, response):
@@ -624,9 +620,28 @@ def authcheck(url, templates: list[type[SiteTemplateBase]], verbose, wasprocesse
                     with open(NV_401, "a") as file:
                         file.write(f"{response.url}{f' | {hostname}' if hostname else ''}\n")
                 return
-            with error_lock:
-                with open(NV_ERROR, "a") as file:
-                    file.write(f"{response.url}{f' | {hostname}' if hostname else ''} => {response.status_code}\n")
+            login_page_found = False
+            for u in urls_to_try:
+                response = requests.get(url + u, verify=False, timeout=REQUESTS_TIMEOUT)
+                if response.status_code not in range(400, 600):
+                    if check_if_loginpage_exists(response.text):
+                        login_page_found = True
+                        with login_page_lock:
+                            with open(NV_LOGIN_PAGE, "a") as file:
+                                title = find_title(None, response.text)
+                                file.write(f"{url}{u}{f' | {hostname}' if hostname else ''}{f' => {title}' if title else ''}\n")
+                    else:
+                        with maybe_something_lock:
+                            with open(NV_MAYBE_SOMETHING, "a") as file:
+                                title = find_title(None, response.text)
+                                location = None
+                                if 'Location' in response.headers:
+                                    location = response.headers['Location']
+                                file.write(f"{url}{u}{f' | {hostname}' if hostname else ''}{f' => {title}' if title else ''}{f' | Redirecting to {location}' if location else ''}\n")
+            if not login_page_found:
+                with error_lock:
+                    with open(NV_ERROR, "a") as file:
+                        file.write(f"{response.url}{f' | {hostname}' if hostname else ''} => {response.status_code}\n")
             return
 
         if response.headers.get("Content-Length") == "0" or response.text.lower() == "ok" or response.text.lower() == "hello world!":
@@ -708,6 +723,8 @@ def authcheck(url, templates: list[type[SiteTemplateBase]], verbose, wasprocesse
                 with open(NV_LOGIN_PAGE, "a") as file:
                     file.write(f"{response.url}{f' | {hostname}' if hostname else ''}{f' => {title}' if title else ''}\n")
             return
+        
+        login_page_found = False
 
         with driver_lock:
             try:
@@ -719,25 +736,34 @@ def authcheck(url, templates: list[type[SiteTemplateBase]], verbose, wasprocesse
                     with login_page_lock:
                         with open(NV_LOGIN_PAGE, "a") as file:
                             file.write(f"{driver.current_url}{f' | {hostname}' if hostname else ''}{f' => {title}' if title else ''}\n")
-                    return
+                    login_page_found = True
 
             except Exception as e:
                 with error_lock:
                     with open(NV_ERROR, "a") as file:
                         file.write(f"{driver.current_url}{f' | {hostname}' if hostname else ''}{f' => {title}' if title else ''} => Selenium Error | {e}\n")
-                    
+
         for u in urls_to_try:
-            response = requests.get(url + u, allow_redirects=True, verify=False, timeout=REQUESTS_TIMEOUT)
-            if response.status_code in [200]:
-                if check_if_loginpage_exists(response.text):
+            response = requests.get(url + u, verify=False, timeout=REQUESTS_TIMEOUT)
+            if response.status_code not in range(400, 600):
+                if not login_page_found and check_if_loginpage_exists(response.text):
+                    login_page_found = True
                     with login_page_lock:
                         with open(NV_LOGIN_PAGE, "a") as file:
                             title = find_title(None, response.text)
                             file.write(f"{url}{u}{f' | {hostname}' if hostname else ''}{f' => {title}' if title else ''}\n")
-                return
-        with non_login_page_lock:
-            with open(NV_NON_LOGIN_PAGE, "a") as file:
-                file.write(f"{url}{f' | {hostname}' if hostname else ''}{f' => {title}' if title else ''}\n")
+                else:
+                    with maybe_something_lock:
+                        with open(NV_MAYBE_SOMETHING, "a") as file:
+                            title = find_title(None, response.text)
+                            location = None
+                            if 'Location' in response.headers:
+                                location = response.headers['Location']
+                            file.write(f"{url}{u}{f' | {hostname}' if hostname else ''}{f' => {title}' if title else ''}{f' | Redirecting to {location}' if location else ''}\n")
+        if not login_page_found:
+            with non_login_page_lock:
+                with open(NV_NON_LOGIN_PAGE, "a") as file:
+                    file.write(f"{url}{f' | {hostname}' if hostname else ''}{f' => {title}' if title else ''}\n")
 
     except requests.exceptions.ConnectTimeout as e:
         with error_lock:
@@ -855,6 +881,9 @@ def main():
         groupup(NV_NOT_VALID)
         groupup(NV_SUCCESS)
         groupup(NV_VERSION)
+        groupup(NV_MAYBE_SOMETHING)
+        groupup(NV_LOGIN_PAGE)
+        groupup(NV_NON_LOGIN_PAGE)
         return
     
 
@@ -894,6 +923,9 @@ def main():
         groupup(NV_NOT_VALID)
         groupup(NV_SUCCESS)
         groupup(NV_VERSION)
+        groupup(NV_MAYBE_SOMETHING)
+        groupup(NV_LOGIN_PAGE)
+        groupup(NV_NON_LOGIN_PAGE)
 
     # If given url is simply a website, run the templates on the website
     else:
