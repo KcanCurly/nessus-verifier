@@ -727,6 +727,7 @@ def authcheck(url, templates: list[type[SiteTemplateBase]], verbose, wasprocesse
         login_page_found = False
 
         with driver_lock:
+            title = None
             try:
                 driver.get(url)
                 time.sleep(15)
@@ -761,6 +762,7 @@ def authcheck(url, templates: list[type[SiteTemplateBase]], verbose, wasprocesse
                                 location = response.headers['Location']
                             file.write(f"{url}{u}{f' | {hostname}' if hostname else ''}{f' => {title}' if title else ''}{f' | Redirecting to {location}' if location else ''}\n")
         if not login_page_found:
+            title = find_title(None, response.text)
             with non_login_page_lock:
                 with open(NV_NON_LOGIN_PAGE, "a") as file:
                     file.write(f"{url}{f' | {hostname}' if hostname else ''}{f' => {title}' if title else ''}\n")
