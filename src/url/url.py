@@ -282,9 +282,9 @@ def extract_version(url, response):
 
 
 
-def check_if_loginpage_exists(response):
+def check_if_loginpage_exists(source_code):
     try:
-        soup = BeautifulSoup(response.text, 'html.parser')
+        soup = BeautifulSoup(source_code, 'html.parser')
         input_fields = soup.find_all('input')
         has_password = any(field.get('type').lower() == 'password' or field.get('type').lower() == 'submit' or field.get('type').lower() == 'username' or field.get('type').lower() == 'email' for field in input_fields) # type: ignore
         if has_password: return True
@@ -663,7 +663,7 @@ def authcheck(url, templates: list[type[SiteTemplateBase]], verbose, wasprocesse
         with driver_lock:
             try:
                 driver.get(url)
-                time.sleep(30)
+                time.sleep(15)
                 page_source = driver.page_source
                 if check_if_loginpage_exists(page_source):
                     with login_page_lock:
