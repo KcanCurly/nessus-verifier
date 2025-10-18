@@ -298,8 +298,16 @@ def check_if_loginpage_exists(source_code):
     try:
         soup = BeautifulSoup(source_code, 'html5lib')
         input_fields = soup.find_all('input')
-        has_password = any(field.get('type').lower() == 'password' or field.get('type').lower() == 'submit' or field.get('type').lower() == 'username' or field.get('type').lower() == 'email' for field in input_fields) # type: ignore
-        if has_password: return True
+
+        target_indicators = ["username", "email", "password", "submit"]
+
+        for input_elem in input_fields:
+            # Check type attribute
+            input_type = input_elem.get('type', '').lower() # type: ignore
+
+            if input_type in target_indicators:
+                return True
+
         return False
     except Exception as e:
         print("---------------------")
