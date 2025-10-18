@@ -284,7 +284,7 @@ def extract_version(url, response):
 
 def check_if_loginpage_exists(source_code):
     try:
-        soup = BeautifulSoup(source_code, 'html.parser')
+        soup = BeautifulSoup(source_code, 'html5lib')
         input_fields = soup.find_all('input')
         has_password = any(field.get('type').lower() == 'password' or field.get('type').lower() == 'submit' or field.get('type').lower() == 'username' or field.get('type').lower() == 'email' for field in input_fields) # type: ignore
         if has_password: return True

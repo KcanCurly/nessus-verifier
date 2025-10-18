@@ -1,7 +1,7 @@
 import argparse
 import os
 import subprocess
-from src.services import activemq, ajp13, amqp, asterisk, chargen, daytime, discard, dns, echo, finger, ftp, ident, ldap, mdns, mongodb, ms_exchange, mssql, netstat, qotd, smb, ssh, snmp, nfs, rpc, smtp, snmp, systat, telnet, tftp, time, mssql, idrac, zookeeper, postgresql, mysql, redis
+from src.services import activemq, ajp13, amqp, asterisk, chargen, daytime, discard, dns, echo, finger, ftp, http, ident, ldap, mdns, mongodb, ms_exchange, mssql, netstat, qotd, smb, ssh, snmp, nfs, rpc, smtp, snmp, systat, telnet, tftp, time, mssql, idrac, zookeeper, postgresql, mysql, redis
 from src.services.serviceclass import BaseServiceClass
 from traceback import print_exc
 
@@ -40,6 +40,7 @@ service_dict: list[type[BaseServiceClass]] = [
     activemq.AMQPServiceClass,
     ajp13.AJP13ServiceClass,
     mdns.MDNSServiceClass,
+    http.HTTPServiceClass,
 ]
 
 
@@ -120,9 +121,6 @@ def all_solver(args):
             command = ["nv-service", "activemq", "version", os.path.join(args.directory, "activemq", h)]
             subprocess.run(command)
 
-
-
-
 def main():
     # Create the main parser
     parser = argparse.ArgumentParser(description="Service Pentesting.")
@@ -148,7 +146,6 @@ def main():
         except Exception as e:
             print(f"Error parsing {v.__name__}: {e}")
             print_exc()
-
 
     args = parser.parse_args()
     

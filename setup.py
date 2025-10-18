@@ -36,6 +36,7 @@ setup(
         "nvdlib",
         "cidr_man",
         "selenium",
+        "html5lib",
     ],
     classifiers=[
         "Programming Language :: Python :: 3",

@@ -21,12 +21,6 @@ class FTP_Anon_Vuln_Data():
     def __init__(self, host: Host, is_TLS: bool):
         self.host = host
         self.is_TLS = is_TLS
-        
-class FTP_Brute_Vuln_Data():
-    def __init__(self, host: str, is_TLS: bool, creds: list[str]):
-        self.host = host
-        self.is_TLS = is_TLS
-        self.creds = creds
 
 class FTPBruteSubServiceClass(BaseSubServiceClass):
     text_column1 = TextColumn("{task.fields[taskid]}", table_column=Column(ratio=1), style= "bold")
@@ -81,8 +75,6 @@ class FTPBruteSubServiceClass(BaseSubServiceClass):
         ip = host.ip
         port = host.port
         cred_len = len(creds)
-
-        vuln = FTP_Brute_Vuln_Data(host, False, [])
 
         try:
             FTPBruteSubServiceClass.progress.update(task_id, status=f"[yellow]Processing[/yellow]", total=cred_len, visible=True)
