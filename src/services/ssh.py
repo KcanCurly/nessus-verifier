@@ -126,7 +126,6 @@ class SSHBruteSubServiceClass(BaseSubServiceClass):
                 "-o", f"ConnectTimeout={10}",  # Set the connection timeout
                 "-o", "StrictHostKeyChecking=no",  # Automatically accept host keys
                 "-o", "PasswordAuthentication=yes",  # Ensure password authentication is used
-                "-o", "HostKeyAlgorithms=+ssh-rsa,ssh-dss",
                 "-o", "KexAlgorithms=+diffie-hellman-group1-sha1,diffie-hellman-group14-sha1,diffie-hellman-group-exchange-sha1,diffie-hellman-group-exchange-sha256",
                 "-o", "Ciphers=+aes128-ctr,aes192-ctr,aes256-ctr,aes128-cbc,3des-cbc",
                 "-o", "MACs=+hmac-sha1,hmac-md5,hmac-sha2-256,hmac-sha2-512",
@@ -162,7 +161,7 @@ class SSHBruteSubServiceClass(BaseSubServiceClass):
                 "-o", f"ConnectTimeout={10}",  # Set the connection timeout
                 "-o", "StrictHostKeyChecking=no",  # Automatically accept host keys
                 "-o", "PasswordAuthentication=yes",  # Ensure password authentication is used
-                "-o", "HostKeyAlgorithms=+ssh-rsa,ssh-dss",
+
                 "-o", "KexAlgorithms=+diffie-hellman-group1-sha1,diffie-hellman-group14-sha1,diffie-hellman-group-exchange-sha1,diffie-hellman-group-exchange-sha256",
                 "-o", "Ciphers=+aes128-ctr,aes192-ctr,aes256-ctr,aes128-cbc,3des-cbc",
                 "-o", "MACs=+hmac-sha1,hmac-md5,hmac-sha2-256,hmac-sha2-512",

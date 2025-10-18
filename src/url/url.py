@@ -258,7 +258,7 @@ def extract_version(url, response):
     except:pass
     try:
         if "/administrator" in response.text:
-            response = requests.get(url + "/administrator", allow_redirects=True, verify=False, timeout=15)
+            response = requests.get(url + "/administrator", allow_redirects=True, verify=False, timeout=REQUESTS_TIMEOUT)
             rrr = re.search(r'<span class="loginversionText" id="VersionInfo">(.*)', response.text, flags=re.IGNORECASE)
             if rrr:
                 v = rrr.group(1)
@@ -524,78 +524,6 @@ def find_login(response):
         return "/ui/#/login"
     return None
 
-
-    bad = check_if_known_Bad(response)
-    if bad:
-        with known_bads_lock:
-            with open(NV_BAD, "a") as file:
-                file.write(f"{url}{f' | {hostname}' if hostname else ''} => {bad}\n")
-        return True
-    
-    if check_basic_auth(response):
-        with _401_lock:
-            with open(NV_401, "a") as file:
-                file.write(f"{url}{f' | {hostname}' if hostname else ''}\n")
-        return True
-    is_login = check_if_loginpage_exists(response)
-
-    # If it is login page, we check if its known bad
-    if is_login:
-        bad = check_if_known_Bad(response)
-        if bad:
-            with known_bads_lock:
-                with open(NV_BAD, "a") as file:
-                    file.write(f"{url}{f' | {hostname}' if hostname else ''} => {bad}\n")
-            return True
-        # If it is not bad, then we check if it requires manual review
-        manual = check_if_manual(response.text)
-        if manual:
-            with manual_lock:
-                with open(NV_MANUAL, "a") as file:
-                    file.write(f"{url}{f' | {hostname}' if hostname else ''} => {manual}\n")
-            return True
-        # NO AUTH
-        if "Grafana" in response.text and "login" not in response.url:
-            with valid_lock:
-                with open(NV_SUCCESS, "a") as file:
-                    file.write(f"{url} => GRAFANA NO AUTH\n")
-            print(f"{url}{f' | {hostname}' if hostname else ''} => Grafana NO AUTH")
-            return True
-        if "Loading Elastic" in response.text and "spaces/space_selector" in response.url:
-            with valid_lock:
-                with open(NV_SUCCESS, "a") as file:
-                    file.write(f"{url} => ELASTIC NO AUTH\n")
-            print(f"{url}{f' | {hostname}' if hostname else ''} => Elastic NO AUTH")
-            return True
-        if "WebSphere Integrated Solutions Console" in response.text and "Password" not in response.text:
-            with valid_lock:
-                with open(NV_SUCCESS, "a") as file:
-                    file.write(f"{url} => WebSphere Integrated Solutions Console NO AUTH\n")
-            print(f"{url}{f' | {hostname}' if hostname else ''} => WebSphere Integrated Solutions Console NO AUTH")
-            return True
-
-        for zz in templates:
-            try:
-                result: URL_STATUS = zz.check(url, response.text, False)
-                if result == URL_STATUS.VALID:
-                    return True
-
-            except TimeoutError as timeout:
-                with error_lock:
-                    with open(NV_ERROR, "a") as file:
-                        file.write(f"{url}{f' | {hostname}' if hostname else ''} => Timeout\n")
-                        return True
-            except Exception as e:
-                with error_lock:
-                    with open(NV_ERROR, "a") as file:
-                        file.write(f"{url}{f' | {hostname}' if hostname else ''} => {e.__class__.__name__} {e}\n")
-                        return True
-    with no_template_lock:
-        with open(NV_NO_TEMPLATE, "a") as file:
-            title = find_title(None, response.text)
-            file.write(f"{url}{f' | {hostname}' if hostname else ''}{f' => {title}' if title else ''}\n")
-        return True
-    return False
 
 # TO DO:
 def find_title(url, response):
