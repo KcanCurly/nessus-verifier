@@ -601,6 +601,8 @@ def authcheck(url, templates: list[type[SiteTemplateBase]], verbose, wasprocesse
 
     templates2 = [zzz() for zzz in templates] # type: ignore
 
+    original_url = url
+
     try:
         response = requests.get(url, allow_redirects=True, headers=headers, verify=False, timeout=REQUESTS_TIMEOUT)
 
@@ -641,7 +643,7 @@ def authcheck(url, templates: list[type[SiteTemplateBase]], verbose, wasprocesse
             if not login_page_found:
                 with error_lock:
                     with open(NV_ERROR, "a") as file:
-                        file.write(f"{response.url}{f' | {hostname}' if hostname else ''} => {response.status_code}\n")
+                        file.write(f"{url}{f' | {hostname}' if hostname else ''} => {response.status_code}\n")
             return
 
         if response.headers.get("Content-Length") == "0" or response.text.lower() == "ok" or response.text.lower() == "hello world!":
