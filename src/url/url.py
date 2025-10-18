@@ -301,7 +301,13 @@ def check_if_loginpage_exists(source_code):
         has_password = any(field.get('type').lower() == 'password' or field.get('type').lower() == 'submit' or field.get('type').lower() == 'username' or field.get('type').lower() == 'email' for field in input_fields) # type: ignore
         if has_password: return True
         return False
-    except: return False
+    except Exception as e:
+        print("---------------------")
+        print("---------------------")
+        print("---------------------")
+        print(source_code)
+        print(e)
+        return False
 
 def check_if_known_Bad(response: requests.Response):
     for header, value in response.headers.items():
@@ -604,6 +610,12 @@ def authcheck(url, templates: list[type[SiteTemplateBase]], verbose, wasprocesse
                 hostname, _, _ = socket.gethostbyaddr(ip)
         except:pass
         if response.status_code in range(400, 600):
+            # Check basic auth
+            if check_basic_auth(response):
+                with _401_lock:
+                    with open(NV_401, "a") as file:
+                        file.write(f"{response.url}{f' | {hostname}' if hostname else ''}\n")
+                return
             with error_lock:
                 with open(NV_ERROR, "a") as file:
                     file.write(f"{response.url}{f' | {hostname}' if hostname else ''} => {response.status_code}\n")
@@ -699,33 +711,25 @@ def authcheck(url, templates: list[type[SiteTemplateBase]], verbose, wasprocesse
                     with login_page_lock:
                         with open(NV_LOGIN_PAGE, "a") as file:
                             file.write(f"{driver.current_url}{f' | {hostname}' if hostname else ''}{f' => {title}' if title else ''}\n")
-                else:
-                    with non_login_page_lock:
-                        with open(NV_NON_LOGIN_PAGE, "a") as file:
-                            file.write(f"{driver.current_url}{f' | {hostname}' if hostname else ''}{f' => {title}' if title else ''}\n")
+                    return
 
             except Exception as e:
                 with error_lock:
                     with open(NV_ERROR, "a") as file:
                         file.write(f"{driver.current_url}{f' | {hostname}' if hostname else ''}{f' => {title}' if title else ''} => Selenium Error | {e}\n")
                     
-        # for u in urls_to_try:
-        #     response = requests.get(url + u, allow_redirects=True, verify=False, timeout=REQUESTS_TIMEOUT)
-        #     if response.status_code in [200] and check_if_loginpage_exists(response):
-        #         with no_template_lock:
-        #             with open(NV_NO_TEMPLATE, "a") as file:
-        #                 title = find_title(None, response.text)
-        #                 file.write(f"{url}{u}{f' | {hostname}' if hostname else ''}{f' => {title}' if title else ''}\n")
-        #         return
-        #         
-        # if response.status_code in [200]:
-        #     with open(NV_NO_TEMPLATE, "a") as file:
-        #         title = find_title(None, response.text)
-        #         file.write(f"{url}{u}{f' | {hostname}' if hostname else ''}{f' => {title}' if title else ''}\n")
-        # else:
-        #     with error_lock:
-        #         with open(NV_ERROR, "a") as file:
-        #             file.write(f"{url}{f' | {hostname}' if hostname else ''} => {response.status_code}\n")
+        for u in urls_to_try:
+            response = requests.get(url + u, allow_redirects=True, verify=False, timeout=REQUESTS_TIMEOUT)
+            if response.status_code in [200]:
+                if check_if_loginpage_exists(response):
+                    with login_page_lock:
+                        with open(NV_LOGIN_PAGE, "a") as file:
+                            title = find_title(None, response.text)
+                            file.write(f"{url}{u}{f' | {hostname}' if hostname else ''}{f' => {title}' if title else ''}\n")
+                return
+        with non_login_page_lock:
+            with open(NV_NON_LOGIN_PAGE, "a") as file:
+                file.write(f"{url}{f' | {hostname}' if hostname else ''}{f' => {title}' if title else ''}\n")
 
     except requests.exceptions.ConnectTimeout as e:
         with error_lock:
