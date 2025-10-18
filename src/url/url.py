@@ -629,6 +629,18 @@ def authcheck(url, templates: list[type[SiteTemplateBase]], verbose, wasprocesse
                 with open(NV_MANUAL, "a") as file:
                     file.write(f"{url}{f' | {hostname}' if hostname else ''} => {manual}\n")
             return
+        try:
+            extr = "/cgi-script-common/common-post-cmd.cgi"
+            response_snmp = requests.post(url + extr, headers=headers, verify=False, timeout=REQUESTS_TIMEOUT, data={"cmdType": 221})
+            if "syslanguage" in response_snmp.text.lower():
+                with manual_lock:
+                    with open(NV_MANUAL, "a") as file:
+                        file.write(f"{url}{f' | {hostname}' if hostname else ''} => SNMP Monitor Service => admin:admin\n")
+                return
+        except Exception:
+            pass
+
+
         # NO AUTH
         if "Grafana" in response.text and "login" not in response.url:
             with valid_lock:
