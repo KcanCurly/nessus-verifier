@@ -16,6 +16,8 @@ from rich.table import Column
 from rich.console import Group
 from rich.panel import Panel
 from src.url.templates import ArisconnectTemplate, FlexNetPublishTemplate, FortigateTemplate, URL_STATUS, FujitsuWebServerTemplate, GrafanaTemplate, HighAvailabilityManagementTemplate, IBMSoftwareAGTemplate, IPECSIPPhoneTemplate, IRISIDICAMTemplate, JHipsterRegistryManagementTemplate, LogparseTemplate, MyQTemplate, NetscalerConsoleTemplate, NexthinkConsoleTemplate, OpinnateTemplate, OracleLightsoutManagerTemplate, PiranhaManagementTemplate, SiteTemplateBase, StoredIQTemplate, StorwareTemplate, SynergySkyTemplate, UNISPHERETemplate, WatsonTemplate, XormonTemplate, XoruxTemplate, ZabbixTemplate, iDRACTemplate
+from selenium import webdriver
+from selenium.webdriver.firefox.options import Options
 
 disable_warnings(InsecureRequestWarning)
 warnings.filterwarnings("ignore", category=XMLParsedAsHTMLWarning)
@@ -47,6 +49,8 @@ _valid_url_lock = threading.Lock()
 comment_lock = threading.Lock()
 no_template_lock = threading.Lock()
 js_lock = threading.Lock()
+login_page_lock = threading.Lock()
+non_login_page_lock = threading.Lock()
 
 NV_VALID_URL = "nv-url-valid-url.txt"
 NV_SUCCESS = "nv-url-success.txt"
@@ -59,8 +63,13 @@ NV_VERSION = "nv-url-version.txt"
 NV_401 = "nv-url-401-basic-digest.txt"
 NV_COMMENTS = "nv-url-comments.txt"
 NV_REQUIRE_JS = "nv-url-js.txt"
+NV_LOGIN_PAGE = "nv-url-login-pages.txt"
+NV_NON_LOGIN_PAGE = "nv-url-non-login-pages.txt"
 
 REQUESTS_TIMEOUT = 15
+
+driver: webdriver.Firefox
+driver_lock = threading.Lock()
 
 chatgpt_admin_paths = [
     "/admin",
@@ -276,7 +285,7 @@ def check_if_loginpage_exists(response):
     try:
         soup = BeautifulSoup(response.text, 'html.parser')
         input_fields = soup.find_all('input')
-        has_password = any(field.get('type') == 'password' or field.get('type') == 'submit' or field.get('type') == 'username' or field.get('type') == 'email' for field in input_fields) # type: ignore
+        has_password = any(field.get('type').lower() == 'password' or field.get('type').lower() == 'submit' or field.get('type').lower() == 'username' or field.get('type').lower() == 'email' for field in input_fields) # type: ignore
         if has_password: return True
         return False
     except: return False
@@ -654,35 +663,16 @@ def authcheck(url, templates: list[type[SiteTemplateBase]], verbose, wasprocesse
                 hostname, _, _ = socket.gethostbyaddr(ip)
         except:pass
 
-        # Find if there was a redirect thru meta tag
-        match = re.search(r'<meta .*;URL=(.*)"\s*', response.text, re.IGNORECASE)
-        if match:
-            redirect_url = match.group(1)
-            redirect_url = redirect_url.strip("'")
-            redirect_url = redirect_url.strip("\"")
-            redirect_url = redirect_url.strip(".")
-            authcheck(url + redirect_url, templates, verbose, True)
-            return
-
-        if "enable JavaScript" in response.text:
-            with js_lock:
-                with open(NV_REQUIRE_JS, "a") as file:
-                    file.write(f"{url}{f' | {hostname}' if hostname else ''}\n")
-
         if response.headers.get("Content-Length") == "0" or response.text.lower() == "ok" or response.text.lower() == "hello world!":
             with known_bads_lock:
                 with open(NV_BAD, "a") as file:
                     file.write(f"{url}{f' | {hostname}' if hostname else ''} => Empty or 'OK'\n")
             return
         
-        comments = extract_comment(response)
-        if comments:
-            with comment_lock:
-                with open(NV_COMMENTS, "a") as file:
+        if "enable JavaScript" in response.text:
+            with js_lock:
+                with open(NV_REQUIRE_JS, "a") as file:
                     file.write(f"{url}{f' | {hostname}' if hostname else ''}\n")
-                    for c in comments:
-                        file.write(f"{c}\n")
-
 
         # Check basic auth
         if check_basic_auth(response):
@@ -734,24 +724,42 @@ def authcheck(url, templates: list[type[SiteTemplateBase]], verbose, wasprocesse
             result: URL_STATUS = zz.check(url, response.text, False)
             if result != URL_STATUS.NOT_RECOGNIZED:
                 return
+            
+        with driver_lock:
+            try:
+                driver.get(url)
+                page_source = driver.page_source
+                if check_if_loginpage_exists(page_source):
+                    with login_page_lock:
+                        with open(NV_LOGIN_PAGE, "a") as file:
+                            file.write(f"{driver.current_url}\n")
+                else:
+                    with non_login_page_lock:
+                        with open(NV_NON_LOGIN_PAGE, "a") as file:
+                            file.write(f"{driver.current_url}\n")
+
+            except Exception as e:
+                with error_lock:
+                    with open(NV_ERROR, "a") as file:
+                        file.write(f"{driver.current_url}{f' | {hostname}' if hostname else ''} => Selenium Error | {e}\n")
                     
-        for u in urls_to_try:
-            response = requests.get(url + u, allow_redirects=True, verify=False, timeout=REQUESTS_TIMEOUT)
-            if response.status_code in [200] and check_if_loginpage_exists(response):
-                with no_template_lock:
-                    with open(NV_NO_TEMPLATE, "a") as file:
-                        title = find_title(None, response.text)
-                        file.write(f"{url}{u}{f' | {hostname}' if hostname else ''}{f' => {title}' if title else ''}\n")
-                return
-                
-        if response.status_code in [200]:
-            with open(NV_NO_TEMPLATE, "a") as file:
-                title = find_title(None, response.text)
-                file.write(f"{url}{u}{f' | {hostname}' if hostname else ''}{f' => {title}' if title else ''}\n")
-        else:
-            with error_lock:
-                with open(NV_ERROR, "a") as file:
-                    file.write(f"{url}{f' | {hostname}' if hostname else ''} => {response.status_code}\n")
+        # for u in urls_to_try:
+        #     response = requests.get(url + u, allow_redirects=True, verify=False, timeout=REQUESTS_TIMEOUT)
+        #     if response.status_code in [200] and check_if_loginpage_exists(response):
+        #         with no_template_lock:
+        #             with open(NV_NO_TEMPLATE, "a") as file:
+        #                 title = find_title(None, response.text)
+        #                 file.write(f"{url}{u}{f' | {hostname}' if hostname else ''}{f' => {title}' if title else ''}\n")
+        #         return
+        #         
+        # if response.status_code in [200]:
+        #     with open(NV_NO_TEMPLATE, "a") as file:
+        #         title = find_title(None, response.text)
+        #         file.write(f"{url}{u}{f' | {hostname}' if hostname else ''}{f' => {title}' if title else ''}\n")
+        # else:
+        #     with error_lock:
+        #         with open(NV_ERROR, "a") as file:
+        #             file.write(f"{url}{f' | {hostname}' if hostname else ''} => {response.status_code}\n")
 
     except requests.exceptions.ConnectTimeout as e:
         with error_lock:
@@ -880,6 +888,15 @@ def main():
     if os.path.isfile(args.t):
         with open(args.t, "r") as file:
             hosts = [line.strip() for line in file]  # Strip newline characters
+
+        global driver
+        options = Options()
+        options.add_argument("--headless")
+        options.add_argument("--no-sandbox")
+        options.add_argument("--disable-dev-shm-usage")
+        options.add_argument("--window-size=1920,1080")
+        driver = webdriver.Firefox(options=options)
+        driver.set_page_load_timeout(30)
 
         with Live(progress_group):
             overall_progress.update(overall_task_id, total=len(hosts))

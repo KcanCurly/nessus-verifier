@@ -35,6 +35,7 @@ setup(
         "BAC0",
         "nvdlib",
         "cidr_man",
+        "selenium",
     ],
     classifiers=[
         "Programming Language :: Python :: 3",
