@@ -591,27 +591,32 @@ def authcheck(url, templates: list[type[SiteTemplateBase]], verbose, wasprocesse
 
                 hostname, _, _ = socket.gethostbyaddr(ip)
         except:pass
+        if response.status_code in range(400, 600):
+            with error_lock:
+                with open(NV_ERROR, "a") as file:
+                    file.write(f"{response.url}{f' | {hostname}' if hostname else ''} => {response.status_code}\n")
+            return
 
         if response.headers.get("Content-Length") == "0" or response.text.lower() == "ok" or response.text.lower() == "hello world!":
             with known_bads_lock:
                 with open(NV_BAD, "a") as file:
-                    file.write(f"{url}{f' | {hostname}' if hostname else ''} => Empty or 'OK'\n")
+                    file.write(f"{response.url}{f' | {hostname}' if hostname else ''} => Empty or 'OK'\n")
             return
         
-        if "enable JavaScript" in response.text:
-            with js_lock:
-                with open(NV_REQUIRE_JS, "a") as file:
-                    file.write(f"{url}{f' | {hostname}' if hostname else ''}\n")
+        #if "enable JavaScript" in response.text:
+        #    with js_lock:
+        #        with open(NV_REQUIRE_JS, "a") as file:
+        #            file.write(f"{response.url}{f' | {hostname}' if hostname else ''}\n")
 
         # Check basic auth
         if check_basic_auth(response):
             with _401_lock:
                 with open(NV_401, "a") as file:
-                    file.write(f"{url}{f' | {hostname}' if hostname else ''}\n")
+                    file.write(f"{response.url}{f' | {hostname}' if hostname else ''}\n")
             return
 
         # We first check if there is any version on the page, if so we find it and return
-        vv = extract_version(url, response)
+        vv = extract_version(response.url, response)
         if vv: return
 
         # Check bads
@@ -619,7 +624,7 @@ def authcheck(url, templates: list[type[SiteTemplateBase]], verbose, wasprocesse
         if bad:
             with known_bads_lock:
                 with open(NV_BAD, "a") as file:
-                    file.write(f"{url}{f' | {hostname}' if hostname else ''} => {bad}\n")
+                    file.write(f"{response.url}{f' | {hostname}' if hostname else ''} => {bad}\n")
             return
         
         # If it is not bad, then we check if it requires manual review
@@ -627,7 +632,7 @@ def authcheck(url, templates: list[type[SiteTemplateBase]], verbose, wasprocesse
         if manual:
             with manual_lock:
                 with open(NV_MANUAL, "a") as file:
-                    file.write(f"{url}{f' | {hostname}' if hostname else ''} => {manual}\n")
+                    file.write(f"{response.url}{f' | {hostname}' if hostname else ''} => {manual}\n")
             return
         try:
             extr = "/cgi-script-common/common-post-cmd.cgi"
@@ -635,7 +640,7 @@ def authcheck(url, templates: list[type[SiteTemplateBase]], verbose, wasprocesse
             if "syslanguage" in response_snmp.text.lower():
                 with manual_lock:
                     with open(NV_MANUAL, "a") as file:
-                        file.write(f"{url}{f' | {hostname}' if hostname else ''} => SNMP Monitor Service => admin:admin\n")
+                        file.write(f"{url + "/cgi-script-common/common-post-cmd.cgi"}{f' | {hostname}' if hostname else ''} => SNMP Monitor Service => admin:admin\n")
                 return
         except Exception:
             pass
@@ -645,20 +650,20 @@ def authcheck(url, templates: list[type[SiteTemplateBase]], verbose, wasprocesse
         if "Grafana" in response.text and "login" not in response.url:
             with valid_lock:
                 with open(NV_SUCCESS, "a") as file:
-                    file.write(f"{url} => GRAFANA NO AUTH\n")
-            print(f"{url}{f' | {hostname}' if hostname else ''} => Grafana NO AUTH")
+                    file.write(f"{response.url} => GRAFANA NO AUTH\n")
+            print(f"{response.url}{f' | {hostname}' if hostname else ''} => Grafana NO AUTH")
             return
         if "Loading Elastic" in response.text and "spaces/space_selector" in response.url:
             with valid_lock:
                 with open(NV_SUCCESS, "a") as file:
-                    file.write(f"{url} => ELASTIC NO AUTH\n")
-            print(f"{url}{f' | {hostname}' if hostname else ''} => Elastic NO AUTH")
+                    file.write(f"{response.url} => ELASTIC NO AUTH\n")
+            print(f"{response.url}{f' | {hostname}' if hostname else ''} => Elastic NO AUTH")
             return
         if "WebSphere Integrated Solutions Console" in response.text and "Password" not in response.text:
             with valid_lock:
                 with open(NV_SUCCESS, "a") as file:
-                    file.write(f"{url} => WebSphere Integrated Solutions Console NO AUTH\n")
-            print(f"{url}{f' | {hostname}' if hostname else ''} => WebSphere Integrated Solutions Console NO AUTH")
+                    file.write(f"{response.url} => WebSphere Integrated Solutions Console NO AUTH\n")
+            print(f"{response.url}{f' | {hostname}' if hostname else ''} => WebSphere Integrated Solutions Console NO AUTH")
             return
 
         for zz in templates2:
@@ -669,7 +674,7 @@ def authcheck(url, templates: list[type[SiteTemplateBase]], verbose, wasprocesse
         if check_if_loginpage_exists(response.text):
             with login_page_lock:
                 with open(NV_LOGIN_PAGE, "a") as file:
-                    file.write(f"{driver.current_url}\n")
+                    file.write(f"{response.url}\n")
             return
 
         with driver_lock:
