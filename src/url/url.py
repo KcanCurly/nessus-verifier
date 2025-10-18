@@ -15,7 +15,7 @@ from rich.progress import TextColumn, Progress, BarColumn, TimeElapsedColumn
 from rich.table import Column
 from rich.console import Group
 from rich.panel import Panel
-from src.url.templates import ArisconnectTemplate, FlexNetPublishTemplate, FortigateTemplate, URL_STATUS, FujitsuWebServerTemplate, GrafanaTemplate, HighAvailabilityManagementTemplate, IBMSoftwareAGTemplate, IPECSIPPhoneTemplate, IRISIDICAMTemplate, JHipsterRegistryManagementTemplate, LogparseTemplate, MyQTemplate, NetscalerConsoleTemplate, NexthinkConsoleTemplate, OpinnateTemplate, OracleLightsoutManagerTemplate, PiranhaManagementTemplate, SiteTemplateBase, StoredIQTemplate, StorwareTemplate, SynergySkyTemplate, UNISPHERETemplate, WatsonTemplate, XormonTemplate, XoruxTemplate, ZabbixTemplate, iDRACTemplate
+from src.url.templates import ArisconnectTemplate, FlexNetPublishTemplate, FortigateTemplate, URL_STATUS, FujitsuWebServerTemplate, GrafanaTemplate, HighAvailabilityManagementTemplate, IBMSoftwareAGTemplate, IPECSIPPhoneTemplate, IRISIDICAMTemplate, JHipsterRegistryManagementTemplate, LogparseTemplate, MyQTemplate, NetGearTemplate, NetscalerConsoleTemplate, NexthinkConsoleTemplate, OpinnateTemplate, OracleLightsoutManagerTemplate, PiranhaManagementTemplate, SiteTemplateBase, StoredIQTemplate, StorwareTemplate, SynergySkyTemplate, UNISPHERETemplate, WatsonTemplate, XormonTemplate, XoruxTemplate, ZabbixTemplate, iDRACTemplate
 from selenium import webdriver
 from selenium.webdriver.firefox.options import Options
 
@@ -653,6 +653,12 @@ def authcheck(url, templates: list[type[SiteTemplateBase]], verbose, wasprocesse
             if result != URL_STATUS.NOT_RECOGNIZED:
                 return
             
+        if check_if_loginpage_exists(response.text):
+            with login_page_lock:
+                with open(NV_LOGIN_PAGE, "a") as file:
+                    file.write(f"{driver.current_url}\n")
+            return
+
         with driver_lock:
             try:
                 driver.get(url)
@@ -794,6 +800,7 @@ def main():
         IBMSoftwareAGTemplate,
         PiranhaManagementTemplate,
         FujitsuWebServerTemplate,
+        NetGearTemplate,
         ]
 
     if args.group_up:

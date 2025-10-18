@@ -841,7 +841,34 @@ class FujitsuWebServerTemplate(SiteTemplateBase):
             res = requests.post(url + "/SessionService/Sessions", timeout=10, verify=False, data={"UserName":username, "Password": password})
 
             if res.status_code in [200, 201]:
-                    self.on_success(url, hostname, username, password)
+                self.on_success(url, hostname, username, password)
+                found = True
+
+            if not found:
+                self.on_failure(url, hostname)
+
+                return URL_STATUS.NOT_VALID
+            return URL_STATUS.VALID
+        else:
+            return URL_STATUS.NOT_RECOGNIZED
+        
+class NetGearTemplate(SiteTemplateBase):
+    def __init__(self):
+        super().__init__("Netgear")
+        self.need404 = True
+
+    def check(self, url, source_code, verbose=False) -> URL_STATUS:
+        if "<title>netgear" in source_code.lower():
+            found = False
+            hostname = hostname = SiteTemplateBase.get_dns_name(url)
+
+            password = "password"
+
+
+            res = requests.post(url, timeout=10, verify=False, data={"pwd": password})
+
+            if "Set-Cookie" in res.headers:
+                    self.on_success(url, hostname, "", password)
                     found = True
 
             if not found:
