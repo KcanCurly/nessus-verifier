@@ -672,9 +672,10 @@ def authcheck(url, templates: list[type[SiteTemplateBase]], verbose, wasprocesse
                 return
             
         if check_if_loginpage_exists(response.text):
+            title = find_title(None, response.text)
             with login_page_lock:
                 with open(NV_LOGIN_PAGE, "a") as file:
-                    file.write(f"{response.url}\n")
+                    file.write(f"{response.url}{f' | {hostname}' if hostname else ''}{f' => {title}' if title else ''}\n")
             return
 
         with driver_lock:
@@ -682,19 +683,20 @@ def authcheck(url, templates: list[type[SiteTemplateBase]], verbose, wasprocesse
                 driver.get(url)
                 time.sleep(15)
                 page_source = driver.page_source
+                title = find_title(None, page_source)
                 if check_if_loginpage_exists(page_source):
                     with login_page_lock:
                         with open(NV_LOGIN_PAGE, "a") as file:
-                            file.write(f"{driver.current_url}\n")
+                            file.write(f"{driver.current_url}{f' | {hostname}' if hostname else ''}{f' => {title}' if title else ''}\n")
                 else:
                     with non_login_page_lock:
                         with open(NV_NON_LOGIN_PAGE, "a") as file:
-                            file.write(f"{driver.current_url}\n")
+                            file.write(f"{driver.current_url}{f' | {hostname}' if hostname else ''}{f' => {title}' if title else ''}\n")
 
             except Exception as e:
                 with error_lock:
                     with open(NV_ERROR, "a") as file:
-                        file.write(f"{driver.current_url}{f' | {hostname}' if hostname else ''} => Selenium Error | {e}\n")
+                        file.write(f"{driver.current_url}{f' | {hostname}' if hostname else ''}{f' => {title}' if title else ''} => Selenium Error | {e}\n")
                     
         # for u in urls_to_try:
         #     response = requests.get(url + u, allow_redirects=True, verify=False, timeout=REQUESTS_TIMEOUT)
