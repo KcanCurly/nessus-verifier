@@ -831,7 +831,7 @@ def main():
         options.add_argument("--disable-dev-shm-usage")
         options.add_argument("--window-size=1920,1080")
         driver = webdriver.Firefox(options=options)
-        driver.set_page_load_timeout(30)
+        driver.implicitly_wait(30)
 
         with Live(progress_group):
             overall_progress.update(overall_task_id, total=len(hosts))
