@@ -729,7 +729,7 @@ def authcheck(url, templates: list[type[SiteTemplateBase]], verbose, wasprocesse
         for u in urls_to_try:
             response = requests.get(url + u, allow_redirects=True, verify=False, timeout=REQUESTS_TIMEOUT)
             if response.status_code in [200]:
-                if check_if_loginpage_exists(response):
+                if check_if_loginpage_exists(response.text):
                     with login_page_lock:
                         with open(NV_LOGIN_PAGE, "a") as file:
                             title = find_title(None, response.text)
