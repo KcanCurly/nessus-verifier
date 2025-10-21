@@ -331,7 +331,7 @@ def get_poc_cve_github_link(cve):
 
 def get_latest_version(product):
     try:
-        resp = requests.get(f"https://endoflife.date/api/v1/products/{product}", verify=False).json()
+        resp = requests.get(f"https://endoflife.date/api/v1/products/{product}", verify=False, timeout=15).json()
         non_eol_releases = [
             release for release in resp["result"]["releases"]
             if not release.get("isEol", True)

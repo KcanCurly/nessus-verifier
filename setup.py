@@ -37,6 +37,7 @@ setup(
         "cidr_man",
         "selenium",
         "html5lib",
+        "argcomplete",
     ],
     classifiers=[
         "Programming Language :: Python :: 3",
