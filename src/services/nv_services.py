@@ -1,4 +1,4 @@
-import argparse
+import argparse, argcomplete
 import os
 import subprocess
 from src.services import activemq, ajp13, amqp, asterisk, chargen, daytime, discard, dns, echo, finger, ftp, http, ident, ldap, mdns, mongodb, ms_exchange, mssql, netstat, qotd, smb, ssh, snmp, nfs, rpc, smtp, snmp, systat, telnet, tftp, time, mssql, idrac, zookeeper, postgresql, mysql, redis
@@ -148,6 +148,7 @@ def main():
             print_exc()
 
     args = parser.parse_args()
+    argcomplete.autocomplete(parser)
     
     if hasattr(args, "func"):
         args.func(args)

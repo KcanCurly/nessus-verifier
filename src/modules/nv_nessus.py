@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import argparse
+import argparse, argcomplete
 import xml.etree.ElementTree as ET
 
 import cidr_man
@@ -40,6 +40,7 @@ def main():
     parser.add_argument('--include-list', type=str, required=False, help='Only process IPs that is in the given file.')
     parser.add_argument('--exclude-list', type=str, required=False, help='Only process IPs that is NOT in the given file.')
     args = parser.parse_args()
+    argcomplete.autocomplete(parser)
 
     include = None
     exclude = None

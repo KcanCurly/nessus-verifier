@@ -1,4 +1,4 @@
-import argparse
+import argparse, argcomplete
 import shutil
 from src.solvers import grafana, mdns, openssl, php, python, tls, kibana, elastic, mongo, oracle, smb, ssh, snmp, tomcat, apache, nginx, vmware, openssh, smtp_relay, mssql, idrac, ipmi, terminal, cleartext, ibmwebsphere, obsolete_protocols, postgresql, nopasswddb, actionables, ftp, ntp, nfs, queuejumper, \
     openssl, webcgi_generic, hpilo, jenkins
@@ -101,8 +101,8 @@ def main():
         zz = v() # type: ignore
         zz.helper_parse(subparsers)
 
-
     args = parser.parse_args()
+    argcomplete.autocomplete(parser)
     
     if hasattr(args, "func"):
         if hasattr(args, "nvd_api_key") and args.nvd_api_key is not None:

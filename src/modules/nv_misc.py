@@ -1,4 +1,4 @@
-import argparse
+import argparse, argcomplete
 from src.utilities import utilities
 from src.utilities.utilities import get_cves
 
@@ -13,8 +13,8 @@ def main():
     latest_parser = subparsers.add_parser("latest", help="Search for latest application version")
     latest_parser.add_argument("app", type=str, help="application name to search")
     
-
     args = parser.parse_args()
+    argcomplete.autocomplete(parser)
 
     if args.command == "cve":
         cves = get_cves(args.cpe, limit=args.count)

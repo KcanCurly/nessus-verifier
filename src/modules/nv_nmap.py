@@ -1,8 +1,6 @@
-import re
 import subprocess
 from src.utilities.utilities import error_handler, get_default_context_execution2, get_hosts_from_file2
-import nmap
-import argparse
+import argparse, argcomplete
 
 @error_handler(["host"])
 def identify_service_single(host,**kwargs):
@@ -82,5 +80,6 @@ def main():
     parser.add_argument("-uo", "--unknown-output", type=str, default="nv-unknown.txt", help="Output file for unknowns (Default: nv-unknown.txt).")
     parser.add_argument("--threads", type=int, default=10, help="Amount of threads (Default = 10).")
     args = parser.parse_args()
+    argcomplete.autocomplete(parser)
     
     identify_service(args.file, args.output if args.output else None, args.unknown_output if args.unknown_output else None, args.threads)

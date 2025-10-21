@@ -1,6 +1,6 @@
 import xml.etree.ElementTree as ET
 import os
-import argparse
+import argparse, argcomplete
 import re
 import yaml
 import json
@@ -214,6 +214,7 @@ def main():
     parser.add_argument('--include-list', type=str, required=False, help='Only process IPs that is in the given file.')
     parser.add_argument('--exclude-list', type=str, required=False, help='Only process IPs that is NOT in the given file.')
     args = parser.parse_args()
+    argcomplete.autocomplete(parser)
 
     include = None
     exclude = None
