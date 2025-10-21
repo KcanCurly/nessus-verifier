@@ -14,7 +14,7 @@ def filter_nessus(input_file, output_file, include, exclude):
 
     # Collect hosts to remove
     to_remove = []
-    for host in report.findall("ReportHost"):
+    for host in report.findall("ReportHost"): # type: ignore
         ip = host.get("name")
 
         if include:
@@ -28,7 +28,7 @@ def filter_nessus(input_file, output_file, include, exclude):
 
     # Remove non-matching hosts
     for host in to_remove:
-        report.remove(host)
+        report.remove(host) # type: ignore
 
     # Save filtered Nessus file
     tree.write(output_file, encoding="utf-8", xml_declaration=True)
