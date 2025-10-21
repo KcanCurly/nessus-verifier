@@ -8,37 +8,26 @@ def connect_and_get_response_single(host, **kwargs):
     timeout = kwargs.get("timeout", 3)  # Default timeout is 3 seconds
     message = kwargs.get("message", "info")
     use_ssl = kwargs.get("ssl", False)
+    use_ssl = True if use_ssl == "ssl" else False
 
     with socket.create_connection((host.ip, int(host.port)), timeout=timeout) as sock:
+        s = sock
         if use_ssl:
             context = ssl._create_unverified_context()
-            with context.wrap_socket(sock, server_hostname=host) as tls_sock:
+            s = context.wrap_socket(sock, server_hostname=host)
 
-                try:
-                    response = tls_sock.recv(1024)  # Try receiving data
-                    if response:
-                        return Version_Vuln_Host_Data(host, response.decode().strip())
-                except socket.timeout:
-                    pass  # No response within timeout
-
-                # If no response, send "info"
-                tls_sock.sendall(bytes(message))
-
-                response = tls_sock.recv(1024)  # Receive response after sending "info"
+        try:
+            response = s.recv(1024)  # Try receiving data
+            if response:
                 return Version_Vuln_Host_Data(host, response.decode().strip())
-        else:
-            try:
-                response = sock.recv(1024)  # Try receiving data
-                if response:
-                    return Version_Vuln_Host_Data(host, response.decode().strip())
-            except socket.timeout:
-                pass  # No response within timeout
+        except socket.timeout:
+            pass  # No response within timeout
 
-            # If no response, send "info"
-            sock.sendall(bytes(message))
+        # If no response, send "info"
+        sock.sendall(bytes(message))
 
-            response = sock.recv(1024)  # Receive response after sending "info"
-            return Version_Vuln_Host_Data(host, response.decode().strip())
+        response = sock.recv(1024)  # Receive response after sending "info"
+        return Version_Vuln_Host_Data(host, response.decode().strip())
 
     
 def connect_and_get_response_multiple(hosts, output, message, ssl, threads, timeout):
