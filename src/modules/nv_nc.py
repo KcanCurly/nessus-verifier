@@ -11,24 +11,26 @@ def connect_and_get_response_single(host, **kwargs):
     print(use_ssl)
     use_ssl = True if use_ssl == "ssl" else False
 
-    with socket.create_connection((host.ip, int(host.port)), timeout=timeout) as sock:
-        s = sock
-        if use_ssl:
-            context = ssl._create_unverified_context()
-            s = context.wrap_socket(sock, server_hostname=host)
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.settimeout(10)
+    if use_ssl:
+        context = ssl._create_unverified_context()
+        sock = context.wrap_socket(sock, server_hostname=host)
 
-        try:
-            response = s.recv(1024)  # Try receiving data
-            if response:
-                return Version_Vuln_Host_Data(host, response.decode().strip())
-        except socket.timeout:
-            pass  # No response within timeout
+    sock.connect((host.ip, int(host.port)))
 
-        # If no response, send "info"
-        s.sendall(bytes(message))
+    try:
+        response = sock.recv(1024)  # Try receiving data
+        if response:
+            return Version_Vuln_Host_Data(host, response.decode().strip())
+    except socket.timeout:
+        pass  # No response within timeout
 
-        response = s.recv(1024)  # Receive response after sending "info"
-        return Version_Vuln_Host_Data(host, response.decode().strip())
+    # If no response, send "info"
+    sock.sendall(bytes(message))
+
+    response = sock.recv(1024)  # Receive response after sending "info"
+    return Version_Vuln_Host_Data(host, response.decode().strip())
 
     
 def connect_and_get_response_multiple(hosts, output, message, ssl, threads, timeout):
