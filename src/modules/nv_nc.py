@@ -8,6 +8,7 @@ def connect_and_get_response_single(host, **kwargs):
     timeout = kwargs.get("timeout", 3)  # Default timeout is 3 seconds
     message = kwargs.get("message", "info")
     use_ssl = kwargs.get("ssl", False)
+    print(use_ssl)
     use_ssl = True if use_ssl == "ssl" else False
 
     with socket.create_connection((host.ip, int(host.port)), timeout=timeout) as sock:
