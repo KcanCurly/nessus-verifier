@@ -24,9 +24,9 @@ def connect_and_get_response_single(host, **kwargs):
             pass  # No response within timeout
 
         # If no response, send "info"
-        sock.sendall(bytes(message))
+        s.sendall(bytes(message))
 
-        response = sock.recv(1024)  # Receive response after sending "info"
+        response = s.recv(1024)  # Receive response after sending "info"
         return Version_Vuln_Host_Data(host, response.decode().strip())
 
     
