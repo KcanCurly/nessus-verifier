@@ -8,11 +8,10 @@ def connect_and_get_response_single(host, **kwargs):
     timeout = kwargs.get("timeout", 3)  # Default timeout is 3 seconds
     message = kwargs.get("message", "info")
     use_ssl = kwargs.get("ssl", False)
-    print(use_ssl)
     use_ssl = True if use_ssl == "ssl" else False
 
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    sock.settimeout(10)
+    sock.settimeout(timeout)
     if use_ssl:
         context = ssl._create_unverified_context()
         sock = context.wrap_socket(sock, server_hostname=host)
@@ -25,6 +24,8 @@ def connect_and_get_response_single(host, **kwargs):
             return Version_Vuln_Host_Data(host, response.decode().strip())
     except socket.timeout:
         pass  # No response within timeout
+    except Exception as e:
+        print(e)
 
     # If no response, send "info"
     sock.sendall(bytes(message))
