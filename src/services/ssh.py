@@ -439,7 +439,7 @@ class SSHAuditSubServiceClass(BaseSubServiceClass):
         is_vul = False
         is_terrapin = False
         for line in lines:
-            if "(rec)" in line:
+            if "31m(rec)" in line:
                 if "kex algorithm to remove" in line:
                     is_vul = True
                     vuln_kex.append(line.split()[1][1:])
@@ -452,17 +452,20 @@ class SSHAuditSubServiceClass(BaseSubServiceClass):
                 elif "enc algorithm to remove" in line:
                     is_vul = True
                     vuln_cipher.append(line.split()[1][1:])
-                elif "kex algorithm to append" in line:
-                    append_kex.append(line.split()[1][1:])
-                elif "mac algorithm to append" in line:
-                    append_mac.append(line.split()[1][1:])
-                elif "key algorithm to append" in line:
-                    append_key.append(line.split()[1][1:])
-                elif "enc algorithm to append" in line:
-                    append_cipher.append(line.split()[1][1:])
             elif "vulnerable to the Terrapin attack" in line:
                 is_vul = True
                 is_terrapin = True
+        if is_vul:
+            for line in lines:
+                if "(rec)" in line:
+                    if "kex algorithm to append" in line:
+                        append_kex.append(line.split()[1][1:])
+                    elif "mac algorithm to append" in line:
+                        append_mac.append(line.split()[1][1:])
+                    elif "key algorithm to append" in line:
+                        append_key.append(line.split()[1][1:])
+                    elif "enc algorithm to append" in line:
+                        append_cipher.append(line.split()[1][1:])
 
         return Audit_Vuln_Data(host, is_vul, is_terrapin, vuln_kex, vuln_mac, vuln_key, vuln_cipher, append_kex, append_mac, append_key, append_cipher)
 
