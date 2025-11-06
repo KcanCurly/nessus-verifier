@@ -234,6 +234,18 @@ urls_to_try = [
     "/sql.zip",
     ]
 
+def are_respones_same(response1: requests.Response, response2: requests.Response):
+    if response1.status_code != response2.status_code:
+        return False
+    
+    if response1.headers["Content-Length"] != response2.headers["Content-Length"]:
+        return False
+    
+    if response1.headers.get("Location", "l") != response2.headers.get("Location", "l"):
+        return False
+    
+    return True
+
 def extract_version(url, response):
     # response = requests.get(url, allow_redirects=True, verify=False, timeout=15)
     try:
@@ -623,8 +635,14 @@ def authcheck(url, templates: list[type[SiteTemplateBase]], verbose, wasprocesse
                         file.write(f"{response.url}{f' | {hostname}' if hostname else ''}\n")
                 return
             login_page_found = False
+
+            baseline_response = requests.get(url + "/jsdoiajdkasd", verify=False, timeout=REQUESTS_TIMEOUT, allow_redirects=False)
+
             for u in urls_to_try:
-                response = requests.get(url + u, verify=False, timeout=REQUESTS_TIMEOUT)
+                response = requests.get(url + u, verify=False, timeout=REQUESTS_TIMEOUT, allow_redirects=False)
+                if are_respones_same(baseline_response, response):
+                    continue
+
                 if response.status_code not in range(400, 600):
                     if check_if_loginpage_exists(response.text):
                         login_page_found = True
@@ -839,8 +857,9 @@ def groupup(filename):
 
 def main():
     parser = argparse.ArgumentParser(description="Website Default Credentials Authentication Checker")
-    parser.add_argument("-t", default="urls.txt", help="Target URL/file to test.")
-    parser.add_argument("--group-up", action="store_true", help="Groups up the output files if there was a problem on main function.")
+    parser.add_argument("-f", "--file", default="urls.txt", help="Target URL/file to test.")
+    parser.add_argument("--no-group-up", action="store_true", help="Don't group up the output files.")
+    parser.add_argument("--group-up", action="store_true", help="Groups up the output files and exits.")
     parser.add_argument("--threads", type=int, default=10, help="Number of threads to use. (Default = 10)")
     parser.add_argument("--dns-ip", type=str, help="DNS ip to do reverse DNS lookup")
     parser.add_argument("-v", "--verbose", action="store_true", help="Enable verbose output.")
@@ -906,7 +925,7 @@ def main():
         options.add_argument("--headless")
         options.add_argument("--no-sandbox")
         options.add_argument("--disable-dev-shm-usage")
-        options.add_argument("--window-size=1920,1080")
+        options.add_argument("--window-size=1280,720")
         options.set_preference("permissions.default.image", 2)
         driver = webdriver.Firefox(options=options)
 
@@ -919,17 +938,17 @@ def main():
                     progress.update(task_id, visible=False)
                     executor.submit(start_authcheck, host, templates, task_id, args.verbose)
 
-
-        groupup(NV_ERROR)
-        groupup(NV_BAD)
-        groupup(NV_MANUAL)
-        groupup(NV_NO_TEMPLATE)
-        groupup(NV_NOT_VALID)
-        groupup(NV_SUCCESS)
-        groupup(NV_VERSION)
-        groupup(NV_MAYBE_SOMETHING)
-        groupup(NV_LOGIN_PAGE)
-        groupup(NV_NON_LOGIN_PAGE)
+        if not args.no_group_up:
+            groupup(NV_ERROR)
+            groupup(NV_BAD)
+            groupup(NV_MANUAL)
+            groupup(NV_NO_TEMPLATE)
+            groupup(NV_NOT_VALID)
+            groupup(NV_SUCCESS)
+            groupup(NV_VERSION)
+            groupup(NV_MAYBE_SOMETHING)
+            groupup(NV_LOGIN_PAGE)
+            groupup(NV_NON_LOGIN_PAGE)
 
     # If given url is simply a website, run the templates on the website
     else:
