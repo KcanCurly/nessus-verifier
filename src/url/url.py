@@ -916,8 +916,8 @@ def main():
 
 
     # If given url is a file, read it line by line and run the templates on each line
-    if os.path.isfile(args.f):
-        with open(args.f, "r") as file:
+    if os.path.isfile(args.file):
+        with open(args.file, "r") as file:
             hosts = [line.strip() for line in file]  # Strip newline characters
 
         global driver
