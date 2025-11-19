@@ -208,13 +208,13 @@ class MongoDBVersionSubServiceClass(BaseSubServiceClass):
             self.print_output("MongoDB versions detected:")
             for key, value in versions.items():
                 cves = []
-                if self.parent_service.print_cves:
+                if self.print_cves:
                     cves = get_cves(f"cpe:2.3:a:mongodb:mongodb:{key}")
                 if cves: self.print_output(f"MongoDB {key} ({", ".join(cves)}):")
                 else: self.print_output(f"MongoDB {key}:")  
                 for v in value:
                     self.print_output(f"    {v}")
-            if self.parent_service.print_latest_version:
+            if self.print_latest_version:
                 latest_versions = self.parent_service.get_latest_version()
                 if latest_versions:
                     self.print_output(f"Latest version for {self.parent_service.eol_product_name}")
