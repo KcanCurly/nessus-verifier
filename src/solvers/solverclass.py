@@ -22,7 +22,7 @@ class BaseSolverClass():
         self.action_title = ""
         self.windowcatcher_datas: list[WindowCatcherData] = []
         self.eol_product_name = ""
-        self.print_cves = False
+        self.print_cve = False
         self.print_latest_version = False
 
     def get_latest_version(self, print_title = True):
@@ -40,7 +40,7 @@ class BaseSolverClass():
         if hasattr(args, "output_directory") and self.args.output_directory:
             self.output += self.args.output_directory + "/" + self.output_filename_for_all
         if hasattr(args, "print_cve") and args.print_cve:
-            self.print_cves = True
+            self.print_cve = True
         if hasattr(args, "print_latest_version") and args.print_latest_version:
             self.print_latest_version = True
         self._get_hosts(args)
