@@ -50,7 +50,7 @@ class KibanaSolverClass(BaseSolverClass):
             self.print_output("Detected Kibana Versions:")
             for key, value in versions.items():
                 cves = []
-                if self.print_cves:
+                if self.print_cve:
                     cves = get_cves(f"cpe:2.3:a:elastic:kibana:{key}")
                 if cves: 
                     all_cves.update(cves)

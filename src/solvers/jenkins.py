@@ -52,7 +52,7 @@ class JenkinsSolverClass(BaseSolverClass):
                 if compare_versions(key, "2.492") == -1:
                     self.print_output(f"Jenkins {key} (EOL):")
                 else:
-                    if self.print_cves:
+                    if self.print_cve:
                         cves = get_cves(f"cpe:2.3:a:jenkins:jenkins:{key}")
                     if cves: 
                         self.print_output(f"Jenkins {key} ({", ".join(cves)}):")

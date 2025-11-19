@@ -48,7 +48,7 @@ class GrafanaSolverClass(BaseSolverClass):
             self.print_output("Detected Grafana Versions:")
             for key, value in versions.items():
                 cves = []
-                if self.print_cves:
+                if self.print_cve:
                     cves = get_cves(f"cpe:2.3:a:grafana:grafana:{key}")
                 if cves: 
                     all_cves.update(cves)

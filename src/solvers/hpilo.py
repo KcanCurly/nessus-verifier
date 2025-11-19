@@ -51,7 +51,7 @@ class HPiLOSolverClass(BaseSolverClass):
                 else:
                     cpe1 = f"cpe:2.3:o:hp:integrated_lights-out_{major}:{minor}"
                     cpe2 = f"cpe:2.3:o:hp:integrated_lights-out_{major}_firmware:{minor}"
-                    if self.print_cves:
+                    if self.print_cve:
                         cves = get_cves(cpe1)
                         if not cves:
                             cves = get_cves(cpe2)

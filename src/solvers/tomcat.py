@@ -35,7 +35,7 @@ class TomcatSolverClass(BaseSolverClass):
                 if key.startswith("8"): 
                     self.print_output(f"Apache Tomcat/{key} (EOL):")
                 else:
-                    if self.print_cves:
+                    if self.print_cve:
                         cves = get_cves(f"cpe:2.3:a:apache:tomcat:{key}")
                     if cves: 
                         all_cves.update(cves)

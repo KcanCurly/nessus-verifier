@@ -35,7 +35,7 @@ class OpenSSLSolverClass(BaseSolverClass):
             self.print_output("Detected OpenSSL versions:")
             for key, value in versions.items():
                 cves = []
-                if self.print_cves:
+                if self.print_cve:
                     cves = get_cves(f"cpe:2.3:a:openssl:openssl:{key}")
                 if cves:
                     all_cves.update(cves)

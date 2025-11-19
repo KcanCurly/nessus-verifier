@@ -14,8 +14,8 @@ class IBMWebSphereSolverClass(BaseSolverClass):
 
         if not self.hosts:
             return
-        if self.is_nv:
-            self.solve_version(self.hosts, args.threads, args.timeout, args.errors, args.verbose)
+
+        self.solve_version(self.hosts, args.threads, args.timeout, args.errors, args.verbose)
 
     @error_handler(["host"])
     def solve_version_single(self, host, timeout, errors, verbose):
@@ -52,12 +52,13 @@ class IBMWebSphereSolverClass(BaseSolverClass):
             self.print_output("Detected IBM WebSphere Versions:")
             for key, value in versions.items():
                 cves = []
-                cpe1 = f"cpe:2.3:a:ibm:websphere_application_server:{key}:*:*:*:liberty"
-                cpe2 = f"cpe:2.3:a:ibm:websphere_application_server:{key}"
-                if self.print_cves:
-                    cves = get_cves(cpe1)
-                    if not cves:
-                        cves = get_cves(cpe2)
+                if self.print_cve:
+                    cpe1 = f"cpe:2.3:a:ibm:websphere_application_server:{key.rsplit(None, 1)[1]}:*:*:*:liberty"
+                    cpe2 = f"cpe:2.3:a:ibm:websphere_application_server:{key.rsplit(None, 1)[1]}"
+                    if self.print_cve:
+                        cves = get_cves(cpe1)
+                        if not cves:
+                            cves = get_cves(cpe2)
                 if cves:
                     all_cves.update(cves)
                     self.print_output(f"{key} ({", ".join(cves)}):")

@@ -41,7 +41,7 @@ class ApacheSolverClass(BaseSolverClass):
             self.print_output("Detected Apache Versions:")
             for key, value in versions.items():
                 cves = []
-                if self.print_cves:
+                if self.print_cve:
                     cves = get_cves(f"cpe:2.3:a:apache:http_server:{key}", cves_to_skip=shodan_cves_to_skip)
                 if cves: 
                     self.print_output(f"Apache {key} ({", ".join(cves)}):")

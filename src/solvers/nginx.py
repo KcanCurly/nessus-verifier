@@ -48,7 +48,7 @@ class NginxSolverClass(BaseSolverClass):
             self.print_output("Detected Nginx Versions:")
             for key, value in versions.items():
                 cves = []
-                if self.print_cves:
+                if self.print_cve:
                     cves = get_cves(f"cpe:2.3:a:f5:nginx_open_source:{key}")
                     if not cves:
                         cves = get_cves(f"cpe:2.3:a:f5:nginx:{key}")

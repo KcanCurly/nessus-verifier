@@ -32,8 +32,9 @@ class AMQPVersionSubServiceClass(BaseSubServiceClass):
                 cves = []
                 if "rabbitmq" in key.lower():
                     cpe = f"cpe:2.3:a:vmware:rabbitmq:{pure_version}"
-                if cpe: 
-                    cves = get_cves(cpe)
+                if cpe:
+                    if self.print_cves:
+                        cves = get_cves(cpe)
                 if cves: 
                     self.print_output(f"{extra} {pure_version} ({", ".join(cves)}):")
                 else:
@@ -41,6 +42,13 @@ class AMQPVersionSubServiceClass(BaseSubServiceClass):
 
                 for v in value:
                     self.print_output(f"    {v}")
+
+            if self.print_latest_version:
+                latest_versions = self.parent_service.get_latest_version()
+                if latest_versions:
+                    self.print_output(f"Latest version for {self.parent_service.eol_product_name}")
+                    for version in latest_versions:
+                        self.print_output(version)
 
 
 
@@ -68,4 +76,8 @@ class AMQPServiceClass(BaseServiceClass):
     def __init__(self) -> None:
         super().__init__("amqp")
         self.eol_product_name = "rabbitmq"
+
+        v = AMQPVersionSubServiceClass()
+        v._set_parent(self)
+
         self.register_subservice(AMQPVersionSubServiceClass())
