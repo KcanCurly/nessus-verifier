@@ -6,6 +6,8 @@ class BaseServiceClass():
         self.name = name
         self.subservices= []
         self.eol_product_name = ""
+        self.print_cves = False
+        self.print_latest_version = False
 
     def helper_parse(self, commandparser):
         parser_task1 = commandparser.add_parser(self.name)
@@ -18,10 +20,14 @@ class BaseServiceClass():
         subservice._set_parent(self)
         self.subservices.append(subservice)
 
-    def print_latest_version(self, print_title = True):
+    def print_latest_version2(self, print_title = True):
         if not self.eol_product_name:
             return
         return get_latest_version(self.eol_product_name)
+    
+    def get_latest_version(self, print_title = True):
+        if self.eol_product_name:
+            return get_latest_version(self.eol_product_name)
 
 """
     def solve(self, args):

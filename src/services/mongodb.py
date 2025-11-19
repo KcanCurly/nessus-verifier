@@ -66,7 +66,7 @@ class MongoDBPostSubServiceClass(BaseSubServiceClass):
                         self.print_output(f"Host: {host} - Database: {db['name']}")
                     return
                 if collections:
-                    d = client[database]
+                    db = client[database]
                     cols = d.list_collections()
                     for c in cols:
                         self.print_output(f"Host: {host} - Database: {db['name']} - Collection: {c['name']}")
@@ -82,9 +82,9 @@ class MongoDBPostSubServiceClass(BaseSubServiceClass):
                     return
                 
                 if database and collection and field:
-                    d = client[database]
-                    doc = d[collection]
-                    self.print_output(f"Host: {host} - Database: {d.name} - Collection: {doc.name}")
+                    db = client[database]
+                    doc = db[collection]
+                    self.print_output(f"Host: {host} - Database: {db.name} - Collection: {doc.name}")
                     for c in doc.find(filter="", limit=row_limit):
                         pprint.pprint(c)
                     return
@@ -207,11 +207,19 @@ class MongoDBVersionSubServiceClass(BaseSubServiceClass):
             ) 
             self.print_output("MongoDB versions detected:")
             for key, value in versions.items():
-                cves = get_cves(f"cpe:2.3:a:mongodb:mongodb:{key}")
+                cves = []
+                if self.parent_service.print_cves:
+                    cves = get_cves(f"cpe:2.3:a:mongodb:mongodb:{key}")
                 if cves: self.print_output(f"MongoDB {key} ({", ".join(cves)}):")
                 else: self.print_output(f"MongoDB {key}:")  
                 for v in value:
                     self.print_output(f"    {v}")
+            if self.parent_service.print_latest_version:
+                latest_versions = self.parent_service.get_latest_version()
+                if latest_versions:
+                    self.print_output(f"Latest version for {self.parent_service.eol_product_name}")
+                    for version in latest_versions:
+                        self.print_output(version)
 
     @error_handler(["host"])
     def single(self, host, **kwargs):
@@ -225,8 +233,11 @@ class MongoDBVersionSubServiceClass(BaseSubServiceClass):
 
 
 class MongoDBServiceClass(BaseServiceClass):
+
+
     def __init__(self) -> None:
         super().__init__("mongodb")
+
         self.register_subservice(MongoDBVersionSubServiceClass())
         self.register_subservice(MongoDBUnauthSubServiceClass())
         self.register_subservice(MongoDBPostSubServiceClass())
