@@ -14,5 +14,5 @@ class MongoSolverClass(BaseSolverClass):
         if not self.hosts:
             return
 
-        mongodb.MongoDBVersionSubServiceClass().nv(self.hosts, threads=args.threads, timeout=args.timeout, errors=args.errors, verbose=args.verbose, output=self.output)
+        mongodb.MongoDBVersionSubServiceClass().nv(self.hosts, print_cve=args.print_cve, print_latest_version=args.print_latest_version, threads=args.threads, timeout=args.timeout, errors=args.errors, verbose=args.verbose, output=self.output)
         self.create_windowcatcher_action()

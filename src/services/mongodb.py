@@ -237,6 +237,7 @@ class MongoDBServiceClass(BaseServiceClass):
 
     def __init__(self) -> None:
         super().__init__("mongodb")
+        self.eol_product_name = "mongodb"
 
         self.register_subservice(MongoDBVersionSubServiceClass())
         self.register_subservice(MongoDBUnauthSubServiceClass())
