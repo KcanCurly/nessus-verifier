@@ -23,7 +23,7 @@ class BaseSubServiceClass():
         self.console(args)
 
     def console(self, args):
-        self.nv(get_hosts_from_file2(args.target), threads=args.threads, timeout=args.timeout, errors=args.errors, verbose=args.verbose, outout=args.output)
+        self.nv(get_hosts_from_file2(args.target), print_cve=args.print_cve, print_latest_version=args.print_latest_version, threads=args.threads, timeout=args.timeout, errors=args.errors, verbose=args.verbose, outout=args.output)
 
     def nv(self, hosts, **kwargs):
         self.threads = kwargs.get("threads", DEFAULT_THREAD)
