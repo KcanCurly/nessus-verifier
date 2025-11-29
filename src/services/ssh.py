@@ -20,7 +20,7 @@ protocol_pattern = r"Remote protocol version (.*),"
 software_pattern = r"remote software version (.*)"
 
 class Audit_Vuln_Data():
-    def __init__(self, host: Host, is_vuln: bool, is_terrapin: bool, vuln_kex: list[str], vuln_mac: list[str], vuln_key: list[str], vuln_cipher, append_kex, append_mac, append_key, append_cipher):
+    def __init__(self, host: Host, is_vuln: bool, is_terrapin: bool, vuln_kex: list[str], vuln_mac: list[str], vuln_key: list[str], vuln_cipher):
         self.host = host
         self.is_vuln = is_vuln
         self.is_terrapin = is_terrapin
@@ -28,21 +28,12 @@ class Audit_Vuln_Data():
         self.vuln_mac = vuln_mac
         self.vuln_key = vuln_key
         self.vuln_cipher = vuln_cipher
-        self.append_kex = append_kex
-        self.append_mac = append_mac
-        self.append_key = append_key
-        self.append_cipher = append_cipher
 
 class SSH_Version_Vuln_Data():
     def __init__(self, host: Host, version: str, protocol: str):
         self.host = host
         self.version = version
         self.protocol = protocol
-
-def remove_extra(input):
-    input = input.replace("p1", "")
-    input = input.replace("p2", "")
-    return input
 
 class SSHBruteSubServiceClass(BaseSubServiceClass):
 
@@ -350,11 +341,6 @@ class SSHAuditSubServiceClass(BaseSubServiceClass):
         vuln_cipher = set()
         vuln_hosts = set()
         vuln_terrapin = set()
-
-        append_kex = set()
-        append_mac = set()
-        append_key = set()
-        append_cipher = set()
     
         for r in results:
             if r.is_vuln:
@@ -363,10 +349,7 @@ class SSHAuditSubServiceClass(BaseSubServiceClass):
                 vuln_mac.update(r.vuln_mac)
                 vuln_key.update(r.vuln_kex)
                 vuln_cipher.update(r.vuln_cipher)
-                append_kex.update(r.append_kex)
-                append_mac.update(r.append_mac)
-                append_key.update(r.append_key)
-                append_cipher.update(r.append_cipher)
+
             if r.is_terrapin:
                 vuln_terrapin.add(r.host)
         
@@ -389,26 +372,6 @@ class SSHAuditSubServiceClass(BaseSubServiceClass):
             self.print_output("Vulnerable Cipher algorithms:")
             for k in vuln_cipher:
                 self.print_output(f"    {k}")
-
-        if append_kex:
-            self.print_output("Suggested KEX algorithms to append:")
-            for k in append_kex:
-                self.print_output(f"    {k}")
-
-        if append_mac:
-            self.print_output("Suggested MAC algorithms to append:")
-            for k in append_mac:
-                self.print_output(f"    {k}")
-
-        if append_key:
-            self.print_output("Suggested Host-Key algorithms to append:")
-            for k in append_key:
-                self.print_output(f"    {k}")
-
-        if append_cipher:
-            self.print_output("Suggested Cipher algorithms to append:")
-            for k in append_cipher:
-                self.print_output(f"    {k}")
                 
         if vuln_hosts:
             self.print_output("Vulnerable hosts:")
@@ -427,10 +390,7 @@ class SSHAuditSubServiceClass(BaseSubServiceClass):
         vuln_mac = []
         vuln_key = []
         vuln_cipher = []
-        append_kex = []
-        append_mac = []
-        append_key = []
-        append_cipher = []
+
         # if verbose: console.print(f"Starting processing {host}")
         command = ["ssh-audit", "--skip-rate-test", "-t", str(self.timeout), str(host)]
         # Execute the command and capture the output
@@ -455,19 +415,8 @@ class SSHAuditSubServiceClass(BaseSubServiceClass):
             elif "vulnerable to the Terrapin attack" in line:
                 is_vul = True
                 is_terrapin = True
-        if is_vul:
-            for line in lines:
-                if "(rec)" in line:
-                    if "kex algorithm to append" in line:
-                        append_kex.append(line.split()[1][1:])
-                    elif "mac algorithm to append" in line:
-                        append_mac.append(line.split()[1][1:])
-                    elif "key algorithm to append" in line:
-                        append_key.append(line.split()[1][1:])
-                    elif "enc algorithm to append" in line:
-                        append_cipher.append(line.split()[1][1:])
 
-        return Audit_Vuln_Data(host, is_vul, is_terrapin, vuln_kex, vuln_mac, vuln_key, vuln_cipher, append_kex, append_mac, append_key, append_cipher)
+        return Audit_Vuln_Data(host, is_vul, is_terrapin, vuln_kex, vuln_mac, vuln_key, vuln_cipher)
 
 
 
