@@ -204,7 +204,8 @@ class SSHVersionSubServiceClass(BaseSubServiceClass):
             if r.protocol and r.protocol != "2.0":
                 protocol1.append(r.host)
             if r.version:
-                r.version = r.version.split("_")[1]
+                if '_' in r.version:
+                    r.version = r.version.split("_")[1]
                 if r.version not in versions:
                     versions[r.version] = []
                 versions[r.version].append(r.host)
