@@ -20,22 +20,22 @@ class CleartextSolverClass(BaseSolverClass):
 
         if not self.hosts:
             return
-        if self.is_nv:
-            hosts = self.subhosts.get("Unencrypted Telnet Server", [])
-            if hosts: 
-                TelnetUsageSubServiceClass().nv(hosts, threads=args.threads, timeout=args.timeout, errors=args.errors, verbose=args.verbose, output=self.output)
-                if not self.is_action_done:
-                    self.create_windowcatcher_action()
-                    self.is_action_done = True
-            hosts = self.subhosts.get("Basic Authentication Without HTTPS", [])
-            if hosts: 
-                self.solve_basic_http(hosts, args.threads, args.timeout, args.errors, args.verbose)
-            hosts = self.subhosts.get("AMQP Cleartext Authentication", [])
-            if hosts: 
-                self.solve_amqp(hosts, args.threads, args.timeout, args.errors, args.verbose)
-            hosts = self.subhosts.get("FTP Supports Cleartext Authentication", [])
-            if hosts: 
-                self.solve_ftp(hosts, args.threads, args.timeout, args.errors, args.verbose)
+
+        hosts = self.subhosts.get("Unencrypted Telnet Server", [])
+        if hosts: 
+            TelnetUsageSubServiceClass().nv(hosts, threads=args.threads, timeout=args.timeout, errors=args.errors, verbose=args.verbose, output=self.output)
+            if not self.is_action_done:
+                self.create_windowcatcher_action()
+                self.is_action_done = True
+        hosts = self.subhosts.get("Basic Authentication Without HTTPS", [])
+        if hosts: 
+            self.solve_basic_http(hosts, args.threads, args.timeout, args.errors, args.verbose)
+        hosts = self.subhosts.get("AMQP Cleartext Authentication", [])
+        if hosts: 
+            self.solve_amqp(hosts, args.threads, args.timeout, args.errors, args.verbose)
+        hosts = self.subhosts.get("FTP Supports Cleartext Authentication", [])
+        if hosts: 
+            self.solve_ftp(hosts, args.threads, args.timeout, args.errors, args.verbose)
 
 
     @error_handler(["host"])

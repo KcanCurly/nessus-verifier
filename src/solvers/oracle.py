@@ -15,10 +15,7 @@ class OracleSolverClass(BaseSolverClass):
 
         if not self.hosts: 
             return
-        if self.is_nv:
-            self.solve_version(self.hosts, args.threads, args.timeout, args.errors, args.verbose)
-        else:
-            self.solve_version(self.hosts, args.threads, args.timeout, args.errors, args.verbose)
+        self.solve_version(self.hosts, args.threads, args.timeout, args.errors, args.verbose)
 
     @error_handler([])
     def solve_version(self, hosts, threads, timeout, errors, verbose):

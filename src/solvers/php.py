@@ -16,10 +16,7 @@ class PHPSolverClass(BaseSolverClass):
 
         if not self.hosts: 
             return
-        if self.is_nv:
-            self.solve_version(self.hosts, args.threads, args.timeout, args.errors, args.verbose)
-        else:
-            self.solve_version(self.hosts, args.threads, args.timeout, args.errors, args.verbose)
+        self.solve_version(self.hosts, args.threads, args.timeout, args.errors, args.verbose)
 
     @error_handler(["host"])
     def solve_version_single(self, host, timeout, errors, verbose):

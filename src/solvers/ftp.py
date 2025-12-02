@@ -13,6 +13,6 @@ class FTPSolverClass(BaseSolverClass):
 
         if not self.hosts:
             return
-        if self.is_nv:
-            FTPAnonSubServiceClass().nv(self.hosts, threads=args.threads, timeout=args.timeout, errors=args.errors, verbose=args.verbose, output=self.output)
-            self.create_windowcatcher_action()
+
+        FTPAnonSubServiceClass().nv(self.hosts, threads=args.threads, timeout=args.timeout, errors=args.errors, verbose=args.verbose, output=self.output)
+        self.create_windowcatcher_action()

@@ -13,6 +13,6 @@ class IDRACSolverClass(BaseSolverClass):
 
         if not self.hosts:
             return
-        if self.is_nv:
-            IDRACVersionSubServiceClass().nv(self.hosts, threads=args.threads, timeout=args.timeout, errors=args.errors, verbos=args.verbose, output=self.output)
-            self.create_windowcatcher_action()
+
+        IDRACVersionSubServiceClass().nv(self.hosts, threads=args.threads, timeout=args.timeout, errors=args.errors, verbos=args.verbose, output=self.output)
+        self.create_windowcatcher_action()

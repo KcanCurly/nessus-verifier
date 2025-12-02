@@ -13,7 +13,7 @@ class NFSSolverClass(BaseSolverClass):
 
         if not self.hosts:
             return
-        if self.is_nv:
-            NFSListServiceClass().nv(self.hosts, threads=args.threads, timeout=args.timeout, errors=args.errors, verbose=args.verbose, output=self.output)
-            self.create_windowcatcher_action()
+
+        NFSListServiceClass().nv(self.hosts, threads=args.threads, timeout=args.timeout, errors=args.errors, verbose=args.verbose, output=self.output)
+        self.create_windowcatcher_action()
 

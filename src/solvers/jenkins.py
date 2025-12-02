@@ -16,8 +16,8 @@ class JenkinsSolverClass(BaseSolverClass):
 
         if not self.hosts:
             return
-        if self.is_nv:
-            self.solve_version(self.hosts, args.threads, args.timeout, args.timeout, args.verbose)
+
+        self.solve_version(self.hosts, args.threads, args.timeout, args.timeout, args.verbose)
 
     @error_handler(["host"])
     def solve_version_single(self, host: Host, timeout: int, errors: bool, verbose: bool):

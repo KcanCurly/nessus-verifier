@@ -13,9 +13,6 @@ class PSQLSolverClass(BaseSolverClass):
 
         if not self.hosts: 
             return
-        if self.is_nv:
-            PSQLDefaultSubServiceClass().nv(self._get_subhosts('PostgreSQL Default Unpassworded Account'), threads=args.threads, timeout=args.timeout, errors=args.errors, verbose=args.verbose, output=self.output)
-            PSQLDefaultSubServiceClass().nv(self._get_subhosts('PostgreSQL Empty Password Handling Remote Authentication Bypass'), threads=args.threads, timeout=args.timeout, errors=args.errors, verbose=args.verbose, output=self.output)
-            self.create_windowcatcher_action()
-        else:
-            PSQLDefaultSubServiceClass().nv(self.hosts, threads=args.threads, timeout=args.timeout, errors=args.errors, verbose=args.verbose)
+
+        PSQLDefaultSubServiceClass().nv(self._get_subhosts('PostgreSQL Default Unpassworded Account'), threads=args.threads, timeout=args.timeout, errors=args.errors, verbose=args.verbose, output=self.output)
+        PSQLDefaultSubServiceClass().nv(self._get_subhosts('PostgreSQL Empty Password Handling Remote Authentication Bypass'), threads=args.threads, timeout=args.timeout, errors=args.errors, verbose=args.verbose, output=self.output)
