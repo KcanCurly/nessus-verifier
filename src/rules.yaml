@@ -2377,7 +2377,13 @@
   # 49704 - External URLs
 
 - name: Web mirroring
-  id: 40
+  id: 41
   should-group-total: false
   plugin-ids: [10662]
   # 10662 - Web mirroring
+
+- name: Web Server Office File Inventory
+  id: 42
+  should-group-total: false
+  plugin-ids: [11419]
+  # 10662 - Web Server Office File Inventory
