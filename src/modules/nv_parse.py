@@ -92,7 +92,7 @@ def get_plugin_output(pluginName, ip_port):
         host_ip = host.attrib['name']  # Extract the host IP
         for report_item in host.findall(".//ReportItem"):
             port = report_item.attrib.get('port', 0)
-            if ip == host_ip and int(report_item.attrib.get("pluginName", -1)) == pluginName and report_item.attrib.get('port', 0) == port:
+            if ip == host_ip and report_item.attrib.get("pluginName") == pluginName and int(report_item.attrib.get('port', 0)) == port:
                 return report_item.findtext('plugin_output')
 
 
