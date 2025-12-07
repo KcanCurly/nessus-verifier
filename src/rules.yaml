@@ -2217,14 +2217,13 @@
 
 - name: Web/CGI Actionable
   id: 34
-  plugin-ids: [55640, 40984, 121479, 65702, 10922, 46803, 91815]
+  plugin-ids: [55640, 40984, 121479, 65702, 10922, 46803]
   # 55640 - SQL Dump Files Disclosed via Web Server
   # 40984 - Browsable Web Directories
   # 121479 - web.config File Information Disclosure
   # 65702 - Git Repository Served by Web Server
   # 10922 - CVS (Web-Based) Entries File Information Disclosure
   # 46803 - PHP expose_php Information Disclosure
-  # 91815 - Web Application Sitemap
 
 - name: HP iLO
   id: 35
@@ -2314,3 +2313,8 @@
   # 145533 - Jenkins < 2.263.3 LTS / 2.276 TOCTOU
   # 130099 - Jenkins < 2.176.4 LTS / 2.197 Multiple Vulnerabilities
   # 114168 - Jenkins < 2.442 / < LTS 2.426.3 Arbitrary File Read
+
+- name: Web Application Sitemap
+  id: 37
+  plugin-ids: [91815]
+  # 91815 - Web Application Sitemap
