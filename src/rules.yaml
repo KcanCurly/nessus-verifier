@@ -2217,9 +2217,13 @@
 
 - name: Web/CGI Actionable
   id: 34
-  plugin-ids: [55640, 40984]
+  plugin-ids: [55640, 40984, 121479, 65702, 10922, 46803]
   # 55640 - SQL Dump Files Disclosed via Web Server
   # 40984 - Browsable Web Directories
+  # 121479 - web.config File Information Disclosure
+  # 65702 - Git Repository Served by Web Server
+  # 10922 - CVS (Web-Based) Entries File Information Disclosure
+  # 46803 - PHP expose_php Information Disclosure
 
 - name: HP iLO
   id: 35

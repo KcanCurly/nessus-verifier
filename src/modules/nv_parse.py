@@ -228,6 +228,16 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                         plugin_output_s = plugin_output.split() # type: ignore
                         for p in plugin_output_s[12:]:
                             print(f"            {p}", file=f)
+                    elif key == "CVS (Web-Based) Entries File Information Disclosure":
+                        plugin_output = get_plugin_output("CVS (Web-Based) Entries File Information Disclosure", z)
+                        plugin_output_s = plugin_output.split() # type: ignore
+                        for p in plugin_output_s[14:]:
+                            print(f"            {p}", file=f)
+                    elif key == "PHP expose_php Information Disclosure":
+                        plugin_output = get_plugin_output("PHP expose_php Information Disclosure", z)
+                        plugin_output_s = plugin_output.split() # type: ignore
+                        for p in plugin_output_s[12:]:
+                            print(f"            {p}", file=f)
     with open(args.output_json_file, "w") as file:
         for v in l:
             json.dump(v.__dict__, file)
