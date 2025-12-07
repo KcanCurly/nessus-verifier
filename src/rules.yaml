@@ -1287,8 +1287,9 @@
 - name: mDNS
   id: 17
   should-group-total: true
-  plugin-ids: [12218]
+  plugin-ids: [12218, 66717]
   # 12218 - mDNS Detection (Remote Network)
+  # 66717 - mDNS Detection (Local Network)
 
 - name: Obsolete Protocols
   id: 18
@@ -2386,4 +2387,10 @@
   id: 42
   should-group-total: false
   plugin-ids: [11419]
-  # 10662 - Web Server Office File Inventory
+  # 11419 - Web Server Office File Inventory
+
+- name: Web Server robots.txt Information Disclosure
+  id: 42
+  should-group-total: false
+  plugin-ids: [10302]
+  # 10302 - Web Server robots.txt Information Disclosure

@@ -287,6 +287,10 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                             if p == ":":
                                 break
                             print(f"            {p}", file=f)
+                    elif key == "Web Server robots.txt Information Disclosure":
+                        plugin_output = get_plugin_output("Web Server robots.txt Information Disclosure", z)
+                        plugin_output_s = plugin_output.split() # type: ignore
+                        print(f"            {plugin_output_s}", file=f)
                         
     with open(args.output_json_file, "w") as file:
         for v in l:
