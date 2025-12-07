@@ -263,17 +263,19 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                     elif key == "Web Server Harvested Email Addresses":
                         plugin_output = get_plugin_output("Web Server Harvested Email Addresses", z)
                         plugin_output_s = plugin_output.split("- ") # type: ignore
-                        n = plugin_output_s[0].strip().split()[-1]
                         z = plugin_output_s[1].strip().split()
                         for p in z:
                             if p == "referenced" or p == "from" or p == ":":
                                 continue
                             if "@" in p:
                                 p = p.replace('\'', "")
-                                p = p.replace(':', "")
+                                p = p.replace(',', ":")
                             elif "/" in p:
                                 p = p.replace('/', "    /")
                             print(f"            {p}", file=f)
+                    elif key == "Web mirroring":
+                        plugin_output = get_plugin_output("Web mirroring", z)
+                        print(f"            {plugin_output}", file=f)
                         
     with open(args.output_json_file, "w") as file:
         for v in l:

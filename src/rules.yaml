@@ -2369,3 +2369,15 @@
   should-group-total: false
   plugin-ids: [49705]
   # 49705 - Web Server Harvested Email Addresses
+
+- name: External URLs
+  id: 40
+  should-group-total: false
+  plugin-ids: [49704]
+  # 49704 - External URLs
+
+- name: Web mirroring
+  id: 40
+  should-group-total: false
+  plugin-ids: [10662]
+  # 10662 - Web mirroring
