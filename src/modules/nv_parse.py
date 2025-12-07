@@ -254,8 +254,12 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                     elif key == "Web Server Directory Enumeration":
                         plugin_output = get_plugin_output("Web Server Directory Enumeration", z)
                         urls =re.findall(r"/S+", plugin_output) # type: ignore
+                        if "disc" in plugin_output: # type: ignore
+                            print(f"            [NO AUTH]", file=f)
+                        else:
+                            print(f"            [AUTH]", file=f)
                         for p in urls:
-                            print(f"            {p}", file=f)
+                            print(f"            {plugin_output}", file=f)
     with open(args.output_json_file, "w") as file:
         for v in l:
             json.dump(v.__dict__, file)
