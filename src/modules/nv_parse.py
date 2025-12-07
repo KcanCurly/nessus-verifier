@@ -85,18 +85,15 @@ def save_services(services):
                 f.write(f"{host}\n")
 
 def get_plugin_output(pluginName, ip_port):
-    print(pluginName)
-    print(ip_port)
     ip, port = ip_port.split(":")
     tree = ET.parse(nessus_file_path) # type: ignore
     root = tree.getroot()
     for host in root.findall(".//Report/ReportHost"):
         host_ip = host.attrib['name']  # Extract the host IP
         if ip == host_ip:
-            print("FOUND IP")
             for report_item in host.findall(".//ReportItem"):
-                if report_item.attrib.get("pluginName") == pluginName:
-                    print("FOUND")
+                print(report_item.attrib.get('port', 0))
+                if report_item.attrib.get("pluginName") == pluginName and report_item.attrib.get('port', 0) == port:
                     return report_item.findtext('plugin_output')
 
 
@@ -224,7 +221,7 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                     print(f"        {z}", file=f)
                     if key == "Browsable Web Directories":
                         plugin_output = get_plugin_output("Browsable Web Directories", z)
-                        plugin_output_s = plugin_output.split("") # type: ignore
+                        plugin_output_s = plugin_output.split() # type: ignore
                         for p in plugin_output_s[6:]:
                             print(f"            {p}", file=f)
                     
