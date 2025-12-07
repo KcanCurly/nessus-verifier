@@ -7,13 +7,18 @@ import yaml
 import json
 import cidr_man
 
-nessus_file_path = None
+sitemap_shortcut = {}
+
+nessus_xml_tree = None
+
+def read_nessus_file(filename):
+    global nessus_xml_tree
+    nessus_xml_tree = ET.parse(filename)
+    return nessus_xml_tree
 
 # Function to parse the Nessus file (.nessus format) and extract services and associated hosts
-def parse_nessus_file(file_path, include = None, exclude = None):
-    global nessus_file_path
-    nessus_file_path = file_path
-    tree = ET.parse(file_path)
+def parse_nessus_file(tree, include = None, exclude = None):
+    global sitemap_shortcut
     root = tree.getroot()
 
     # Dictionary to store services and their associated hosts
@@ -38,6 +43,10 @@ def parse_nessus_file(file_path, include = None, exclude = None):
             port = item.attrib.get('port', 0)
             if not port: # Skip port 0
                 continue
+
+            if item.attrib.get("pluginName") == "Web Application Sitemap":
+                sitemap_shortcut[f"{host_ip}:{port}"] = item.findtext('plugin_output')
+
             
             if item.attrib.get("pluginID") == '24260' and item.attrib.get("pluginName") == "HyperText Transfer Protocol (HTTP) Information":
                 # Parse the plugin output to extract SSL information
@@ -87,8 +96,7 @@ def save_services(services):
 
 def get_plugin_output(pluginName, ip_port):
     ip, port = ip_port.split(":")
-    tree = ET.parse(nessus_file_path) # type: ignore
-    root = tree.getroot()
+    root = nessus_xml_tree.getroot() # type: ignore
     for host in root.findall(".//Report/ReportHost"):
         host_ip = host.attrib['name']  # Extract the host IP
         if ip == host_ip:
@@ -136,12 +144,11 @@ class NessusScanOutput:
         self.output = output
         self.cve = cve
 
-def parse_nessus_output(file_path) -> list[NessusScanOutput]:
+def parse_nessus_output(tree) -> list[NessusScanOutput]:
     """
     Parses Nessus XML output and returns a list of NessusScanOutput objects.
     """
     nessus_scan_output = []
-    tree = ET.parse(file_path)
     root = tree.getroot()
 
     for host in root.iter('ReportHost'):
@@ -164,10 +171,6 @@ def parse_nessus_output(file_path) -> list[NessusScanOutput]:
             nessus_scan_output.append(output)
 
     return nessus_scan_output
-
-def read_nessus_file(filename):
-    with open(filename, 'rb') as f: return f.read()
-    
     
 def group_up(l: list[NessusScanOutput], parse_severity0: bool) -> list[GroupNessusScanOutput]:
     rules: list[GroupNessusScanOutput] = []
@@ -215,7 +218,7 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
             for h in a.hosts:
                 print(f"    {h}", file=f)
 
-            if a.id > 37 and len(a.sub_hosts.items()) == 1: continue
+            if a.id > 38 and len(a.sub_hosts.items()) == 1: continue
             print(file=f)
             for key,value in a.sub_hosts.items():
                 print(f"    {key}", file=f)
@@ -242,11 +245,13 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                         for p in plugin_output_s[12:]:
                             print(f"            {p}", file=f)
                     elif key == "Web Application Sitemap":
-                        plugin_output = get_plugin_output("Web Application Sitemap", z)
-                        plugin_output_s = plugin_output.split("- ") # type: ignore
+                        plugin_output = sitemap_shortcut[z]
                         urls =re.findall(r"https?://\S+", plugin_output) # type: ignore
                         for p in urls:
                             print(f"            {p}", file=f)
+                    elif key == "Web Server Directory Enumeration":
+                        plugin_output = get_plugin_output("Web Server Directory Enumeration", z)
+                        print(f"            {plugin_output}", file=f)
     with open(args.output_json_file, "w") as file:
         for v in l:
             json.dump(v.__dict__, file)
@@ -276,13 +281,15 @@ def main():
         with open(args.exclude_list, "r") as f:
             exclude = [cidr_man.CIDR(i) for i in f]
 
+    tree = read_nessus_file(args.file)
+
     # Parse for services and urls
-    services, urls = parse_nessus_file(args.file, include, exclude)
+    services, urls = parse_nessus_file(tree, include, exclude)
     save_services(services)
     save_urls(urls)
     
     # Parse for vulnerabilities
-    output = parse_nessus_output(args.file)
+    output = parse_nessus_output(tree)
     rules = group_up(output, args.severity0)
     write_to_file(rules, args)
     

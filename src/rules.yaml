@@ -1,7 +1,7 @@
 - name: IGNORE
   id: -1
   plugin-ids: [142960, 10114, 34850, 51192, 12085, 11213, 98048, 136929, 
-  57582, 24244, 10759, 12224, 18391, 44135, 85582, 42057, 26194, 47831,
+  57582, 24244, 10759, 12224, 18391, 44135, 85582, 42057, 26194,
   10407, 10263, 10437, 33270, 58363]
   # 58363 - IIS Detailed Error Information Disclosure
   # 33270 - ASP.NET DEBUG Method Enabled
@@ -24,7 +24,6 @@
   # 85582 - Web Application Potentially Vulnerable to Clickjacking
   # 42057 - Web Server Allows Password Auto-Completion
   # 26194 - Web Server Transmits Cleartext Credentials
-  # 47831 - CGI Generic XSS (comprehensive test)
   # 10407 - X Server Detection
 
 - name: Actionables
@@ -63,7 +62,7 @@
   # 78479 - SSLv3 Padding Oracle On Downgraded Legacy Encryption Vulnerability (POODLE)
   # 83875 - SSL/TLS Diffie-Hellman Modulus <= 1024 Bits (Logjam)
 
-- name: SMTP - Open Relay Test
+- name: SMTP - Open Relay
   id: 2
   plugin-ids: [18017, 10262, 11852]
   # 18017 - MTA Open Mail Relaying Allowed (internal)
@@ -2208,12 +2207,13 @@
 
 - name: Web/CGI Generic
   id: 33
-  plugin-ids: [10815, 44136, 39466, 49067, 55903]
+  plugin-ids: [10815, 44136, 39466, 49067, 55903, 47831]
   # 55903 - CGI Generic XSS (extended patterns)
   # 10815 - Web Server Generic XSS
   # 44136 - CGI Generic Cookie Injection Scripting
   # 39466 - CGI Generic XSS (quick test)
   # 49067 - CGI Generic HTML Injections (quick test)
+  # 47831 - CGI Generic XSS (comprehensive test)
 
 - name: Web/CGI Actionable
   id: 34
@@ -2318,3 +2318,8 @@
   id: 37
   plugin-ids: [91815]
   # 91815 - Web Application Sitemap
+
+- name: Web Server Directory Enumeration
+  id: 38
+  plugin-ids: [11032]
+  # 11032 - Web Server Directory Enumeration
