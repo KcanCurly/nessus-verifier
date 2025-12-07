@@ -114,10 +114,11 @@ def save_urls(urls):
     
     
 class GroupNessusScanOutput:
-    def __init__(self, id, plugin_ids, hosts, sub_hosts, name):
+    def __init__(self, id, plugin_ids, should_group_total, hosts, sub_hosts, name):
         self.id = id
         self.name = name
         self.plugin_ids = plugin_ids
+        self.should_group_total = should_group_total
         self.hosts = hosts
         self.sub_hosts = sub_hosts
     
@@ -183,7 +184,7 @@ def group_up(l: list[NessusScanOutput], parse_severity0: bool) -> list[GroupNess
         
     available_id = -1
     for rule in rule_data:
-        r = GroupNessusScanOutput(rule['id'], rule['plugin-ids'], [], {}, rule['name'])
+        r = GroupNessusScanOutput(rule['id'], rule['plugin-ids'], rule['should-group-total'], [], {}, rule['name'])
         rules.append(r)
         available_id = available_id + 1
 
@@ -199,7 +200,7 @@ def group_up(l: list[NessusScanOutput], parse_severity0: bool) -> list[GroupNess
         if not found:
             if not parse_severity0 and n.severity == "0":
                 continue
-            new_rule = GroupNessusScanOutput(available_id, [n.plugin_id], [], {}, n.name)
+            new_rule = GroupNessusScanOutput(available_id, [n.plugin_id], False, [], {}, n.name)
             new_rule.add_host(n.name, n.plugin_id, n.host_port)
             rules.append(new_rule)
             available_id = available_id + 1
@@ -215,8 +216,9 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
         for a in n:
             if len(a.hosts) == 0: continue
             print(a.name, file=f)
-            for h in a.hosts:
-                print(f"    {h}", file=f)
+            if a.should_group_total:
+                for h in a.hosts:
+                    print(f"    {h}", file=f)
 
             if a.id > 38 and len(a.sub_hosts.items()) == 1: continue
             print(file=f)
@@ -251,7 +253,7 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                             print(f"            {p}", file=f)
                     elif key == "Web Server Directory Enumeration":
                         plugin_output = get_plugin_output("Web Server Directory Enumeration", z)
-                        print(f"            {plugin_output}", file=f)
+                        print(f"            {plugin_output.strip()}", file=f) # type: ignore
     with open(args.output_json_file, "w") as file:
         for v in l:
             json.dump(v.__dict__, file)

@@ -1,5 +1,6 @@
 - name: IGNORE
   id: -1
+  should-group-total: false
   plugin-ids: [142960, 10114, 34850, 51192, 12085, 11213, 98048, 136929, 
   57582, 24244, 10759, 12224, 18391, 44135, 85582, 42057, 26194,
   10407, 10263, 10437, 33270, 58363]
@@ -28,6 +29,7 @@
 
 - name: Actionables
   id: 0
+  should-group-total: false
   plugin-ids: [131734, 150163, 142594, 184452]
   # 131734 - Apache Solr Config API Velocity Template RCE (Direct Check)
   # 150163 - VMware vCenter Server Virtual SAN Health Check plug-in RCE (CVE-2021-21985) (direct check)
@@ -36,6 +38,7 @@
 
 - name: TLS Misconfigurations
   id: 1
+  should-group-total: true
   plugin-ids: [20007, 104743, 157288, 31705, 66848, 26928, 94437, 65821, 42873, 83738, 
   81606, 7282, 132675, 7222, 45411, 35291, 69551, 15901, 78479, 83875, 91572, 60108, 42880]
   # 42880 - SSL / TLS Renegotiation Handshakes MiTM Plaintext Data Injection
@@ -64,6 +67,7 @@
 
 - name: SMTP - Open Relay
   id: 2
+  should-group-total: true
   plugin-ids: [18017, 10262, 11852]
   # 18017 - MTA Open Mail Relaying Allowed (internal)
   # 10262 - MTA Open Mail Relaying Allowed
@@ -71,6 +75,7 @@
 
 - name: SSH Service Misconfigurations
   id: 3
+  should-group-total: true
   plugin-ids: [90317, 71049, 153953, 153954, 86328, 70658, 153588, 10882, 187315]
   # 90317 - SSH Weak Algorithms Supported
   # 71049 - SSH Weak MAC Algorithms Enabled
@@ -84,12 +89,14 @@
 
 - name: NTP Mode 6
   id: 4
+  should-group-total: true
   plugin-ids: [97861, 71783]
   # 97861 - Network Time Protocol (NTP) Mode 6 Scanner
   # 71783 - Network Time Protocol Daemon (ntpd) monlist Command Enabled DoS
 
 - name: SMB Service Misconfigurations
   id: 5
+  should-group-total: true
   plugin-ids: [57608, 26920, 100464]
   # 57608 - SMB Signing not required
   # 26920 - SMB NULL Session Authentication
@@ -97,6 +104,7 @@
 
 - name: SNMP Service Misconfigurations
   id: 6
+  should-group-total: true
   plugin-ids: [10264, 27841, 41028, 76474]
   # 10264 - SNMP Agent Default Community Names
   # 27841 - SNMP GETBULK Large max-repetitions Remote DoS
@@ -105,6 +113,7 @@
   
 - name: Cleartext Protocol Detected
   id: 7
+  should-group-total: true
   plugin-ids: [87733, 42263, 54582, 98615, 3018, 34324, 15854, 15855, 10891]
   # 87733 - AMQP Cleartext Authentication
   # 42263 - Unencrypted Telnet Server
@@ -118,6 +127,7 @@
 
 - name: Terminal Services Misconfigurations
   id: 8
+  should-group-total: true
   plugin-ids: [58453, 57690, 30218, 18405]
   # 58453 - Terminal Services Doesn't Use Network Level Authentication (NLA) Only(58453)
   # 57690 - Terminal Services Encryption Level is Medium or Low
@@ -126,6 +136,7 @@
 
 - name: Usage of database without password
   id: 9
+  should-group-total: true
   plugin-ids: [81777, 100634, 101025, 10483]
   # 81777 - MongoDB Service Without Authentication Detection
   # 100634 - Redis Server Unprotected by Password Authentication
@@ -134,6 +145,7 @@
 
 - name: Apache Tomcat Version
   id: 10
+  should-group-total: true
   plugin-ids: [171342, 178943, 126125, 171351, 171349, 17727, 171340, 171346, 50448, 81579, 
   124058, 121117, 121125, 51958, 197832, 55859, 66427, 197851, 55759, 197818, 132419, 
   111066, 197822, 197831, 197837, 57541, 72692, 151501, 121119, 154149, 154150, 154151, 151502, 
@@ -709,6 +721,7 @@
 
 - name: Apache Server Version
   id: 11
+  should-group-total: true
   plugin-ids: [48204, 170113, 193422, 193424, 158900, 171347, 161948, 193419, 172186, 192923, 
   193421, 171339, 171356, 210450, 201198, 193420, 139574, 11210, 135290, 183391, 201532, 14177, 
   11137, 153952, 156255, 57603, 10938, 11853, 11915, 14803, 11408, 11788, 202577, 193423, 12100, 
@@ -903,6 +916,7 @@
 
 - name: Nginx Version
   id: 12
+  should-group-total: true
   plugin-ids: [71117, 118150, 107263, 77246, 161697, 58414, 107265, 107264, 190683, 58750, 107262, 150154, 134220, 41608, 132775, 118956, 58413, 107261, 127907, 106375, 86884, 105359, 73894, 73519, 122612, 78386, 166545, 198223, 106374, 136340, 191141, 5173, 6456, 6457, 6795, 5562, 701146, 6529, 6458]
   # 71117 - nginx < 1.4.4 / 1.5.7 ngx_parse_http Security Bypass
   # 118150 - nginx < 1.10.1 / 1.11.x < 1.11.1 Denial-of-Service Vulnerability
@@ -946,6 +960,7 @@
 
 - name: VMWare Product Versions
   id: 13
+  should-group-total: true
   plugin-ids: [9597, 9596, 113243, 91322, 153545, 166101, 90710, 153547, 92870, 103377, 140040, 104654, 149902, 153546, 207464, 83186, 183957, 111760, 
   65223, 146826, 201124, 95468, 135411, 77728, 70612, 105784, 65209, 66274, 99475, 66812, 177742, 153544, 200746, 129503, 150982, 183958, 76457, 155790, 
   159306, 163100, 81146, 91713, 168746, 153889, 106950, 164351, 105514, 76495, 79863, 78508, 102084, 99474, 67141, 113241, 113244, 89740, 191711, 111759, 
@@ -1139,6 +1154,7 @@
 
 - name: OpenSSH Versions
   id: 14
+  should-group-total: true
   plugin-ids: [17700, 17839, 44074, 70895, 10802, 11031, 19592, 90924, 99359, 44067, 
   44075, 44065, 159490, 187201, 85382, 51920, 17699, 67140, 93194, 90023, 44077, 10883,
    73079, 106608, 11837, 17744, 44070, 44069, 44071, 10771, 10823, 90022, 96151, 22466, 
@@ -1256,6 +1272,7 @@
   
 - name: NFS
   id: 15
+  should-group-total: true
   plugin-ids: [42256, 11356, 15984]
   # 42256 - NFS Shares World Readable
   # 11356 - NFS Exported Share Information Disclosure
@@ -1263,16 +1280,19 @@
 
 - name: MSSQL
   id: 16
+  should-group-total: true
   plugin-ids: [73756]
   # 73756 - Microsoft SQL Server Unsupported Version Detection (remote check)
 
 - name: mDNS
   id: 17
+  should-group-total: true
   plugin-ids: [12218]
   # 12218 - mDNS Detection (Remote Network)
 
 - name: Obsolete Protocols
   id: 18
+  should-group-total: true
   plugin-ids: [10061, 10198, 11367, 10052, 10043, 1904, 1905, 10275]
   # 10061 - Echo Service Detection
   # 10198 - Quote of the Day (QOTD) Service Detection
@@ -1285,6 +1305,7 @@
 
 - name: iDRAC
   id: 19
+  should-group-total: true
   plugin-ids: [161798, 213382, 213383, 136341, 162428, 189899, 159643, 193888, 182918, 
   205387, 148955, 167509, 144756, 501906, 90265, 177843, 161799, 119833, 167508, 202259, 
   174982, 131730, 161800, 148956, 111604, 109208, 501895, 501923, 501894, 161797, 80442, 
@@ -1356,11 +1377,13 @@
 
 - name: IPMI
   id: 20
+  should-group-total: true
   plugin-ids: [80101]
   # IPMI v2.0 Password Hash Disclosure
 
 - name: PHP
   id: 21
+  should-group-total: true
   plugin-ids: [211669, 211671, 211670, 207821, 51139, 144947, 134162, 130276, 48244, 
   48245, 141355, 133400, 146311, 58988, 149348, 18033, 25159, 88679, 138593, 51140, 44921, 
   143449, 132769, 41014, 43351, 77285, 136744, 13650, 24907, 35750, 84363, 142904, 15973, 
@@ -1728,6 +1751,7 @@
 
 - name: Grafana
   id: 22
+  should-group-total: true
   plugin-ids: [186028, 184129, 184357, 190601, 181464, 208027, 183776, 211633, 211576, 9765, 192023, 181419, 193176, 215000, 240850, 242132,
   241364, 242626, 241355, 237905, 242625]
   # 242625 - Grafana Labs XSS (CVE-2025-6023)
@@ -1754,11 +1778,13 @@
 
 - name: Python Unsupported Version
   id: 23
+  should-group-total: true
   plugin-ids: [148367]
   # 148367 - Python Unsupported Version Detection
 
 - name: Kibana
   id: 24
+  should-group-total: true
   plugin-ids: [207060, 174002, 125082, 109942, 121166, 118798, 122589, 187123, 117666, 
   121358, 121165, 175414, 186424, 207061, 200799, 205597, 200798, 190362, 119422, 121357, 
   9779, 701234, 9780, 113527, 113529, 113532, 113531, 113530, 98982, 113533, 113517, 
@@ -1822,6 +1848,7 @@
 
 - name: Elasticsearch
   id: 25
+  should-group-total: true
   plugin-ids: [112040, 117665, 192892, 214589, 112043, 112045, 112038, 121249, 112046, 
   112041, 200480, 112044, 112037, 118799, 112042, 119499, 112039, 122973, 109941, 9778]
   # 112040 - Elasticsearch ESA-2017-10
@@ -1847,6 +1874,7 @@
 
 - name: MongoDB
   id: 26
+  should-group-total: true
   plugin-ids: [205616, 205615, 65915, 197879, 126506, 122363, 209641, 135921, 122243, 65914, 9559, 9558, 
   126648, 67243, 72334, 88931, 9972, 232848, 265330, 242170, 241991, 243288, 243397, 243058, 242979, 243059,
   241372, 265329, 265331, 242977]
@@ -1883,16 +1911,19 @@
 
 - name: Oracle Database
   id: 27
+  should-group-total: true
   plugin-ids: [55786]
   # 55786 - Oracle Database Unsupported Version Detection
 
 - name: QueueJumper
   id: 28
+  should-group-total: true
   plugin-ids: [175373]
   # 175373 - Microsoft Message Queuing RCE (CVE-2023-21554, QueueJumper)
 
 - name: IBM WebSphere Application Server
   id: 29
+  should-group-total: true
   plugin-ids: [214870, 132076, 210931, 172173, 171344, 205643, 214871]
   # 214870 - IBM WebSphere Application Server Liberty 20.0.0.6 < 24.0.0.12 DoS (7174997)
   # 132076 - IBM WebSphere Application Server 7.0.0.x <= 7.0.0.45 / 8.0.0.x <= 8.0.0.15 / 8.5.x < 8.5.5.17 / 9.0.x < 9.0.5.2 / Liberty < 19.0.0.11 Information Disclosure (CVE-2019-4441)
@@ -1904,17 +1935,20 @@
 
 - name: PostgreSQL
   id: 30
+  should-group-total: true
   plugin-ids: [10483, 104031]
   # 10483 - PostgreSQL Default Unpassworded Account
   # 104031 - PostgreSQL Empty Password Handling Remote Authentication Bypass
 
 - name: FTP
   id: 31
+  should-group-total: true
   plugin-ids: [10079]
   # 10079 - Anonymous FTP Enabled
 
 - name: OpenSSL
   id: 32
+  should-group-total: true
   plugin-ids: [182308, 200200, 152782, 171079, 201084, 160477, 125641, 162420, 158974, 209149, 157228, 181288, 
   144047, 162721, 121385, 173260, 192965, 184811, 178475, 148125, 128116, 148402, 121384, 132725, 128115, 128117, 
   157231, 121383, 200206, 146591, 158975, 160480, 158973, 144053, 132726, 162418, 146374, 125642, 162419, 156100, 
@@ -2207,6 +2241,7 @@
 
 - name: Web/CGI Generic
   id: 33
+  should-group-total: false
   plugin-ids: [10815, 44136, 39466, 49067, 55903, 47831]
   # 55903 - CGI Generic XSS (extended patterns)
   # 10815 - Web Server Generic XSS
@@ -2217,6 +2252,7 @@
 
 - name: Web/CGI Actionable
   id: 34
+  should-group-total: false
   plugin-ids: [55640, 40984, 121479, 65702, 10922, 46803]
   # 55640 - SQL Dump Files Disclosed via Web Server
   # 40984 - Browsable Web Directories
@@ -2227,6 +2263,7 @@
 
 - name: HP iLO
   id: 35
+  should-group-total: true
   plugin-ids: [140770, 102803, 122032, 122095, 122187, 122188, 122191, 125342, 134976, 162139]
   # 162139 - iLO 4 < 2.80 DoS
   # 134976 - iLO 3 < 1.90 / iLO 4 < 2.61 / iLO 5 < 1.35 Remote Code Execution Vulnerability (HPESBHF03866)
@@ -2241,6 +2278,7 @@
 
 - name: Jenkins
   id: 36
+  should-group-total: true
   plugin-ids: [193426, 208098, 205143,65054 ,165766 ,156929 ,172394 ,83956 ,205143 ,189463 ,154894 ,125733 ,151193 ,208098 ,
   227562 ,148418 ,83956 ,125734 ,181682 ,233779 ,145248 ,177395 ,178903 ,9659 ,119500 ,135178 ,89725 ,99984 ,138887 ,124168 ,72685 
   ,89034 ,104634 ,129776 ,109551 ,111603 ,106951 ,154055 ,148975 ,65055 ,163258 ,164898 ,133527 ,117337 ,106559 ,139726 ,148401 
@@ -2316,10 +2354,12 @@
 
 - name: Web Application Sitemap
   id: 37
+  should-group-total: false
   plugin-ids: [91815]
   # 91815 - Web Application Sitemap
 
 - name: Web Server Directory Enumeration
   id: 38
+  should-group-total: false
   plugin-ids: [11032]
   # 11032 - Web Server Directory Enumeration
