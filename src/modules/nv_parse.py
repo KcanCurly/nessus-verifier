@@ -30,8 +30,8 @@ def parse_nessus_file(file_path, include = None, exclude = None):
         # Iterate through all the services (plugins) for this host
         for item in host.findall(".//ReportItem"):
             service_name = item.attrib.get('svc_name', '').lower()
-            port = item.attrib.get('port', '')
-            if not port or port == "0": # Skip port 0
+            port = item.attrib.get('port', 0)
+            if not port: # Skip port 0
                 continue
             
             if item.attrib.get("pluginID") == '24260' and item.attrib.get("pluginName") == "HyperText Transfer Protocol (HTTP) Information":

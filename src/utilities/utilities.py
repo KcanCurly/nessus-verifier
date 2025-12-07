@@ -327,7 +327,13 @@ def get_poc_cve_github_link(cve):
         resp = resp.json()
         return [repo["html_url"] for repo in resp]
 
-    
+def get_cve_pocs(cve):
+    try:
+        resp = requests.get(f"https://labs.jamessawyer.co.uk/cves/api/cves?q={cve}", verify=False, timeout=15).json()
+        pocs = resp["results"][0]["urls"]
+        return resp["results"][0]["urls"]
+    except Exception as e:
+        return []
 
 def get_latest_version(product):
     try:
@@ -340,6 +346,7 @@ def get_latest_version(product):
         return [r['latest']['name'] for r in non_eol_releases]
     except Exception as e:
         return None
+
 
 def get_cves2(cpe, sort_by_epss = False, limit = 10, cves_to_skip = []):
     try:

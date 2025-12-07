@@ -50,12 +50,8 @@ class ApacheSolverClass(BaseSolverClass):
                     self.print_output(f"    {v}")
             self.create_windowcatcher_action()
 
-            if self.print_latest_version:
-                latest_versions = self.get_latest_version()
-                if latest_versions:
-                    self.print_output(f"Latest version for {self.eol_product_name}")
-                    for version in latest_versions:
-                        self.print_output(version)
+            self.print_latest_versions()
+
 
             for cve in all_cves:
                 links = get_poc_cve_github_link(cve)
