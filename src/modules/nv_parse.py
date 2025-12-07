@@ -246,10 +246,10 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                         plugin_output_s = plugin_output.split("- ") # type: ignore
                         for p in plugin_output_s[1:]:
                             # p = p.strip()
-                            if not p.startswith("http"):
-                                continue
                             if " " in p:
                                 p = p.split(" ")[0]
+                            if not p.startswith("http"):
+                                continue
                             print(f"            {p}", file=f)
     with open(args.output_json_file, "w") as file:
         for v in l:
