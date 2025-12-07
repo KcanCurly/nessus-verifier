@@ -244,12 +244,8 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                     elif key == "Web Application Sitemap":
                         plugin_output = get_plugin_output("Web Application Sitemap", z)
                         plugin_output_s = plugin_output.split("- ") # type: ignore
-                        for p in plugin_output_s[1:]:
-                            # p = p.strip()
-                            if " " in p:
-                                p = p.split(" ")[0]
-                            if not p.startswith("http"):
-                                continue
+                        urls =re.findall(r"https?://\S+", plugin_output) # type: ignore
+                        for p in urls:
                             print(f"            {p}", file=f)
     with open(args.output_json_file, "w") as file:
         for v in l:
