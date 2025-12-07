@@ -85,6 +85,8 @@ def save_services(services):
                 f.write(f"{host}\n")
 
 def get_plugin_output(pluginName, ip_port):
+    print(pluginName)
+    print(ip_port)
     ip, port = ip_port.split(":")
     tree = ET.parse(nessus_file_path) # type: ignore
     root = tree.getroot()
@@ -92,6 +94,7 @@ def get_plugin_output(pluginName, ip_port):
         host_ip = host.attrib['name']  # Extract the host IP
         for report_item in host.findall(".//ReportItem"):
             if ip == host_ip and report_item.attrib.get("pluginName") == pluginName and int(report_item.attrib.get('port', 0)) == port:
+                print("FOUND")
                 return report_item.findtext('plugin_output')
 
 
