@@ -243,9 +243,11 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                             print(f"            {p}", file=f)
                     elif key == "Web Application Sitemap":
                         plugin_output = get_plugin_output("Web Application Sitemap", z)
-                        plugin_output_s = plugin_output.split("-") # type: ignore
+                        plugin_output_s = plugin_output.split("- ") # type: ignore
                         for p in plugin_output_s[1:]:
-                            p = p.strip()
+                            # p = p.strip()
+                            if not p.startswith("http"):
+                                continue
                             if " " in p:
                                 p = p.split(" ")[0]
                             print(f"            {p}", file=f)
