@@ -221,7 +221,8 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                     print(f"    {h}", file=f)
 
             if a.id > 38 and len(a.sub_hosts.items()) == 1: continue
-            print(file=f)
+            if a.should_group_total:
+                print(file=f)
             for key,value in a.sub_hosts.items():
                 print(f"    {key}", file=f)
                 for z in value:
@@ -253,7 +254,13 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                             print(f"            {p}", file=f)
                     elif key == "Web Server Directory Enumeration":
                         plugin_output = get_plugin_output("Web Server Directory Enumeration", z)
-                        print(f"            {plugin_output.strip()}", file=f) # type: ignore
+                        urls =re.findall(r"/S+", plugin_output) # type: ignore
+                        if "disc" in plugin_output: # type: ignore
+                            print(f"            [NO AUTH]", file=f)
+                        else:
+                            print(f"            [AUTH]", file=f)
+                        for p in urls:
+                            print(f"            {p}", file=f)
     with open(args.output_json_file, "w") as file:
         for v in l:
             json.dump(v.__dict__, file)
