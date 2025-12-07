@@ -281,7 +281,11 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                     elif key == "Web Server Office File Inventory":
                         plugin_output = get_plugin_output("Web Server Office File Inventory", z)
                         plugin_output_s = plugin_output.split() # type: ignore
-                        for p in plugin_output_s[12:]:
+                        r = plugin_output_s[12:]
+                        r.reverse()
+                        for p in r:
+                            if p == ":":
+                                break
                             print(f"            {p}", file=f)
                         
     with open(args.output_json_file, "w") as file:
