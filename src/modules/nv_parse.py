@@ -260,6 +260,12 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                             print(f"            [AUTH]", file=f)
                         for p in urls:
                             print(f"            {p}", file=f)
+                    elif key == "Web Server Harvested Email Addresses":
+                        plugin_output = get_plugin_output("Web Server Harvested Email Addresses", z)
+                        finds =re.findall(r"(\S+@\S+), referenced from (.*)", plugin_output) # type: ignore
+                        for p, ref in finds:
+                            print(f"            {p} (from: {ref})", file=f)
+                        
     with open(args.output_json_file, "w") as file:
         for v in l:
             json.dump(v.__dict__, file)

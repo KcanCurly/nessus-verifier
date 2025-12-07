@@ -2363,3 +2363,9 @@
   should-group-total: false
   plugin-ids: [11032]
   # 11032 - Web Server Directory Enumeration
+
+- name: Web Server Harvested Email Addresses
+  id: 39
+  should-group-total: false
+  plugin-ids: [49705]
+  # 49705 - Web Server Harvested Email Addresses
