@@ -1,7 +1,7 @@
 import argparse, argcomplete
 import shutil
 from src.solvers import grafana, mdns, openssl, php, python, tls, kibana, elastic, mongo, oracle, smb, ssh, snmp, tomcat, apache, nginx, vmware, openssh, smtp_relay, mssql, idrac, ipmi, terminal, cleartext, ibmwebsphere, obsolete_protocols, postgresql, nopasswddb, actionables, ftp, ntp, nfs, queuejumper, \
-    openssl, webcgi_generic, hpilo, jenkins
+    openssl, webcgi_actionable, webcgi_generic, hpilo, jenkins
 from src.modules.nv_parse import GroupNessusScanOutput
 from src.solvers.solverclass import BaseSolverClass
 import src.utilities.utilities
@@ -42,8 +42,10 @@ solver_dict: dict[int, type[BaseSolverClass]] = {
     31: ftp.FTPSolverClass,
     32: openssl.OpenSSLSolverClass,
     # 33: webcgi_generic,
-    34: hpilo.HPiLOSolverClass, 
-    35: jenkins.JenkinsSolverClass,
+    # 33: webcgi_generic.WebCGIGenericSolverClass,
+    34: webcgi_actionable.WebCGIActionableSolverClass,
+    35: hpilo.HPiLOSolverClass, 
+    36: jenkins.JenkinsSolverClass,
 }
 
 def all_solver(args):

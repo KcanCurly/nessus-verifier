@@ -6,8 +6,12 @@ import yaml
 import json
 import cidr_man
 
+nessus_file_path = None
+
 # Function to parse the Nessus file (.nessus format) and extract services and associated hosts
 def parse_nessus_file(file_path, include = None, exclude = None):
+    global nessus_file_path
+    nessus_file_path = file_path
     tree = ET.parse(file_path)
     root = tree.getroot()
 
@@ -79,6 +83,18 @@ def save_services(services):
         with open(os.path.join(service_dir, 'hosts.txt'), 'w') as f:
             for host in hosts:
                 f.write(f"{host}\n")
+
+def get_plugin_output(pluginName, ip_port):
+    ip, port = ip_port.split(":")
+    tree = ET.parse(nessus_file_path) # type: ignore
+    root = tree.getroot()
+    for host in root.findall(".//Report/ReportHost"):
+        host_ip = host.attrib['name']  # Extract the host IP
+        for report_item in host.findall(".//ReportItem"):
+            port = report_item.attrib.get('port', 0)
+            if ip == host_ip and int(report_item.attrib.get("pluginName", -1)) == pluginName and report_item.attrib.get('port', 0) == port:
+                return report_item.findtext('plugin_output')
+
 
 def save_urls(urls):
     output_file = "urls.txt"
@@ -195,12 +211,18 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
             print(a.name, file=f)
             for h in a.hosts:
                 print(f"    {h}", file=f)
-            if a.id > 35 and len(a.sub_hosts.items()) == 1: continue
+
+            if a.id > 36 and len(a.sub_hosts.items()) == 1: continue
             print(file=f)
             for key,value in a.sub_hosts.items():
                 print(f"    {key}", file=f)
                 for z in value:
                     print(f"        {z}", file=f)
+                    if key == "Browsable Web Directories":
+                        plugin_output = get_plugin_output("Browsable Web Directories", z)
+                        plugin_output_s = plugin_output.split("") # type: ignore
+                        for p in plugin_output_s[6:]:
+                            print(f"            {p}", file=f)
                     
     with open(args.output_json_file, "w") as file:
         for v in l:

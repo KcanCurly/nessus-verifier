@@ -2215,8 +2215,14 @@
   # 39466 - CGI Generic XSS (quick test)
   # 49067 - CGI Generic HTML Injections (quick test)
 
-- name: HP iLO
+- name: Web/CGI Actionable
   id: 34
+  plugin-ids: [55640, 40984]
+  # 55640 - SQL Dump Files Disclosed via Web Server
+  # 40984 - Browsable Web Directories
+
+- name: HP iLO
+  id: 35
   plugin-ids: [140770, 102803, 122032, 122095, 122187, 122188, 122191, 125342, 134976, 162139]
   # 162139 - iLO 4 < 2.80 DoS
   # 134976 - iLO 3 < 1.90 / iLO 4 < 2.61 / iLO 5 < 1.35 Remote Code Execution Vulnerability (HPESBHF03866)
@@ -2230,7 +2236,7 @@
   # 140770 - HP iLO 3 < 1.93 / HP iLO 4 < 2.75 / HP iLO Superdome 4 < 1.64 / HP iLO 5 < 2.18 / HP Moonshot/Edgeline iLO 5 < 2.30 Ripple20 Multiple vulnerabilities
 
 - name: Jenkins
-  id: 35
+  id: 36
   plugin-ids: [193426, 208098, 205143,65054 ,165766 ,156929 ,172394 ,83956 ,205143 ,189463 ,154894 ,125733 ,151193 ,208098 ,
   227562 ,148418 ,83956 ,125734 ,181682 ,233779 ,145248 ,177395 ,178903 ,9659 ,119500 ,135178 ,89725 ,99984 ,138887 ,124168 ,72685 
   ,89034 ,104634 ,129776 ,109551 ,111603 ,106951 ,154055 ,148975 ,65055 ,163258 ,164898 ,133527 ,117337 ,106559 ,139726 ,148401 

@@ -5,7 +5,7 @@ from src.solvers.solverclass import BaseSolverClass
 
 class JenkinsSolverClass(BaseSolverClass):
     def __init__(self) -> None:
-        super().__init__("Jenkins Version", 35)
+        super().__init__("Jenkins Version", 36)
         self.output_filename_for_all = "jenkins.txt"
         self.output_png_for_action = "jenkins.png"
         self.action_title = "Jenkins"

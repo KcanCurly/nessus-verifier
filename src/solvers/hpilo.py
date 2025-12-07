@@ -6,7 +6,7 @@ from src.solvers.solverclass import BaseSolverClass
 
 class HPiLOSolverClass(BaseSolverClass):
     def __init__(self) -> None:
-        super().__init__("HP iLO Version", 34)
+        super().__init__("HP iLO Version", 35)
         self.output_filename_for_all = "hpilo.txt"
         self.output_png_for_action = "old-hpilo.png"
         self.action_title = "OldHPilo"
