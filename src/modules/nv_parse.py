@@ -265,8 +265,6 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                         plugin_output_s = plugin_output.split("- ") # type: ignore
                         for p in plugin_output_s:
                             p = p.strip()
-                            if p.startswith("The"):
-                                continue
                             print(f"            {p}", file=f)
                         
     with open(args.output_json_file, "w") as file:
