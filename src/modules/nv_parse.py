@@ -220,7 +220,7 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                 for h in a.hosts:
                     print(f"    {h}", file=f)
 
-            if a.id > 38 and len(a.sub_hosts.items()) == 1: continue
+            if a.id > 38: continue
             if a.should_group_total:
                 print(file=f)
             for key,value in a.sub_hosts.items():
