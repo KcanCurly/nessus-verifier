@@ -220,7 +220,6 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                 for h in a.hosts:
                     print(f"    {h}", file=f)
 
-            if a.id > 38: continue
             if a.should_group_total:
                 print(file=f)
             for key,value in a.sub_hosts.items():
@@ -254,7 +253,7 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                             print(f"            {p}", file=f)
                     elif key == "Web Server Directory Enumeration":
                         plugin_output = get_plugin_output("Web Server Directory Enumeration", z)
-                        urls =re.findall(r"/S+", plugin_output) # type: ignore
+                        urls =re.findall(r"/S+", plugin_output.strip()) # type: ignore
                         if "disc" in plugin_output: # type: ignore
                             print(f"            [NO AUTH]", file=f)
                         else:
