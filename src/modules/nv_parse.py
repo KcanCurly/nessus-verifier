@@ -92,7 +92,6 @@ def get_plugin_output(pluginName, ip_port):
         host_ip = host.attrib['name']  # Extract the host IP
         if ip == host_ip:
             for report_item in host.findall(".//ReportItem"):
-                print(report_item.attrib.get('port', 0))
                 if report_item.attrib.get("pluginName") == pluginName and report_item.attrib.get('port', 0) == port:
                     return report_item.findtext('plugin_output')
 
@@ -224,7 +223,11 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                         plugin_output_s = plugin_output.split() # type: ignore
                         for p in plugin_output_s[6:]:
                             print(f"            {p}", file=f)
-                    
+                    elif key == "SQL Dump Files Disclosed via Web Server":
+                        plugin_output = get_plugin_output("SQL Dump Files Disclosed via Web Server", z)
+                        plugin_output_s = plugin_output.split() # type: ignore
+                        for p in plugin_output_s[12:]:
+                            print(f"            {p}", file=f)
     with open(args.output_json_file, "w") as file:
         for v in l:
             json.dump(v.__dict__, file)
