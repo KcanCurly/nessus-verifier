@@ -132,10 +132,9 @@ def parse_nessus_output(file_path) -> list[NessusScanOutput]:
         ip_address = host_properties.findtext("./tag[@name='host-ip']") # type: ignore
 
         for item in host.iter('ReportItem'):
-            if not item.get('port'):
-                continue
             if item.get('port') == '0':
-                print("Skipping port 0")
+                continue
+
             plugin_id = int(item.get('pluginID')) # type: ignore
             name = item.get('pluginName')
             description = item.findtext('description')
