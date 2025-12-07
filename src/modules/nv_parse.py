@@ -262,7 +262,7 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                             print(f"            {p}", file=f)
                     elif key == "Web Server Harvested Email Addresses":
                         plugin_output = get_plugin_output("Web Server Harvested Email Addresses", z)
-                        plugin_output_s = plugin_output.split(" - ") # type: ignore
+                        plugin_output_s = plugin_output.split(" - ")[1:] # type: ignore
                         for p in plugin_output_s:
                             print(f"            {p}", file=f)
                         
