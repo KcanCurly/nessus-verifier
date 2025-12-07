@@ -276,8 +276,8 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                     elif key == "Web mirroring":
                         plugin_output = get_plugin_output("Web mirroring", z)
                         plugin_output_s = plugin_output.split("+ CGI : ") # type: ignore
-                        for p in plugin_output_s:
-                            print(f"            {p.split()}", file=f)
+                        for p in plugin_output_s[1:]:
+                            print(f"            {p.strip()}", file=f)
                         
     with open(args.output_json_file, "w") as file:
         for v in l:
