@@ -1,3 +1,4 @@
+from ast import parse
 import xml.etree.ElementTree as ET
 import os
 import argparse, argcomplete
@@ -168,7 +169,7 @@ def read_nessus_file(filename):
     with open(filename, 'rb') as f: return f.read()
     
     
-def group_up(l: list[NessusScanOutput]):
+def group_up(l: list[NessusScanOutput], parse_severity0: bool) -> list[GroupNessusScanOutput]:
     rules: list[GroupNessusScanOutput] = []
     
     current_script_path = os.path.abspath(__file__)
@@ -192,7 +193,9 @@ def group_up(l: list[NessusScanOutput]):
 
         
         # No rule in rules.yaml so we make its own rule if its not on info severity
-        if not found and n.severity != "0":
+        if not found:
+            if not parse_severity0 and n.severity == "0":
+                continue
             new_rule = GroupNessusScanOutput(available_id, [n.plugin_id], [], {}, n.name)
             new_rule.add_host(n.name, n.plugin_id, n.host_port)
             rules.append(new_rule)
@@ -255,6 +258,7 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
 def main():
     parser = argparse.ArgumentParser(description="nessus-verifier.")
     parser.add_argument("-f", "--file", type=str, required=True, help="Path to a Nessus file.")
+    parser.add_argument('--severity0', action="store_true", help='Parse serverity 0 findings.')
     parser.add_argument('--skip-ignored', action="store_true", help='Do not write ignored vulnerabilities to txt output.')
     parser.add_argument('-o', '--output-file', type=str, required=False, default="output.txt", help='Vulnerability Groups output file name txt (Default: output.txt).')
     parser.add_argument('-oj', '--output-json-file', type=str, required=False, default="output.ndjson", help='Vulnerability Groups output file name json (Default: output.ndjson).')
@@ -281,7 +285,7 @@ def main():
     
     # Parse for vulnerabilities
     output = parse_nessus_output(args.file)
-    rules = group_up(output)
+    rules = group_up(output, args.severity0)
     write_to_file(rules, args)
     
 
