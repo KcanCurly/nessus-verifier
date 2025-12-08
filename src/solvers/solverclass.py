@@ -36,7 +36,7 @@ class BaseSolverClass():
     def process_args(self, args):
         self.args = args
         current_script_path = os.path.abspath(__file__)
-        dir_up = os.path.abspath(os.path.join(current_script_path, "../"))
+        dir_up = os.path.abspath(os.path.join(current_script_path, "../../"))
         locales_dir = os.path.join(dir_up, "locales")
         i18n.load_path.append(locales_dir) # type: ignore
         i18n.set('locale', args.language) # type: ignore
