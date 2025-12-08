@@ -12,7 +12,7 @@ from rich.progress import TextColumn, Progress, BarColumn, TimeElapsedColumn
 from rich.table import Column
 from rich.console import Group
 from rich.panel import Panel
-
+import i18n
 
 shodan_cves_to_skip = ["CVE-2008-3844", "CVE-2007-2768"]
 
@@ -356,7 +356,8 @@ class SSHAuditSubServiceClass(BaseSubServiceClass):
                 vuln_terrapin.add(r.host)
         
         if vuln_kex:
-            self.print_output("Vulnerable KEX algorithms:")
+            self.print_output(i18n.t("ssh_vuln_kex_title"))
+            #self.print_output("Vulnerable KEX algorithms:")
             for k in vuln_kex:
                 self.print_output(f"    {k}")
             

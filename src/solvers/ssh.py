@@ -14,5 +14,5 @@ class SSHAuditSolverClass(BaseSolverClass):
 
         if not self.hosts: 
             return
-        SSHAuditSubServiceClass().nv(self.hosts, threads=args.threads, timeout=args.timeout, errors=args.errors, verbose=args.verbose, output=self.output)
+        SSHAuditSubServiceClass().nv(self.hosts, langauge=args.language, threads=args.threads, timeout=args.timeout, errors=args.errors, verbose=args.verbose, output=self.output)
         self.create_windowcatcher_action()
