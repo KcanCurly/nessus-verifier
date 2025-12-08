@@ -1,0 +1,4 @@
+[en]:
+  ssh_vuln_kex_title: "Vulnerable KEX algorithms:"
+[tr]:
+  ssh_vuln_kex_title: "Zayıf KEX algoritmaları:"

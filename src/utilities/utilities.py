@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from email.policy import default
 import json
 import subprocess
 import re
@@ -298,6 +299,7 @@ def add_default_parser_arguments(parser, add_target_argument = True):
     parser.add_argument("-ti", "--timeout", type=int, default=5, help="Amount of timeout (Default = 5).")
     parser.add_argument("--print-cve", action="store_true", help="Print CVEs of services if found")
     parser.add_argument("--nvd-api-key", type=str, help="NVD API Key for getting cves.")
+    parser.add_argument("-l", "--language",  type=str, default="en", help="Language of the output")
     parser.add_argument("--print-latest-version", action="store_true", help="Print latest versions of services if found")
     parser.add_argument("-e", "--errors", type=int, choices=[1, 2], default = 0, help="1 - Print Errors\n2 - Print errors and prints stacktrace")
     parser.add_argument("-v", "--verbose", action="store_true", help="Print Verbose")

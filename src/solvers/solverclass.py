@@ -1,6 +1,8 @@
+from ast import arg
 from src.utilities.utilities import Host, add_default_parser_arguments, add_default_solver_parser_arguments, find_scan, get_hosts_from_file2, get_latest_version
 import traceback
 import os
+import i18n
 
 class WindowCatcherData:
     def __init__(self, name, code, output) -> None:
@@ -33,6 +35,11 @@ class BaseSolverClass():
 
     def process_args(self, args):
         self.args = args
+        current_script_path = os.path.abspath(__file__)
+        dir_up = os.path.abspath(os.path.join(current_script_path, "../"))
+        locales_dir = os.path.join(dir_up, "locales")
+        i18n.load_path.append(locales_dir) # type: ignore
+        i18n.set('locale', args.language) # type: ignore
         if hasattr(args, "is_all") and args.is_all: 
             self.process_config(args.config)
         if hasattr(args, "output"):

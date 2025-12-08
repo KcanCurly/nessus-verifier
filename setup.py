@@ -38,6 +38,7 @@ setup(
         "selenium",
         "html5lib",
         "argcomplete",
+        "python-i18n",
     ],
     classifiers=[
         "Programming Language :: Python :: 3",
