@@ -219,7 +219,7 @@ class SSHVersionSubServiceClass(BaseSubServiceClass):
             versions = dict(
                 sorted(versions.items(), key=lambda x: x[0], reverse=True)
             )
-            self.print_output(i18n.t('version_title', name='SSH'))
+            self.print_output(i18n.t('main.version_title', name='SSH'))
             for key, value in versions.items():
                 major = key
                 minor = ""
