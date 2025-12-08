@@ -356,7 +356,7 @@ class SSHAuditSubServiceClass(BaseSubServiceClass):
                 vuln_terrapin.add(r.host)
         
         if vuln_kex:
-            self.print_output(i18n.t("ssh_vuln_kex_title"))
+            self.print_output(i18n.t("main.ssh_vuln_kex_title"))
             #self.print_output("Vulnerable KEX algorithms:")
             for k in vuln_kex:
                 self.print_output(f"    {k}")
