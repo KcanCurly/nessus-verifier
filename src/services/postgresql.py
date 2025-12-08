@@ -1,3 +1,4 @@
+import i18n
 import psycopg
 from src.utilities.utilities import Version_Vuln_List_Host_Data, get_default_context_execution2, error_handler, get_hosts_from_file, get_hosts_from_file2, add_default_parser_arguments
 from src.services.consts import DEFAULT_ERRORS, DEFAULT_THREAD, DEFAULT_TIMEOUT, DEFAULT_VERBOSE
@@ -25,7 +26,7 @@ class PSQLBruteSubServiceClass(BaseSubServiceClass):
         results: list[str] = get_default_context_execution2("PostgreSQL Bruteforce", self.threads, hosts, self.single, creds=creds, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
 
         if results:
-            self.print_output("Valid PostgreSQL credential found:")
+            self.print_output(i18n.t('main.credential_found', name='PostgreSQL'))
             for r in results:
                 self.print_output(f"    {r}")
 
@@ -69,9 +70,9 @@ class PSQLDefaultSubServiceClass(BaseSubServiceClass):
         results: list[Version_Vuln_List_Host_Data] = get_default_context_execution2("PostgreSQL without Password Usage", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
 
         if results:
-            self.print_output("PostgreSQL servers that allows user postgres with empty password authentication:")
+            self.print_output(i18n.t('main.postgresql_no_password_title'))
             for r in results:
-                self.print_output(f"{r.host}: Databases: {", ".join(r.version)}")
+                self.print_output(f"{r.host}: {i18n.t('main.databases')}: {", ".join(r.version)}")
 
 
 

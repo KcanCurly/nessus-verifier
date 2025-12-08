@@ -1,4 +1,6 @@
 import re
+
+import i18n
 from src.utilities.utilities import Host, Version_Vuln_Host_Data, error_handler, get_cves, get_url_response, get_default_context_execution, get_poc_cve_github_link
 from src.solvers.solverclass import BaseSolverClass
 from packaging.version import parse
@@ -46,8 +48,7 @@ class KibanaSolverClass(BaseSolverClass):
             versions = dict(
                 sorted(versions.items(), key=lambda x: parse(x[0]), reverse=True)
             )
-
-            self.print_output("Detected Kibana Versions:")
+            self.print_output(i18n.t('main.version_title', name='Kibana'))
             for key, value in versions.items():
                 cves = []
                 if self.print_cve:

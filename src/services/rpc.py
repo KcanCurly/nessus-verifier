@@ -1,4 +1,6 @@
 import subprocess
+
+import i18n
 from src.utilities.utilities import error_handler, get_default_context_execution2, Version_Vuln_List_Host_Data
 from src.services.consts import DEFAULT_ERRORS, DEFAULT_THREAD, DEFAULT_TIMEOUT, DEFAULT_VERBOSE
 from src.services.serviceclass import BaseServiceClass
@@ -34,7 +36,7 @@ class RPCUsageSubServiceClass(BaseSubServiceClass):
         results: list[Version_Vuln_List_Host_Data] = get_default_context_execution2("RPC Anonymous Access Check", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
     
         if results:
-            self.print_output("Anonymous RPC pipes detected:")
+            self.print_output(i18n.t('main.anonymous_rpc_access'))
             for r in results:
                 self.print_output(r.host)
                 for value in r.version:

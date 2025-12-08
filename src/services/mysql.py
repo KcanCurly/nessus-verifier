@@ -1,3 +1,4 @@
+import i18n
 import nmap
 import pymysql
 from src.utilities.utilities import Version_Vuln_Host_Data, get_default_context_execution2, error_handler, get_hosts_from_file2, add_default_parser_arguments
@@ -176,7 +177,7 @@ class MYSQLVersionSubServiceClass(BaseSubServiceClass):
         
         if versions:
             versions = dict(sorted(versions.items(), reverse=True))
-            self.print_output("Detected MySQL Versions:")
+            self.print_output(i18n.t('main.version_title', name="MySQL"))
             for key, value in versions.items():
                 self.print_output(f"{key}:")
                 for v in value:

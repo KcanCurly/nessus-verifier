@@ -149,7 +149,6 @@ def main():
             print_exc()
     argcomplete.autocomplete(parser)
     args = parser.parse_args()
-    
     current_script_path = os.path.abspath(__file__)
     dir_up = os.path.abspath(os.path.join(current_script_path, "../../"))
     locales_dir = os.path.join(dir_up, "locales")

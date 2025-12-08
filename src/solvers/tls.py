@@ -3,6 +3,8 @@ import re
 import ssl
 import socket
 import tomllib
+
+import i18n
 from src.utilities.utilities import error_handler, find_scan, add_default_solver_parser_arguments, add_default_parser_arguments, get_default_context_execution, Host
 from src.modules.nv_parse import GroupNessusScanOutput
 from src.solvers.solverclass import BaseSolverClass
@@ -158,12 +160,12 @@ class TLSSolverClass(BaseSolverClass):
                 expired_cert_hosts.append(f"{r.host} - {r.is_cert_expired}")
         
         if weak_ciphers:       
-            self.print_output("Vulnerable TLS Ciphers on Hosts:")                
+            self.print_output(i18n.t('main.tls_vulnerable_ciphers_title'))             
             for key, value in weak_ciphers.items():
                 self.print_output(f"    {key} - {", ".join(value)}")
         
         if weak_versions: 
-            self.print_output("Vulnerable TLS Versions on Hosts:")                
+            self.print_output(i18n.t('main.tls_vulnerable_versions_title'))            
             for key, value in weak_versions.items():
                 self.print_output(f"    {key} - {", ".join(value)}")
             self.print_output("")
@@ -181,7 +183,7 @@ class TLSSolverClass(BaseSolverClass):
             self.print_output("")
                 
         if expired_cert_hosts:
-            self.print_output("Expired cert on hosts:")
+            self.print_output(i18n.t('main.tls_expired_certificates_title'))
             for v in expired_cert_hosts:
                 self.print_output(f"    {v}")
             self.print_output("")

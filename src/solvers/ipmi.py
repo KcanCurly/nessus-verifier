@@ -1,5 +1,7 @@
 import subprocess
 import re
+
+import i18n
 from src.solvers.solverclass import BaseSolverClass
 from src.utilities.utilities import error_handler
 
@@ -40,7 +42,7 @@ class IPMISolverClass(BaseSolverClass):
             creds[m[0]].append(f"{m[1]}:{m[2]}")
         
         if hashes:
-            self.print_output("IPMI hashes dumped:")
+            self.print_output(i18n.t('main.ipmi_hashes_found'))
             for key, value in hashes.items():
                 self.print_output(f"{key}:")
                 for v in value:
@@ -48,7 +50,7 @@ class IPMISolverClass(BaseSolverClass):
             self.create_windowcatcher_action()
 
         if creds:
-            self.print_output("IPMI Creds found:")
+            self.print_output(i18n.t('main.ipmi_creds_found'))
             for key, value in creds.items():
                 self.print_output(f"{key}:")
                 for v in value:

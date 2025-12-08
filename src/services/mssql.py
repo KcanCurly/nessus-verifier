@@ -1,3 +1,4 @@
+import i18n
 import pymssql
 import nmap
 from src.utilities.utilities import Version_Vuln_Host_Data, get_cves, get_default_context_execution2, error_handler, get_hosts_from_file, get_hosts_from_file2, add_default_parser_arguments
@@ -255,8 +256,7 @@ class MSSQLVersionSubServiceClass(BaseSubServiceClass):
 
         if versions:
             versions = dict(sorted(versions.items(), reverse=True))
-            self.print_output("Detected MSSQL Versions:")
-            
+            self.print_output(i18n.t('main.version_title', name="MSSQL"))            
 
             for key, value in versions.items():
                 extra, pure_version = key.rsplit(" ", 1)

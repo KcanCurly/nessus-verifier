@@ -321,6 +321,9 @@ def get_url_response(url, timeout=5, redirect = True):
         except Exception:
             return None
         
+def get_poc_from_cve(cve):
+    return get_cve_pocs(cve)
+
 def get_poc_cve_github_link(cve):
     year = cve.split("-")[1]
     link = f"https://github.com/nomi-sec/PoC-in-GitHub/blob/master/{year}/{cve}.json"

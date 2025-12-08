@@ -1,6 +1,8 @@
 import socket
 import struct
 import time
+
+import i18n
 from src.utilities.utilities import get_default_context_execution2, error_handler
 from src.services.serviceclass import BaseServiceClass
 from src.services.servicesubclass import BaseSubServiceClass
@@ -17,7 +19,7 @@ class TimeUsageSubServiceClass(BaseSubServiceClass):
         results = get_default_context_execution2("Time Protocol Usage", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
 
         if len(results):
-            self.print_output("Time protocol detected:")
+            self.print_output(i18n.t('main.usage_title', name="Time"))
             for r in results:
                 self.print_output(f"    {r}")
 

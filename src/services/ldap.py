@@ -1,4 +1,6 @@
 import subprocess
+
+import i18n
 from src.utilities.utilities import get_default_context_execution2, error_handler
 from src.services.serviceclass import BaseServiceClass
 from src.services.servicesubclass import BaseSubServiceClass
@@ -14,7 +16,7 @@ class LDAPSubServiceClass(BaseSubServiceClass):
         results= get_default_context_execution2("LDAP Anonymous", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
 
         if results:
-            self.print_output("LDAP anonymous access were found:")
+            self.print_output(i18n.t('main.ldap_anon_title'))
             for v in results:
                 self.print_output(f"    {v}")
             self.print_output("")
@@ -22,9 +24,9 @@ class LDAPSubServiceClass(BaseSubServiceClass):
 
     @error_handler(["host"])
     def single(self, host, **kwargs):
-        command = ["ldapsearch", "-x", "-H", f"ldap://{host}", "-b", "", "(objectClass=*)"]
+        command = ["ldapwhoami", "-x", "-H", f"ldap://{host}"]
         result = subprocess.run(command, text=True, capture_output=True)
-        if "ldaperr" not in result.stdout.lower() and "can't contact" not in result.stderr.lower() and "invalid credentials" not in result.stdout.lower():
+        if "anonymous" in result.stdout.lower() or result.stdout == "":
             return host
 
 class LDAPServiceClass(BaseServiceClass):

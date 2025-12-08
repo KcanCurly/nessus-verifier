@@ -1,5 +1,7 @@
 import subprocess
 import re
+
+import i18n
 from impacket.smbconnection import SMBConnection # type: ignore
 from smb import SMBConnection as pysmbconn
 from src.utilities.utilities import error_handler, get_default_context_execution2
@@ -23,9 +25,9 @@ class SMBNullSessionSubServiceClass(BaseSubServiceClass):
         results = get_default_context_execution2("SMB Null Session Check", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
 
         if results:
-            print("Null session allowed:")
+            self.print_output(i18n.t('main.smb_null_session_title'))
             for r in results:
-                print(r)
+                self.print_output(r)
 
     @error_handler(["host"])
     def single(self, host, **kwargs):
@@ -80,9 +82,9 @@ class SMBOSVersionSubServiceClass(BaseSubServiceClass):
                 pass
 
         if obs:
-            print("Obsolete Windows versions:")
+            self.print_output(i18n.t('main.obsolete_windows_versions'))
             for o in obs:
-                print(o)
+                self.print_output(o)
 
         
 
@@ -113,7 +115,7 @@ class SMBNullGuestSubServiceClass(BaseSubServiceClass):
             for host, info in null_vuln.items():
                 if len(info.items()) <= 0: continue
                 if not written:
-                    self.print_output("Null Accessble Shares Found:")
+                    self.print_output(i18n.t('main.smb_null_shares_title'))
                     written = True
                 self.print_output(f"{host}:")
                 for share, files in info.items():
@@ -125,7 +127,7 @@ class SMBNullGuestSubServiceClass(BaseSubServiceClass):
             for host, info in guest_vuln.items():
                 if len(info.items()) <= 0: continue
                 if not written:
-                    self.print_output("Guest Accessble Shares Found:")
+                    self.print_output(i18n.t('main.smb_guest_shares_title'))
                     written = True
                 self.print_output(f"{host}:")
                 for share, files in info.items():
@@ -198,7 +200,7 @@ class SMBSignSubServiceClass(BaseSubServiceClass):
         results = get_default_context_execution2("SMB Signing Check", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
 
         if results:
-            self.print_output("SMB signing NOT enabled on hosts:")
+            self.print_output(i18n.t('main.smb_sign_not_required_title'))
             for v in results:
                 self.print_output(f"    {v}")
 
@@ -222,7 +224,7 @@ class SMBv1SubServiceClass(BaseSubServiceClass):
         results = get_default_context_execution2("SMBv1 Check", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
 
         if results:
-            self.print_output("SMBv1 enabled on hosts:")
+            self.print_output(i18n.t('main.smbv1_enabled_title'))
             for v in results:
                 self.print_output(f"    {v}")
 

@@ -1,4 +1,6 @@
 import socket
+
+import i18n
 from src.utilities.utilities import Version_Vuln_Host_Data, get_default_context_execution2, error_handler
 from src.services.consts import DEFAULT_ERRORS, DEFAULT_THREAD, DEFAULT_TIMEOUT, DEFAULT_VERBOSE
 from src.services.serviceclass import BaseServiceClass
@@ -59,7 +61,7 @@ class DaytimeUsageSubServiceClass(BaseSubServiceClass):
         results = get_default_context_execution2("Daytime Usage", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
         
         if results:
-            self.print_output("Daytime Usage Detected:")
+            self.print_output(i18n.t('main.usage_title', name='Daytime'))
             for value in results:
                 self.print_output(f"{value}")
 

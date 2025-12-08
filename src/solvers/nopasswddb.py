@@ -1,3 +1,4 @@
+import i18n
 from src.utilities.utilities import Host, error_handler, get_default_context_execution, get_url_response
 from src.services import mongodb, postgresql, redis
 from src.solvers.solverclass import BaseSolverClass
@@ -34,7 +35,7 @@ class NoPasswordDBSolverClass(BaseSolverClass):
         results: list[Host] = get_default_context_execution("Elasticsearch Unrestricted Access Information Disclosure", threads, hosts, (self.solve_elastic_version_single, timeout, errors, verbose))
 
         if results:
-            self.print_output("Elastic Unrestricted Access:")
+            self.print_output(i18n.t('main.unauth_elasticsearch_access'))
             for r in results:
                 self.print_output(f"    {r}")
             self.create_windowcatcher_action()

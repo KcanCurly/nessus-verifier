@@ -1,4 +1,6 @@
 import socket
+
+import i18n
 from src.utilities.utilities import get_default_context_execution2, error_handler
 from src.services.serviceclass import BaseServiceClass
 from src.services.servicesubclass import BaseSubServiceClass
@@ -14,7 +16,7 @@ class EchoUsageSubServiceClass(BaseSubServiceClass):
         results = get_default_context_execution2("Echo Usage", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
         
         if results:
-            self.print_output("Echo Usage Detected:")
+            self.print_output(i18n.t('main.usage_title', name='Echo'))
             for value in results:
                 self.print_output(f"{value}")
 

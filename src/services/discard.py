@@ -1,4 +1,5 @@
 import socket
+import i18n
 from src.utilities.utilities import get_default_context_execution2, error_handler
 from src.services.serviceclass import BaseServiceClass
 from src.services.servicesubclass import BaseSubServiceClass
@@ -14,13 +15,12 @@ class DiscardUsageSubServiceClass(BaseSubServiceClass):
         results = get_default_context_execution2("Discard Usage", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
         
         if results:
-            self.print_output("Discard Usage Detected:")
+            self.print_output(i18n.t('main.usage_title', name='Discard'))
             for value in results:
                 self.print_output(f"{value}")
 
     @error_handler(["host"])
     def single(self, host, **kwargs):
-
         try:
             ip, port = host.split(":")
             # Create a socket

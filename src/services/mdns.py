@@ -1,3 +1,4 @@
+import i18n
 import nmap
 from src.utilities.utilities import Version_Vuln_List_Host_Data, get_default_context_execution2, error_handler
 from src.services.serviceclass import BaseServiceClass
@@ -14,13 +15,13 @@ class MDNSDiscoverySubServiceClass(BaseSubServiceClass):
     def nv(self, hosts, **kwargs):
         super().nv(hosts, kwargs=kwargs)
 
-        results: list[Version_Vuln_List_Host_Data] = get_default_context_execution2("MDNS DNS Discovery", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
+        results: list[Version_Vuln_List_Host_Data] = get_default_context_execution2("mDNS Discovery", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
                     
         if results:
-            self.print_output("mDNS Enabled Hosts:")
+            self.print_output(i18n.t('main.mdns_enabled_title'))
             for r in results:
                 self.print_output(r.host)
-            self.print_output("mDNS Service Discovery:")
+            self.print_output(i18n.t('main.mdns_service_discovery_title'))
             for r in results:
                 self.print_output(f"{r.host}:")
                 for v in r.version:

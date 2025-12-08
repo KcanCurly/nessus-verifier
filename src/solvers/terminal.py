@@ -1,3 +1,4 @@
+import i18n
 from src.solvers.solverclass import BaseSolverClass
 from src.utilities.utilities import error_handler
 from src.external.rdpy import RDPConfig, LU_ISSUES
@@ -31,7 +32,7 @@ class TerminalSolverClass(BaseSolverClass):
             #    self._print_exception(f"Error for {host}: {e}")
                 
         if vuln:
-            self.print_output("Terminal Misconfigurations Detected:")
+            self.print_output(i18n.t('main.terminal_misconfiguration_title'))
             for key, value in vuln.items():
                 self.print_output(f"{key}")
                 for v in value:

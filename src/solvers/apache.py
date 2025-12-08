@@ -1,4 +1,6 @@
 import os
+
+import i18n
 from src.utilities.utilities import Version_Vuln_Host_Data, error_handler, get_header_from_url, get_default_context_execution, get_cves, get_poc_cve_github_link
 import re
 from packaging.version import parse
@@ -38,7 +40,7 @@ class ApacheSolverClass(BaseSolverClass):
             versions = dict(
                 sorted(versions.items(), key=lambda x: parse(x[0]), reverse=True)
             )
-            self.print_output("Detected Apache Versions:")
+            self.print_output(i18n.t('main.version_title', name='Apache'))
             for key, value in versions.items():
                 cves = []
                 if self.print_cve:

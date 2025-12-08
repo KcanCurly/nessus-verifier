@@ -1,4 +1,6 @@
 import socket
+
+import i18n
 from src.utilities.utilities import Version_Vuln_Host_Data, get_default_context_execution2, error_handler
 from src.services.consts import DEFAULT_ERRORS, DEFAULT_THREAD, DEFAULT_TIMEOUT, DEFAULT_VERBOSE
 from src.services.serviceclass import BaseServiceClass
@@ -56,7 +58,7 @@ class QOTDUsageSubServiceClass(BaseSubServiceClass):
         results = get_default_context_execution2("QOTD Usage", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
         
         if results:
-            self.print_output("QOTD Usage Detected:")
+            self.print_output(i18n.t('main.usage_title', name="QOTD"))
             for value in results:
                 self.print_output(f"{value}")
 

@@ -1,5 +1,7 @@
 import subprocess
 import re
+
+import i18n
 from src.solvers.solverclass import BaseSolverClass
 from src.utilities.utilities import error_handler
 
@@ -35,7 +37,7 @@ class QueueJumperSolverClass(BaseSolverClass):
             self._print_exception(e)
         
         if vuln:
-            self.print_output("Vulnerable to CVE-2023-21554 (QueueJumper):")
+            self.print_output(i18n.t('main.vulnerable_to', name='CVE-2023-21554 (QueueJumper)'))
             for v in vuln:
                 self.print_output(f"    {v}")
             self.create_windowcatcher_action()

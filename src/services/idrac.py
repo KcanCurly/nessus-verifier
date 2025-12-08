@@ -1,3 +1,4 @@
+import i18n
 from src.utilities.utilities import get_default_context_execution2, error_handler, get_url_response
 from src.services.serviceclass import BaseServiceClass
 from src.services.servicesubclass import BaseSubServiceClass
@@ -41,28 +42,28 @@ class IDRACVersionSubServiceClass(BaseSubServiceClass):
                 versions_unknown[r.version].add(r.host)
 
         if versions_9:
-            self.print_output("Detected iDRAC 9 versions:")
+            self.print_output(i18n.t('main.version_title', name="iDRAC 9"))
             for key, value in versions_9.items():
                 self.print_output(f"{key}:")
                 for v in value:
                     self.print_output(f"    {v}")
                     
         if versions_8:
-            self.print_output("Detected iDRAC 8 versions (EOL):")
+            self.print_output(i18n.t('main.version_title', name="iDRAC 8 (EOL)" ))
             for key, value in versions_8.items():
                 self.print_output(f"{key}:")
                 for v in value:
                     self.print_output(f"    {v}")
                     
         if versions_7:
-            self.print_output("Detected iDRAC 7 versions (EOL):")
+            self.print_output(i18n.t('main.version_title', name="iDRAC 7 (EOL)"))
             for key, value in versions_7.items():
                 self.print_output(f"{key}:")
                 for v in value:
                     self.print_output(f"    {v}")
                     
         if versions_unknown:
-            self.print_output("Detected iDRAC versions:")
+            self.print_output(i18n.t('main.version_title', name="iDRAC"))
             for key, value in versions_unknown.items():
                 self.print_output(f"iDRAC {key}:")
                 for v in value:

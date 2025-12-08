@@ -1,4 +1,6 @@
 import re
+
+import i18n
 from src.utilities.utilities import Host, Version_Vuln_Host_Data, error_handler, get_cves, get_poc_cve_github_link, get_url_response, get_default_context_execution
 from src.solvers.solverclass import BaseSolverClass
 
@@ -49,7 +51,7 @@ class IBMWebSphereSolverClass(BaseSolverClass):
             
         if versions:
             versions = dict(sorted(versions.items(), reverse=True))
-            self.print_output("Detected IBM WebSphere Versions:")
+            self.print_output(i18n.t('main.version_title', name='IBM WebSphere'))
             for key, value in versions.items():
                 cves = []
                 if self.print_cve:

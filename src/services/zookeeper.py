@@ -1,5 +1,7 @@
 import subprocess
 import re
+
+import i18n
 from src.utilities.utilities import error_handler
 from src.services.serviceclass import BaseServiceClass
 from src.services.servicesubclass import BaseSubServiceClass
@@ -54,14 +56,14 @@ class ZookeeperEnumServiceClass(BaseSubServiceClass):
 
         if versions:
             versions = dict(sorted(versions.items(), reverse=True))
-            self.print_output("Apache Zookeeper Versions:")
+            self.print_output(i18n.t('main.version_title', name='Apache Zookeeper'))
             for k,v in versions.items():
                 self.print_output(f"Apache Zookeeper {k.strip()}:")
                 for a in v:
                     self.print_output(f"    {a}")
                     
         if info_vuln:
-            self.print_output("Apache Zookeeper Information Disclosure Detected:")
+            self.print_output(i18n.t('main.zookeeper_information_disclosure'))
             for k,v in info_vuln.items():
                 self.print_output(f"{k}:")
                 for a in v:

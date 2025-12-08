@@ -1,3 +1,4 @@
+import i18n
 import redis
 import redis.exceptions
 from src.utilities.utilities import Version_Vuln_Host_Data, get_cves, get_default_context_execution2, error_handler
@@ -51,7 +52,7 @@ class RedisVersionSubServiceClass(BaseSubServiceClass):
             versions[r.version].add(r.host)
         if versions:
             versions = dict(sorted(versions.items(), reverse=True))
-            self.print_output("Detected Redis Versions:")
+            self.print_output(i18n.t('main.version_title', name="Redis"))
             for r, values in versions.items():
                 cves = get_cves(f"cpe:2.3:a:redis:redis:{r}")
                 if cves:
@@ -81,7 +82,7 @@ class RedisUnauthSubServiceClass(BaseSubServiceClass):
         results: list[str] = get_default_context_execution2("Redis Unauth", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
 
         if results:
-            self.print_output(f"Unauthenticated Redis instances found:")
+            self.print_output(i18n.t('main.unauth_database_access', name="Redis"))
             for r in results:
                 self.print_output(r)
             self.print_output("redis-cli -h x.x.x.x -p 6379 info")
@@ -101,4 +102,4 @@ class RedisServiceClass(BaseServiceClass):
         super().__init__("redis")
         self.register_subservice(RedisUnauthSubServiceClass())
         self.register_subservice(RedisVersionSubServiceClass())
-        self.register_subservice(RedisPostSubServiceClass())
+        # self.register_subservice(RedisPostSubServiceClass())

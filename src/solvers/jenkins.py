@@ -1,3 +1,4 @@
+import i18n
 from src.utilities.utilities import Host, Version_Vuln_Host_Data, error_handler, get_cves, get_poc_cve_github_link, get_url_response, get_default_context_execution, get_header_from_url
 import re
 from packaging.version import parse
@@ -43,7 +44,7 @@ class JenkinsSolverClass(BaseSolverClass):
             versions[r.version].add(r.host)
 
         if versions:
-            self.print_output("Detected Jenkins versions:")
+            self.print_output(i18n.t('main.version_title', name='Jenkins'))
             versions = dict(
                 sorted(versions.items(), key=lambda x: parse(x[0]), reverse=True)
             )

@@ -1,4 +1,5 @@
 import pprint
+import i18n
 from pymongo import MongoClient
 import pymongo
 from packaging.version import parse
@@ -204,8 +205,8 @@ class MongoDBVersionSubServiceClass(BaseSubServiceClass):
         if versions:      
             versions = dict(
                 sorted(versions.items(), key=lambda x: parse(x[0]), reverse=True)
-            ) 
-            self.print_output("MongoDB versions detected:")
+            )
+            self.print_output(i18n.t('main.version_title', name="MongoDB"))
             for key, value in versions.items():
                 cves = []
                 if self.print_cves:

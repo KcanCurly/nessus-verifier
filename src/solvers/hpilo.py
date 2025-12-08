@@ -1,3 +1,4 @@
+import i18n
 from src.utilities.utilities import Host, Version_Vuln_Host_Data, error_handler, get_cves, get_poc_cve_github_link, get_url_response, get_default_context_execution
 from src.solvers.solverclass import BaseSolverClass
 
@@ -40,7 +41,7 @@ class HPiLOSolverClass(BaseSolverClass):
             versions[r.version].add(r.host)
         
         if versions:
-            self.print_output("Detected HP iLO versions:")
+            self.print_output(i18n.t('main.version_title', name='HP iLO'))
             versions = dict(sorted(versions.items(), reverse=True))
             for key, value in versions.items():
                 cves = []
@@ -57,9 +58,9 @@ class HPiLOSolverClass(BaseSolverClass):
                             cves = get_cves(cpe2)
                     if cves:
                         all_cves.update(cves)
-                        self.print_output(f"HPE {key} ({", ".join(cves)}):")
+                        self.print_output(f"HP iLO {key} ({", ".join(cves)}):")
                     else:
-                        self.print_output(f"HPE {key}:")
+                        self.print_output(f"HP iLO {key}:")
                 for v in value:
                     self.print_output(f"    {v}")
             self.create_windowcatcher_action()

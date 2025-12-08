@@ -1,5 +1,7 @@
 import subprocess
 import re
+
+import i18n
 from src.utilities.utilities import error_handler
 from src.services.serviceclass import BaseServiceClass
 from src.services.servicesubclass import BaseSubServiceClass
@@ -33,7 +35,7 @@ class SNMPDefaultSubServiceClass(BaseSubServiceClass):
             if self.errors: print(f"Error: {e}")
         
         if vuln:
-            self.print_output("SNMP community strings were found:")
+            self.print_output(i18n.t('main.snmp_public_community'))
             for k,v in vuln.items():
                 self.print_output(k)
                 for a in v:

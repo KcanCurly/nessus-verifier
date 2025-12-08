@@ -5,7 +5,7 @@ from src.utilities.utilities import error_handler, get_cves, get_default_context
 from src.services.serviceclass import BaseServiceClass
 from src.services.servicesubclass import BaseSubServiceClass
 import nmap
-
+import i18n
 from src.utilities.utilities import get_hosts_from_file
 
 class Listener(stomp.ConnectionListener):
@@ -68,7 +68,7 @@ class ActiveMQVersionSubServiceClass(BaseSubServiceClass):
         results = get_default_context_execution2("ActiveMQ Version", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
                         
         if results:
-            self.print_output("ActiveMQ Version:")               
+            self.print_output(i18n.t('main.version_title', name='ActiveMQ'))
             for a in results:
                 self.print_output(f"    {a}")
 

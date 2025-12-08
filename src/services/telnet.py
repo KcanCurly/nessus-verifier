@@ -1,3 +1,4 @@
+import i18n
 import nmap
 import socket
 from src.utilities.utilities import Version_Vuln_Host_Data, get_default_context_execution2, error_handler
@@ -56,7 +57,7 @@ class TelnetUsageSubServiceClass(BaseSubServiceClass):
         results = get_default_context_execution2("Telnet Usage", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
         
         if results:
-            self.print_output("Telnet Usage Detected:")
+            self.print_output(i18n.t('main.usage_title', name="Telnet"))
             for value in results:
                 self.print_output(f"{value}")
 

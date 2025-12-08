@@ -1,3 +1,4 @@
+import i18n
 from src.utilities.utilities import Version_Vuln_Host_Data, error_handler, get_url_response, get_default_context_execution, get_cves, get_poc_cve_github_link
 from packaging.version import parse
 from src.solvers.solverclass import BaseSolverClass
@@ -43,7 +44,7 @@ class ElasticsearchSolverClass(BaseSolverClass):
             versions = dict(
                 sorted(versions.items(), key=lambda x: parse(x[0]), reverse=True)
             )
-            self.print_output("Elastic versions detected:")
+            self.print_output(i18n.t('main.version_title', name='Elasticsearch'))
             for key, value in versions.items():
                 cves = []
                 if self.print_cve:

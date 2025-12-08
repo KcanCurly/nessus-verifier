@@ -1,6 +1,8 @@
 from ftplib import FTP
 from ftplib import Error
 from ftplib import FTP_TLS
+
+import i18n
 from src.utilities.utilities import add_default_parser_arguments, get_default_context_execution2, error_handler, get_cves, Host, normalize_line_endings, get_hosts_from_file, get_hosts_from_file2
 from src.services.serviceclass import BaseServiceClass
 from src.services.servicesubclass import BaseSubServiceClass
@@ -132,7 +134,7 @@ class FTPAnonSubServiceClass(BaseSubServiceClass):
         results: list[FTP_Anon_Vuln_Data] = get_default_context_execution2("FTP Anon", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
                         
         if results:
-            self.print_output("FTP Anonymous Access on Hosts:")               
+            self.print_output(i18n.t('main.ftp_anon_title'))         
             for a in results:
                 self.print_output(f"    {a.host}{" [TLS]" if a.is_TLS else ""}")
 
@@ -166,7 +168,7 @@ class FTPVersionSubServiceClass(BaseSubServiceClass):
         results = get_default_context_execution2("FTP Version", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
                         
         if results:
-            self.print_output("FTP Version:")               
+            self.print_output(i18n.t('main.version_title', name="FTP"))              
             for a in results:
                 self.print_output(f"    {a}")
 

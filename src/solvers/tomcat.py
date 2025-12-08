@@ -1,3 +1,4 @@
+import i18n
 from src.utilities.utilities import Version_Vuln_Host_Data, error_handler, get_poc_cve_github_link, get_url_response, get_default_context_execution, get_cves
 from src.solvers.solverclass import BaseSolverClass
 import re
@@ -29,11 +30,11 @@ class TomcatSolverClass(BaseSolverClass):
                 sorted(versions.items(), key=lambda x: parse(x[0]), reverse=True)
             )
             total_cves = []
-            self.print_output("Detected Apache Tomcat Versions:")
+            self.print_output(i18n.t('main.version_title', name='Apache Tomcat'))
             for key, value in versions.items():
                 cves = []
                 if key.startswith("8"): 
-                    self.print_output(f"Apache Tomcat/{key} (EOL):")
+                    self.print_output(f"Apache Tomcat {key} (EOL):")
                 else:
                     if self.print_cve:
                         cves = get_cves(f"cpe:2.3:a:apache:tomcat:{key}")

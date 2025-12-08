@@ -1,3 +1,4 @@
+import i18n
 from src.utilities.utilities import error_handler, get_cves, get_default_context_execution2, Version_Vuln_Host_Data
 from src.services.serviceclass import BaseServiceClass
 from src.services.servicesubclass import BaseSubServiceClass
@@ -23,7 +24,7 @@ class AMQPVersionSubServiceClass(BaseSubServiceClass):
 
         if versions:
             versions = dict(sorted(versions.items(), reverse=True))
-            self.print_output("Detected AMQP Versions:")
+            self.print_output(i18n.t('main.version_title', name='AMQP'))
             
             for key, value in versions.items():
                 extra, pure_version = key.rsplit(" ", 1)

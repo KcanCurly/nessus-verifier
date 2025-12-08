@@ -1,3 +1,4 @@
+import i18n
 import nmap
 from src.solvers.solverclass import BaseSolverClass
 from src.utilities.utilities import error_handler
@@ -51,7 +52,7 @@ class ObsoleteProtocolSolverClass(BaseSolverClass):
                 pass
         
         if vuln_echo:
-            self.print_output("Echo Protocol Detected:")
+            self.print_output(i18n.t('main.usage_title', name="Echo"))
             for value in vuln_echo:
                 self.print_output(f"{value}")
             if not self.is_action_done:
@@ -59,7 +60,7 @@ class ObsoleteProtocolSolverClass(BaseSolverClass):
                 self.is_action_done = True
                 
         if vuln_discard:
-            self.print_output("Discard Protocol Detected:")
+            self.print_output(i18n.t('main.usage_title', name="Discard"))
             for value in vuln_discard:
                 self.print_output(f"{value}")
             if not self.is_action_done:
@@ -67,7 +68,7 @@ class ObsoleteProtocolSolverClass(BaseSolverClass):
                 self.is_action_done = True
                 
         if vuln_daytime:
-            self.print_output("Daytime Protocol Detected:")
+            self.print_output(i18n.t('main.usage_title', name="Daytime"))
             for value in vuln_daytime:
                 self.print_output(f"{value}")
             if not self.is_action_done:
@@ -75,7 +76,7 @@ class ObsoleteProtocolSolverClass(BaseSolverClass):
                 self.is_action_done = True
                 
         if vuln_qotd:
-            self.print_output("QOTD Protocol Detected:")
+            self.print_output(i18n.t('main.usage_title', name="QOTD"))
             for value in vuln_qotd:
                 self.print_output(f"{value}")
             if not self.is_action_done:
@@ -83,7 +84,7 @@ class ObsoleteProtocolSolverClass(BaseSolverClass):
                 self.is_action_done = True
                 
         if vuln_chargen:
-            self.print_output("Chargen Protocol Detected:")
+            self.print_output(i18n.t('main.usage_title', name="Chargen"))
             for value in vuln_chargen:
                 self.print_output(f"{value}")
             if not self.is_action_done:
@@ -91,6 +92,7 @@ class ObsoleteProtocolSolverClass(BaseSolverClass):
                 self.is_action_done = True
                 
         if vuln_systat:
+            self.print_output(i18n.t('main.usage_title', name="Systat"))
             self.print_output("Systat Protocol Detected:")
             for value in vuln_systat:
                 self.print_output(f"{value}")

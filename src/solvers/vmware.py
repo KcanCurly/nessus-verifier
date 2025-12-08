@@ -1,3 +1,4 @@
+import i18n
 from src.solvers.solverclass import BaseSolverClass
 from src.utilities import utilities
 from src.utilities.utilities import error_handler, get_cves, get_poc_cve_github_link
@@ -134,7 +135,7 @@ class VmwareSolverClass(BaseSolverClass):
 
         all_cves =set()
         if versions:
-            self.print_output("Detected Vmware Versions:")
+            self.print_output(i18n.t('main.version_title', name='VMware'))
             for key, value in versions.items():
                 cves = []
                 

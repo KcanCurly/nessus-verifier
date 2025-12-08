@@ -1,5 +1,7 @@
 import subprocess
 import re
+
+import i18n
 from src.services.serviceclass import BaseServiceClass
 from src.services.servicesubclass import BaseSubServiceClass
 from src.utilities.utilities import error_handler
@@ -38,7 +40,7 @@ class TFTPBruteSubServiceClass(BaseSubServiceClass):
             vuln[m[1]].add(m[0])
             
         if vuln:
-            self.print_output("TFTP files were found:")
+            self.print_output(i18n.t('main.tftp_files_found'))
             for k,v in vuln.items():
                 self.print_output(f"{k}:")
                 for a in v:
