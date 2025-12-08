@@ -1,2 +1,8 @@
 tr:
   ssh_vuln_kex_title: "Zayıf KEX algoritmaları:"
+  ssh_vuln_mac_title : "Zayıf MAC algoritmaları:"
+  ssh_vuln_hostkey_title : "Zayıf Host-Key algoritmaları:"
+  ssh_vuln_cipher_title : "Zayıf Şifreleme algoritmaları:"
+  ssh_vuln_hosts : "Etkilenen Sistemler:"
+  ssh_vuln_terrapin_hosts : "Terrapin Zafiyetinden Etkilenen Sistemler:"
+  version_title : "Tespit edilen %{name} Sürümleri:"

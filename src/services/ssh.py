@@ -219,7 +219,7 @@ class SSHVersionSubServiceClass(BaseSubServiceClass):
             versions = dict(
                 sorted(versions.items(), key=lambda x: x[0], reverse=True)
             )
-            self.print_output("SSH Versions:")
+            self.print_output(i18n.t('version_title', name='SSH'))
             for key, value in versions.items():
                 major = key
                 minor = ""
@@ -362,27 +362,27 @@ class SSHAuditSubServiceClass(BaseSubServiceClass):
                 self.print_output(f"    {k}")
             
         if vuln_mac:
-            self.print_output("Vulnerable MAC algorithms:")
+            self.print_output(i18n.t("main.ssh_vuln_mac_title"))
             for k in vuln_mac:
                 self.print_output(f"    {k}")
                 
         if vuln_key:
-            self.print_output("Vulnerable Host-Key algorithms:")
+            self.print_output(i18n.t("main.ssh_vuln_hostkey_title"))
             for k in vuln_key:
                 self.print_output(f"    {k}")
         
         if vuln_cipher:
-            self.print_output("Vulnerable Cipher algorithms:")
+            self.print_output(i18n.t("main.ssh_vuln_cipher_title"))
             for k in vuln_cipher:
                 self.print_output(f"    {k}")
                 
         if vuln_hosts:
-            self.print_output("Vulnerable hosts:")
+            self.print_output(i18n.t("main.ssh_vuln_hosts"))
             for k in vuln_hosts:
                 self.print_output(f"    {k}")
                 
         if vuln_terrapin:
-            self.print_output("Vulnerable Terrapin hosts:")
+            self.print_output(i18n.t("main.ssh_vuln_terrapin_hosts"))
             for k in vuln_terrapin:
                 self.print_output(f"    {k}")
 

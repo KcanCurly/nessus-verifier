@@ -4,6 +4,7 @@ import subprocess
 from src.services import activemq, ajp13, amqp, asterisk, chargen, daytime, discard, dns, echo, finger, ftp, http, ident, ldap, mdns, mongodb, ms_exchange, mssql, netstat, qotd, smb, ssh, snmp, nfs, rpc, smtp, snmp, systat, telnet, tftp, time, mssql, idrac, zookeeper, postgresql, mysql, redis
 from src.services.serviceclass import BaseServiceClass
 from traceback import print_exc
+import i18n
 
 service_dict: list[type[BaseServiceClass]] = [
     dns.DNSServiceClass,
@@ -146,9 +147,15 @@ def main():
         except Exception as e:
             print(f"Error parsing {v.__name__}: {e}")
             print_exc()
-
-    args = parser.parse_args()
     argcomplete.autocomplete(parser)
+    args = parser.parse_args()
+    
+    current_script_path = os.path.abspath(__file__)
+    dir_up = os.path.abspath(os.path.join(current_script_path, "../../"))
+    locales_dir = os.path.join(dir_up, "locales")
+    i18n.load_path.append(locales_dir) # type: ignore
+    i18n.set('locale', args.language) # type: ignore
+    
     
     if hasattr(args, "func"):
         args.func(args)
