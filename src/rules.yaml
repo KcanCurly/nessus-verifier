@@ -1967,7 +1967,8 @@
   5559, 2183, 9628, 700523, 5782, 5358, 8663, 6868, 4521, 9971, 9465, 9800, 9463, 801060, 5358, 8791, 9934, 6400, 6400,
   9465, 9800, 9463, 6288, 8617, 5720, 9627, 8661, 9933, 801053, 9466, 8253, 9390, 6022, 9461, 8662, 11060, 12110, 8064, 
   801056, 801057, 801062, 801936, 801056, 9625, 11267, 11267, 801061, 9128, 801619, 801059, 801064, 801938, 801067,
-  801054, 801052, 801935, 801065, 801963, 801055, 93112, 74326, 237112, 266298, 266293]
+  801054, 801052, 801935, 801065, 801963, 801055, 93112, 74326, 237112, 266298, 266293, 266318]
+  # 266318 - OpenSSL 1.0.2 < 1.0.2zm Vulnerability
   # 266293 - OpenSSL 3.3.0 < 3.3.5 Multiple Vulnerabilities
   # 266298 - OpenSSL 3.5.0 < 3.5.4 Multiple Vulnerabilities
   # 237112 - OpenSSL 3.5.0 < 3.5.1 Vulnerability
@@ -2390,7 +2391,22 @@
   # 11419 - Web Server Office File Inventory
 
 - name: Web Server robots.txt Information Disclosure
-  id: 42
+  id: 43
   should-group-total: false
   plugin-ids: [10302]
   # 10302 - Web Server robots.txt Information Disclosure
+
+- name: Backup File Disclosure
+  id: 45
+  should-group-total: false
+  plugin-ids: [11411]
+  # 11411 - Backup File Disclosure
+
+- name: Linux EOL
+  id: 46
+  should-group-total: true
+  plugin-ids: [201456, 201351, 201408, 201425]
+  # 201456 - Canonical Ubuntu Linux SEoL (18.04.x)
+  # 201351 - Canonical Ubuntu Linux SEoL (16.04.x)
+  # 201408 - Canonical Ubuntu Linux SEoL (14.04.x)
+  # 201425 - CentOS SEoL (7.x)

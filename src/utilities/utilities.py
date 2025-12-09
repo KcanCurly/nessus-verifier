@@ -322,23 +322,15 @@ def get_url_response(url, timeout=5, redirect = True):
             return None
         
 def get_poc_from_cve(cve):
-    return get_cve_pocs(cve)
+    return get_poc_cve_github_link(cve)
 
 def get_poc_cve_github_link(cve):
     year = cve.split("-")[1]
     link = f"https://github.com/nomi-sec/PoC-in-GitHub/blob/master/{year}/{cve}.json"
-    resp = requests.get(link, verify=False)
+    resp = requests.get(link, verify=False, timeout=15)
     if resp.status_code in [200]:
         resp = resp.json()
         return [repo["html_url"] for repo in resp]
-
-def get_cve_pocs(cve):
-    try:
-        resp = requests.get(f"https://labs.jamessawyer.co.uk/cves/api/cves?q={cve}", verify=False, timeout=15).json()
-        pocs = resp["results"][0]["urls"]
-        return resp["results"][0]["urls"]
-    except Exception as e:
-        return []
 
 def get_latest_version(product):
     try:

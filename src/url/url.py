@@ -559,8 +559,6 @@ def find_login(response):
         return "/ui/#/login"
     return None
 
-
-# TO DO:
 def find_title(url, response):
     soup = BeautifulSoup(response, 'html.parser')
     title_tag = soup.title
@@ -627,6 +625,7 @@ def authcheck(url, templates: list[type[SiteTemplateBase]], verbose, wasprocesse
 
                 hostname, _, _ = socket.gethostbyaddr(ip)
         except:pass
+        extract_version(response.url, response)
         if response.status_code in range(400, 600):
             # Check basic auth
             if check_basic_auth(response):
@@ -669,21 +668,6 @@ def authcheck(url, templates: list[type[SiteTemplateBase]], verbose, wasprocesse
                 with open(NV_BAD, "a") as file:
                     file.write(f"{response.url}{f' | {hostname}' if hostname else ''} => Empty or 'OK'\n")
             return
-        
-        #if "enable JavaScript" in response.text:
-        #    with js_lock:
-        #        with open(NV_REQUIRE_JS, "a") as file:
-        #            file.write(f"{response.url}{f' | {hostname}' if hostname else ''}\n")
-
-        # Check basic auth
-        if check_basic_auth(response):
-            with _401_lock:
-                with open(NV_401, "a") as file:
-                    file.write(f"{response.url}{f' | {hostname}' if hostname else ''}\n")
-            return
-
-        # We first check if there is any version on the page, if so we find it and return
-        extract_version(response.url, response)
 
         # Check bads
         bad = check_if_known_Bad(response)

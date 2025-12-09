@@ -291,6 +291,11 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                         plugin_output = get_plugin_output("Web Server robots.txt Information Disclosure", z)
                         plugin_output_s = plugin_output.split() # type: ignore
                         print(f"            {plugin_output_s}", file=f)
+                    elif key == "Backup File Disclosure":
+                        plugin_output = get_plugin_output("Backup File Disclosure", z)
+                        urls =re.findall(r"https?://\S+", plugin_output) # type: ignore
+                        for p in urls:
+                            print(f"            {p}", file=f)
                         
     with open(args.output_json_file, "w") as file:
         for v in l:
