@@ -2396,11 +2396,11 @@
   plugin-ids: [10302]
   # 10302 - Web Server robots.txt Information Disclosure
 
-- name: Backup File Disclosure
+- name: Backup Files Disclosure
   id: 45
   should-group-total: false
   plugin-ids: [11411]
-  # 11411 - Backup File Disclosure
+  # 11411 - Backup Files Disclosure
 
 - name: Linux EOL
   id: 46
