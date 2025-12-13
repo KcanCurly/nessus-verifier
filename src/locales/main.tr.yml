@@ -37,3 +37,4 @@ tr:
   latest_version_title: "Güncel %{name} sürümleri:"
   poc_title: "CVE'ler için Bulunan POC'ler:"
   default_creds_title: "%{name} için Bulunan Varsayılan Kimlik Bilgileri:"
+  activemq_unauth_access: "ActiveMQ Anonim Erişimi Etkin veya Kimlik Doğrulaması Yapılandırılmamış Sistemler:"

@@ -37,3 +37,4 @@ en:
   latest_version_title: "Latest %{name} version(s):"
   poc_title: "Proof of Concepts (POCs) found for the following CVEs:"
   default_creds_title: "Default Credentials Found for %{name}:"
+  activemq_unauth_access: "ActiveMQ Anonymous Access Enabled or Authentication Not Configured on Hosts:"

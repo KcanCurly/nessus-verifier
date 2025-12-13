@@ -6,6 +6,18 @@ from src.services.serviceclass import BaseServiceClass
 from src.services.servicesubclass import BaseSubServiceClass
 import i18n
 from src.utilities.utilities import get_hosts_from_file
+import random
+import string
+
+def generate_random_string(length=8):
+    """
+    Generate a random string of specified length using only ASCII letters and digits.
+    """
+    # Define the character pool: a-z, A-Z, 0-9
+    chars = string.ascii_letters + string.digits  # 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+    
+    # Generate random string
+    return ''.join(random.choice(chars) for _ in range(length))
 
 class Listener(stomp.ConnectionListener):
 
@@ -23,8 +35,19 @@ class ActiveMQDefaultCredsSubServiceClass(BaseSubServiceClass):
     @error_handler([])
     def nv(self, hosts, **kwargs):
         super().nv(hosts, kwargs=kwargs)
+
         
-        results = get_default_context_execution2("ActiveMQ Default Creds Scan", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
+        results = get_default_context_execution2("ActiveMQ Random Creds Scan", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose, username=generate_random_string(), password=generate_random_string())
+
+        if results:
+            self.print_output(i18n.t('main.activemq_unauth_access', name='ActiveMQ'))
+            for r in results:
+                self.print_output(f"    {r}")
+
+        for r in results:
+            hosts.remove(r)
+
+        results = get_default_context_execution2("ActiveMQ Default Creds Scan", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose, username="system", password="manager")
 
         if results:
             self.print_output(i18n.t('main.default_creds_title', name='ActiveMQ'))
@@ -34,18 +57,14 @@ class ActiveMQDefaultCredsSubServiceClass(BaseSubServiceClass):
     @error_handler(["host"])
     def single(self, host, **kwargs):
         ip = host.ip
-        port = host.port    
+        port = host.port
+        username=kwargs.get("username", "z")
+        password=kwargs.get("password", "z")
         try:
             h = [(ip, port)]
             conn = stomp.Connection(host_and_ports=h)
             conn.set_listener('', PrintingListener())
-            conn.connect('z', 'z', wait = True, with_connect_command = True)
-            conn.subscribe(destination='/queue/queue-1', id=1, ack='auto')
-            time.sleep(1)
-            conn.send('/queue/queue-1', 'hello world')
-            time.sleep(1)
-
-            
+            conn.connect(username, password, wait = True)
             conn.disconnect()
             return f"{host.ip}:{host.port}"
         except Exception as e: print(e)
