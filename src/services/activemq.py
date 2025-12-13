@@ -73,7 +73,7 @@ class ActiveMQVersionSubServiceClass(BaseSubServiceClass):
         d = nmap_identify_service_single(host)
         if d:
             version = d["version"]
-            if version and version.startswith("Apache ActiveMQ"):
+            if version and version.startswith("ActiveMQ OpenWire transport"):
                 return f"{host.ip}:{host.port} => {version}"
 
 
