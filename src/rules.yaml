@@ -2490,6 +2490,12 @@
   plugin-ids: [35371]
   # 35371 - DNS Server Version Detection
 
+- name: Microsoft Windows SMB (GENERIC)
+  id: 50
+  should-group-total: true
+  plugin-regex: ["^Microsoft Windows SMB"]
+  plugin-ids: []
+
 - name: Jenkins Plugins (GENERIC)
   id: 999999
   should-group-total: true
@@ -2520,7 +2526,7 @@
   plugin-regex: []
   plugin-ids: [161439, 155705, 119775, 17367, 189514, 160218, 35786, 152484, 214333,
   76054, 185163, 71495, 104660, 215121, 208080, 10757, 63692, 29222, 49069, 91340, 47619,
-  186009, 159843]
+  186009, 159843, 14255, 121471, 129979, 53258, 92468]
   # 161439 - ManageEngine PAM360 Detection
   # 155705 - QNAP QTS/QES/QuTS hero - Web Detection
   # 119775 - GPON ONT Home Gateway Router Detection
@@ -2544,3 +2550,8 @@
   # 47619 - Splunk Web Detection
   # 186009 - Fortinet FortiSIEM Web Interface Detection
   # 159843 - Apache Shiro HTTP Detection
+  # 14255 - Microsoft Outlook Web Access (OWA) Version Detection
+  # 121471 - Kubernetes Web API Detection
+  # 129979 - Harbor Web Interface Detection
+  # 53258 - Oracle BI Publisher Enterprise Detection
+  # 92468 - Sonatype Nexus Repository Manager Detection
