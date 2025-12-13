@@ -7,7 +7,7 @@ import dns.reversename
 import dns.update
 import dns.zone
 import re
-from src.utilities.utilities import Version_Vuln_Host_Data, error_handler, get_default_context_execution2, get_hosts_from_file2, add_default_parser_arguments
+from src.utilities.utilities import Version_Vuln_Host_Data, error_handler, get_default_context_execution2, get_hosts_from_file2, add_default_serviceclass_arguments
 from src.services.consts import DEFAULT_ERRORS, DEFAULT_THREAD, DEFAULT_TIMEOUT, DEFAULT_VERBOSE
 from src.services.serviceclass import BaseServiceClass
 from src.services.servicesubclass import BaseSubServiceClass
@@ -221,7 +221,7 @@ class DNSAddDNSSubServiceClass(BaseSubServiceClass):
         parser.add_argument("domain", type=str, help="File name or targets seperated by space")
         parser.add_argument("-n", "--name", type=str, default="Pentest-TXT-Record", help="TXT Record name to be added (Default = Pentest-TXT-Record).")
         parser.add_argument("-nv", "--value", type=str, default="Pentest-TXT-Record-Value", help="TXT Record name to be added (Default = Pentest-TXT-Record-Value).")
-        add_default_parser_arguments(parser, False)
+        add_default_serviceclass_arguments(parser, False)
         parser.set_defaults(func=self.console)
         
     def nv(self, hosts, **kwargs):
@@ -364,7 +364,7 @@ class DNSMaliciousSubServiceClass(BaseSubServiceClass):
         parser = subparsers.add_parser(self.command_name, help = self.help_description)
         parser.add_argument("target", type=str, help="File name or targets seperated by space")
         parser.add_argument("--domains", nargs="+", default=["accounts.googleaccesspoint.com", "86-adm.one", "pvkxculusei.xyz"], help="List of malicious domains seperated by space")
-        add_default_parser_arguments(parser, False)
+        add_default_serviceclass_arguments(parser, False)
         parser.set_defaults(func=self.console)
 
     def console(self, args):

@@ -1,6 +1,6 @@
 import subprocess
 import os
-from src.utilities.utilities import error_handler, get_hosts_from_file2, add_default_parser_arguments
+from src.utilities.utilities import error_handler, get_hosts_from_file2, add_default_serviceclass_arguments
 from src.services.consts import DEFAULT_ERRORS, DEFAULT_THREAD, DEFAULT_TIMEOUT, DEFAULT_VERBOSE
 from src.services.serviceclass import BaseServiceClass
 from src.services.servicesubclass import BaseSubServiceClass
@@ -13,7 +13,7 @@ class AsteriskVersionSubServiceClass(BaseSubServiceClass):
         parser = subparsers.add_parser(self.command_name, help = self.help_description)
         parser.add_argument("target", type=str, help="File name or targets seperated by space")
         parser.add_argument("-p", "--ports", type=str, default="5030-5080", help="sippts port argument (Default = 5030-5080)")
-        add_default_parser_arguments(parser, False)
+        add_default_serviceclass_arguments(parser, False)
         parser.set_defaults(func=self.console)
 
     def console(self, args):

@@ -289,7 +289,7 @@ def print_service_error(e_level, message):
         
 
 
-def add_default_parser_arguments(parser, add_target_argument = True):
+def add_default_serviceclass_arguments(parser, add_target_argument = True):
     if add_target_argument: 
         parser.add_argument("target", type=str, help="File name or targets seperated by space")
     parser.add_argument("-a", "--create-actions", type=str, default=None, help="Creates action toml file for windowcatcher with given name.")

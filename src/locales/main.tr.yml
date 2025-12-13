@@ -34,3 +34,4 @@ tr:
   tls_vulnerable_ciphers_title: "Zayıf TLS Şifreleme Kullanıldığı Tespit Edilen Sistemler:"
   tls_misconfigured_hosts_title: "Yanlış Yapılandırılmış TLS Sistemleri Tespit Edildi:"
   tls_expired_certificates_title: "Süresi Dolmuş Sertifikaya Sahip Sistemler:"
+  latest_version_title: "Güncel %{name} sürümleri:"

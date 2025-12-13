@@ -1,5 +1,8 @@
 import threading
-from src.utilities.utilities import add_default_parser_arguments, get_hosts_from_file2, error_handler
+
+import i18n
+from src.utilities import utilities
+from src.utilities.utilities import add_default_serviceclass_arguments, get_hosts_from_file2, error_handler
 from src.services.consts import DEFAULT_ERRORS, DEFAULT_THREAD, DEFAULT_TIMEOUT, DEFAULT_VERBOSE
 from src.services.serviceclass import BaseServiceClass as base_service
 from dataclasses import dataclass
@@ -16,7 +19,7 @@ class BaseSubServiceClass():
 
     def helper_parse(self, subparsers):
         parser_enum = subparsers.add_parser(self.command_name, help = self.help_description)
-        add_default_parser_arguments(parser_enum)
+        add_default_serviceclass_arguments(parser_enum)
         parser_enum.set_defaults(func=self.console)
 
     def solve(self, args):
@@ -36,6 +39,13 @@ class BaseSubServiceClass():
         if self.output:
             with open(self.output, "w") as f:
                 pass
+
+    def print_latest_versions(self, product_code, product_name):
+        if self.print_latest_version:
+            latest_versions = utilities.get_latest_version(product_code, True)
+            if latest_versions:
+                self.print_output(i18n.t('main.latest_version_title', name=product_name))
+                self.print_output(', '.join(latest_versions or []))
 
     @error_handler([])
     def print_output(self, message, normal_print = True):

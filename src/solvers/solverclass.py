@@ -1,5 +1,5 @@
 from ast import arg
-from src.utilities.utilities import Host, add_default_parser_arguments, add_default_solver_parser_arguments, find_scan, get_hosts_from_file2, get_latest_version
+from src.utilities.utilities import Host, add_default_serviceclass_arguments, add_default_solver_parser_arguments, find_scan, get_hosts_from_file2, get_latest_version
 import traceback
 import os
 import i18n
@@ -74,7 +74,7 @@ class BaseSolverClass():
     def helper_parse(self, subparser):
         parser_task1 = subparser.add_parser(str(self.id), help=self.name)
         add_default_solver_parser_arguments(parser_task1)
-        add_default_parser_arguments(parser_task1, False)
+        add_default_serviceclass_arguments(parser_task1, False)
         parser_task1.set_defaults(func=self.solve)
         
     def solve(self, args):

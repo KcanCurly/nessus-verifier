@@ -1,4 +1,4 @@
-from src.utilities.utilities import add_default_parser_arguments, get_default_context_execution2, error_handler, get_cves, Host, normalize_line_endings, get_hosts_from_file, get_hosts_from_file2
+from src.utilities.utilities import add_default_serviceclass_arguments, get_default_context_execution2, error_handler, get_cves, Host, normalize_line_endings, get_hosts_from_file, get_hosts_from_file2
 from src.services.serviceclass import BaseServiceClass
 from src.services.servicesubclass import BaseSubServiceClass
 from concurrent.futures import ThreadPoolExecutor
@@ -35,7 +35,7 @@ class HTTP401BruteSubServiceClass(BaseSubServiceClass):
         parser = subparsers.add_parser(self.command_name, help = self.help_description)
         parser.add_argument("target", type=str, help="File name or targets seperated by space")
         parser.add_argument("credential", type=str, help="File name or targets seperated by space, user:pass on each line")
-        add_default_parser_arguments(parser, False)
+        add_default_serviceclass_arguments(parser, False)
         parser.set_defaults(func=self.console)
 
     def console(self, args):

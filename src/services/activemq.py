@@ -63,13 +63,11 @@ class ActiveMQVersionSubServiceClass(BaseSubServiceClass):
             self.print_output(i18n.t('main.version_title', name='ActiveMQ'))
             for k, v in version_dict.items():
                 self.print_output(f"Apache ActiveMQ {k}:")
+                self.print_cves()
                 for a in v:
                     self.print_output(f"    {a}")
 
-
-            self.print_output(f"Latest Apache ActiveMQ version:")
-            latest_versions = utilities.get_latest_version("apache-activemq", True)
-            self.print_output(', '.join(latest_versions or []))
+            self.print_latest_versions("apache-activemq", "Apache ActiveMQ")
 
     @error_handler(["host"])
     def single(self, host, **kwargs):

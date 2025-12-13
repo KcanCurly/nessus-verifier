@@ -1,5 +1,5 @@
 import smtplib
-from src.utilities.utilities import confirm_prompt, get_hosts_from_file2, get_hosts_from_file, add_default_parser_arguments, error_handler
+from src.utilities.utilities import confirm_prompt, get_hosts_from_file2, get_hosts_from_file, add_default_serviceclass_arguments, error_handler
 from src.services.serviceclass import BaseServiceClass
 from src.services.servicesubclass import BaseSubServiceClass
 
@@ -95,7 +95,7 @@ def helper_parse(commandparser):
     parser_userenum = subparsers.add_parser("userenum", help="Tries to enumerate users with VRFY EXPN and RCPT TO")
     parser_userenum.add_argument("target", type=str, help="File name or targets seperated by space")
     parser_userenum.add_argument("domain", type=str, help="Domain name for RCPT TO")
-    add_default_parser_arguments(parser_userenum, False)
+    add_default_serviceclass_arguments(parser_userenum, False)
     parser_userenum.set_defaults(func=userenum_console)
     
 class SMTPOpenRelaySubServiceClass(BaseSubServiceClass):
@@ -114,7 +114,7 @@ class SMTPOpenRelaySubServiceClass(BaseSubServiceClass):
         parser.add_argument("--subject", type=str, default="Openrelay Test", help="Email subject")
         parser.add_argument("--message", type=str, default="Openrelay test message", help="Email message, this is a template meaning $host would be replaced with the host value")
         parser.add_argument("--confirm", action="store_true", help="Bypass confirm prompt")
-        add_default_parser_arguments(parser, False)
+        add_default_serviceclass_arguments(parser, False)
         parser.set_defaults(func=self.console)
 
     def console(self, args):

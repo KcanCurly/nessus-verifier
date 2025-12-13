@@ -1,7 +1,7 @@
 import i18n
 import nmap
 import pymysql
-from src.utilities.utilities import Version_Vuln_Host_Data, get_default_context_execution2, error_handler, get_hosts_from_file2, add_default_parser_arguments
+from src.utilities.utilities import Version_Vuln_Host_Data, get_default_context_execution2, error_handler, get_hosts_from_file2, add_default_serviceclass_arguments
 from src.services.serviceclass import BaseServiceClass
 from src.services.servicesubclass import BaseSubServiceClass
 
@@ -22,7 +22,7 @@ class MYSQLPostSubServiceClass(BaseSubServiceClass):
         parser.add_argument("--columns", action="store_true", help="Print columns of selected table")
         parser.add_argument("--column", nargs="+", help="Print values of selected columns")
         parser.add_argument("--limit", type=int, default=10, help="Row Limit (Default = 10)")
-        add_default_parser_arguments(parser, False)
+        add_default_serviceclass_arguments(parser, False)
         parser.set_defaults(func=self.console)
 
     def console(self, args):

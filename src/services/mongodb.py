@@ -3,7 +3,7 @@ import i18n
 from pymongo import MongoClient
 import pymongo
 from packaging.version import parse
-from src.utilities.utilities import Version_Vuln_Host_Data, get_default_context_execution2, error_handler, get_hosts_from_file, get_hosts_from_file2, add_default_parser_arguments, Host, get_cves
+from src.utilities.utilities import Version_Vuln_Host_Data, get_default_context_execution2, error_handler, get_hosts_from_file, get_hosts_from_file2, add_default_serviceclass_arguments, Host, get_cves
 from src.services.serviceclass import BaseServiceClass
 from src.services.servicesubclass import BaseSubServiceClass
 from traceback import print_exc
@@ -25,7 +25,7 @@ class MongoDBPostSubServiceClass(BaseSubServiceClass):
         parser.add_argument("--fields", action="store_true", help="Print fields of selected collection")
         parser.add_argument("--field", nargs="+", help="Print values of selected fields")
         parser.add_argument("--limit", type=int, default=10, help="Row Limit (Default = 10)")
-        add_default_parser_arguments(parser, False)
+        add_default_serviceclass_arguments(parser, False)
         parser.set_defaults(func=self.console)
 
     def console(self, args):
@@ -121,7 +121,7 @@ class MongoDBBruteSubServiceClass(BaseSubServiceClass):
         parser = subparsers.add_parser(self.command_name, help = self.help_description)
         parser.add_argument("target", type=str, help="File name or targets seperated by space")
         parser.add_argument("credential", type=str, help="File name or targets seperated by space, user:pass on each line")
-        add_default_parser_arguments(parser, False)
+        add_default_serviceclass_arguments(parser, False)
         parser.set_defaults(func=self.console)
 
     def console(self, args):

@@ -1,5 +1,5 @@
 import tomllib
-from src.utilities.utilities import add_default_solver_parser_arguments, add_default_parser_arguments
+from src.utilities.utilities import add_default_solver_parser_arguments, add_default_serviceclass_arguments
 from src.solvers.solverclass import BaseSolverClass
 from src.services.smtp import SMTPOpenRelaySubServiceClass
 
@@ -20,7 +20,7 @@ class SMTPSolverClass(BaseSolverClass):
         parser_task1.add_argument("--subject", type=str, default="Openrelay Test", help="Email subject")
         parser_task1.add_argument("--message", type=str, default="Openrelay test message", help="Email message, this is a template meaning $host would be replaced with the host value")
         parser_task1.add_argument("--confirm", action="store_true", help="Bypass confirm prompt")
-        add_default_parser_arguments(parser_task1, False)
+        add_default_serviceclass_arguments(parser_task1, False)
         parser_task1.set_defaults(func=self.solve)
 
     def process_config(self, config: str) -> None:

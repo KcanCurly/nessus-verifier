@@ -1,6 +1,6 @@
 import imaplib
 import ssl
-from src.utilities.utilities import get_hosts_from_file, add_default_parser_arguments
+from src.utilities.utilities import get_hosts_from_file, add_default_serviceclass_arguments
 
 def tls_nv(hosts: list[str], errors, verbose):
     tls_enabled = []
@@ -44,5 +44,5 @@ def helper_parse(commandparser):
     subparsers = parser_task1.add_subparsers(dest="command")
     
     parser_tls = subparsers.add_parser("tls", help="Checks if TLS is enforced")
-    add_default_parser_arguments(parser_tls)
+    add_default_serviceclass_arguments(parser_tls)
     parser_tls.set_defaults(func=tls_console)

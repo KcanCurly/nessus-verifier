@@ -1,6 +1,6 @@
 import subprocess
 import re
-from src.utilities.utilities import error_handler, get_hosts_from_file2, add_default_parser_arguments
+from src.utilities.utilities import error_handler, get_hosts_from_file2, add_default_serviceclass_arguments
 from src.services.serviceclass import BaseServiceClass
 from src.services.servicesubclass import BaseSubServiceClass
 from traceback import print_exc
@@ -13,7 +13,7 @@ class IdentUsersSubServiceClass(BaseSubServiceClass):
         parser = subparsers.add_parser(self.command_name, help = self.help_description)
         parser.add_argument("target", type=str, help="File name or targets seperated by space")
         parser.add_argument("-p", "--ports", nargs="+", default=["22", "80", "113", "443"], help="Ports to enumerate")
-        add_default_parser_arguments(parser, False)
+        add_default_serviceclass_arguments(parser, False)
         parser.set_defaults(func=self.console)
 
     def console(self, args):

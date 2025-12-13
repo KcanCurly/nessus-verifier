@@ -5,7 +5,7 @@ import socket
 import tomllib
 
 import i18n
-from src.utilities.utilities import error_handler, find_scan, add_default_solver_parser_arguments, add_default_parser_arguments, get_default_context_execution, Host
+from src.utilities.utilities import error_handler, find_scan, add_default_solver_parser_arguments, add_default_serviceclass_arguments, get_default_context_execution, Host
 from src.modules.nv_parse import GroupNessusScanOutput
 from src.solvers.solverclass import BaseSolverClass
 
@@ -52,7 +52,7 @@ class TLSSolverClass(BaseSolverClass):
         parser_task1 = subparser.add_parser(str(self.id), help="TLS Misconfigurations")
         add_default_solver_parser_arguments(parser_task1)
         parser_task1.add_argument("--allow-white-ciphers", action="store_true", required=False, help="White named ciphers are fine from sslscan output")
-        add_default_parser_arguments(parser_task1, False)
+        add_default_serviceclass_arguments(parser_task1, False)
         parser_task1.set_defaults(func=self.solve)
     
 

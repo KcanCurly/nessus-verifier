@@ -34,3 +34,4 @@ en:
   tls_vulnerable_ciphers_title: "Vulnerable TLS Ciphers Detected:"
   tls_misconfigured_hosts_title: "Misconfigured TLS Hosts Detected:"
   tls_expired_certificates_title: "Expired cert on hosts:"
+  latest_version_title: "Latest %{name} version(s):"
