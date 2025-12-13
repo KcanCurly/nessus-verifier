@@ -35,7 +35,7 @@ class BaseSubServiceClass():
         self.verbose = kwargs.get("verbose", DEFAULT_VERBOSE)
         self.output = kwargs.get("output", "")
         self.print_cves = kwargs.get("print_cve", False)
-        self.should_print_latest_version = kwargs.get("print_latest_version", False)
+        self.should_print_latest_version = kwargs.get("print_latest_version")
         print(self.should_print_latest_version)
         if self.output:
             with open(self.output, "w") as f:
