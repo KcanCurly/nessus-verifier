@@ -1,4 +1,5 @@
 import stomp
+from stomp import PrintingListener
 import time
 from src.utilities.utilities import error_handler, get_cves, get_default_context_execution2, nmap_identify_service_single
 from src.services.serviceclass import BaseServiceClass
@@ -7,32 +8,13 @@ import i18n
 from src.utilities.utilities import get_hosts_from_file
 
 class Listener(stomp.ConnectionListener):
-# Override the methods on_error and on_message provides by the
-# parent class
+
     def on_error(self, headers, message):
-        print('received an error "%s"' % message)# Print out the message received    def on_message(self, headers, message):
+        print('received an error "%s"' % message)
         
     def on_message(self, headers, message):
         print('received a message "%s"' % message)
 
-
-
-def enumerate_nv(l: list[str], output: str = "", threads: int = 10, timeout: int = 3, verbose: bool = False, disable_visual_on_complete: bool = False):
-    for host in l:
-        ip = host.split(":")[0]
-        port = host.split(":")[1]
-        try:
-            h = [(ip, int(port))]
-            conn = stomp.Connection(h)
-            conn.set_listener('', Listener())
-            conn.connect('admin', 'admin', wait = True)
-            conn.subscribe(destination='/queue/queue-1', id=1, ack='auto')
-            time.sleep(5)
-            conn.disconnect()
-        except Exception as e: print(e)
-
-def enumerate_console(args):
-    enumerate_nv(get_hosts_from_file(args.file))
 
 class ActiveMQDefaultCredsSubServiceClass(BaseSubServiceClass):
     def __init__(self) -> None:
@@ -56,12 +38,12 @@ class ActiveMQDefaultCredsSubServiceClass(BaseSubServiceClass):
         try:
             h = [(ip, port)]
             conn = stomp.Connection(host_and_ports=h)
-            conn.set_listener('', Listener())
+            conn.set_listener('', PrintingListener())
             conn.connect('z', 'z', wait = True)
             conn.subscribe(destination='/queue/queue-1', id=1, ack='auto')
-            time.sleep(2)
+            time.sleep(1)
             conn.send('/queue/queue-1', 'hello world')
-            time.sleep(2)
+            time.sleep(1)
 
             
             conn.disconnect()
