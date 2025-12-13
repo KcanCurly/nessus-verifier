@@ -15,8 +15,7 @@ class Listener(stomp.ConnectionListener):
     def on_message(self, headers, message):
         print('received a message "%s"' % message)
 
-    def on_connected(self, headers, body):
-        print('Connected: %s' % headers)
+
 
 def enumerate_nv(l: list[str], output: str = "", threads: int = 10, timeout: int = 3, verbose: bool = False, disable_visual_on_complete: bool = False):
     for host in l:
