@@ -209,7 +209,7 @@ class MongoDBVersionSubServiceClass(BaseSubServiceClass):
             self.print_output(i18n.t('main.version_title', name="MongoDB"))
             for key, value in versions.items():
                 cves = []
-                if self.print_cves:
+                if self.should_print_cves:
                     cves = get_cves(f"cpe:2.3:a:mongodb:mongodb:{key}")
                 if cves: self.print_output(f"MongoDB {key} ({", ".join(cves)}):")
                 else: self.print_output(f"MongoDB {key}:")  

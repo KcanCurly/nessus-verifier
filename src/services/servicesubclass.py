@@ -35,8 +35,9 @@ class BaseSubServiceClass():
         self.errors = kwargs.get("errors", DEFAULT_ERRORS)
         self.verbose = kwargs.get("verbose", DEFAULT_VERBOSE)
         self.output = kwargs.get("output", "")
-        self.print_cves = kwargs.get("print_cve", False)
-        self.should_print_latest_version = kwargs.get("print_latest_version")
+        self.should_print_cves = kwargs.get("print_cve", False)
+        self.should_print_latest_version = kwargs.get("print_latest_version", False)
+        self.should_print_poc = kwargs.get("print_poc", False)
         if self.output:
             with open(self.output, "w") as f:
                 pass
@@ -49,7 +50,7 @@ class BaseSubServiceClass():
                 self.print_output(', '.join(lv or []))
 
     def print_pocs(self, cve_list):
-        if cve_list:
+        if self.should_print_poc and cve_list:
             pocs = utilities.get_poc_from_cves(cve_list)
             if pocs:
                 self.print_output(i18n.t('main.poc_title'))

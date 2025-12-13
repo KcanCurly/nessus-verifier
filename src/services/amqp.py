@@ -34,7 +34,7 @@ class AMQPVersionSubServiceClass(BaseSubServiceClass):
                 if "rabbitmq" in key.lower():
                     cpe = f"cpe:2.3:a:vmware:rabbitmq:{pure_version}"
                 if cpe:
-                    if self.print_cves:
+                    if self.should_print_cves:
                         cves = get_cves(cpe)
                 if cves: 
                     self.print_output(f"{extra} {pure_version} ({", ".join(cves)}):")
