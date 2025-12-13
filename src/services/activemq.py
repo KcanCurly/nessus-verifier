@@ -32,6 +32,32 @@ def enumerate_nv(l: list[str], output: str = "", threads: int = 10, timeout: int
 def enumerate_console(args):
     enumerate_nv(get_hosts_from_file(args.file))
 
+class ActiveMQDefaultCredsSubServiceClass(BaseSubServiceClass):
+    def __init__(self) -> None:
+        super().__init__("defaultcreds", "Checks for default credentials")
+
+    @error_handler([])
+    def nv(self, hosts, **kwargs):
+        super().nv(hosts, kwargs=kwargs)
+        
+        results = get_default_context_execution2("ActiveMQ Default Creds Scan", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
+
+        if results:
+            self.print_output(i18n.t('main.default_creds_title', name='ActiveMQ'))
+            for r in results:
+                self.print_output(f"    {r}")
+
+    @error_handler(["host"])
+    def single(self, host, **kwargs):
+        ip = host.ip
+        port = host.port    
+        try:
+            h = [(ip, port)]
+            conn = stomp.Connection(h)
+            conn.connect('system', 'manager', wait = True)
+            conn.disconnect()
+            return f"{host.ip}:{host.port} => Default credentials 'system:manager' work"
+        except Exception as e: pass
 
 class ActiveMQVersionSubServiceClass(BaseSubServiceClass):
     def __init__(self) -> None:
@@ -43,7 +69,7 @@ class ActiveMQVersionSubServiceClass(BaseSubServiceClass):
         
         cve_base = "cpe:2.3:a:apache:activemq:"
 
-        results = get_default_context_execution2("AMQP Scan", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
+        results = get_default_context_execution2("ActiveMQ Scan", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
 
         version_dict = {}
 
@@ -85,3 +111,4 @@ class AMQPServiceClass(BaseServiceClass):
         super().__init__("activemq")
         self.eol_product_name = "apache-activemq"
         self.register_subservice(ActiveMQVersionSubServiceClass())
+        self.register_subservice(ActiveMQDefaultCredsSubServiceClass())

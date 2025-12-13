@@ -50,6 +50,8 @@ class BaseSolverClass():
             self.print_cve = True
         if hasattr(args, "print_latest_version") and args.print_latest_version:
             self.print_latest_version = True
+        if hasattr(args, "print_poc") and args.print_poc:
+            self.print_poc = True
         self._get_hosts(args)
 
     def print_latest_versions(self):

@@ -35,7 +35,7 @@ class SMBNullSessionSubServiceClass(BaseSubServiceClass):
         ip = host.ip
         port = host.port
 
-        command = ["impacket-DumpNTLMInfo", ip]
+        command = ["DumpNTLMInfo.py", ip]
         result = subprocess.run(command, text=True, capture_output=True)
         for line in result.stdout.splitlines():
             if "Null" in line and "True" in line:
