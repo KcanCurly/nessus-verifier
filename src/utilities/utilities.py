@@ -335,13 +335,16 @@ def get_poc_from_cve(cve):
     return get_poc_cve_github_link(cve)
 
 def get_poc_cve_github_link(cve):
-    year = cve.split("-")[1]
-    link = f"https://github.com/nomi-sec/PoC-in-GitHub/blob/master/{year}/{cve}.json"
-    resp = requests.get(link, verify=False, timeout=15)
-    if resp.status_code in [200]:
-        resp = resp.json()
-        print(resp)
-        return [repo["html_url"] for repo in resp]
+    try:
+        year = cve.split("-")[1]
+        link = f"https://github.com/nomi-sec/PoC-in-GitHub/blob/master/{year}/{cve}.json"
+        resp = requests.get(link, verify=False, timeout=15)
+        if resp.status_code in [200]:
+            resp = resp.json()
+            print(resp)
+            return [repo["html_url"] for repo in resp]
+    except Exception as e:
+        return []
 
 def get_latest_version(product, print_error = False):
     try:
