@@ -29,7 +29,7 @@ class BaseSubServiceClass():
         self.nv(get_hosts_from_file2(args.target), print_cve=args.print_cve, print_latest_version=args.print_latest_version, threads=args.threads, timeout=args.timeout, errors=args.errors, verbose=args.verbose, output=args.output)
 
     def nv(self, hosts, **kwargs):
-        print(kwargs)
+        kwargs = kwargs.get("kwargs", {})
         self.threads = kwargs.get("threads", DEFAULT_THREAD)
         self.timeout = kwargs.get("timeout", DEFAULT_TIMEOUT)
         self.errors = kwargs.get("errors", DEFAULT_ERRORS)
