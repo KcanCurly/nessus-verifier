@@ -92,6 +92,7 @@ def main():
     parser_all.add_argument("--nvd-api-key", type=str, help="NVD API Key for getting cves.")
     parser_all.add_argument("--print-cve", action="store_true", help="Print CVEs of services if found")
     parser_all.add_argument("--print-latest-version", action="store_true", help="Print latest versions if found")
+    parser_all.add_argument("-l", "--language", type=str, default="en", help="Language")
     parser_all.add_argument("-th", "--threads", type=int, default=10, help="Amount of threads (Default = 10).")
     parser_all.add_argument("-ti", "--timeout", type=int, default=5, help="Amount of timeout (Default = 5).")
     parser_all.add_argument("-e", "--errors", type=int, choices=[1, 2], default = 0, help="1 - Print Errors\n2 - Print errors and prints stacktrace")

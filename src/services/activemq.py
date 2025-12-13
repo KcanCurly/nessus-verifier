@@ -34,29 +34,6 @@ def enumerate_nv(l: list[str], output: str = "", threads: int = 10, timeout: int
 def enumerate_console(args):
     enumerate_nv(get_hosts_from_file(args.file))
 
-def main():
-    parser = argparse.ArgumentParser(description="ActiveMQ module of nessus-verifier.")
-    
-    subparsers = parser.add_subparsers(dest="command")  # Create subparsers
-    
-    parser_all = subparsers.add_parser("all", help="Runs all modules (Except post module)")
-    parser_all.add_argument("-f", "--file", type=str, required=True, help="input file name")
-    parser_all.add_argument("-u", "--username", type=str, default="postgres", help="Username (Default = postgres)")
-    parser_all.add_argument("-p", "--password", type=str, default="", help="Username (Default = '')")
-    parser_all.add_argument("--threads", default=10, type=int, help="Number of threads (Default = 10)")
-    parser_all.add_argument("--timeout", default=5, type=int, help="Timeout in seconds (Default = 5)")
-    parser_all.add_argument("--disable-visual-on-complete", action="store_true", help="Disables the status visual for an individual task when that task is complete, this can help on keeping eye on what is going on at the time")
-    parser_all.add_argument("--only-show-progress", action="store_true", help="Only show overall progress bar")
-    parser_all.add_argument("-v", "--verbose", action="store_true", help="Enable verbose")
-    parser_all.set_defaults(func=enumerate_console)
-    
-    args = parser.parse_args()
-    
-    if hasattr(args, "func"):
-        args.func(args)
-    else:
-        parser.print_help()
-
 class ActiveMQVersionSubServiceClass(BaseSubServiceClass):
     def __init__(self) -> None:
         super().__init__("version", "Checks version")
@@ -65,7 +42,7 @@ class ActiveMQVersionSubServiceClass(BaseSubServiceClass):
     def nv(self, hosts, **kwargs):
         super().nv(hosts, kwargs=kwargs)
 
-        results = get_default_context_execution2("ActiveMQ Version", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
+        results = get_default_context_execution2("AMQP Scan", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
                         
         if results:
             self.print_output(i18n.t('main.version_title', name='ActiveMQ'))

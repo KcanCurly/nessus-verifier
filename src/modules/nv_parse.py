@@ -114,21 +114,30 @@ def save_urls(urls):
     
     
 class GroupNessusScanOutput:
-    def __init__(self, id, plugin_ids, should_group_total, hosts, sub_hosts, name):
+    def __init__(self, id, plugin_ids, should_group_total, hosts, sub_hosts, name, regexes):
         self.id = id
         self.name = name
         self.plugin_ids = plugin_ids
         self.should_group_total = should_group_total
         self.hosts = hosts
         self.sub_hosts = sub_hosts
+        self.regexes = regexes
     
-    def add_host(self, name, id, host) -> bool:
+    def check_and_add_host(self, name, id, host) -> bool:
         if id in self.plugin_ids:
             if host not in self.hosts: self.hosts.append(host)
             if name not in self.sub_hosts:
                 self.sub_hosts[name] = []
             self.sub_hosts[name].append(host)
             return True
+        elif self.regexes:
+            for r in self.regexes:
+                if re.search(r, name):
+                    if host not in self.hosts: self.hosts.append(host)
+                    if name not in self.sub_hosts:
+                        self.sub_hosts[name] = []
+                    self.sub_hosts[name].append(host)
+                    return True
         return False
     
     @classmethod
@@ -184,7 +193,7 @@ def group_up(l: list[NessusScanOutput], parse_severity0: bool) -> list[GroupNess
         
     available_id = -1
     for rule in rule_data:
-        r = GroupNessusScanOutput(rule['id'], rule['plugin-ids'], rule['should-group-total'], [], {}, rule['name'])
+        r = GroupNessusScanOutput(rule['id'], rule['plugin-ids'], rule['should-group-total'], [], {}, rule['name'], rule['plugin-regex'])
         rules.append(r)
         available_id = available_id + 1
 
@@ -192,7 +201,7 @@ def group_up(l: list[NessusScanOutput], parse_severity0: bool) -> list[GroupNess
         found = False
 
         for rule in rules:
-            if rule.add_host(n.name, n.plugin_id, n.host_port):
+            if rule.check_and_add_host(n.name, n.plugin_id, n.host_port):
                 found = True
 
         
@@ -200,8 +209,8 @@ def group_up(l: list[NessusScanOutput], parse_severity0: bool) -> list[GroupNess
         if not found:
             if not parse_severity0 and n.severity == "0":
                 continue
-            new_rule = GroupNessusScanOutput(available_id, [n.plugin_id], False, [], {}, n.name)
-            new_rule.add_host(n.name, n.plugin_id, n.host_port)
+            new_rule = GroupNessusScanOutput(available_id, [n.plugin_id], False, [], {}, n.name, [])
+            new_rule.check_and_add_host(n.name, n.plugin_id, n.host_port)
             rules.append(new_rule)
             available_id = available_id + 1
 
@@ -296,6 +305,11 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                         urls =re.findall(r"https?://\S+", plugin_output) # type: ignore
                         for p in urls:
                             print(f"            {p}", file=f)
+                    elif key == "LDAP User Enumeration":
+                        plugin_output = get_plugin_output("LDAP User Enumeration", z)
+                        sections = plugin_output.split("|") # type: ignore
+                        for s in sections:
+                            print(f"            {s}", file=f)
                         
     with open(args.output_json_file, "w") as file:
         for v in l:
@@ -337,7 +351,3 @@ def main():
     output = parse_nessus_output(tree)
     rules = group_up(output, args.severity0)
     write_to_file(rules, args)
-    
-
-if __name__ == "__main__":
-    main()
