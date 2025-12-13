@@ -53,7 +53,9 @@ class ActiveMQVersionSubServiceClass(BaseSubServiceClass):
                 self.print_output(f"    {a}")
 
             self.print_output(f"Latest Apache ActiveMQ version:")
-            utilities.get_latest_version("apache-activemq", True)
+            latest_versions = utilities.get_latest_version("apache-activemq", True)
+            for v in latest_versions: # type: ignore
+                self.print_output(v)
 
 
     @error_handler(["host"])

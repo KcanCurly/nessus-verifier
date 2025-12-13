@@ -340,7 +340,6 @@ def get_latest_version(product, print_error = False):
             release for release in resp["result"]["releases"]
             if not release.get("isEol", True)
         ]
-        print(non_eol_releases)
 
         return [r['latest']['name'] for r in non_eol_releases]
     except Exception as e:
