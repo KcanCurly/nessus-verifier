@@ -44,7 +44,7 @@ class AMQPVersionSubServiceClass(BaseSubServiceClass):
                 for v in value:
                     self.print_output(f"    {v}")
 
-            if self.print_latest_version:
+            if self.should_print_latest_version:
                 latest_versions = self.parent_service.get_latest_version()
                 if latest_versions:
                     self.print_output(f"Latest version for {self.parent_service.eol_product_name}")

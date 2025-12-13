@@ -35,17 +35,19 @@ class BaseSubServiceClass():
         self.verbose = kwargs.get("verbose", DEFAULT_VERBOSE)
         self.output = kwargs.get("output", "")
         self.print_cves = kwargs.get("print_cve", False)
-        self.print_latest_version = kwargs.get("print_latest_version", False)
+        self.should_print_latest_version = kwargs.get("print_latest_version", False)
         if self.output:
             with open(self.output, "w") as f:
                 pass
 
     def print_latest_versions(self, product_code, product_name):
-        if self.print_latest_version:
-            latest_versions = utilities.get_latest_version(product_code, True)
-            if latest_versions:
+        print(1)
+        if self.should_print_latest_version:
+            print(2)
+            lv = utilities.get_latest_version(product_code, True)
+            if lv:
                 self.print_output(i18n.t('main.latest_version_title', name=product_name))
-                self.print_output(', '.join(latest_versions or []))
+                self.print_output(', '.join(lv or []))
 
     @error_handler([])
     def print_output(self, message, normal_print = True):
