@@ -1,4 +1,5 @@
 import subprocess
+from sys import version
 import stomp
 import argparse
 import time
@@ -44,13 +45,27 @@ class ActiveMQVersionSubServiceClass(BaseSubServiceClass):
     @error_handler([])
     def nv(self, hosts, **kwargs):
         super().nv(hosts, kwargs=kwargs)
+        cve_base = "cpe:2.3:a:apache:activemq:"
 
         results = get_default_context_execution2("AMQP Scan", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
+
+        version_dict = {}
+
+        for r in results:
+            ip_port = r.split("=>")[0].strip()
+            version = r.split("=>")[1].split()[3].strip()
+            if version not in version_dict:
+                version_dict[version] = []
+            version_dict[version].append(ip_port)
+
                         
         if results:
             self.print_output(i18n.t('main.version_title', name='ActiveMQ'))
-            for a in results:
-                self.print_output(f"    {a}")
+            for k, v in version_dict.items():
+                self.print_output(f"Apache ActiveMQ {k}:")
+                for a in v:
+                    self.print_output(f"    {a}")
+
 
             self.print_output(f"Latest Apache ActiveMQ version:")
             latest_versions = utilities.get_latest_version("apache-activemq", True)
