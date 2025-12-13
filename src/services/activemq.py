@@ -1,13 +1,8 @@
-import subprocess
-from sys import version
 import stomp
-import argparse
 import time
-from src.utilities import utilities
-from src.utilities.utilities import error_handler, get_cves, get_default_context_execution2, Version_Vuln_Host_Data, nmap_identify_service_single
+from src.utilities.utilities import error_handler, get_cves, get_default_context_execution2, nmap_identify_service_single
 from src.services.serviceclass import BaseServiceClass
 from src.services.servicesubclass import BaseSubServiceClass
-import nmap
 import i18n
 from src.utilities.utilities import get_hosts_from_file
 
