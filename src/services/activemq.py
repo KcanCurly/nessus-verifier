@@ -39,7 +39,7 @@ class ActiveMQDefaultCredsSubServiceClass(BaseSubServiceClass):
             h = [(ip, port)]
             conn = stomp.Connection(host_and_ports=h)
             conn.set_listener('', PrintingListener())
-            conn.connect('z', 'z', wait = True)
+            conn.connect('z', 'z', wait = True, with_connect_command = True)
             conn.subscribe(destination='/queue/queue-1', id=1, ack='auto')
             time.sleep(1)
             conn.send('/queue/queue-1', 'hello world')
