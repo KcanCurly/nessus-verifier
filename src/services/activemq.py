@@ -2,7 +2,8 @@ import subprocess
 import stomp
 import argparse
 import time
-from src.utilities.utilities import error_handler, get_cves, get_default_context_execution2, Version_Vuln_Host_Data
+from src.utilities import utilities
+from src.utilities.utilities import error_handler, get_cves, get_default_context_execution2, Version_Vuln_Host_Data, nmap_identify_service_single
 from src.services.serviceclass import BaseServiceClass
 from src.services.servicesubclass import BaseSubServiceClass
 import nmap
@@ -35,38 +36,6 @@ def enumerate_nv(l: list[str], output: str = "", threads: int = 10, timeout: int
 def enumerate_console(args):
     enumerate_nv(get_hosts_from_file(args.file))
 
-def identify_service_single(host,**kwargs):
-    ip = host.ip
-    port = host.port
-    result = subprocess.run(
-        ["nmap", "-sV", "-p", port, "--version-all", ip],
-        stdout=subprocess.PIPE,
-        stderr=subprocess.DEVNULL,
-        text=True
-    )
-
-    for line in result.stdout.splitlines():
-        if line.startswith(port):
-            try:
-                parts = line.split(maxsplit=3)
-                if parts[1] == "open":
-                    return {
-                        "ip": ip,
-                        "port": port,
-                        "protocol": parts[0].split("/")[1],
-                        "service": parts[2],
-                        "version": parts[3]
-                    }
-            except:
-                parts = line.split(maxsplit=2)
-                if parts[1] == "open":
-                    return {
-                        "ip": ip,
-                        "port": port,
-                        "protocol": parts[0].split("/")[1],
-                        "service": parts[2],
-                        "version": ""
-                    }
 
 class ActiveMQVersionSubServiceClass(BaseSubServiceClass):
     def __init__(self) -> None:
@@ -83,10 +52,13 @@ class ActiveMQVersionSubServiceClass(BaseSubServiceClass):
             for a in results:
                 self.print_output(f"    {a}")
 
+            self.print_output(f"Latest Apache ActiveMQ version:")
+            utilities.get_latest_version("apache-activemq")
+
 
     @error_handler(["host"])
     def single(self, host, **kwargs):
-        d = identify_service_single(host)
+        d = nmap_identify_service_single(host)
         if d:
             version = d["version"]
             if version:

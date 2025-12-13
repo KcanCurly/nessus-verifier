@@ -431,3 +431,36 @@ def error_handler(variables):
 
         return wrapper
     return decorator
+
+def nmap_identify_service_single(host,**kwargs):
+    ip = host.ip
+    port = host.port
+    result = subprocess.run(
+        ["nmap", "-sV", "-p", port, "--version-all", ip],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.DEVNULL,
+        text=True
+    )
+
+    for line in result.stdout.splitlines():
+        if line.startswith(port):
+            try:
+                parts = line.split(maxsplit=3)
+                if parts[1] == "open":
+                    return {
+                        "ip": ip,
+                        "port": port,
+                        "protocol": parts[0].split("/")[1],
+                        "service": parts[2],
+                        "version": parts[3]
+                    }
+            except:
+                parts = line.split(maxsplit=2)
+                if parts[1] == "open":
+                    return {
+                        "ip": ip,
+                        "port": port,
+                        "protocol": parts[0].split("/")[1],
+                        "service": parts[2],
+                        "version": ""
+                    }
