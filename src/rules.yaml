@@ -2483,6 +2483,13 @@
   plugin-ids: [45478]
   # 45478 - LDAP User Enumeration
 
+- name: DNS Server Version Detection
+  id: 49
+  should-group-total: false
+  plugin-regex: []
+  plugin-ids: [35371]
+  # 35371 - DNS Server Version Detection
+
 - name: Jenkins Plugins (GENERIC)
   id: 999999
   should-group-total: true
@@ -2511,7 +2518,9 @@
   id: 1000000
   should-group-total: false
   plugin-regex: []
-  plugin-ids: [161439, 155705, 119775, 17367, 189514, 160218, 35786, 152484]
+  plugin-ids: [161439, 155705, 119775, 17367, 189514, 160218, 35786, 152484, 214333,
+  76054, 185163, 71495, 104660, 215121, 208080, 10757, 63692, 29222, 49069, 91340, 47619,
+  186009, 159843]
   # 161439 - ManageEngine PAM360 Detection
   # 155705 - QNAP QTS/QES/QuTS hero - Web Detection
   # 119775 - GPON ONT Home Gateway Router Detection
@@ -2520,3 +2529,18 @@
   # 160218 - Apache Airflow Web API Detection
   # 35786 - Zabbix Web Interface Detection
   # 152484 - GitLab Web UI Detection
+  # 214333 - SonarSource SonarQube Server Web Interface Detection
+  # 76054 - HP OneView Detection
+  # 185163 - HPE OneView Detection
+  # 71495 - Palo Alto Networks PAN-OS Firewall/Panorama Web UI Detection
+  # 104660 - Vanilla Forums Detection
+  # 215121 - ClickHouse Detection
+  # 208080 - Infoblox NIOS Web Interface Detection
+  # 10757 - Webmin Detection
+  # 63692 - ManageEngine AssetExplorer Detection
+  # 29222 - Citrix Application Delivery Controller (ADC) / Citrix NetScaler Detection
+  # 49069 - Splunk Management API Detection
+  # 91340 - VMware Aria Operations Web UI Detection
+  # 47619 - Splunk Web Detection
+  # 186009 - Fortinet FortiSIEM Web Interface Detection
+  # 159843 - Apache Shiro HTTP Detection

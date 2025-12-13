@@ -93,6 +93,11 @@ def save_services(services):
         with open(os.path.join(service_dir, 'hosts.txt'), 'w') as f:
             for host in hosts:
                 f.write(f"{host}\n")
+        # Protocol specific things
+        if service == "cifs":
+            with open(os.path.join(service_dir, 'ips.txt'), 'w') as f:
+                for host in hosts:
+                    f.write(f"{host.split(":")[0]}\n")
 
 def get_plugin_output(pluginName, ip_port):
     ip, port = ip_port.split(":")
