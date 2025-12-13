@@ -50,12 +50,14 @@ class BaseSubServiceClass():
 
     def print_pocs(self, cve_list):
         if cve_list:
-            self.print_output(i18n.t('main.poc_title'))
             pocs = utilities.get_poc_from_cves(cve_list)
-            for cve, poc_list in pocs.items():
-                self.print_output(f"{cve}:")
-                for poc in poc_list:
-                    self.print_output(f"{poc}")
+            if pocs:
+                self.print_output(i18n.t('main.poc_title'))
+                
+                for cve, poc_list in pocs.items():
+                    self.print_output(f"{cve}:")
+                    for poc in poc_list:
+                        self.print_output(f"{poc}")
 
     @error_handler([])
     def print_output(self, message, normal_print = True):
