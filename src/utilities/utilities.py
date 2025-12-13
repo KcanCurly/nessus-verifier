@@ -339,8 +339,8 @@ def get_poc_cve_github_link(cve):
     link = f"https://github.com/nomi-sec/PoC-in-GitHub/blob/master/{year}/{cve}.json"
     resp = requests.get(link, verify=False, timeout=15)
     if resp.status_code in [200]:
-        print(1)
         resp = resp.json()
+        print(resp)
         return [repo["html_url"] for repo in resp]
 
 def get_latest_version(product, print_error = False):
