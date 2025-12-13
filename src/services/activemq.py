@@ -63,7 +63,10 @@ class ActiveMQVersionSubServiceClass(BaseSubServiceClass):
         if results:
             self.print_output(i18n.t('main.version_title', name='ActiveMQ'))
             for k, v in version_dict.items():
-                self.print_output(f"Apache ActiveMQ {k}:")
+                cves = []
+                if self.print_cves:
+                    cves = get_cves(cve_base + k)
+                self.print_output(f"Apache ActiveMQ {k}{" (" + ''.join(cves) + ")"}:")
                 for a in v:
                     self.print_output(f"    {a}")
 
