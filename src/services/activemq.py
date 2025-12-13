@@ -45,7 +45,7 @@ class ActiveMQVersionSubServiceClass(BaseSubServiceClass):
     @error_handler([])
     def nv(self, hosts, **kwargs):
         super().nv(hosts, kwargs=kwargs)
-        print(kwargs)
+        
         cve_base = "cpe:2.3:a:apache:activemq:"
 
         results = get_default_context_execution2("AMQP Scan", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
