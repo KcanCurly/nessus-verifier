@@ -36,3 +36,4 @@ tr:
   tls_expired_certificates_title: "Süresi Dolmuş Sertifikaya Sahip Sistemler:"
   latest_version_title: "Güncel %{name} sürümleri:"
   poc_title: "CVE'ler için Bulunan POC'ler:"
+  default_creds_title: "%{name} için Bulunan Varsayılan Kimlik Bilgileri:"

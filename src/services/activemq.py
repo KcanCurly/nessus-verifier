@@ -58,7 +58,7 @@ class ActiveMQDefaultCredsSubServiceClass(BaseSubServiceClass):
             conn.connect('z', 'z', wait = True)
             
             conn.disconnect()
-            return f"{host.ip}:{host.port} => Default credentials 'system:manager' work"
+            return f"{host.ip}:{host.port}"
         except Exception as e: print(e)
 
 class ActiveMQVersionSubServiceClass(BaseSubServiceClass):
