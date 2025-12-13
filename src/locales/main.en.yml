@@ -35,3 +35,4 @@ en:
   tls_misconfigured_hosts_title: "Misconfigured TLS Hosts Detected:"
   tls_expired_certificates_title: "Expired cert on hosts:"
   latest_version_title: "Latest %{name} version(s):"
+  poc_title: "Proof of Concepts (POCs) found for the following CVEs:"

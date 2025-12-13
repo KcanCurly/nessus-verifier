@@ -297,10 +297,12 @@ def add_default_serviceclass_arguments(parser, add_target_argument = True):
     parser.add_argument("-s", "--space", type=str, default=0, help="Amount of spaces to prepend when printing affected hosts. (Default = 0)")    
     parser.add_argument("-th", "--threads", type=int, default=10, help="Amount of threads (Default = 10).")
     parser.add_argument("-ti", "--timeout", type=int, default=5, help="Amount of timeout (Default = 5).")
+    parser.add_argument("--print-latest-version", action="store_true", help="Print latest versions of services if found")
     parser.add_argument("--print-cve", action="store_true", help="Print CVEs of services if found")
     parser.add_argument("--nvd-api-key", type=str, help="NVD API Key for getting cves.")
+    parser.add_argument("--print-poc", action="store_true", help="Print POCs for CVEs if found")
     parser.add_argument("-l", "--language",  type=str, default="en", help="Language of the output")
-    parser.add_argument("--print-latest-version", action="store_true", help="Print latest versions of services if found")
+    
     parser.add_argument("-e", "--errors", type=int, choices=[1, 2], default = 0, help="1 - Print Errors\n2 - Print errors and prints stacktrace")
     parser.add_argument("-v", "--verbose", action="store_true", help="Print Verbose")
 
@@ -321,6 +323,14 @@ def get_url_response(url, timeout=5, redirect = True):
         except Exception:
             return None
         
+def get_poc_from_cves(cve_list):
+    poc_dict = {}
+    for cve in cve_list:
+        pocs = get_poc_from_cve(cve)
+        if pocs:
+            poc_dict[cve] = pocs
+    return poc_dict
+
 def get_poc_from_cve(cve):
     return get_poc_cve_github_link(cve)
 

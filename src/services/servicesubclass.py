@@ -26,7 +26,7 @@ class BaseSubServiceClass():
         self.console(args)
 
     def console(self, args):
-        self.nv(get_hosts_from_file2(args.target), print_cve=args.print_cve, print_latest_version=args.print_latest_version, threads=args.threads, timeout=args.timeout, errors=args.errors, verbose=args.verbose, output=args.output)
+        self.nv(get_hosts_from_file2(args.target), print_cve=args.print_cve, print_latest_version=args.print_latest_version, print_poc=args.print_poc, threads=args.threads, timeout=args.timeout, errors=args.errors, verbose=args.verbose, output=args.output)
 
     def nv(self, hosts, **kwargs):
         kwargs = kwargs.get("kwargs", {})
@@ -37,19 +37,25 @@ class BaseSubServiceClass():
         self.output = kwargs.get("output", "")
         self.print_cves = kwargs.get("print_cve", False)
         self.should_print_latest_version = kwargs.get("print_latest_version")
-        print(self.should_print_latest_version)
         if self.output:
             with open(self.output, "w") as f:
                 pass
 
     def print_latest_versions(self, product_code, product_name):
-        print(1)
         if self.should_print_latest_version:
-            print(2)
             lv = utilities.get_latest_version(product_code, True)
             if lv:
                 self.print_output(i18n.t('main.latest_version_title', name=product_name))
                 self.print_output(', '.join(lv or []))
+
+    def print_pocs(self, cve_list):
+        if cve_list:
+            self.print_output(i18n.t('main.poc_title'))
+            pocs = utilities.get_poc_from_cves(cve_list)
+            for cve, poc_list in pocs.items():
+                self.print_output(f"{cve}:")
+                for poc in poc_list:
+                    self.print_output(f"{poc}")
 
     @error_handler([])
     def print_output(self, message, normal_print = True):

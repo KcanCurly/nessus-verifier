@@ -35,3 +35,4 @@ tr:
   tls_misconfigured_hosts_title: "Yanlış Yapılandırılmış TLS Sistemleri Tespit Edildi:"
   tls_expired_certificates_title: "Süresi Dolmuş Sertifikaya Sahip Sistemler:"
   latest_version_title: "Güncel %{name} sürümleri:"
+  poc_title: "Aşağıdaki CVE'ler için Bulunan POC'ler:"

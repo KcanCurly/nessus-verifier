@@ -59,18 +59,21 @@ class ActiveMQVersionSubServiceClass(BaseSubServiceClass):
                 version_dict[version] = []
             version_dict[version].append(ip_port)
 
+        cve_set = set()
                         
         if results:
             self.print_output(i18n.t('main.version_title', name='ActiveMQ'))
-            for k, v in version_dict.items():
+            for version, hosts in version_dict.items():
                 cves = []
                 if self.print_cves:
-                    cves = get_cves(cve_base + k)
-                self.print_output(f"Apache ActiveMQ {k}{" (" + ''.join(cves) + ")"}:")
-                for a in v:
+                    cves = get_cves(cve_base + version)
+                    cve_set.update(cves)
+                self.print_output(f"Apache ActiveMQ {version}{" (" + ''.join(cves) + ")"}:")
+                for a in hosts:
                     self.print_output(f"    {a}")
 
             self.print_latest_versions("apache-activemq", "Apache ActiveMQ")
+            self.print_pocs(cves)
 
     @error_handler(["host"])
     def single(self, host, **kwargs):
