@@ -56,6 +56,7 @@ class ActiveMQDefaultCredsSubServiceClass(BaseSubServiceClass):
             conn = stomp.Connection(host_and_ports=h)
             conn.set_listener('', Listener())
             conn.connect('z', 'z', wait = True)
+            print(conn.is_connected())
             
             conn.disconnect()
             return f"{host.ip}:{host.port}"
