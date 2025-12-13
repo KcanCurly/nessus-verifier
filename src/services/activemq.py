@@ -1,3 +1,4 @@
+import subprocess
 import stomp
 import argparse
 import time
@@ -34,6 +35,39 @@ def enumerate_nv(l: list[str], output: str = "", threads: int = 10, timeout: int
 def enumerate_console(args):
     enumerate_nv(get_hosts_from_file(args.file))
 
+def identify_service_single(host,**kwargs):
+    ip = host.ip
+    port = host.port
+    result = subprocess.run(
+        ["nmap", "-sV", "-p", port, "--version-all", ip],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.DEVNULL,
+        text=True
+    )
+
+    for line in result.stdout.splitlines():
+        if line.startswith(port):
+            try:
+                parts = line.split(maxsplit=3)
+                if parts[1] == "open":
+                    return {
+                        "ip": ip,
+                        "port": port,
+                        "protocol": parts[0].split("/")[1],
+                        "service": parts[2],
+                        "version": parts[3]
+                    }
+            except:
+                parts = line.split(maxsplit=2)
+                if parts[1] == "open":
+                    return {
+                        "ip": ip,
+                        "port": port,
+                        "protocol": parts[0].split("/")[1],
+                        "service": parts[2],
+                        "version": ""
+                    }
+
 class ActiveMQVersionSubServiceClass(BaseSubServiceClass):
     def __init__(self) -> None:
         super().__init__("version", "Checks version")
@@ -52,17 +86,11 @@ class ActiveMQVersionSubServiceClass(BaseSubServiceClass):
 
     @error_handler(["host"])
     def single(self, host, **kwargs):
-        nm = nmap.PortScanner()
-        ip = host.ip
-        port = host.port
-        nm.scan(ip, port, arguments=f'-sV')
-        
-        if ip in nm.all_hosts():
-            nmap_host = nm[ip]
-            if 'apachemq' in nmap_host['tcp'][int(port)]['name'].lower():
-                product = nmap_host['tcp'][int(port)].get("product", "Service not found")
-                version = nmap_host['tcp'][int(port)].get('version', '')
-                return f"{host}{f" - {product} {version}" if product else ""}"
+        d = identify_service_single(host)
+        if d:
+            version = d["version"]
+            if version:
+                return f"{host.ip}:{host.port} => {version}"
 
 
 
