@@ -26,7 +26,7 @@ class BaseSubServiceClass():
         self.console(args)
 
     def console(self, args):
-        self.nv(get_hosts_from_file2(args.target), print_cve=args.print_cve, print_latest_version=args.print_latest_version, threads=args.threads, timeout=args.timeout, errors=args.errors, verbose=args.verbose, outout=args.output)
+        self.nv(get_hosts_from_file2(args.target), print_cve=args.print_cve, print_latest_version=args.print_latest_version, threads=args.threads, timeout=args.timeout, errors=args.errors, verbose=args.verbose, output=args.output)
 
     def nv(self, hosts, **kwargs):
         self.threads = kwargs.get("threads", DEFAULT_THREAD)
@@ -36,6 +36,7 @@ class BaseSubServiceClass():
         self.output = kwargs.get("output", "")
         self.print_cves = kwargs.get("print_cve", False)
         self.should_print_latest_version = kwargs.get("print_latest_version", False)
+        print(self.should_print_latest_version)
         if self.output:
             with open(self.output, "w") as f:
                 pass
