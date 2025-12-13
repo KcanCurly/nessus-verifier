@@ -337,12 +337,10 @@ def get_poc_from_cve(cve):
 def get_poc_cve_github_link(cve):
     try:
         year = cve.split("-")[1]
-        link = f"https://github.com/nomi-sec/PoC-in-GitHub/blob/master/{year}/{cve}.json"
+        link = f"https://raw.githubusercontent.com/nomi-sec/PoC-in-GitHub/refs/heads/master/{year}/{cve}.json"
         resp = requests.get(link, verify=False, timeout=15)
         if resp.status_code in [200]:
-            print(resp)
             resp = resp.json()
-            print(resp)
             return [repo["html_url"] for repo in resp]
     except Exception as e:
         print(f"Could not get POC for {cve}: {e}")
