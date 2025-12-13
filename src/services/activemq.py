@@ -15,6 +15,9 @@ class Listener(stomp.ConnectionListener):
     def on_message(self, headers, message):
         print('received a message "%s"' % message)
 
+    def on_connected(self, headers, body):
+        print('Connected: %s' % headers)
+
 def enumerate_nv(l: list[str], output: str = "", threads: int = 10, timeout: int = 3, verbose: bool = False, disable_visual_on_complete: bool = False):
     for host in l:
         ip = host.split(":")[0]
@@ -56,7 +59,11 @@ class ActiveMQDefaultCredsSubServiceClass(BaseSubServiceClass):
             conn = stomp.Connection(host_and_ports=h)
             conn.set_listener('', Listener())
             conn.connect('z', 'z', wait = True)
-            print(conn.is_connected())
+            conn.subscribe(destination='/queue/queue-1', id=1, ack='auto')
+            time.sleep(2)
+            conn.send('/queue/queue-1', 'hello world')
+            time.sleep(2)
+
             
             conn.disconnect()
             return f"{host.ip}:{host.port}"
