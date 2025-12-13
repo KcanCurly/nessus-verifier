@@ -63,11 +63,10 @@ class ActiveMQDefaultCredsSubServiceClass(BaseSubServiceClass):
         try:
             h = [(ip, port)]
             conn = stomp.Connection(host_and_ports=h)
-            conn.set_listener('', PrintingListener())
             conn.connect(username, password, wait = True)
             conn.disconnect()
             return f"{host.ip}:{host.port}"
-        except Exception as e: print(e)
+        except Exception as e: pass
 
 class ActiveMQVersionSubServiceClass(BaseSubServiceClass):
     def __init__(self) -> None:
