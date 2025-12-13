@@ -53,8 +53,10 @@ class ActiveMQDefaultCredsSubServiceClass(BaseSubServiceClass):
         port = host.port    
         try:
             h = [(ip, port)]
-            conn = stomp.Connection(h)
+            conn = stomp.Connection(host_and_ports=h)
+            conn.set_listener('', Listener())
             conn.connect('system', 'manager', wait = True)
+            
             conn.disconnect()
             return f"{host.ip}:{host.port} => Default credentials 'system:manager' work"
         except Exception as e: pass
