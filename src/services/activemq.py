@@ -34,6 +34,9 @@ class Listener(stomp.ConnectionListener):
     def on_send(self, frame):
         print('sending a message "%s"' % frame)
 
+    def on_disconnected(self):
+        self.z = 1
+
 class ActiveMQSSLSubServiceClass(BaseSubServiceClass):
     def __init__(self) -> None:
         super().__init__("ssl", "Checks for SSL/TLS")
@@ -60,8 +63,9 @@ class ActiveMQSSLSubServiceClass(BaseSubServiceClass):
             # conn.set_ssl(for_hosts=[(ip, port)])
             conn.connect("system","manager",wait = True)
             conn.disconnect()
-            return f"{host.ip}:{host.port}"
-        except Exception as e: print(e)
+            if l.z == 1:
+                return f"{host.ip}:{host.port}"
+        except Exception as e: pass
 
 
 class ActiveMQDefaultCredsSubServiceClass(BaseSubServiceClass):
