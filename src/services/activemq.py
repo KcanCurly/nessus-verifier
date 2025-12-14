@@ -25,6 +25,7 @@ class Listener(stomp.ConnectionListener):
 
     def on_error(self, frame):
         print('received an error "%s"' % frame)
+        print(frame.body)
         if "or password is invalid" in frame.body:
             self.z = 1
         
