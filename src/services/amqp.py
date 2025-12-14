@@ -51,7 +51,7 @@ class AMQPDefaultCredsSubServiceClass(BaseSubServiceClass):
             print(c.__dict__)
             if c.connected:
                 return f"{host.ip}:{host.port}"
-        except Exception as e: pass
+        except Exception as e: print("Error", e)
 
 class AMQPVersionSubServiceClass(BaseSubServiceClass):
     def __init__(self) -> None:
