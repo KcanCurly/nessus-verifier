@@ -35,6 +35,7 @@ class Listener(stomp.ConnectionListener):
         print('sending a message "%s"' % frame)
 
     def on_disconnected(self):
+        print("on_disconnected")
         self.z = 1
 
 class ActiveMQSSLSubServiceClass(BaseSubServiceClass):
