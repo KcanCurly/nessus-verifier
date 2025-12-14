@@ -49,7 +49,7 @@ class ActiveMQDefaultCredsSubServiceClass(BaseSubServiceClass):
         results = get_default_context_execution2("ActiveMQ Random Creds Scan", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose, username="", password="")
 
         if results:
-            self.print_output(i18n.t('main.activemq_unauth_access', name='ActiveMQ'))
+            self.print_output("a")
             for r in results:
                 self.print_output(f"    {r}")
 
