@@ -25,44 +25,7 @@ class MQTTVersionSubServiceClass(BaseSubServiceClass):
     def nv(self, hosts, **kwargs) -> None:
         super().nv(hosts, kwargs=kwargs)
 
-        nm = nmap.PortScanner()
-        results: list[Version_Vuln_Host_Data] = get_default_context_execution2("MQTT Version", self.threads, hosts, self.single, nm=nm, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
-
-        versions = {}
-
-        for r in results:
-            if r.version not in versions:
-                versions[r.version] = set()
-            versions[r.version].add(r.host)
-
-        if versions:
-            versions = dict(sorted(versions.items(), reverse=True))
-            self.print_output(i18n.t('main.version_title', name='AMQP'))
-            
-            for key, value in versions.items():
-                extra, pure_version = key.rsplit(" ", 1)
-
-                cpe = ""
-                cves = []
-                if "rabbitmq" in key.lower():
-                    cpe = f"cpe:2.3:a:vmware:rabbitmq:{pure_version}"
-                if cpe:
-                    if self.should_print_cves:
-                        cves = get_cves(cpe)
-                if cves: 
-                    self.print_output(f"{extra} {pure_version} ({", ".join(cves)}):")
-                else:
-                    self.print_output(f"{extra} {pure_version}:")
-
-                for v in value:
-                    self.print_output(f"    {v}")
-
-            if self.should_print_latest_version:
-                latest_versions = self.parent_service.get_latest_version()
-                if latest_versions:
-                    self.print_output(f"Latest version for {self.parent_service.eol_product_name}")
-                    for version in latest_versions:
-                        self.print_output(version)
+        results: list[Version_Vuln_Host_Data] = get_default_context_execution2("MQTT Version", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
 
 
 
@@ -73,13 +36,21 @@ class MQTTVersionSubServiceClass(BaseSubServiceClass):
         mqttc = mqtt.Client(CallbackAPIVersion.VERSION2)
         mqttc.on_connect = on_connect
         mqttc.on_message = on_message
+        print(1)
         mqttc.username_pw_set("system", "manager")
+        print(2)
         mqttc.connect(ip, int(port), 60)
+        print(3)
         mqttc.loop_start()
+        print(4)
         print(mqttc.is_connected())
+        print(5)
         mqttc.disconnect()
+        print(6)
         mqttc.loop_stop()
+        print(7)
         print(mqttc.is_connected())
+        print(8)
 
 
 
