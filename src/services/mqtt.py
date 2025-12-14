@@ -60,6 +60,7 @@ class MQTTDefaultCredsSubServiceClass(BaseSubServiceClass):
         username=kwargs.get("username", "")
         password=kwargs.get("password", "")
         anonymous = kwargs.get("anonymous", False)
+        s = False
         try:
             mqttc = mqtt.Client(CallbackAPIVersion.VERSION2)
             mqttc.on_connect = on_connect
@@ -69,9 +70,12 @@ class MQTTDefaultCredsSubServiceClass(BaseSubServiceClass):
             mqttc.connect(host.ip, int(host.port), 60)
             mqttc.loop_start()
             sleep(0.5)
+            s = mqttc.is_connected()
             mqttc.disconnect()
             mqttc.loop_stop()
             sleep(0.5)
+            if s:
+                return f"{host.ip}:{host.port}"
 
         except Exception as e:
             print("Error", e)
