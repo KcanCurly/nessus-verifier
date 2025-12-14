@@ -27,6 +27,31 @@ class Listener(stomp.ConnectionListener):
     def on_message(self, headers, message):
         print('received a message "%s"' % message)
 
+class ActiveMQSSLSubServiceClass(BaseSubServiceClass):
+    def __init__(self) -> None:
+        super().__init__("ssl", "Checks for SSL/TLS")
+
+    @error_handler([])
+    def nv(self, hosts, **kwargs):
+        super().nv(hosts, kwargs=kwargs)
+
+        results = get_default_context_execution2("ActiveMQ SSL Scan", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
+
+        if results:
+            self.print_output("a")
+            for r in results:
+                self.print_output(f"    {r}")
+
+    @error_handler(["host"])
+    def single(self, host, **kwargs):
+        ip = host.ip
+        port = host.port
+        try:
+            h = [(ip, port)]
+            conn = stomp.Connection(host_and_ports=h)
+            print(conn.get_ssl())
+            return f"{host.ip}:{host.port}"
+        except Exception as e: print(e)
 
 class ActiveMQDefaultCredsSubServiceClass(BaseSubServiceClass):
     def __init__(self) -> None:
@@ -46,7 +71,7 @@ class ActiveMQDefaultCredsSubServiceClass(BaseSubServiceClass):
         for r in results:
             hosts.remove(r)
 
-        results = get_default_context_execution2("ActiveMQ Random Creds Scan", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose, anonymous=True)
+        results = get_default_context_execution2("ActiveMQ Anonymous Access Scan", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose, anonymous=True)
 
         if results:
             self.print_output(i18n.t('main.anonymous_creds_title', name='ActiveMQ'))
@@ -134,3 +159,4 @@ class AMQPServiceClass(BaseServiceClass):
         self.eol_product_name = "apache-activemq"
         self.register_subservice(ActiveMQVersionSubServiceClass())
         self.register_subservice(ActiveMQDefaultCredsSubServiceClass())
+        self.register_subservice(ActiveMQSSLSubServiceClass())
