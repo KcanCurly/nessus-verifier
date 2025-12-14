@@ -24,6 +24,47 @@ class MQTTBruteforceSubServiceClass(BaseSubServiceClass):
     def __init__(self) -> None:
         super().__init__("bruteforce", "Bruteforce for valid credentials")
 
+class MQTTSSLSubServiceClass(BaseSubServiceClass):
+    def __init__(self) -> None:
+        super().__init__("ssl", "Checks for SSL/TLS")
+
+    @error_handler([])
+    def nv(self, hosts, **kwargs):
+        super().nv(hosts, kwargs=kwargs)
+
+        results = get_default_context_execution2("MQTT SSL Scan", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
+
+        if results:
+            self.print_output(i18n.t('main.non_tls_connection_accepted', name='MQTT'))
+            for r in results:
+                self.print_output(f"    {r}")
+
+    @error_handler(["host"])
+    def single(self, host, **kwargs):
+        username=kwargs.get("username", "")
+        password=kwargs.get("password", "")
+
+        s = False
+        try:
+            mqttc = mqtt.Client(CallbackAPIVersion.VERSION2)
+            mqttc.on_connect = on_connect
+            mqttc.on_message = on_message
+
+            mqttc.username_pw_set(username, password)
+            mqttc.connect(host.ip, int(host.port), 60)
+            
+            mqttc.loop_start()
+            sleep(0.5)
+            s = mqttc.is_connected()
+            mqttc.disconnect()
+            mqttc.loop_stop()
+            sleep(0.5)
+            if s:
+                return f"{host.ip}:{host.port}"
+
+        except Exception as e:
+            pass
+
 class MQTTDefaultCredsSubServiceClass(BaseSubServiceClass):
     def __init__(self) -> None:
         super().__init__("defaultcreds", "Checks for default credentials")
