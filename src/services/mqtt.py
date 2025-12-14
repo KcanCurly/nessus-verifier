@@ -44,7 +44,7 @@ class MQTTSSLSubServiceClass(BaseSubServiceClass):
         username=kwargs.get("username", "")
         password=kwargs.get("password", "")
 
-        s = False
+
         try:
             mqttc = mqtt.Client(CallbackAPIVersion.VERSION2)
             mqttc.on_connect = on_connect
@@ -59,8 +59,8 @@ class MQTTSSLSubServiceClass(BaseSubServiceClass):
             mqttc.disconnect()
             mqttc.loop_stop()
             sleep(0.5)
-            if s:
-                return f"{host.ip}:{host.port}"
+
+            return f"{host.ip}:{host.port}"
 
         except Exception as e:
             print("Error", e)
