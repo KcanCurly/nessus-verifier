@@ -22,14 +22,14 @@ def generate_random_string(length=8):
 class Listener(stomp.ConnectionListener):
     
 
-    def on_error(self, headers, message):
-        print('received an error "%s"' % message)
+    def on_error(self, frame):
+        print('received an error "%s"' % frame)
         
-    def on_message(self, headers, message):
-        print('received a message "%s"' % message)
+    def on_message(self, frame):
+        print('received a message "%s"' % frame)
 
-    def on_send(self, headers, message):
-        print('sending a message "%s"' % message)
+    def on_send(self, frame):
+        print('sending a message "%s"' % frame)
 
 class ActiveMQSSLSubServiceClass(BaseSubServiceClass):
     def __init__(self) -> None:
