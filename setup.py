@@ -41,6 +41,7 @@ setup(
         "python-i18n",
         "paho-mqtt",
         "amqp",
+        "rabbitmq-amqp-python-client",
     ],
     classifiers=[
         "Programming Language :: Python :: 3",

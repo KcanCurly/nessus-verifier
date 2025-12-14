@@ -6,6 +6,37 @@ from src.services.servicesubclass import BaseSubServiceClass
 import nmap
 import amqp
 
+from rabbitmq_amqp_python_client import (  # PosixSSlConfigurationContext,; PosixClientCert,
+    AddressHelper,
+    AMQPMessagingHandler,
+    Connection,
+    Converter,
+    Environment,
+    Event,
+    ExchangeSpecification,
+    ExchangeToQueueBindingSpecification,
+    Message,
+    OutcomeState,
+    QuorumQueueSpecification,
+)
+
+def create_connection(environment: Environment) -> Connection:
+    connection = environment.connection()
+    # in case of SSL enablement
+    # ca_cert_file = ".ci/certs/ca_certificate.pem"
+    # client_cert = ".ci/certs/client_certificate.pem"
+    # client_key = ".ci/certs/client_key.pem"
+    # connection = Connection(
+    #    "amqps://guest:guest@localhost:5671/",
+    #    ssl_context=PosixSslConfigurationContext(
+    #        ca_cert=ca_cert_file,
+    #        client_cert=ClientCert(client_cert=client_cert, client_key=client_key),
+    #    ),
+    # )
+    connection.dial()
+
+    return connection
+
 class AMQPDefaultCredsSubServiceClass(BaseSubServiceClass):
     def __init__(self) -> None:
         super().__init__("defaultcreds", "Checks for default credentials")
@@ -47,11 +78,14 @@ class AMQPDefaultCredsSubServiceClass(BaseSubServiceClass):
         password=kwargs.get("password", "")
         anonymous = kwargs.get("anonymous", False)
         try:
-            c = amqp.Connection(f"{host.ip}:{host.port}", username, password, authentication=amqp.sasl.PLAIN)
-            c.connect()
-            print(c.__dict__)
-            if c.connected:
-                return f"{host.ip}:{host.port}"
+            #c = amqp.Connection(f"{host.ip}:{host.port}", username, password, authentication=amqp.sasl.PLAIN)
+            #c.connect()
+            #print(c.__dict__)
+            #if c.connected:
+            #    return f"{host.ip}:{host.port}"
+            environment = Environment(uri=f"amqp://{username}:{password}@{host.ip}:{host.port}/")
+            connection = create_connection(environment)
+            print(connection.active_consumers)
         except Exception as e: print("Error", e)
 
 class AMQPVersionSubServiceClass(BaseSubServiceClass):
