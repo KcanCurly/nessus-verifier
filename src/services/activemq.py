@@ -36,8 +36,17 @@ class ActiveMQDefaultCredsSubServiceClass(BaseSubServiceClass):
     def nv(self, hosts, **kwargs):
         super().nv(hosts, kwargs=kwargs)
 
-        
         results = get_default_context_execution2("ActiveMQ Random Creds Scan", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose, username=generate_random_string(), password=generate_random_string())
+
+        if results:
+            self.print_output(i18n.t('main.activemq_unauth_access', name='ActiveMQ'))
+            for r in results:
+                self.print_output(f"    {r}")
+
+        for r in results:
+            hosts.remove(r)
+
+        results = get_default_context_execution2("ActiveMQ Random Creds Scan", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose, username="", password="")
 
         if results:
             self.print_output(i18n.t('main.activemq_unauth_access', name='ActiveMQ'))
@@ -58,8 +67,8 @@ class ActiveMQDefaultCredsSubServiceClass(BaseSubServiceClass):
     def single(self, host, **kwargs):
         ip = host.ip
         port = host.port
-        username=kwargs.get("username", "z")
-        password=kwargs.get("password", "z")
+        username=kwargs.get("username", "")
+        password=kwargs.get("password", "")
         try:
             h = [(ip, port)]
             conn = stomp.Connection(host_and_ports=h)
