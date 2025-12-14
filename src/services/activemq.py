@@ -37,6 +37,7 @@ class Listener2(stomp.ConnectionListener):
         :param Frame frame: the stomp frame
         """
         print("on_connected %s %s", frame.headers, frame.body)
+        self.z = 1
 
     def on_disconnected(self):
         print("on_disconnected")
@@ -76,9 +77,6 @@ class Listener2(stomp.ConnectionListener):
         :param Frame frame: the stomp frame
         """
         print("on_send", frame)
-        if "DISCONNECT" in frame.cmd:
-            print("D")
-            self.z = 1
 
     def on_heartbeat(self):
         print("on_heartbeat")
