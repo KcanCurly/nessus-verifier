@@ -49,9 +49,7 @@ class ActiveMQSSLSubServiceClass(BaseSubServiceClass):
         try:
             h = [(ip, port)]
             conn = stomp.Connection(host_and_ports=h)
-            conn.set_ssl(for_hosts=h)
             conn.connect(wait = True)
-            print(conn.get_ssl(h[0]))
             conn.disconnect()
             return f"{host.ip}:{host.port}"
         except Exception as e: print(e)
