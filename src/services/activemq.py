@@ -61,7 +61,7 @@ class ActiveMQSSLSubServiceClass(BaseSubServiceClass):
             l = Listener()
             conn.set_listener('', l)
             # conn.set_ssl(for_hosts=[(ip, port)])
-            conn.connect("system","manager",wait = True)
+            conn.connect("","",wait = True)
             conn.disconnect()
             time.sleep(0.5)
             if l.z == 1:

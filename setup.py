@@ -39,6 +39,7 @@ setup(
         "html5lib",
         "argcomplete",
         "python-i18n",
+        "paho-mqtt",
     ],
     classifiers=[
         "Programming Language :: Python :: 3",

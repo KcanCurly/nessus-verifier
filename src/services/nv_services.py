@@ -1,7 +1,7 @@
 import argparse, argcomplete
 import os
 import subprocess
-from src.services import activemq, ajp13, amqp, asterisk, chargen, daytime, discard, dns, echo, finger, ftp, http, ident, ldap, mdns, mongodb, ms_exchange, mssql, netstat, qotd, smb, ssh, snmp, nfs, rpc, smtp, snmp, systat, telnet, tftp, time, mssql, idrac, zookeeper, postgresql, mysql, redis
+from src.services import activemq, ajp13, amqp, asterisk, chargen, daytime, discard, dns, echo, finger, ftp, http, ident, ldap, mdns, mongodb, mqtt, ms_exchange, mssql, netstat, qotd, smb, ssh, snmp, nfs, rpc, smtp, snmp, systat, telnet, tftp, time, mssql, idrac, zookeeper, postgresql, mysql, redis
 from src.services.serviceclass import BaseServiceClass
 from traceback import print_exc
 import i18n
@@ -42,6 +42,7 @@ service_dict: list[type[BaseServiceClass]] = [
     ajp13.AJP13ServiceClass,
     mdns.MDNSServiceClass,
     http.HTTPServiceClass,
+    mqtt.MQTTServiceClass,
 ]
 
 
