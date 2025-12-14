@@ -48,6 +48,7 @@ class ActiveMQSSLSubServiceClass(BaseSubServiceClass):
         try:
             h = [(ip, port)]
             conn = stomp.Connection(host_and_ports=h)
+            conn.set_listener('listener', PrintingListener())
             conn.connect("a","a",wait = True)
             conn.disconnect()
             return f"{host.ip}:{host.port}"
