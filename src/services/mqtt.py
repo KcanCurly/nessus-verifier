@@ -33,20 +33,13 @@ class MQTTVersionSubServiceClass(BaseSubServiceClass):
     @error_handler(["host"])
     def single(self, host, **kwargs):
         try:
-            ip = host.ip
-            port = host.port
-            print(ip)
-            print(port)
             mqttc = mqtt.Client(CallbackAPIVersion.VERSION2)
             mqttc.on_connect = on_connect
             mqttc.on_message = on_message
-            print(1)
-            mqttc.username_pw_set("system", "manager")
-            print(2)
-            mqttc.connect(ip, int(port), 60)
-            print(3)
+            mqttc.username_pw_set("system", "managera")
+            mqttc.connect(host.ip, int(host.port), 60)
             mqttc.loop_start()
-            sleep(1)
+            sleep(0.5)
             print(mqttc.is_connected())
             print(5)
             mqttc.disconnect()
