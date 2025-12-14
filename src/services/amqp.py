@@ -46,6 +46,7 @@ class AMQPDefaultCredsSubServiceClass(BaseSubServiceClass):
         password=kwargs.get("password", "")
         anonymous = kwargs.get("anonymous", False)
         try:
+            print(host)
             c = amqp.Connection(f"{host.ip}:{host.port}", username, password)
             c.connect()
             print(c.__dict__)
