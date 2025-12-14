@@ -77,6 +77,7 @@ class MQTTVersionSubServiceClass(BaseSubServiceClass):
         mqttc.connect(ip, int(port), 60)
         print(mqttc.is_connected())
         mqttc.disconnect()
+        print(mqttc.is_connected())
 
 
 
