@@ -184,6 +184,7 @@ class ActiveMQDefaultCredsSubServiceClass(BaseSubServiceClass):
             else:
                 conn.connect(username, password, wait = True)
             conn.disconnect(wait = True)
+            time.sleep(1)
             return f"{host.ip}:{host.port}"
         except Exception as e: pass
 
