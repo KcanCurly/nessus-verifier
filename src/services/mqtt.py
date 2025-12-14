@@ -36,20 +36,17 @@ class MQTTVersionSubServiceClass(BaseSubServiceClass):
             mqttc = mqtt.Client(CallbackAPIVersion.VERSION2)
             mqttc.on_connect = on_connect
             mqttc.on_message = on_message
-            mqttc.username_pw_set("system", "managera")
+            mqttc.username_pw_set("system", "manager")
             mqttc.connect(host.ip, int(host.port), 60)
+
             mqttc.loop_start()
             sleep(0.5)
             print(mqttc.is_connected())
-            print(5)
+            sleep(15)
             mqttc.disconnect()
-            sleep(1)
-            print(6)
             mqttc.loop_stop()
-            sleep(1)
-            print(7)
+            sleep(0.5)
             print(mqttc.is_connected())
-            print(8)
         except Exception as e:
             print("Error", e)
 
