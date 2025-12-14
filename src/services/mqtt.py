@@ -132,3 +132,4 @@ class MQTTServiceClass(BaseServiceClass):
     def __init__(self) -> None:
         super().__init__("mqtt")
         self.register_subservice(MQTTDefaultCredsSubServiceClass())
+        self.register_subservice(MQTTSSLSubServiceClass())
