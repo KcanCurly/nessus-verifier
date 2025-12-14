@@ -59,7 +59,7 @@ class ActiveMQSSLSubServiceClass(BaseSubServiceClass):
             h = [(ip, port)]
             conn = stomp.Connection(host_and_ports=h)
             l = Listener()
-            conn.set_listener('listener', Listener())
+            conn.set_listener('', l)
             # conn.set_ssl(for_hosts=[(ip, port)])
             conn.connect("system","manager",wait = True)
             conn.disconnect()
