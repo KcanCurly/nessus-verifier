@@ -124,7 +124,7 @@ class ActiveMQSSLSubServiceClass(BaseSubServiceClass):
             conn.set_listener('', l)
             # conn.set_ssl(for_hosts=[(ip, port)])
             conn.connect("","",wait = True)
-            conn.disconnect()
+            conn.disconnect(wait = True)
             if l.z == 1:
                 print("1")
                 return f"{host.ip}:{host.port}"
@@ -183,8 +183,8 @@ class ActiveMQDefaultCredsSubServiceClass(BaseSubServiceClass):
                 conn.connect(wait = True)
             else:
                 conn.connect(username, password, wait = True)
-            conn.disconnect(wait = True)
-            time.sleep(1)
+            conn.disconnect()
+            
             return f"{host.ip}:{host.port}"
         except Exception as e: pass
 
