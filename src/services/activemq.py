@@ -138,6 +138,7 @@ class ActiveMQSSLSubServiceClass(BaseSubServiceClass):
                 return f"{host.ip}:{host.port}"
         except Exception as e: 
             print("Error", e)
+            time.sleep(1)
             if l.z == 1:
                 print("2")
                 return f"{host.ip}:{host.port}"
