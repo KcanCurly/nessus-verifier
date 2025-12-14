@@ -56,7 +56,7 @@ class ActiveMQDefaultCredsSubServiceClass(BaseSubServiceClass):
         for r in results:
             hosts.remove(r)
 
-        results = get_default_context_execution2("ActiveMQ Default Creds Scan", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose, username="system", password="managera")
+        results = get_default_context_execution2("ActiveMQ Default Creds Scan", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose, username="system", password="manager")
 
         if results:
             self.print_output(i18n.t('main.default_creds_title', name='ActiveMQ'))
@@ -72,7 +72,7 @@ class ActiveMQDefaultCredsSubServiceClass(BaseSubServiceClass):
         try:
             h = [(ip, port)]
             conn = stomp.Connection(host_and_ports=h)
-            conn.connect(username, password, wait = True)
+            conn.connect(wait = True)
             conn.disconnect()
             return f"{host.ip}:{host.port}"
         except Exception as e: pass
