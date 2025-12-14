@@ -42,7 +42,6 @@ class ActiveMQSSLSubServiceClass(BaseSubServiceClass):
             for r in results:
                 self.print_output(f"    {r}")
 
-    @error_handler(["host"])
     def single(self, host, **kwargs):
         ip = host.ip
         port = host.port
