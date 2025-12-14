@@ -20,12 +20,16 @@ def generate_random_string(length=8):
     return ''.join(random.choice(chars) for _ in range(length))
 
 class Listener(stomp.ConnectionListener):
+    
 
     def on_error(self, headers, message):
         print('received an error "%s"' % message)
         
     def on_message(self, headers, message):
         print('received a message "%s"' % message)
+
+    def on_send(self, headers, message):
+        print('sending a message "%s"' % message)
 
 class ActiveMQSSLSubServiceClass(BaseSubServiceClass):
     def __init__(self) -> None:
@@ -55,7 +59,7 @@ class ActiveMQSSLSubServiceClass(BaseSubServiceClass):
         try:
             h = [(ip, port)]
             conn = stomp.Connection(host_and_ports=h)
-            conn.set_listener('listener', PrintingListener())
+            conn.set_listener('listener', Listener())
             conn.connect("a","a",wait = True)
             conn.disconnect()
             return f"{host.ip}:{host.port}"
@@ -67,7 +71,7 @@ class ActiveMQSSLSubServiceClass(BaseSubServiceClass):
         try:
             h = [(ip, port)]
             conn = stomp.Connection(host_and_ports=h)
-            conn.set_listener('listener', PrintingListener())
+            conn.set_listener('listener', Listener())
             conn.set_ssl(for_hosts=[(ip, port)])
             conn.connect("a","a",wait = True)
             conn.disconnect()
