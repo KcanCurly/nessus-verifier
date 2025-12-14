@@ -1,24 +1,11 @@
 import stomp
 from stomp import PrintingListener
 import time
-from src.utilities.utilities import error_handler, get_cves, get_default_context_execution2, nmap_identify_service_single
+from src.utilities.utilities import error_handler, generate_random_string, get_cves, get_default_context_execution2, nmap_identify_service_single
 from src.services.serviceclass import BaseServiceClass
 from src.services.servicesubclass import BaseSubServiceClass
 import i18n
 from src.utilities.utilities import get_hosts_from_file
-import random
-import string
-
-def generate_random_string(length=8):
-    """
-    Generate a random string of specified length using only ASCII letters and digits.
-    """
-    # Define the character pool: a-z, A-Z, 0-9
-    chars = string.ascii_letters + string.digits
-    
-    # Generate random string
-    return ''.join(random.choice(chars) for _ in range(length))
-
 
 class Listener(stomp.ConnectionListener):
     def __init__(self):
@@ -80,30 +67,30 @@ class ActiveMQDefaultCredsSubServiceClass(BaseSubServiceClass):
     def nv(self, hosts, **kwargs):
         super().nv(hosts, kwargs=kwargs)
 
-        results = get_default_context_execution2("ActiveMQ Random Creds Scan", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose, username=generate_random_string(), password=generate_random_string())
+        results = get_default_context_execution2("Stomp Random Creds Scan", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose, username=generate_random_string(), password=generate_random_string())
 
         if results:
-            self.print_output(i18n.t('main.activemq_unauth_access', name='ActiveMQ'))
+            self.print_output(i18n.t('main.activemq_unauth_access', name='Stomp'))
             for r in results:
                 self.print_output(f"    {r}")
 
         for r in results:
             hosts.remove(r)
 
-        results = get_default_context_execution2("ActiveMQ Anonymous Access Scan", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose, anonymous=True)
+        results = get_default_context_execution2("Stomp Anonymous Access Scan", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose, anonymous=True)
 
         if results:
-            self.print_output(i18n.t('main.anonymous_creds_title', name='ActiveMQ'))
+            self.print_output(i18n.t('main.anonymous_creds_title', name='Stomp'))
             for r in results:
                 self.print_output(f"    {r}")
 
         for r in results:
             hosts.remove(r)
 
-        results = get_default_context_execution2("ActiveMQ Default Creds Scan", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose, username="system", password="manager")
+        results = get_default_context_execution2("Stomp Default Creds Scan", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose, username="system", password="manager")
 
         if results:
-            self.print_output(i18n.t('main.default_creds_title', name='ActiveMQ'))
+            self.print_output(i18n.t('main.default_creds_title', name='Stomp'))
             for r in results:
                 self.print_output(f"    {r}")
 

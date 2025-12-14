@@ -1,6 +1,6 @@
 from time import sleep
 import i18n
-from src.utilities.utilities import error_handler, get_cves, get_default_context_execution2, Version_Vuln_Host_Data
+from src.utilities.utilities import error_handler, generate_random_string, get_cves, get_default_context_execution2, Version_Vuln_Host_Data
 from src.services.serviceclass import BaseServiceClass
 from src.services.servicesubclass import BaseSubServiceClass
 import nmap
@@ -9,6 +9,7 @@ from paho.mqtt.enums import CallbackAPIVersion
 
 # The callback for when the client receives a CONNACK response from the server.
 def on_connect(client, userdata, flags, reason_code, properties):
+    return
     print(f"Connected with result code {reason_code}")
     # Subscribing in on_connect() means that if we lose the connection and
     # reconnect then subscriptions will be renewed.
@@ -16,43 +17,67 @@ def on_connect(client, userdata, flags, reason_code, properties):
 
 # The callback for when a PUBLISH message is received from the server.
 def on_message(client, userdata, msg):
+    return
     print(msg.topic+" "+str(msg.payload))
 
-class MQTTVersionSubServiceClass(BaseSubServiceClass):
+class MQTTDefaultCredsSubServiceClass(BaseSubServiceClass):
     def __init__(self) -> None:
-        super().__init__("version", "Checks version")
+        super().__init__("defaultcreds", "Checks for default credentials")
 
     @error_handler([])
-    def nv(self, hosts, **kwargs) -> None:
+    def nv(self, hosts, **kwargs):
         super().nv(hosts, kwargs=kwargs)
 
-        results: list[Version_Vuln_Host_Data] = get_default_context_execution2("MQTT Version", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
+        results = get_default_context_execution2("MQTT Random Creds Scan", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose, username=generate_random_string(), password=generate_random_string())
 
+        if results:
+            self.print_output(i18n.t('main.activemq_unauth_access', name='MQTT'))
+            for r in results:
+                self.print_output(f"    {r}")
 
+        for r in results:
+            hosts.remove(r)
+
+        results = get_default_context_execution2("MQTT Anonymous Access Scan", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose, anonymous=True)
+
+        if results:
+            self.print_output(i18n.t('main.anonymous_creds_title', name='MQTT'))
+            for r in results:
+                self.print_output(f"    {r}")
+
+        for r in results:
+            hosts.remove(r)
+
+        results = get_default_context_execution2("MQTT Default Creds Scan", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose, username="system", password="manager")
+
+        if results:
+            self.print_output(i18n.t('main.default_creds_title', name='MQTT'))
+            for r in results:
+                self.print_output(f"    {r}")
 
     @error_handler(["host"])
     def single(self, host, **kwargs):
+        username=kwargs.get("username", "")
+        password=kwargs.get("password", "")
+        anonymous = kwargs.get("anonymous", False)
         try:
             mqttc = mqtt.Client(CallbackAPIVersion.VERSION2)
             mqttc.on_connect = on_connect
             mqttc.on_message = on_message
-            mqttc.username_pw_set("system", "manager")
+            if not anonymous:
+                mqttc.username_pw_set(username, password)
             mqttc.connect(host.ip, int(host.port), 60)
-
             mqttc.loop_start()
             sleep(0.5)
-            print(mqttc.is_connected())
-            sleep(15)
             mqttc.disconnect()
             mqttc.loop_stop()
             sleep(0.5)
-            print(mqttc.is_connected())
+
         except Exception as e:
             print("Error", e)
-
 
 
 class MQTTServiceClass(BaseServiceClass):
     def __init__(self) -> None:
         super().__init__("mqtt")
-        self.register_subservice(MQTTVersionSubServiceClass())
+        self.register_subservice(MQTTDefaultCredsSubServiceClass())

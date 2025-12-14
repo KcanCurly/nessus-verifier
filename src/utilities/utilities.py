@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 from email.policy import default
 import json
+import random
+import string
 import subprocess
 import re
 import ssl
@@ -288,6 +290,15 @@ def print_service_error(e_level, message):
         print_exc()
         
 
+def generate_random_string(length=8):
+    """
+    Generate a random string of specified length using only ASCII letters and digits.
+    """
+    # Define the character pool: a-z, A-Z, 0-9
+    chars = string.ascii_letters + string.digits
+    
+    # Generate random string
+    return ''.join(random.choice(chars) for _ in range(length))
 
 def add_default_serviceclass_arguments(parser, add_target_argument = True):
     if add_target_argument: 
