@@ -68,14 +68,16 @@ class Listener2(stomp.ConnectionListener):
         """
         print("on_error %s %s", frame.headers, frame.body)
         if "or password is invalid" in frame.body:
+            print("P")
             self.z = 1
 
     def on_send(self, frame):
         """
         :param Frame frame: the stomp frame
         """
-        print("on_send %s", frame)
+        print("on_send", frame)
         if "DISCONNECT" in frame.cmd:
+            print("D")
             self.z = 1
 
     def on_heartbeat(self):
@@ -123,13 +125,18 @@ class ActiveMQSSLSubServiceClass(BaseSubServiceClass):
             l = Listener2()
             conn.set_listener('', l)
             # conn.set_ssl(for_hosts=[(ip, port)])
+            print(0)
             conn.connect("","",wait = True)
+            print(1)
             conn.disconnect()
+            print(2)
             time.sleep(10)
+            print(3)
             if l.z == 1:
                 print("1")
                 return f"{host.ip}:{host.port}"
         except Exception as e: 
+            print("Error", e)
             if l.z == 1:
                 print("2")
                 return f"{host.ip}:{host.port}"
