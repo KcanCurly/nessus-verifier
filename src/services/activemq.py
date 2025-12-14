@@ -19,6 +19,68 @@ def generate_random_string(length=8):
     # Generate random string
     return ''.join(random.choice(chars) for _ in range(length))
 
+
+class Listener2(stomp.ConnectionListener):
+    def __init__(self, print_to_log=False):
+        self.print_to_log = print_to_log
+        self.z = 1
+
+
+    def on_connecting(self, host_and_port):
+        """
+        :param (str,int) host_and_port:
+        """
+        print("on_connecting %s %s", *host_and_port)
+
+    def on_connected(self, frame):
+        """
+        :param Frame frame: the stomp frame
+        """
+        print("on_connected %s %s", frame.headers, frame.body)
+
+    def on_disconnected(self):
+        print("on_disconnected")
+
+    def on_heartbeat_timeout(self):
+        print("on_heartbeat_timeout")
+
+    def on_before_message(self, frame):
+        """
+        :param Frame frame: the stomp frame
+        """
+        print("on_before_message %s %s", frame.headers, frame.body)
+
+    def on_message(self, frame):
+        """
+        :param Frame frame: the stomp frame
+        """
+        print("on_message %s %s", frame.headers, frame.body)
+
+    def on_receipt(self, frame):
+        """
+        :param Frame frame: the stomp frame
+        """
+        print("on_receipt %s %s", frame.headers, frame.body)
+
+    def on_error(self, frame):
+        """
+        :param Frame frame: the stomp frame
+        """
+        print("on_error %s %s", frame.headers, frame.body)
+        if "or password is invalid" in frame.body:
+            self.z = 1
+
+    def on_send(self, frame):
+        """
+        :param Frame frame: the stomp frame
+        """
+        print("on_send %s", frame)
+        if "DISCONNECT" in frame.cmd:
+            self.z = 1
+
+    def on_heartbeat(self):
+        print("on_heartbeat")
+
 class Listener(stomp.ConnectionListener):
     def __init__(self):
         self.z = 0
@@ -58,7 +120,7 @@ class ActiveMQSSLSubServiceClass(BaseSubServiceClass):
         try:
             h = [(ip, port)]
             conn = stomp.Connection(host_and_ports=h)
-            l = Listener()
+            l = Listener2()
             conn.set_listener('', l)
             # conn.set_ssl(for_hosts=[(ip, port)])
             conn.connect("","",wait = True)
