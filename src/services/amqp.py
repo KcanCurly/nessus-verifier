@@ -1,3 +1,4 @@
+import amqp.sasl
 import i18n
 from src.utilities.utilities import error_handler, generate_random_string, get_cves, get_default_context_execution2, Version_Vuln_Host_Data
 from src.services.serviceclass import BaseServiceClass
@@ -46,8 +47,7 @@ class AMQPDefaultCredsSubServiceClass(BaseSubServiceClass):
         password=kwargs.get("password", "")
         anonymous = kwargs.get("anonymous", False)
         try:
-            print(host)
-            c = amqp.Connection(f"{host.ip}:{host.port}", username, password)
+            c = amqp.Connection(f"{host.ip}:{host.port}", username, password, authentication=amqp.sasl.AMQPLAIN)
             c.connect()
             print(c.__dict__)
             if c.connected:
