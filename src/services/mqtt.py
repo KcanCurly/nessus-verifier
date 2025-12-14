@@ -20,6 +20,10 @@ def on_message(client, userdata, msg):
     return
     print(msg.topic+" "+str(msg.payload))
 
+class MQTTBruteforceSubServiceClass(BaseSubServiceClass):
+    def __init__(self) -> None:
+        super().__init__("bruteforce", "Bruteforce for valid credentials")
+
 class MQTTDefaultCredsSubServiceClass(BaseSubServiceClass):
     def __init__(self) -> None:
         super().__init__("defaultcreds", "Checks for default credentials")
@@ -67,7 +71,9 @@ class MQTTDefaultCredsSubServiceClass(BaseSubServiceClass):
             mqttc.on_message = on_message
             if not anonymous:
                 mqttc.username_pw_set(username, password)
+            mqttc.tls_set()
             mqttc.connect(host.ip, int(host.port), 60)
+            
             mqttc.loop_start()
             sleep(0.5)
             s = mqttc.is_connected()
