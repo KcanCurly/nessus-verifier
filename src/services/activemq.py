@@ -27,7 +27,6 @@ class Listener(stomp.ConnectionListener):
         print('received an error "%s"' % frame)
         print(frame.body)
         if "or password is invalid" in frame.body:
-            print("a")
             self.z = 1
         
     def on_message(self, frame):
@@ -65,9 +64,11 @@ class ActiveMQSSLSubServiceClass(BaseSubServiceClass):
             conn.connect("","",wait = True)
             conn.disconnect()
             if l.z == 1:
+                print("1")
                 return f"{host.ip}:{host.port}"
         except Exception as e: 
             if l.z == 1:
+                print("2")
                 return f"{host.ip}:{host.port}"
 
 
