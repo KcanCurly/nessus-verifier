@@ -14,7 +14,7 @@ def generate_random_string(length=8):
     Generate a random string of specified length using only ASCII letters and digits.
     """
     # Define the character pool: a-z, A-Z, 0-9
-    chars = string.ascii_letters + string.digits  # 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+    chars = string.ascii_letters + string.digits
     
     # Generate random string
     return ''.join(random.choice(chars) for _ in range(length))
@@ -46,10 +46,10 @@ class ActiveMQDefaultCredsSubServiceClass(BaseSubServiceClass):
         for r in results:
             hosts.remove(r)
 
-        results = get_default_context_execution2("ActiveMQ Random Creds Scan", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose, username="", password="")
+        results = get_default_context_execution2("ActiveMQ Random Creds Scan", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose, anonymous=True)
 
         if results:
-            self.print_output("a")
+            self.print_output(i18n.t('main.anonymous_creds_title', name='ActiveMQ'))
             for r in results:
                 self.print_output(f"    {r}")
 
@@ -69,10 +69,14 @@ class ActiveMQDefaultCredsSubServiceClass(BaseSubServiceClass):
         port = host.port
         username=kwargs.get("username", "")
         password=kwargs.get("password", "")
+        anonymous = kwargs.get("anonymous", False)
         try:
             h = [(ip, port)]
             conn = stomp.Connection(host_and_ports=h)
-            conn.connect(wait = True)
+            if anonymous:
+                conn.connect(wait = True)
+            else:
+                conn.connect(username, password, wait = True)
             conn.disconnect()
             return f"{host.ip}:{host.port}"
         except Exception as e: pass
