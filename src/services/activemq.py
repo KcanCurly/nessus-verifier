@@ -66,7 +66,9 @@ class ActiveMQSSLSubServiceClass(BaseSubServiceClass):
             conn.disconnect()
             if l.z == 1:
                 return f"{host.ip}:{host.port}"
-        except Exception as e: pass
+        except Exception as e: 
+            if l.z == 1:
+                return f"{host.ip}:{host.port}"
 
 
 class ActiveMQDefaultCredsSubServiceClass(BaseSubServiceClass):
