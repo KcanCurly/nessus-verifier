@@ -40,6 +40,7 @@ setup(
         "argcomplete",
         "python-i18n",
         "paho-mqtt",
+        "amqp",
     ],
     classifiers=[
         "Programming Language :: Python :: 3",

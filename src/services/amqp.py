@@ -1,8 +1,56 @@
 import i18n
-from src.utilities.utilities import error_handler, get_cves, get_default_context_execution2, Version_Vuln_Host_Data
+from src.utilities.utilities import error_handler, generate_random_string, get_cves, get_default_context_execution2, Version_Vuln_Host_Data
 from src.services.serviceclass import BaseServiceClass
 from src.services.servicesubclass import BaseSubServiceClass
 import nmap
+import amqp
+
+class AMQPDefaultCredsSubServiceClass(BaseSubServiceClass):
+    def __init__(self) -> None:
+        super().__init__("defaultcreds", "Checks for default credentials")
+
+    @error_handler([])
+    def nv(self, hosts, **kwargs):
+        super().nv(hosts, kwargs=kwargs)
+
+        results = get_default_context_execution2("AMQP Random Creds Scan", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose, username=generate_random_string(), password=generate_random_string())
+
+        if results:
+            self.print_output(i18n.t('main.activemq_unauth_access', name='AMQP'))
+            for r in results:
+                self.print_output(f"    {r}")
+
+        for r in results:
+            hosts.remove(r)
+
+        results = get_default_context_execution2("AMQP Anonymous Access Scan", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose, anonymous=True)
+
+        if results:
+            self.print_output(i18n.t('main.anonymous_creds_title', name='AMQP'))
+            for r in results:
+                self.print_output(f"    {r}")
+
+        for r in results:
+            hosts.remove(r)
+
+        results = get_default_context_execution2("AMQP Default Creds Scan", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose, username="system", password="manager")
+
+        if results:
+            self.print_output(i18n.t('main.default_creds_title', name='AMQP'))
+            for r in results:
+                self.print_output(f"    {r}")
+
+    @error_handler(["host"])
+    def single(self, host, **kwargs):
+        username=kwargs.get("username", "")
+        password=kwargs.get("password", "")
+        anonymous = kwargs.get("anonymous", False)
+        try:
+            c = amqp.Connection(f"{host.ip}:{host.port}", username, password)
+            print(c.connected)
+            
+            return f"{host.ip}:{host.port}"
+        except Exception as e: pass
 
 class AMQPVersionSubServiceClass(BaseSubServiceClass):
     def __init__(self) -> None:
@@ -82,3 +130,4 @@ class AMQPServiceClass(BaseServiceClass):
         v._set_parent(self)
 
         self.register_subservice(AMQPVersionSubServiceClass())
+        self.register_subservice(AMQPDefaultCredsSubServiceClass())
