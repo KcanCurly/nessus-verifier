@@ -47,7 +47,7 @@ class AMQPDefaultCredsSubServiceClass(BaseSubServiceClass):
         password=kwargs.get("password", "")
         anonymous = kwargs.get("anonymous", False)
         try:
-            c = amqp.Connection(f"{host.ip}:{host.port}", username, password, authentication=amqp.sasl.AMQPLAIN)
+            c = amqp.Connection(f"{host.ip}:{host.port}", username, password, authentication=amqp.sasl.PLAIN)
             c.connect()
             print(c.__dict__)
             if c.connected:
