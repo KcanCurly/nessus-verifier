@@ -63,7 +63,7 @@ class MQTTSSLSubServiceClass(BaseSubServiceClass):
                 return f"{host.ip}:{host.port}"
 
         except Exception as e:
-            pass
+            print("Error", e)
 
 class MQTTDefaultCredsSubServiceClass(BaseSubServiceClass):
     def __init__(self) -> None:
