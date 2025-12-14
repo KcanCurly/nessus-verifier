@@ -23,7 +23,7 @@ def generate_random_string(length=8):
 class Listener2(stomp.ConnectionListener):
     def __init__(self, print_to_log=False):
         self.print_to_log = print_to_log
-        self.z = 1
+        self.z = 0
 
 
     def on_connecting(self, host_and_port):
