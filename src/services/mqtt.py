@@ -75,7 +75,8 @@ class MQTTVersionSubServiceClass(BaseSubServiceClass):
         mqttc.on_message = on_message
         mqttc.username_pw_set("system", "manager")
         mqttc.connect(ip, int(port), 60)
-        print(mqttc.is_connected)
+        print(mqttc.is_connected())
+        mqttc.disconnect()
 
 
 
