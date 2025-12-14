@@ -36,8 +36,6 @@ class Listener(stomp.ConnectionListener):
         if "DISCONNECT" in frame.cmd:
             self.z = 1
 
-
-
 class ActiveMQSSLSubServiceClass(BaseSubServiceClass):
     def __init__(self) -> None:
         super().__init__("ssl", "Checks for SSL/TLS")
@@ -49,7 +47,7 @@ class ActiveMQSSLSubServiceClass(BaseSubServiceClass):
         results = get_default_context_execution2("ActiveMQ SSL Scan", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
 
         if results:
-            self.print_output("a")
+            self.print_output(i18n.t('main.non_tls_connection_accepted', name='ActiveMQ'))
             for r in results:
                 self.print_output(f"    {r}")
 
@@ -62,7 +60,7 @@ class ActiveMQSSLSubServiceClass(BaseSubServiceClass):
             l = Listener()
             conn.set_listener('', l)
             # conn.set_ssl(for_hosts=[(ip, port)])
-            conn.connect("system","manager",wait = True)
+            conn.connect("","",wait = True)
             conn.disconnect()
             if l.z == 1:
                 return f"{host.ip}:{host.port}"

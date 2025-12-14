@@ -39,3 +39,4 @@ tr:
   default_creds_title: "%{name} için Bulunan Varsayılan Kimlik Bilgileri:"
   anonymous_creds_title: "%{name} için Anonim Erişim:"
   activemq_unauth_access: "ActiveMQ Anonim Erişimi Etkin veya Kimlik Doğrulaması Yapılandırılmamış Sistemler:"
+  non_tls_connection_accepted: "SSL Olmayan Bağlantıları Kabul Eden %{name} Sistemler:"
