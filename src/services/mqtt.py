@@ -1,3 +1,4 @@
+from time import sleep
 import i18n
 from src.utilities.utilities import error_handler, get_cves, get_default_context_execution2, Version_Vuln_Host_Data
 from src.services.serviceclass import BaseServiceClass
@@ -45,12 +46,14 @@ class MQTTVersionSubServiceClass(BaseSubServiceClass):
             mqttc.connect(ip, int(port), 60)
             print(3)
             mqttc.loop_start()
-            print(4)
+            sleep(1)
             print(mqttc.is_connected())
             print(5)
             mqttc.disconnect()
+            sleep(1)
             print(6)
             mqttc.loop_stop()
+            sleep(1)
             print(7)
             print(mqttc.is_connected())
             print(8)
