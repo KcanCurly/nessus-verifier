@@ -47,7 +47,7 @@ class AMQPDefaultCredsSubServiceClass(BaseSubServiceClass):
         anonymous = kwargs.get("anonymous", False)
         try:
             c = amqp.Connection(f"{host.ip}:{host.port}", username, password)
-            print(c.version_major)
+            print(c)
             if c.connected:
                 return f"{host.ip}:{host.port}"
         except Exception as e: pass
