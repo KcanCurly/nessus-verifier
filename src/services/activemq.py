@@ -21,15 +21,13 @@ def generate_random_string(length=8):
 
 
 class Listener(stomp.ConnectionListener):
-    def __init__(self, print_to_log=False):
-        self.print_to_log = print_to_log
+    def __init__(self):
         self.z = 0
 
     def on_connected(self, frame):
         """
         :param Frame frame: the stomp frame
         """
-        print("on_connected %s %s", frame.headers, frame.body)
         self.z = 1
 
     def on_error(self, frame):
