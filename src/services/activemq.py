@@ -20,10 +20,13 @@ def generate_random_string(length=8):
     return ''.join(random.choice(chars) for _ in range(length))
 
 class Listener(stomp.ConnectionListener):
-    
+    def __init__(self):
+        self.z = 0
 
     def on_error(self, frame):
         print('received an error "%s"' % frame)
+        if "or password is invalid" in frame.body:
+            self.z = 1
         
     def on_message(self, frame):
         print('received a message "%s"' % frame)
@@ -46,37 +49,20 @@ class ActiveMQSSLSubServiceClass(BaseSubServiceClass):
             for r in results:
                 self.print_output(f"    {r}")
 
-        results = get_default_context_execution2("ActiveMQ SSL Scan", self.threads, hosts, self.single2, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
-
-        if results:
-            self.print_output("a")
-            for r in results:
-                self.print_output(f"    {r}")
-
     def single(self, host, **kwargs):
         ip = host.ip
         port = host.port
         try:
             h = [(ip, port)]
             conn = stomp.Connection(host_and_ports=h)
+            l = Listener()
             conn.set_listener('listener', Listener())
-            conn.connect("a","a",wait = True)
+            # conn.set_ssl(for_hosts=[(ip, port)])
+            conn.connect("system","manager",wait = True)
             conn.disconnect()
             return f"{host.ip}:{host.port}"
         except Exception as e: print(e)
 
-    def single2(self, host, **kwargs):
-        ip = host.ip
-        port = host.port
-        try:
-            h = [(ip, port)]
-            conn = stomp.Connection(host_and_ports=h)
-            conn.set_listener('listener', Listener())
-            conn.set_ssl(for_hosts=[(ip, port)])
-            conn.connect("a","a",wait = True)
-            conn.disconnect()
-            return f"{host.ip}:{host.port}"
-        except Exception as e: print(e)
 
 class ActiveMQDefaultCredsSubServiceClass(BaseSubServiceClass):
     def __init__(self) -> None:
