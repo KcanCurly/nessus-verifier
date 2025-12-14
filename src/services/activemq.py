@@ -20,17 +20,10 @@ def generate_random_string(length=8):
     return ''.join(random.choice(chars) for _ in range(length))
 
 
-class Listener2(stomp.ConnectionListener):
+class Listener(stomp.ConnectionListener):
     def __init__(self, print_to_log=False):
         self.print_to_log = print_to_log
         self.z = 0
-
-
-    def on_connecting(self, host_and_port):
-        """
-        :param (str,int) host_and_port:
-        """
-        print("on_connecting %s %s", *host_and_port)
 
     def on_connected(self, frame):
         """
@@ -39,64 +32,11 @@ class Listener2(stomp.ConnectionListener):
         print("on_connected %s %s", frame.headers, frame.body)
         self.z = 1
 
-    def on_disconnected(self):
-        print("on_disconnected")
-
-    def on_heartbeat_timeout(self):
-        print("on_heartbeat_timeout")
-
-    def on_before_message(self, frame):
-        """
-        :param Frame frame: the stomp frame
-        """
-        print("on_before_message %s %s", frame.headers, frame.body)
-
-    def on_message(self, frame):
-        """
-        :param Frame frame: the stomp frame
-        """
-        print("on_message %s %s", frame.headers, frame.body)
-
-    def on_receipt(self, frame):
-        """
-        :param Frame frame: the stomp frame
-        """
-        print("on_receipt %s %s", frame.headers, frame.body)
-
     def on_error(self, frame):
         """
         :param Frame frame: the stomp frame
         """
-        print("on_error %s %s", frame.headers, frame.body)
         if "or password is invalid" in frame.body:
-            print("P")
-            self.z = 1
-
-    def on_send(self, frame):
-        """
-        :param Frame frame: the stomp frame
-        """
-        print("on_send", frame)
-
-    def on_heartbeat(self):
-        print("on_heartbeat")
-
-class Listener(stomp.ConnectionListener):
-    def __init__(self):
-        self.z = 0
-
-    def on_error(self, frame):
-        print('received an error "%s"' % frame)
-        print(frame.body)
-        if "or password is invalid" in frame.body:
-            self.z = 1
-        
-    def on_message(self, frame):
-        print('received a message "%s"' % frame)
-
-    def on_send(self, frame):
-        print('sending a message "%s"' % frame)
-        if "DISCONNECT" in frame.cmd:
             self.z = 1
 
 class ActiveMQSSLSubServiceClass(BaseSubServiceClass):
@@ -120,21 +60,17 @@ class ActiveMQSSLSubServiceClass(BaseSubServiceClass):
         try:
             h = [(ip, port)]
             conn = stomp.Connection(host_and_ports=h)
-            l = Listener2()
+            l = Listener()
             conn.set_listener('', l)
             # conn.set_ssl(for_hosts=[(ip, port)])
-            print(0)
             conn.connect("","",wait = True)
             conn.disconnect()
             time.sleep(0.5)
             if l.z == 1:
-                print("1")
                 return f"{host.ip}:{host.port}"
         except Exception as e: 
-            print("Error", e)
             time.sleep(0.5)
             if l.z == 1:
-                print("2")
                 return f"{host.ip}:{host.port}"
 
 
