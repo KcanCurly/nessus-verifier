@@ -41,6 +41,7 @@ setup(
         "python-i18n",
         "paho-mqtt",
         "amqp",
+        "pika",
         "rabbitmq-amqp-python-client",
     ],
     classifiers=[

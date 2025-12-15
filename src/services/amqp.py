@@ -5,6 +5,63 @@ from src.services.serviceclass import BaseServiceClass
 from src.services.servicesubclass import BaseSubServiceClass
 import nmap
 import amqp
+import pika
+
+import time
+from pika import PlainCredentials, ConnectionParameters, BlockingConnection, exceptions
+
+
+class RabbitMQConnection:
+    _instance = None
+
+    def __new__(cls, host="localhost", port=5672, username="admin", password="admin"):
+        if not cls._instance:
+            cls._instance = super().__new__(cls)
+        return cls._instance
+
+    def __init__(self, host="localhost", port=5672, username="admin", password="admin"):
+        self.host = host
+        self.port = port
+        self.username = username
+        self.password = password
+        self.connection = None
+
+    def __enter__(self):
+        self.connect()
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.close()
+
+    def connect(self):
+        retries = 0
+        while retries < 10:
+            try:
+                credentials = PlainCredentials(self.username, self.password)
+                parameters = ConnectionParameters(host=self.host, port=self.port, credentials=credentials)
+                self.connection = BlockingConnection(parameters)
+                print("Connected to RabbitMQ")
+                return
+            except exceptions.AMQPConnectionError as e:
+                print("Failed to connect to RabbitMQ:", e)
+
+        print("Exceeded maximum number of connection retries. Stopping the code.")
+
+    def is_connected(self):
+        return self.connection is not None and self.connection.is_open
+
+    def close(self):
+        if self.is_connected():
+            self.connection.close() # type: ignore
+            self.connection = None
+            print("Closed RabbitMQ connection")
+
+    def get_channel(self):
+        if self.is_connected():
+            return self.connection.channel() # type: ignore
+
+        return None
+
 
 from rabbitmq_amqp_python_client import (  # PosixSSlConfigurationContext,; PosixClientCert,
     AddressHelper,
@@ -68,14 +125,8 @@ class AMQPDefaultCredsSubServiceClass(BaseSubServiceClass):
         password=kwargs.get("password", "")
         anonymous = kwargs.get("anonymous", False)
         try:
-            with amqp.Connection(f"{host.ip}:{host.port}", username, password, authentication=amqp.sasl.AMQPLAIN) as c:
-                ch = c.channel()
-                ch.basic_publish(ch, amqp.Message('Hello World'), routing_key='test')
-                if c.connected:
-                    return f"{host.ip}:{host.port}"
-            #environment = Environment(uri=f"amqp://{username}:{password}@{host.ip}:{host.port}/")
-            #connection = create_connection(environment)
-            #return f"{host.ip}:{host.port}"
+            conn = RabbitMQConnection(host.ip, int(host.port), "deneme", "deneme")
+            print(conn.is_connected())
         except Exception as e: print("Error", e)
 
 class AMQPVersionSubServiceClass(BaseSubServiceClass):
