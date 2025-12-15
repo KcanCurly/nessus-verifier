@@ -69,10 +69,9 @@ class AMQPDefaultCredsSubServiceClass(BaseSubServiceClass):
         anonymous = kwargs.get("anonymous", False)
         try:
             c = amqp.Connection(f"{host.ip}:{host.port}", username, password, authentication=amqp.sasl.PLAIN)
-            c.connect()
-            #print(c.__dict__)
-            #if c.connected:
-            #    return f"{host.ip}:{host.port}"
+            print(c.__dict__)
+            if c.connected:
+                return f"{host.ip}:{host.port}"
             #environment = Environment(uri=f"amqp://{username}:{password}@{host.ip}:{host.port}/")
             #connection = create_connection(environment)
             #return f"{host.ip}:{host.port}"
