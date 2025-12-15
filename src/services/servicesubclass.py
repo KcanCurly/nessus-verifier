@@ -133,9 +133,8 @@ class VersionSubService(BaseSubServiceClass):
         return []
 
     def print_single_version_result(self, name, results, version, cpe_base):
-        self.print_output(i18n.t('main.version_title', name=self.products[0][0]))
         cves = get_cves(cpe_base+version)
 
         self.print_output(f"{name} {version}{' (' + ', '.join(cves) + ')' if cves else ''}:")
         for v in results:
-            self.print_output("" * self.space + v)
+            self.print_output(" " * self.space + v)
