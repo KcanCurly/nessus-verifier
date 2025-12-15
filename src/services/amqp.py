@@ -69,13 +69,6 @@ class AMQPDefaultCredsSubServiceClass(BaseSubServiceClass):
         for r in results:
             hosts.remove(r)
 
-        results = get_default_context_execution2("AMQP Default Creds Scan", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose, username="deneme", password="deneme")
-
-        if results:
-            self.print_output(i18n.t('main.default_creds_title', name='AMQP'))
-            for r in results:
-                self.print_output(f"    {r}")
-
     @error_handler(["host"])
     def single(self, host, **kwargs):
         username=kwargs.get("username", "guest")
