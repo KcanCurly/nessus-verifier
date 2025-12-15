@@ -300,7 +300,7 @@ def generate_random_string(length=8):
     # Generate random string
     return ''.join(random.choice(chars) for _ in range(length))
 
-def add_default_version_subservice_arguments(parser, add_target_argument = True)
+def add_default_version_subservice_arguments(parser, add_target_argument = True):
     if add_target_argument: 
         parser.add_argument("target", type=str, help="File name or targets seperated by space")
     parser.add_argument("-a", "--create-actions", type=str, default=None, help="Creates action toml file for windowcatcher with given name.")
