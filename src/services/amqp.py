@@ -45,16 +45,6 @@ class AMQPDefaultCredsSubServiceClass(BaseSubServiceClass):
     def nv(self, hosts, **kwargs):
         super().nv(hosts, kwargs=kwargs)
 
-        results = get_default_context_execution2("AMQP Random Creds Scan", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose, username=generate_random_string(), password=generate_random_string())
-
-        if results:
-            self.print_output(i18n.t('main.activemq_unauth_access', name='AMQP'))
-            for r in results:
-                self.print_output(f"    {r}")
-
-        for r in results:
-            hosts.remove(r)
-
         results = get_default_context_execution2("AMQP Anonymous Access Scan", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose, anonymous=True)
 
         if results:
@@ -65,7 +55,7 @@ class AMQPDefaultCredsSubServiceClass(BaseSubServiceClass):
         for r in results:
             hosts.remove(r)
 
-        results = get_default_context_execution2("AMQP Default Creds Scan", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose, username="guest", password="guest")
+        results = get_default_context_execution2("AMQP Default Creds Scan", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose, username="deneme", password="deneme")
 
         if results:
             self.print_output(i18n.t('main.default_creds_title', name='AMQP'))
@@ -85,7 +75,7 @@ class AMQPDefaultCredsSubServiceClass(BaseSubServiceClass):
             #    return f"{host.ip}:{host.port}"
             environment = Environment(uri=f"amqp://{username}:{password}@{host.ip}:{host.port}/")
             connection = create_connection(environment)
-            print(connection.active_consumers)
+            return f"{host.ip}:{host.port}"
         except Exception as e: print("Error", e)
 
 class AMQPVersionSubServiceClass(BaseSubServiceClass):
