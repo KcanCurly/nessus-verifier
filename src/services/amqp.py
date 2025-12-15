@@ -126,6 +126,7 @@ class AMQPDefaultCredsSubServiceClass(BaseSubServiceClass):
         anonymous = kwargs.get("anonymous", False)
         try:
             conn = RabbitMQConnection(host.ip, int(host.port), "deneme", "deneme")
+            conn.connect()
             print(conn.is_connected())
         except Exception as e: print("Error", e)
 
