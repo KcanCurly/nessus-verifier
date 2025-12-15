@@ -99,14 +99,11 @@ class AMQPVersionSubServiceClass(VersionSubService):
             versions[r.version].add(r.host)
 
         if versions:
-            print(versions)
             versions = dict(sorted(versions.items(), reverse=True))
             self.print_output(i18n.t('main.version_title', name=self.products[0][0]))
             
             for key, value in versions.items():
                 _, pure_version = key.rsplit(" ", 1)
-                for v in value:
-                    print(v)
                 if "rabbitmq" in key.lower():
                     self.print_single_version_result("RabbitMQ", value, pure_version, "cpe:2.3:a:vmware:rabbitmq:")
 
