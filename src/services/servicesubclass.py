@@ -28,7 +28,7 @@ class BaseSubServiceClass():
         self.console(args)
 
     def console(self, args):
-        self.nv(get_hosts_from_file2(args.target), print_cve=args.print_cve, print_latest_version=args.print_latest_version, print_poc=args.print_poc, threads=args.threads, timeout=args.timeout, errors=args.errors, verbose=args.verbose, output=args.output)
+        self.nv(get_hosts_from_file2(args.target), space=args.space, print_cve=args.print_cve, print_latest_version=args.print_latest_version, print_poc=args.print_poc, threads=args.threads, timeout=args.timeout, errors=args.errors, verbose=args.verbose, output=args.output)
 
     def nv(self, hosts, **kwargs):
         kwargs = kwargs.get("kwargs", {})
@@ -41,10 +41,6 @@ class BaseSubServiceClass():
         self.should_print_latest_version = kwargs.get("print_latest_version", False)
         self.should_print_poc = kwargs.get("print_poc", False)
         self.space = kwargs.get("space")
-        if self.output:
-            with open(self.output, "w") as f:
-                pass
-        print(kwargs)
 
     def print_latest_versions(self, product_code, product_name):
         if self.should_print_latest_version:
