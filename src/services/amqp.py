@@ -34,16 +34,14 @@ class RabbitMQConnection:
         self.close()
 
     def connect(self):
-        retries = 0
-        while retries < 10:
-            try:
-                credentials = PlainCredentials(self.username, self.password)
-                parameters = ConnectionParameters(host=self.host, port=self.port, credentials=credentials)
-                self.connection = BlockingConnection(parameters)
-                print("Connected to RabbitMQ")
-                return
-            except exceptions.AMQPConnectionError as e:
-                print("Failed to connect to RabbitMQ:", e)
+        try:
+            credentials = PlainCredentials(self.username, self.password)
+            parameters = ConnectionParameters(host=self.host, port=self.port, credentials=credentials)
+            self.connection = BlockingConnection(parameters)
+            print("Connected to RabbitMQ")
+            return
+        except exceptions.AMQPConnectionError as e:
+            print("Failed to connect to RabbitMQ:", e)
 
         print("Exceeded maximum number of connection retries. Stopping the code.")
 
