@@ -78,13 +78,14 @@ class AMQPDefaultCredsSubServiceClass(BaseSubServiceClass):
 
     @error_handler(["host"])
     def single(self, host, **kwargs):
-        username=kwargs.get("username", "")
-        password=kwargs.get("password", "")
+        username=kwargs.get("username", None)
+        password=kwargs.get("password", None)
         anonymous = kwargs.get("anonymous", False)
         try:
-            conn = RabbitMQConnection(host.ip, int(host.port), username, password)
+            conn = RabbitMQConnection(host.ip, int(host.port), username, password) # type: ignore
             conn.connect()
-            print(conn.is_connected())
+            if conn.is_connected():
+                return host
         except Exception as e: print("Error", e)
 
 class AMQPVersionSubServiceClass(BaseSubServiceClass):
