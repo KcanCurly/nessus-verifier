@@ -94,12 +94,12 @@ class AMQPVersionSubServiceClass(VersionSubService):
         versions = {}
 
         for r in results:
-            print(r.host)
             if r.version not in versions:
                 versions[r.version] = set()
             versions[r.version].add(r.host)
 
         if versions:
+            print(versions)
             versions = dict(sorted(versions.items(), reverse=True))
             self.print_output(i18n.t('main.version_title', name=self.products[0][0]))
             
