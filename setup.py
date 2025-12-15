@@ -40,9 +40,7 @@ setup(
         "argcomplete",
         "python-i18n",
         "paho-mqtt",
-        "amqp",
         "pika",
-        "rabbitmq-amqp-python-client",
     ],
     classifiers=[
         "Programming Language :: Python :: 3",

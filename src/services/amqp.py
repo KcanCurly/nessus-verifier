@@ -3,19 +3,17 @@ from src.utilities.utilities import error_handler, generate_random_string, get_c
 from src.services.serviceclass import BaseServiceClass
 from src.services.servicesubclass import BaseSubServiceClass
 import nmap
-import amqp
 from pika import PlainCredentials, ConnectionParameters, BlockingConnection, exceptions
-
 
 class RabbitMQConnection:
     _instance = None
 
-    def __new__(cls, host="localhost", port=5672, username="admin", password="admin"):
+    def __new__(cls, host="localhost", port=5672, username="guest", password="guest"):
         if not cls._instance:
             cls._instance = super().__new__(cls)
         return cls._instance
 
-    def __init__(self, host="localhost", port=5672, username="admin", password="admin"):
+    def __init__(self, host="localhost", port=5672, username="guest", password="guest"):
         self.host = host
         self.port = port
         self.username = username
@@ -34,10 +32,9 @@ class RabbitMQConnection:
             credentials = PlainCredentials(self.username, self.password)
             parameters = ConnectionParameters(host=self.host, port=self.port, credentials=credentials)
             self.connection = BlockingConnection(parameters)
-            print("Connected to RabbitMQ")
             return
         except exceptions.AMQPConnectionError as e:
-            print("Failed to connect to RabbitMQ:", e)
+            pass
 
     def is_connected(self):
         return self.connection is not None and self.connection.is_open
@@ -46,7 +43,6 @@ class RabbitMQConnection:
         if self.is_connected():
             self.connection.close() # type: ignore
             self.connection = None
-            print("Closed RabbitMQ connection")
 
     def get_channel(self):
         if self.is_connected():
@@ -54,37 +50,6 @@ class RabbitMQConnection:
 
         return None
 
-
-from rabbitmq_amqp_python_client import (  # PosixSSlConfigurationContext,; PosixClientCert,
-    AddressHelper,
-    AMQPMessagingHandler,
-    Connection,
-    Converter,
-    Environment,
-    Event,
-    ExchangeSpecification,
-    ExchangeToQueueBindingSpecification,
-    Message,
-    OutcomeState,
-    QuorumQueueSpecification,
-)
-
-def create_connection(environment: Environment) -> Connection:
-    connection = environment.connection()
-    # in case of SSL enablement
-    # ca_cert_file = ".ci/certs/ca_certificate.pem"
-    # client_cert = ".ci/certs/client_certificate.pem"
-    # client_key = ".ci/certs/client_key.pem"
-    # connection = Connection(
-    #    "amqps://guest:guest@localhost:5671/",
-    #    ssl_context=PosixSslConfigurationContext(
-    #        ca_cert=ca_cert_file,
-    #        client_cert=ClientCert(client_cert=client_cert, client_key=client_key),
-    #    ),
-    # )
-    connection.dial()
-
-    return connection
 
 class AMQPDefaultCredsSubServiceClass(BaseSubServiceClass):
     def __init__(self) -> None:
@@ -104,7 +69,7 @@ class AMQPDefaultCredsSubServiceClass(BaseSubServiceClass):
         for r in results:
             hosts.remove(r)
 
-        results = get_default_context_execution2("AMQP Default Creds Scan", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose, username="admin", password="admin")
+        results = get_default_context_execution2("AMQP Default Creds Scan", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose, username="guest", password="guest")
 
         if results:
             self.print_output(i18n.t('main.default_creds_title', name='AMQP'))
