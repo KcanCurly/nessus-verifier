@@ -105,7 +105,8 @@ class AMQPVersionSubServiceClass(VersionSubService):
             
             for key, value in versions.items():
                 _, pure_version = key.rsplit(" ", 1)
-                print(value.ip)
+                for v in value:
+                    print(v)
                 if "rabbitmq" in key.lower():
                     self.print_single_version_result("RabbitMQ", value, pure_version, "cpe:2.3:a:vmware:rabbitmq:")
 
