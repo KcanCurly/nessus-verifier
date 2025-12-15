@@ -134,4 +134,4 @@ class VersionSubService(BaseSubServiceClass):
 
         self.print_output(f"{name} {version}{' (' + ', '.join(cves) + ')' if cves else ''}:")
         for v in results:
-            self.print_output(" " * self.space + v)
+            self.print_output(" " * self.space + str(v))
