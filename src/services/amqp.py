@@ -94,7 +94,7 @@ class AMQPVersionSubServiceClass(VersionSubService):
         versions = {}
 
         for r in results:
-            print(r)
+            print(r.host)
             if r.version not in versions:
                 versions[r.version] = set()
             versions[r.version].add(r.host)
