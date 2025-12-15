@@ -1,13 +1,9 @@
-import amqp.sasl
 import i18n
 from src.utilities.utilities import error_handler, generate_random_string, get_cves, get_default_context_execution2, Version_Vuln_Host_Data
 from src.services.serviceclass import BaseServiceClass
 from src.services.servicesubclass import BaseSubServiceClass
 import nmap
 import amqp
-import pika
-
-import time
 from pika import PlainCredentials, ConnectionParameters, BlockingConnection, exceptions
 
 
@@ -42,8 +38,6 @@ class RabbitMQConnection:
             return
         except exceptions.AMQPConnectionError as e:
             print("Failed to connect to RabbitMQ:", e)
-
-        print("Exceeded maximum number of connection retries. Stopping the code.")
 
     def is_connected(self):
         return self.connection is not None and self.connection.is_open
@@ -123,7 +117,7 @@ class AMQPDefaultCredsSubServiceClass(BaseSubServiceClass):
         password=kwargs.get("password", "")
         anonymous = kwargs.get("anonymous", False)
         try:
-            conn = RabbitMQConnection(host.ip, int(host.port), "deneme", "deneme")
+            conn = RabbitMQConnection(host.ip, int(host.port), username, password)
             conn.connect()
             print(conn.is_connected())
         except Exception as e: print("Error", e)
