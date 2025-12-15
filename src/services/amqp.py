@@ -1,7 +1,7 @@
 import i18n
 from src.utilities.utilities import error_handler, generate_random_string, get_cves, get_default_context_execution2, Version_Vuln_Host_Data
 from src.services.serviceclass import BaseServiceClass
-from src.services.servicesubclass import BaseSubServiceClass
+from src.services.servicesubclass import BaseSubServiceClass, VersionSubService
 import nmap
 from pika import PlainCredentials, ConnectionParameters, BlockingConnection, exceptions
 
@@ -81,16 +81,16 @@ class AMQPDefaultCredsSubServiceClass(BaseSubServiceClass):
                 return host
         except Exception as e: print("Error", e)
 
-class AMQPVersionSubServiceClass(BaseSubServiceClass):
+class AMQPVersionSubServiceClass(VersionSubService):
     def __init__(self) -> None:
-        super().__init__("version", "Checks version")
+        super().__init__("version", "Checks version", [("RabbitMQ", "rabbitmq")])
 
     @error_handler([])
     def nv(self, hosts, **kwargs) -> None:
         super().nv(hosts, kwargs=kwargs)
 
         nm = nmap.PortScanner()
-        results: list[Version_Vuln_Host_Data] = get_default_context_execution2("AMQP Version", self.threads, hosts, self.single, nm=nm, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
+        results: list[Version_Vuln_Host_Data] = get_default_context_execution2(f"{self.products[0][0]} Version", self.threads, hosts, self.single, nm=nm, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
 
         versions = {}
 
@@ -101,32 +101,16 @@ class AMQPVersionSubServiceClass(BaseSubServiceClass):
 
         if versions:
             versions = dict(sorted(versions.items(), reverse=True))
-            self.print_output(i18n.t('main.version_title', name='AMQP'))
+            self.print_output(i18n.t('main.version_title', name=self.products[0][0]))
             
             for key, value in versions.items():
-                extra, pure_version = key.rsplit(" ", 1)
+                _, pure_version = key.rsplit(" ", 1)
 
-                cpe = ""
-                cves = []
                 if "rabbitmq" in key.lower():
-                    cpe = f"cpe:2.3:a:vmware:rabbitmq:{pure_version}"
-                if cpe:
-                    if self.should_print_cves:
-                        cves = get_cves(cpe)
-                if cves: 
-                    self.print_output(f"{extra} {pure_version} ({", ".join(cves)}):")
-                else:
-                    self.print_output(f"{extra} {pure_version}:")
+                    self.print_single_version_result("RabbitMQ", value, pure_version, "cpe:2.3:a:vmware:rabbitmq:")
 
-                for v in value:
-                    self.print_output(f"    {v}")
-
-            if self.should_print_latest_version:
-                latest_versions = self.parent_service.get_latest_version()
-                if latest_versions:
-                    self.print_output(f"Latest version for {self.parent_service.eol_product_name}")
-                    for version in latest_versions:
-                        self.print_output(version)
+            self.print_latest_versions()
+            self.print_pocs()
 
 
 
@@ -153,10 +137,6 @@ class AMQPVersionSubServiceClass(BaseSubServiceClass):
 class AMQPServiceClass(BaseServiceClass):
     def __init__(self) -> None:
         super().__init__("amqp")
-        self.eol_product_name = "rabbitmq"
-
-        v = AMQPVersionSubServiceClass()
-        v._set_parent(self)
 
         self.register_subservice(AMQPVersionSubServiceClass())
         self.register_subservice(AMQPDefaultCredsSubServiceClass())

@@ -1,13 +1,15 @@
 import threading
+from typing import Tuple
 
 import i18n
 from src.utilities import utilities
-from src.utilities.utilities import add_default_serviceclass_arguments, get_hosts_from_file2, error_handler
+from src.utilities.utilities import add_default_serviceclass_arguments, add_default_version_subservice_arguments, get_cves, get_hosts_from_file2, error_handler
 from src.services.consts import DEFAULT_ERRORS, DEFAULT_THREAD, DEFAULT_TIMEOUT, DEFAULT_VERBOSE
 from src.services.serviceclass import BaseServiceClass as base_service
 from dataclasses import dataclass
 
 lock = threading.Lock()
+
 
 class BaseSubServiceClass():
     def __init__(self, command_name: str, help_description: str) -> None:
@@ -38,6 +40,7 @@ class BaseSubServiceClass():
         self.should_print_cves = kwargs.get("print_cve", False)
         self.should_print_latest_version = kwargs.get("print_latest_version", False)
         self.should_print_poc = kwargs.get("print_poc", False)
+        self.space = kwargs.get("space")
         if self.output:
             with open(self.output, "w") as f:
                 pass
@@ -92,3 +95,47 @@ class NVOptions:
     errors: int = DEFAULT_ERRORS
     verbose: bool = DEFAULT_VERBOSE
     output: str = ""
+
+class VersionSubService(BaseSubServiceClass):
+    def __init__(self, command_name: str, help_description: str, products: list[tuple[str, str]]) -> None:
+        super().__init__(command_name, help_description)
+        self.products = products
+        self.cves = set()
+
+    def helper_parse(self, subparsers):
+        parser_enum = subparsers.add_parser(self.command_name, help = self.help_description)
+        add_default_version_subservice_arguments(parser_enum)
+        parser_enum.set_defaults(func=self.console)
+
+    def print_latest_versions(self):
+        if self.should_print_latest_version and self.products:
+            for name, code in self.products:
+                lv = utilities.get_latest_version(code, True)
+                if lv:
+                    self.print_output(i18n.t('main.latest_version_title', name=name))
+                    self.print_output(', '.join(lv or []))
+
+    def print_pocs(self):
+        if self.should_print_poc and self.cves:
+            pocs = utilities.get_poc_from_cves(self.cves)
+            if pocs:
+                self.print_output(i18n.t('main.poc_title'))
+                for cve, poc_list in pocs.items():
+                    self.print_output(f"{cve}:")
+                    for poc in poc_list:
+                        self.print_output(f"{poc}")
+
+    def get_cves(self, cpe):
+        if self.should_print_cves:
+            cves = get_cves(cpe)
+            self.cves.update(cves)
+            return cves
+        return []
+
+    def print_single_version_result(self, name, results, version, cpe_base):
+        self.print_output(i18n.t('main.version_title', name=self.products[0][0]))
+        cves = get_cves(cpe_base+version)
+
+        self.print_output(f"{name} {version}{' (' + ', '.join(cves) + ')' if cves else ''}:")
+        for v in results:
+            self.print_output("" * self.space + v)
