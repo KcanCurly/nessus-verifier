@@ -130,6 +130,7 @@ class VersionSubService(BaseSubServiceClass):
         return []
 
     def print_single_version_result(self, name, results, version, cpe_base):
+        print(cpe_base+version)
         cves = get_cves(cpe_base+version)
 
         self.print_output(f"{name} {version}{' (' + ', '.join(cves) + ')' if cves else ''}:")
