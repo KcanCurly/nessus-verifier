@@ -44,6 +44,7 @@ class BaseSubServiceClass():
         if self.output:
             with open(self.output, "w") as f:
                 pass
+        print(kwargs)
 
     def print_latest_versions(self, product_code, product_name):
         if self.should_print_latest_version:

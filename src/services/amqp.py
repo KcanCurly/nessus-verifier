@@ -88,7 +88,7 @@ class AMQPVersionSubServiceClass(VersionSubService):
     @error_handler([])
     def nv(self, hosts, **kwargs) -> None:
         super().nv(hosts, kwargs=kwargs)
-        print(kwargs)
+        
 
         nm = nmap.PortScanner()
         results: list[Version_Vuln_Host_Data] = get_default_context_execution2(f"{self.products[0][0]} Version", self.threads, hosts, self.single, nm=nm, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
