@@ -26,7 +26,7 @@ class EchoUsageSubServiceClass(BaseSubServiceClass):
             users = client.registered_users('kali')
             print(users)
         except Exception as e:
-            print(e)
+            print("Error", e)
 
 
 
