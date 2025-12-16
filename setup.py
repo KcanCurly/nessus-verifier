@@ -41,6 +41,7 @@ setup(
         "python-i18n",
         "paho-mqtt",
         "pika",
+        "ejabberd_python3d",
     ],
     classifiers=[
         "Programming Language :: Python :: 3",
