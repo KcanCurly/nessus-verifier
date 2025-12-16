@@ -3,7 +3,7 @@ from src.utilities.utilities import get_default_context_execution2, error_handle
 from src.services.serviceclass import BaseServiceClass
 from src.services.servicesubclass import BaseSubServiceClass
 from traceback import print_exc
-from ejabberd_python3d.client import EjabberdAPIClient
+from pyejabberd import EjabberdAPIClient
 
 class EchoUsageSubServiceClass(BaseSubServiceClass):
     def __init__(self) -> None:
@@ -22,7 +22,9 @@ class EchoUsageSubServiceClass(BaseSubServiceClass):
     @error_handler(["host"])
     def single(self, host, **kwargs):
         try:
-            client = EjabberdAPIClient(host.ip,'admin','password', port=int(host.port))
+            client = EjabberdAPIClient(host=host.ip, port=int(host.port), username='admin', password='password', user_domain='kali',
+                           protocol='https')
+
             users = client.registered_users('kali')
             print(users)
         except Exception as e:
