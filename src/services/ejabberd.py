@@ -23,7 +23,7 @@ class EchoUsageSubServiceClass(BaseSubServiceClass):
     def single(self, host, **kwargs):
         try:
             client = EjabberdAPIClient(host=host.ip, port=int(host.port), username='admin', password='password', user_domain='kali',
-                           protocol='http')
+                           protocol='https')
 
             users = client.registered_users('kali')
             print(users)
