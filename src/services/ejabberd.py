@@ -42,5 +42,5 @@ class EchoUsageSubServiceClass(BaseSubServiceClass):
 
 class EjabberDServiceClass(BaseServiceClass):
     def __init__(self) -> None:
-        super().__init__("echo")
+        super().__init__("ejabberd")
         self.register_subservice(EchoUsageSubServiceClass())
