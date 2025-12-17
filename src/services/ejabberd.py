@@ -4,6 +4,7 @@ from src.services.serviceclass import BaseServiceClass
 from src.services.servicesubclass import BaseSubServiceClass
 from traceback import print_exc
 from pyejabberd import EjabberdAPIClient
+import xmpp
 
 class EchoUsageSubServiceClass(BaseSubServiceClass):
     def __init__(self) -> None:
@@ -21,12 +22,16 @@ class EchoUsageSubServiceClass(BaseSubServiceClass):
 
     @error_handler(["host"])
     def single(self, host, **kwargs):
+        
+        jabberid = "admin@kali"
+        password = "password"
+        receiver = "bazqux@xmpp.domain.tld"
+        message  = "hello world"
         try:
-            client = EjabberdAPIClient(host=host.ip, port=int(host.port), username='admin', password='password', user_domain='kali',
-                           protocol='https')
-
-            users = client.registered_users('kali')
-            print(users)
+            jid = xmpp.protocol.JID(jabberid)
+            connection = xmpp.Client(server=jid.getDomain(), debug=True)
+            connection.connect((host.ip, host.port))
+            connection.auth(user=jid.getNode(), password=password, resource=jid.getResource())
         except Exception as e:
             print("Error", e)
 
