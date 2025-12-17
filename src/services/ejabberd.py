@@ -37,13 +37,13 @@ class EchoUsageSubServiceClass(BaseSubServiceClass):
             connection = xmpp.Client(server=jid.getDomain(), debug=True)
 
             print("2")
-            connection.connect((host.ip, host.port))
-            print(connection.isConnected())
+            #connection.connect((host.ip, host.port))
+            #print(connection.isConnected())
             connection.debug_flags
 
             print("3")
-            z = connection.auth(user=jid.getNode(), password=password, resource=jid.getResource())
-            print(z)
+            #z = connection.auth(user=jid.getNode(), password=password, resource=jid.getResource())
+            #print(z)
         except xmpp.protocol.HostUnknown as e:
             print("Wrong Domain")
         except Exception as e:
