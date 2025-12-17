@@ -37,6 +37,7 @@ class EchoUsageSubServiceClass(BaseSubServiceClass):
             connection = xmpp.Client(server=jid.getDomain(), debug=True)
             print("2")
             connection.connect((host.ip, host.port))
+            print(connection.isConnected())
             print("3")
             #connection.auth(user=jid.getNode(), password=password, resource=jid.getResource())
             print("4")
