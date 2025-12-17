@@ -34,7 +34,7 @@ class EchoUsageSubServiceClass(BaseSubServiceClass):
 
             jid = xmpp.protocol.JID(jabberid)
             print("1")
-            connection = xmpp.Client(server=jid.getDomain(), debug=True)
+            connection = xmpp.Client(None, debug=True)
 
             print("2")
             connection.connect((host.ip, host.port))
