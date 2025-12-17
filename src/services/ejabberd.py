@@ -31,9 +31,10 @@ class EchoUsageSubServiceClass(BaseSubServiceClass):
         receiver = "bazqux@xmpp.domain.tld"
         message  = "hello world"
         try:
+
             jid = xmpp.protocol.JID(jabberid)
             print("1")
-            connection = xmpp.Client(server=jid.getDomain())
+            connection = xmpp.Client(server=jid.getDomain(), debug=None)
 
             print("2")
             connection.connect((host.ip, host.port))
