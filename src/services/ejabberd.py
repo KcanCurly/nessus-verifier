@@ -37,7 +37,7 @@ class EchoUsageSubServiceClass(BaseSubServiceClass):
             print("2")
             connection.connect((host.ip, host.port))
             print("3")
-            connection.auth(user=jid.getNode(), password=password, resource=jid.getResource())
+            #connection.auth(user=jid.getNode(), password=password, resource=jid.getResource())
             print("4")
         except Exception as e:
             print("Error", e)
