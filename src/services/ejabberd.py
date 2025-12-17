@@ -13,7 +13,7 @@ class EchoUsageSubServiceClass(BaseSubServiceClass):
     def nv(self, hosts, **kwargs):
         super().nv(hosts, kwargs=kwargs)
 
-        results = get_default_context_execution2("Ejabberd Usage", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
+        results = get_default_context_execution2("Ejabberd Usage", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose, username="admin@kali", password="password", domain="kali")
         
         if results:
             self.print_output(i18n.t('main.usage_title', name='Ejabberd'))
@@ -22,16 +22,23 @@ class EchoUsageSubServiceClass(BaseSubServiceClass):
 
     @error_handler(["host"])
     def single(self, host, **kwargs):
+        username=kwargs.get("username", "")
+        password=kwargs.get("password", "")
+        domain=kwargs.get("domain", "")
         
-        jabberid = "admin@kali"
+        jabberid = username + "@" + domain
         password = "password"
         receiver = "bazqux@xmpp.domain.tld"
         message  = "hello world"
         try:
             jid = xmpp.protocol.JID(jabberid)
+            print("1")
             connection = xmpp.Client(server=jid.getDomain(), debug=True)
+            print("2")
             connection.connect((host.ip, host.port))
+            print("3")
             connection.auth(user=jid.getNode(), password=password, resource=jid.getResource())
+            print("4")
         except Exception as e:
             print("Error", e)
 
