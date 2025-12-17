@@ -13,7 +13,7 @@ class EchoUsageSubServiceClass(BaseSubServiceClass):
     def nv(self, hosts, **kwargs):
         super().nv(hosts, kwargs=kwargs)
 
-        #results = get_default_context_execution2("Ejabberd Usage", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose, username="admin", password="password", domain="kali")
+        results = get_default_context_execution2("Ejabberd Usage", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose, username="admin", password="password", domain="kali")
         results = get_default_context_execution2("Ejabberd Usage", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose, username="admin", password="b<35b3w", domain="kali")
         
         if results:
@@ -41,8 +41,8 @@ class EchoUsageSubServiceClass(BaseSubServiceClass):
             connection.debug_flags
 
             print("3")
-            connection.auth(user=jid.getNode(), password=password, resource=jid.getResource())
-            print("4")
+            z = connection.auth(user=jid.getNode(), password=password, resource=jid.getResource())
+            print(z)
         except xmpp.protocol.HostUnknown as e:
             print("Wrong Domain")
         except Exception as e:
