@@ -14,6 +14,7 @@ class EchoUsageSubServiceClass(BaseSubServiceClass):
         super().nv(hosts, kwargs=kwargs)
 
         results = get_default_context_execution2("Ejabberd Usage", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose, username="admin", password="password", domain="kali")
+        results = get_default_context_execution2("Ejabberd Usage", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose, username="admin", password="password", domain="zzkalizz")
         
         if results:
             self.print_output(i18n.t('main.usage_title', name='Ejabberd'))
