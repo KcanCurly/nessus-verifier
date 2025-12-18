@@ -30,6 +30,7 @@ class TomcatBruteforceSubServiceClass(BaseSubServiceClass):
         print(username, password)
         resp = requests.get(f"http://{host}/manager/status", auth=(username, password))
         print(resp.status_code)
+        print(resp.request.headers)
 
 class TomcatVersionSubServiceClass(VersionSubService):
     def __init__(self) -> None:
