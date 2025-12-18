@@ -28,7 +28,7 @@ class TomcatBruteforceSubServiceClass(BaseSubServiceClass):
         errors=kwargs.get("errors", False)
         verbose = kwargs.get("verbose", False)
         print(username, password)
-        resp = requests.get(f"http://{host}/manager/status", auth=(username, password), allow_redirects=False)
+        resp = requests.get(f"http://{host.ip}:{host.port}/manager/status", auth=(username, password), allow_redirects=False)
         print(resp.headers)
         print(resp.status_code)
 
