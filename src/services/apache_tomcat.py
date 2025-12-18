@@ -41,16 +41,7 @@ class TomcatBruteforceSubServiceClass(BaseSubServiceClass):
             except Exception as e:
                 pass
 
-        CONNECTION_URL = f"service:jmx:rmi:///jndi/rmi://{host.ip}:{host.port}/jmxrmi"
-        try:
-            jmxConnection = jmxquery.JMXConnection(CONNECTION_URL)
-            JMXQ = jmxquery.JMXQuery("Catalina:type=Server", "*")
-            q = jmxConnection.query([JMXQ])
-            for a in q:
-                print(a.value)
 
-        except Exception as e:
-            print("Error", e)
 
 
 class TomcatVersionSubServiceClass(VersionSubService):
