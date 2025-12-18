@@ -9,7 +9,7 @@ import jmxquery
 from enum import Enum
 
 class PREDEFINED_QUERY(Enum):
-    TOMCAT_SERVER_INFO = "Tomcat Server info"
+    TOMCAT_SERVER_INFO = "Tomcat Server Info"
 
 q = {
     PREDEFINED_QUERY.TOMCAT_SERVER_INFO: ("Catalina:type=Server", "serverInfo")
@@ -30,7 +30,7 @@ class JMXQuerySubServiceClass(BaseSubServiceClass):
         parser_enum.add_argument("--predefined-query", type=str, required=False, choices=[e.value for e in PREDEFINED_QUERY], help="Predefined queries")
 
     def console(self, args):
-        self.nv(get_hosts_from_file2(args.target), query=args.query, attribute=args.attribute, predefined_query=args.predefined_query, threads=args.threads, timeout=args.timeout, errors=args.errors, verbose=args.verbose, output=args.output)
+        self.nv(get_hosts_from_file2(args.target), query=args.query, attribute=args.attribute, predefined_query=args.predefined_query, threads=args.threads, timeout=args.timeout, errors=args.errors, verbose=args.verbose, output=args.output, username=args.username, password=args.password)
 
     @error_handler([])
     def nv(self, hosts, **kwargs) -> None:
@@ -50,12 +50,14 @@ class JMXQuerySubServiceClass(BaseSubServiceClass):
     def single(self, host, **kwargs):
         query=kwargs.get("query", "")
         attribute=kwargs.get("attribute", "")
+        username=kwargs.get("username", None)
+        password=kwargs.get("password", None)
         timeout=kwargs.get("timeout", 10)
         errors=kwargs.get("errors", False)
         verbose = kwargs.get("verbose", False)
         CONNECTION_URL = f"service:jmx:rmi:///jndi/rmi://{host}/jmxrmi"
         try:
-            jmxConnection = jmxquery.JMXConnection(CONNECTION_URL)
+            jmxConnection = jmxquery.JMXConnection(CONNECTION_URL, username, password) # type: ignore
             JMXQ = jmxquery.JMXQuery("Catalina:type=Server", "*")
             q = jmxConnection.query([JMXQ])
             for a in q:
