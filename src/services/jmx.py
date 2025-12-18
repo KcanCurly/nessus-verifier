@@ -69,7 +69,8 @@ class JMXQuerySubServiceClass(BaseSubServiceClass):
                 self.print_output(a.value)
 
         except subprocess.CalledProcessError as e:
-            self.print_output(f"Error {e.stderr} ||| {e.stdout} ||| {e.output}")
+            if "Invalid username or password" in e.stderr:
+                self.print_output("Invalid username or password")
         except Exception as e:
             self.print_output(f"Error {type(e)}")
 
