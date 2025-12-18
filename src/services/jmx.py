@@ -58,7 +58,7 @@ class JMXQuerySubServiceClass(BaseSubServiceClass):
         CONNECTION_URL = f"service:jmx:rmi:///jndi/rmi://{host}/jmxrmi"
         try:
             jmxConnection = jmxquery.JMXConnection(CONNECTION_URL, username, password) # type: ignore
-            JMXQ = jmxquery.JMXQuery("Catalina:type=Server", "*")
+            JMXQ = jmxquery.JMXQuery(query, attribute)
             q = jmxConnection.query([JMXQ])
             for a in q:
                 self.print_output(a.value)
