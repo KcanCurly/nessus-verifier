@@ -90,3 +90,4 @@ class TomcatServiceClass(BaseServiceClass):
         super().__init__("tomcat")
 
         self.register_subservice(TomcatVersionSubServiceClass())
+        self.register_subservice(TomcatBruteforceSubServiceClass())
