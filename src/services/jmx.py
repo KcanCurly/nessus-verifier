@@ -68,7 +68,7 @@ class JMXQuerySubServiceClass(BaseSubServiceClass):
                 self.print_output(a.value)
 
         except Exception as e:
-            self.print_output(f"Error {e}")
+            self.print_output(f"Error {type(e)}")
 
 
 
