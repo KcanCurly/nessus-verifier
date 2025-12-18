@@ -44,6 +44,7 @@ class TomcatBruteforceSubServiceClass(BaseSubServiceClass):
         CONNECTION_URL = f"service:jmx:rmi:///jndi/rmi://{host}/jmxrmi"
         try:
             jmxConnection = jmxquery.JMXConnection(CONNECTION_URL)
+            print(jmxConnection.connection_uri)
         except Exception as e:
             print("Error", e)
 
