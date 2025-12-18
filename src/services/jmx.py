@@ -69,7 +69,7 @@ class JMXQuerySubServiceClass(BaseSubServiceClass):
                 self.print_output(a.value)
 
         except subprocess.CalledProcessError as e:
-            self.print_output(f"Error {e}")
+            self.print_output(f"Error {e.stderr} ||| {e.stdout} ||| {e.output}")
         except Exception as e:
             self.print_output(f"Error {type(e)}")
 
