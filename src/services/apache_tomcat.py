@@ -44,7 +44,7 @@ class TomcatBruteforceSubServiceClass(BaseSubServiceClass):
         CONNECTION_URL = f"service:jmx:rmi:///jndi/rmi://{host.ip}:{host.port}/jmxrmi"
         try:
             jmxConnection = jmxquery.JMXConnection(CONNECTION_URL)
-            JMXQ = jmxquery.JMXQuery("Catalina:type=Manager,context=/servlets-examples,host=192.168.1.102", "maxActiveSessions")
+            JMXQ = jmxquery.JMXQuery("Catalina:type=Server", ":")
             q = jmxConnection.query([JMXQ])
             for a in q:
                 print(a.value)
