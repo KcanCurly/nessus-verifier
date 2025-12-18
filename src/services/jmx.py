@@ -57,6 +57,8 @@ class JMXQuerySubServiceClass(BaseSubServiceClass):
         errors=kwargs.get("errors", False)
         verbose = kwargs.get("verbose", False)
 
+        print(username, password)
+
         CONNECTION_URL = f"service:jmx:rmi:///jndi/rmi://{host}/jmxrmi"
         try:
             jmxConnection = jmxquery.JMXConnection(CONNECTION_URL, username, password) # type: ignore
