@@ -1,6 +1,7 @@
 import re
+import requests
 import i18n
-from src.utilities.utilities import error_handler, get_default_context_execution2, Version_Vuln_Host_Data, get_header_from_url
+from src.utilities.utilities import error_handler, get_default_context_execution2, Version_Vuln_Host_Data, get_header_from_url, get_url_response
 from src.services.serviceclass import BaseServiceClass
 from src.services.servicesubclass import BaseSubServiceClass, VersionSubService
 
@@ -43,6 +44,15 @@ class TomcatVersionSubServiceClass(VersionSubService):
         header = get_header_from_url(host, "Server", timeout, errors, verbose)
         if header:
             m = re.search(version_regex, header)
+            if m:
+                m = m.group(1)
+                if " " in m:
+                    m = m.split()[0]
+                return Version_Vuln_Host_Data(host, m)
+        else:
+            resp = get_url_response(host)
+            version_regex = r"Apache Tomcat/(.*)"
+            m = re.search(version_regex, resp.text) # type: ignore
             if m:
                 m = m.group(1)
                 if " " in m:
