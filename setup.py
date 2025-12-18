@@ -42,6 +42,7 @@ setup(
         "paho-mqtt",
         "pika",
         "xmpppy",
+        "jmxquery",
     ],
     classifiers=[
         "Programming Language :: Python :: 3",

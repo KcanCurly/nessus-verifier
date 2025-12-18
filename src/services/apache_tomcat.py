@@ -5,6 +5,7 @@ from src.utilities.utilities import error_handler, get_default_context_execution
 from src.services.serviceclass import BaseServiceClass
 from src.services.servicesubclass import BaseSubServiceClass, VersionSubService
 import requests
+import jmxquery
 
 class TomcatBruteforceSubServiceClass(BaseSubServiceClass):
     def __init__(self) -> None:
@@ -14,11 +15,12 @@ class TomcatBruteforceSubServiceClass(BaseSubServiceClass):
     def nv(self, hosts, **kwargs) -> None:
         super().nv(hosts, kwargs=kwargs)
         
-        results: list[Version_Vuln_Host_Data] = get_default_context_execution2(f"Tomcat Bruteforce", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose, username="status", password="status")
+        results = get_default_context_execution2(f"Tomcat Bruteforce", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose, username="status", password="status")
+
+        for r in results:
+            self.print_output(f"{r[0]} is accessible by f{r[1]}:{r[2]}") # type: ignore
+
         results: list[Version_Vuln_Host_Data] = get_default_context_execution2(f"Tomcat Bruteforce", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose, username="status", password="statusa")
-
-
-
 
     @error_handler(["host"])
     def single(self, host, **kwargs):
@@ -27,10 +29,23 @@ class TomcatBruteforceSubServiceClass(BaseSubServiceClass):
         timeout=kwargs.get("timeout", 10)
         errors=kwargs.get("errors", False)
         verbose = kwargs.get("verbose", False)
-        print(username, password)
-        resp = requests.get(f"http://{host.ip}:{host.port}/manager/status", auth=(username, password), allow_redirects=False)
-        print(resp.headers)
-        print(resp.status_code)
+        r = []
+
+        # All these requires different built-in roles
+        # It is possible 
+        to_try = ["/manager/status", "/manager/html", "/manager/text/serverinfo"]
+
+        for u in to_try:
+            resp = requests.get(f"http://{host}{u}", auth=(username, password), allow_redirects=False)
+            if resp.status_code in [200]:
+                r.append([(f"http://{host}{u}", username, password)])
+
+        CONNECTION_URL = f"service:jmx:rmi:///jndi/rmi://{host}/jmxrmi"
+        try:
+            jmxConnection = jmxquery.JMXConnection(CONNECTION_URL)
+        except Exception as e:
+            print("Error", e)
+
 
 class TomcatVersionSubServiceClass(VersionSubService):
     def __init__(self) -> None:
