@@ -27,6 +27,7 @@ class TomcatBruteforceSubServiceClass(BaseSubServiceClass):
         timeout=kwargs.get("timeout", 10)
         errors=kwargs.get("errors", False)
         verbose = kwargs.get("verbose", False)
+        print(username, password)
         resp = requests.get(f"http://{host}/manager/status", auth=(username, password))
         print(resp.status_code)
 
