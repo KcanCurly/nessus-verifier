@@ -45,7 +45,7 @@ class JMXQuerySubServiceClass(BaseSubServiceClass):
         if predefined_query:
             query, attribute = q[PREDEFINED_QUERY(predefined_query)]
 
-        results: list[Version_Vuln_Host_Data] = get_default_context_execution2(f"JMX Query", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose, query=query, attribute=attribute, username=username, password=password)
+        results = get_default_context_execution2(f"JMX Query", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose, query=query, attribute=attribute, username=username, password=password)
 
 
     @error_handler(["host"])
