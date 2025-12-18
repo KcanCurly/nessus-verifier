@@ -28,9 +28,9 @@ class TomcatBruteforceSubServiceClass(BaseSubServiceClass):
         errors=kwargs.get("errors", False)
         verbose = kwargs.get("verbose", False)
         print(username, password)
-        resp = requests.get(f"http://{host}/manager/status", auth=(username, password), headers={"User-Agent":"Mozilla/5.0 (X11; Linux x86_64; rv:128.0) Gecko/20100101 Firefox/128.0"})
+        resp = requests.get(f"http://{host}/manager/status", auth=(username, password), allow_redirects=False)
+        print(resp.headers)
         print(resp.status_code)
-        print(resp.request.headers)
 
 class TomcatVersionSubServiceClass(VersionSubService):
     def __init__(self) -> None:
