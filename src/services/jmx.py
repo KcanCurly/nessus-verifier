@@ -36,26 +36,27 @@ class JMXQuerySubServiceClass(BaseSubServiceClass):
     def nv(self, hosts, **kwargs) -> None:
         super().nv(hosts, kwargs=kwargs)
         query = kwargs.get("query")
+        username=kwargs.get("username")
+        password=kwargs.get("password")
         predefined_query = kwargs.get("predefined_query", None)
         attribute = kwargs.get("attribute")
 
         if predefined_query:
             query, attribute = q[PREDEFINED_QUERY(predefined_query)]
 
-        results: list[Version_Vuln_Host_Data] = get_default_context_execution2(f"JMX Query", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose, query=query, attribute=attribute)
+        results: list[Version_Vuln_Host_Data] = get_default_context_execution2(f"JMX Query", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose, query=query, attribute=attribute, username=username, password=password)
 
 
     @error_handler(["host"])
     def single(self, host, **kwargs):
         query=kwargs.get("query", "")
         attribute=kwargs.get("attribute", "")
-        username=kwargs.get("username", None)
-        password=kwargs.get("password", None)
+        username=kwargs.get("username")
+        password=kwargs.get("password")
         timeout=kwargs.get("timeout", 10)
         errors=kwargs.get("errors", False)
         verbose = kwargs.get("verbose", False)
 
-        print(query, attribute)
         CONNECTION_URL = f"service:jmx:rmi:///jndi/rmi://{host}/jmxrmi"
         try:
             jmxConnection = jmxquery.JMXConnection(CONNECTION_URL, username, password) # type: ignore
