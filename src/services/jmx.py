@@ -1,4 +1,5 @@
 import re
+import subprocess
 import requests
 import i18n
 from src.utilities.utilities import add_default_serviceclass_arguments, error_handler, get_default_context_execution2, Version_Vuln_Host_Data, get_header_from_url, get_hosts_from_file2, get_url_response
@@ -67,6 +68,8 @@ class JMXQuerySubServiceClass(BaseSubServiceClass):
             for a in q:
                 self.print_output(a.value)
 
+        except subprocess.CalledProcessError as e:
+            self.print_output("Error", e.output)
         except Exception as e:
             self.print_output(f"Error {type(e)}")
 
