@@ -41,7 +41,7 @@ class TomcatBruteforceSubServiceClass(BaseSubServiceClass):
             except Exception as e:
                 pass
 
-        CONNECTION_URL = f"service:jmx:rmi:///jndi/rmi://{host}/jmxrmi"
+        CONNECTION_URL = f"service:jmx:rmi:///jndi/rmi://{host.ip}:{host.port}/jmxrmi"
         try:
             jmxConnection = jmxquery.JMXConnection(CONNECTION_URL)
             JMXQ = jmxquery.JMXQuery("Catalina:type=Manager,context=/servlets-examples", "maxActiveSessions")
