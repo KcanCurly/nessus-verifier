@@ -390,7 +390,7 @@ def get_latest_version(product, print_error = False):
 
 def get_cves2(cpe, sort_by_epss = False, limit = 10, cves_to_skip = []):
     try:
-        z = nvdlib.searchCVE(cpeName = cpe, key=nvd_api_key)
+        z = nvdlib.searchCVE(cpeName = cpe, key=nvd_api_key, isVulnerable=True)
         cves = [a.id for a in z]
         sorted_z = sorted(
         cves,
