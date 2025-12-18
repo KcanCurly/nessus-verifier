@@ -36,9 +36,9 @@ class JMXQuerySubServiceClass(BaseSubServiceClass):
     def nv(self, hosts, **kwargs) -> None:
         super().nv(hosts, kwargs=kwargs)
         kwargs = kwargs.get("kwargs", {})
-        query = kwargs.get("query", "")
+        query = kwargs.get("query")
         predefined_query = kwargs.get("predefined_query", None)
-        attribute = kwargs.get("attribute", "*")
+        attribute = kwargs.get("attribute")
 
         if predefined_query:
             query, attribute = q[PREDEFINED_QUERY(predefined_query)]
