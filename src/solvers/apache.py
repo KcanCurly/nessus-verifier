@@ -5,6 +5,7 @@ from src.utilities.utilities import Version_Vuln_Host_Data, error_handler, get_h
 import re
 from packaging.version import parse
 from src.solvers.solverclass import BaseSolverClass, WindowCatcherData
+from src.services.apache_tomcat import TomcatVersionSubServiceClass
 
 shodan_cves_to_skip = ["CVE-2006-20001"]
 
@@ -25,51 +26,4 @@ class ApacheSolverClass(BaseSolverClass):
 
         if not self.hosts:
             return
-        self.solve_version(self.hosts, args.threads, args.timeout, args.errors, args.verbose)
-
-    def solve_version(self, hosts, threads, timeout, errors, verbose):
-        versions = {}
-        results: list[Version_Vuln_Host_Data] = get_default_context_execution("Apache Version", threads, hosts, (self.solve_version_single, timeout, errors, verbose))
-        for r in results:
-            if r.version not in versions:
-                versions[r.version] = set()
-            versions[r.version].add(r.host)
-        all_cves = set()
-
-        if versions:
-            versions = dict(
-                sorted(versions.items(), key=lambda x: parse(x[0]), reverse=True)
-            )
-            self.print_output(i18n.t('main.version_title', name='Apache'))
-            for key, value in versions.items():
-                cves = []
-                if self.print_cve:
-                    cves = get_cves(f"cpe:2.3:a:apache:http_server:{key}", cves_to_skip=shodan_cves_to_skip)
-                if cves: 
-                    self.print_output(f"Apache {key} ({", ".join(cves)}):")
-                else: self.print_output(f"Apache {key}:")
-                for v in value:
-                    self.print_output(f"    {v}")
-            self.create_windowcatcher_action()
-
-            self.print_latest_versions()
-
-
-            for cve in all_cves:
-                links = get_poc_cve_github_link(cve)
-                if links:
-                    self.print_output(f"{cve}:")
-                    for link in links:
-                        self.print_output(link)
-                    
-    @error_handler(["host"])
-    def solve_version_single(self, host, timeout, errors, verbose):
-        version_regex = r"Apache/(.*)"
-        header = get_header_from_url(host, "Server", timeout, errors, verbose)
-        if header:
-            m = re.search(version_regex, header)
-            if m:
-                m = m.group(1)
-                if " " in m:
-                    m = m.split()[0]
-                return Version_Vuln_Host_Data(host, m)
+        TomcatVersionSubServiceClass().nv(self.hosts, threads=args.threads, timeout=args.timeout, errors=args.errors, verbos=args.verbose, output=self.output)

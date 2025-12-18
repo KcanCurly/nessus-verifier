@@ -161,6 +161,8 @@ class DNSAnySubServiceClass(BaseSubServiceClass):
             for v in vuln:
                 print(f"    {v}")
 
+
+
 class DNSVersionSubServiceClass(BaseSubServiceClass):
     def __init__(self) -> None:
         super().__init__("version", "Checks version")
