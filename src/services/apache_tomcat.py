@@ -20,8 +20,6 @@ class TomcatBruteforceSubServiceClass(BaseSubServiceClass):
         for r in results:
             self.print_output(f"{r[0]} is accessible by f{r[1]}:{r[2]}") # type: ignore
 
-        results: list[Version_Vuln_Host_Data] = get_default_context_execution2(f"Tomcat Bruteforce", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose, username="status", password="statusa")
-
     @error_handler(["host"])
     def single(self, host, **kwargs):
         username=kwargs.get("username", "")
@@ -36,9 +34,12 @@ class TomcatBruteforceSubServiceClass(BaseSubServiceClass):
         to_try = ["/manager/status", "/manager/html", "/manager/text/serverinfo"]
 
         for u in to_try:
-            resp = requests.get(f"http://{host}{u}", auth=(username, password), allow_redirects=False)
-            if resp.status_code in [200]:
-                r.append([(f"http://{host}{u}", username, password)])
+            try:
+                resp = requests.get(f"http://{host}{u}", auth=(username, password), allow_redirects=False)
+                if resp.status_code in [200]:
+                    r.append([(f"http://{host}{u}", username, password)])
+            except Exception as e:
+                pass
 
         CONNECTION_URL = f"service:jmx:rmi:///jndi/rmi://{host}/jmxrmi"
         try:
