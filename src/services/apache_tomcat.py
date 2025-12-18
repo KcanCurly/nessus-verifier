@@ -4,7 +4,31 @@ import i18n
 from src.utilities.utilities import error_handler, get_default_context_execution2, Version_Vuln_Host_Data, get_header_from_url, get_url_response
 from src.services.serviceclass import BaseServiceClass
 from src.services.servicesubclass import BaseSubServiceClass, VersionSubService
+import requests
 
+class TomcatBruteforceSubServiceClass(BaseSubServiceClass):
+    def __init__(self) -> None:
+        super().__init__("brute", "Bruteforce")
+
+    @error_handler([])
+    def nv(self, hosts, **kwargs) -> None:
+        super().nv(hosts, kwargs=kwargs)
+        
+        results: list[Version_Vuln_Host_Data] = get_default_context_execution2(f"Tomcat Bruteforce", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose, username="status", password="status")
+        results: list[Version_Vuln_Host_Data] = get_default_context_execution2(f"Tomcat Bruteforce", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose, username="status", password="statusa")
+
+
+
+
+    @error_handler(["host"])
+    def single(self, host, **kwargs):
+        username=kwargs.get("username", "")
+        password=kwargs.get("password", "")
+        timeout=kwargs.get("timeout", 10)
+        errors=kwargs.get("errors", False)
+        verbose = kwargs.get("verbose", False)
+        resp = requests.get(f"http://{host}/manager/status", auth=(username, password))
+        print(resp.status_code)
 
 class TomcatVersionSubServiceClass(VersionSubService):
     def __init__(self) -> None:
