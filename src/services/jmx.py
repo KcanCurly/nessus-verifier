@@ -35,7 +35,6 @@ class JMXQuerySubServiceClass(BaseSubServiceClass):
     @error_handler([])
     def nv(self, hosts, **kwargs) -> None:
         super().nv(hosts, kwargs=kwargs)
-        kwargs = kwargs.get("kwargs", {})
         query = kwargs.get("query")
         predefined_query = kwargs.get("predefined_query", None)
         attribute = kwargs.get("attribute")
