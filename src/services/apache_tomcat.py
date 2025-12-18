@@ -51,7 +51,7 @@ class TomcatVersionSubServiceClass(VersionSubService):
                 return Version_Vuln_Host_Data(host, m)
         else:
             resp = get_url_response(host)
-            version_regex = r"Apache Tomcat/(.*)"
+            version_regex = r"Apache Tomcat/(\d+\.\d+\.\d+)"
             m = re.search(version_regex, resp.text) # type: ignore
             if m:
                 m = m.group(1)
