@@ -55,6 +55,8 @@ class JMXQuerySubServiceClass(BaseSubServiceClass):
         timeout=kwargs.get("timeout", 10)
         errors=kwargs.get("errors", False)
         verbose = kwargs.get("verbose", False)
+
+        print(query, attribute)
         CONNECTION_URL = f"service:jmx:rmi:///jndi/rmi://{host}/jmxrmi"
         try:
             jmxConnection = jmxquery.JMXConnection(CONNECTION_URL, username, password) # type: ignore
