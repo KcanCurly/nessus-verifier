@@ -47,7 +47,7 @@ class TomcatBruteforceSubServiceClass(BaseSubServiceClass):
             JMXQ = jmxquery.JMXQuery("Catalina:type=Server", "*")
             q = jmxConnection.query([JMXQ])
             for a in q:
-                print(a)
+                print(a.value)
 
         except Exception as e:
             print("Error", e)
