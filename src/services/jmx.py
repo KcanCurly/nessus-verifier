@@ -8,6 +8,8 @@ from src.services.servicesubclass import BaseSubServiceClass, VersionSubService
 import requests
 import jmxquery
 from enum import Enum
+import socket
+import time
 
 class PREDEFINED_QUERY(Enum):
     TOMCAT_SERVER_INFO = "Tomcat Server Info"
@@ -74,10 +76,31 @@ class JMXQuerySubServiceClass(BaseSubServiceClass):
         except Exception as e:
             self.print_output(f"Error {e}")
 
+class JMXShutdownSubServiceClass(BaseSubServiceClass):
+    def __init__(self) -> None:
+        super().__init__("shutdown", "Check shutdown")
 
+    @error_handler([])
+    def nv(self, hosts, **kwargs) -> None:
+        super().nv(hosts, kwargs=kwargs)
+
+        get_default_context_execution2(f"JMX Query", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
+
+
+    @error_handler(["host"])
+    def single(self, host, **kwargs):
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.connect((host.ip, host.port))
+
+        for ch in "MESSAGE":
+            sock.send(ch.encode())
+            time.sleep(1)
+
+        sock.close()
 
 class JMXServiceClass(BaseServiceClass):
     def __init__(self) -> None:
         super().__init__("jmx")
 
         self.register_subservice(JMXQuerySubServiceClass())
+        self.register_subservice(JMXShutdownSubServiceClass())
