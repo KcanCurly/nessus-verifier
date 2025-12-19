@@ -18,9 +18,9 @@ class TomcatPuttestSubServiceClass(BaseSubServiceClass):
         results = get_default_context_execution2(f"Tomcat Put Test", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
 
         if results:
-            self.print_output("")
-        for r in results:
-            self.print_output(f"{r[0]} is accessible by f{r[1]}:{r[2]}") # type: ignore
+            self.print_output("Apache Tomcat PUT/DELETE allowed on hosts:")
+            for r in results:
+                self.print_output(f"    {r}") # type: ignore
 
     @error_handler(["host"])
     def single(self, host, **kwargs):
@@ -29,8 +29,8 @@ class TomcatPuttestSubServiceClass(BaseSubServiceClass):
         verbose = kwargs.get("verbose", False)
 
         s = generate_random_string()
-        requests.put(f"http://{host}/{s}")
-        requests.delete(f"http://{host}/{s}")
+        requests.put(f"http://{host}/{s}", verify=False)
+        requests.delete(f"http://{host}/{s}", verify=False)
         return host
 
 class TomcatBruteforceSubServiceClass(BaseSubServiceClass):
