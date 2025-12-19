@@ -90,7 +90,7 @@ class JMXShutdownSubServiceClass(BaseSubServiceClass):
     @error_handler(["host"])
     def single(self, host, **kwargs):
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        sock.connect((host.ip, host.port))
+        sock.connect((host.ip, int(host.port)))
 
         for ch in "MESSAGE":
             sock.send(ch.encode())
