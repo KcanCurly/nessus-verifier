@@ -78,9 +78,9 @@ class TomcatPuttestSubServiceClass(BaseSubServiceClass):
 
         s = generate_random_string()
         resp = requests.put(f"http://{host}/{s}", verify=False)
-        print(resp.text)
+        print(resp.status_code)
         resp = requests.delete(f"http://{host}/{s}", verify=False)
-        print(resp.text)
+        print(resp.status_code)
         return host
 
 class TomcatBruteforceSubServiceClass(BaseSubServiceClass):
