@@ -6,7 +6,6 @@ from src.utilities.utilities import error_handler, generate_random_string, get_d
 from src.services.serviceclass import BaseServiceClass
 from src.services.servicesubclass import BaseSubServiceClass, VersionSubService
 import requests
-import jmxquery
 
 class TomcatPuttestSubServiceClass(BaseSubServiceClass):
     def __init__(self) -> None:
@@ -28,7 +27,7 @@ class TomcatPuttestSubServiceClass(BaseSubServiceClass):
         timeout=kwargs.get("timeout", 10)
         errors=kwargs.get("errors", False)
         verbose = kwargs.get("verbose", False)
-        
+
         s = generate_random_string()
         requests.put(f"http://{host}/{s}")
         requests.delete(f"http://{host}/{s}")
