@@ -132,7 +132,7 @@ class TomcatVersionSubServiceClass(VersionSubService):
         timeout=kwargs.get("timeout", 10)
         errors=kwargs.get("errors", False)
         verbose = kwargs.get("verbose", False)
-        version_regex = r"Apache/(.*)"
+        version_regex = r"Apache Tomcat/(\d+\.\d+\.\d+)"
         header = get_header_from_url(host, "Server", timeout, errors, verbose)
         if header:
             m = re.search(version_regex, header)
@@ -143,7 +143,6 @@ class TomcatVersionSubServiceClass(VersionSubService):
                 return Version_Vuln_Host_Data(host, m)
         else:
             resp = get_url_response(host)
-            version_regex = r"Apache Tomcat/(\d+\.\d+\.\d+)"
             m = re.search(version_regex, resp.text) # type: ignore
             if m:
                 m = m.group(1)
