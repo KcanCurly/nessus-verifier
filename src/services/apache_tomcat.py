@@ -204,3 +204,4 @@ class TomcatServiceClass(BaseServiceClass):
         self.register_subservice(TomcatBruteforceSubServiceClass())
         self.register_subservice(TomcatShutdownSubServiceClass())
         self.register_subservice(TomcatPuttestSubServiceClass())
+        self.register_subservice(TomcatPutExploitSubServiceClass())
