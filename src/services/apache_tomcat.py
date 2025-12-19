@@ -1,11 +1,38 @@
 import re
+import socket
 import requests
 import i18n
-from src.utilities.utilities import error_handler, get_default_context_execution2, Version_Vuln_Host_Data, get_header_from_url, get_url_response
+from src.utilities.utilities import error_handler, generate_random_string, get_default_context_execution2, Version_Vuln_Host_Data, get_header_from_url, get_url_response
 from src.services.serviceclass import BaseServiceClass
 from src.services.servicesubclass import BaseSubServiceClass, VersionSubService
 import requests
 import jmxquery
+
+class TomcatPuttestSubServiceClass(BaseSubServiceClass):
+    def __init__(self) -> None:
+        super().__init__("puttest", "Bruteforce")
+
+    @error_handler([])
+    def nv(self, hosts, **kwargs) -> None:
+        super().nv(hosts, kwargs=kwargs)
+        
+        results = get_default_context_execution2(f"Tomcat Put Test", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
+
+        if results:
+            self.print_output("")
+        for r in results:
+            self.print_output(f"{r[0]} is accessible by f{r[1]}:{r[2]}") # type: ignore
+
+    @error_handler(["host"])
+    def single(self, host, **kwargs):
+        timeout=kwargs.get("timeout", 10)
+        errors=kwargs.get("errors", False)
+        verbose = kwargs.get("verbose", False)
+        
+        s = generate_random_string()
+        requests.put(f"http://{host}/{s}")
+        requests.delete(f"http://{host}/{s}")
+        return host
 
 class TomcatBruteforceSubServiceClass(BaseSubServiceClass):
     def __init__(self) -> None:
@@ -31,7 +58,7 @@ class TomcatBruteforceSubServiceClass(BaseSubServiceClass):
 
         # All these requires different built-in roles
         # It is possible 
-        to_try = ["/manager/status", "/manager/html", "/manager/text/serverinfo"]
+        to_try = ["/manager/status", "/manager/html", "/manager/text/serverinfo", "/jmxproxy?get=java.lang:type=Memory&att=HeapMemoryUsage"]
 
         for u in to_try:
             try:
@@ -41,7 +68,31 @@ class TomcatBruteforceSubServiceClass(BaseSubServiceClass):
             except Exception as e:
                 pass
 
+class TomcatShutdownSubServiceClass(BaseSubServiceClass):
+    def __init__(self) -> None:
+        super().__init__("shutdown", "Check shutdown")
 
+    @error_handler([])
+    def nv(self, hosts, **kwargs) -> None:
+        super().nv(hosts, kwargs=kwargs)
+
+        result = get_default_context_execution2(f"JMX Shutdown Port Check", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
+
+        if result:
+            self.print_output("Port 8005 is open on these hosts, there is a chance that they are SHUTDOWN ports:")
+            for r in result:
+                self.print_output(f"    {r}")
+
+
+    @error_handler(["host"])
+    def single(self, host, **kwargs):
+        try:
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            sock.connect((host.ip, 8005))
+            sock.close()
+            return host
+        except:
+            pass
 
 
 class TomcatVersionSubServiceClass(VersionSubService):
@@ -105,3 +156,5 @@ class TomcatServiceClass(BaseServiceClass):
 
         self.register_subservice(TomcatVersionSubServiceClass())
         self.register_subservice(TomcatBruteforceSubServiceClass())
+        self.register_subservice(TomcatShutdownSubServiceClass())
+        self.register_subservice(TomcatPuttestSubServiceClass())

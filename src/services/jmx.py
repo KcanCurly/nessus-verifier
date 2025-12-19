@@ -76,35 +76,10 @@ class JMXQuerySubServiceClass(BaseSubServiceClass):
         except Exception as e:
             self.print_output(f"Error {e}")
 
-class JMXShutdownSubServiceClass(BaseSubServiceClass):
-    def __init__(self) -> None:
-        super().__init__("shutdown", "Check shutdown")
 
-    @error_handler([])
-    def nv(self, hosts, **kwargs) -> None:
-        super().nv(hosts, kwargs=kwargs)
-
-        result = get_default_context_execution2(f"JMX Query", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
-
-        if result:
-            self.print_output("Port 8005 is open on these hosts, there is a chance that they are SHUTDOWN ports:")
-            for r in result:
-                self.print_output(f"    {r}")
-
-
-    @error_handler(["host"])
-    def single(self, host, **kwargs):
-        try:
-            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            sock.connect((host.ip, 8005))
-            sock.close()
-            return host
-        except:
-            pass
 
 class JMXServiceClass(BaseServiceClass):
     def __init__(self) -> None:
         super().__init__("jmx")
 
         self.register_subservice(JMXQuerySubServiceClass())
-        self.register_subservice(JMXShutdownSubServiceClass())
