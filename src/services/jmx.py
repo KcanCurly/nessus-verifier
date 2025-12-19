@@ -84,19 +84,23 @@ class JMXShutdownSubServiceClass(BaseSubServiceClass):
     def nv(self, hosts, **kwargs) -> None:
         super().nv(hosts, kwargs=kwargs)
 
-        get_default_context_execution2(f"JMX Query", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
+        result = get_default_context_execution2(f"JMX Query", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
+
+        if result:
+            self.print_output("Port 8005 is open on these hosts, there is a chance that they are SHUTDOWN ports:")
+            for r in result:
+                self.print_output(f"    {r}")
 
 
     @error_handler(["host"])
     def single(self, host, **kwargs):
-        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        sock.connect((host.ip, int(host.port)))
-
-        for ch in "MESSAGE":
-            sock.send(ch.encode())
-            time.sleep(1)
-
-        sock.close()
+        try:
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            sock.connect((host.ip, 8005))
+            sock.close()
+            return host
+        except:
+            pass
 
 class JMXServiceClass(BaseServiceClass):
     def __init__(self) -> None:
