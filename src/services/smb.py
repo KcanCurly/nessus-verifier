@@ -160,8 +160,7 @@ class SMBNullGuestSubServiceClass(BaseSubServiceClass):
                             if file.filename == "." or file.filename == "..": continue
                             guest_vuln[share.name].append(file.filename)
                     except Exception: pass
-            if guest_vuln:
-                return NullGuest_Vuln_Data(host, None, guest_vuln)
+            return NullGuest_Vuln_Data(host, {}, guest_vuln)
         
     @error_handler(["host"])
     def single_null(self, host, **kwargs):
@@ -188,7 +187,7 @@ class SMBNullGuestSubServiceClass(BaseSubServiceClass):
                             if file.filename == "." or file.filename == "..": continue
                             null_vuln[share.name].append(file.filename)
                     except Exception: pass
-            return NullGuest_Vuln_Data(host, null_vuln, None)
+            return NullGuest_Vuln_Data(host, null_vuln, {})
 
 class SMBSignSubServiceClass(BaseSubServiceClass):
     def __init__(self) -> None:
