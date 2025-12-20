@@ -30,7 +30,7 @@ class TFTPBruteSubServiceClass(BaseSubServiceClass):
         ip = host.ip
         port = host.port
 
-        nm.scan(ip, port, arguments=f'-sU --script tftp-enum')
+        nm.scan(ip, port, arguments=f'-sU -sV --script tftp-enum')
         if ip in nm.all_hosts():
             nmap_host = nm[ip]
             if 'udp' in nmap_host and int(port) in nmap_host['udp']:
