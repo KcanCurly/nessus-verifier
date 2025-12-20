@@ -116,7 +116,7 @@ class TLSSolverClass(BaseSolverClass):
                             weak_ciphers.add(re.sub(r'^\x1b\[[0-9;]*m', '', cipher))
                     else:
                         if "[33m" in bit:
-                            weak_bits.append(re.sub(r'^\x1b\[[0-9;]*m', '', bit) + "->" + re.sub(r'^\x1b\[[0-9;]*m', '', cipher))
+                            weak_bits.append(re.sub(r'^\x1b\[[0-9;]*m', '', bit) + "bits -> " + re.sub(r'^\x1b\[[0-9;]*m', '', cipher))
         except Exception as e:
             pass
                 

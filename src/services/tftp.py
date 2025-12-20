@@ -3,7 +3,8 @@ import re
 import i18n
 from src.services.serviceclass import BaseServiceClass
 from src.services.servicesubclass import BaseSubServiceClass
-from src.utilities.utilities import error_handler
+from src.utilities.utilities import error_handler, get_default_context_execution2
+import nmap
 
 class TFTPBruteSubServiceClass(BaseSubServiceClass):
     def __init__(self) -> None:
@@ -12,38 +13,29 @@ class TFTPBruteSubServiceClass(BaseSubServiceClass):
     @error_handler([])
     def nv(self, hosts, **kwargs):
         super().nv(hosts, kwargs=kwargs)
+        nm = nmap.PortScanner()
 
-        pattern = r"\[\+\] Found (.*) on (\S*)"
-        nmap_file = "/usr/share/nmap/nselib/data/tftplist.txt"
-        result = ", ".join(host.ip for host in hosts)
-        vuln = {}
-        print("Running metasploit tftpbrute module, there will be no progression bar")
-        command = ["msfconsole", "-q", "-x", f"color false; use auxiliary/scanner/tftp/tftpbrute; set RHOSTS {result}; set THREADS {self.threads}; set ConnectTimeout {self.timeout}; run; exit"]
-        result = subprocess.run(command, text=True, capture_output=True)
-        
-        matches = re.findall(pattern, result.stdout, re.MULTILINE)
-
-        for m in matches:
-            if m[1] not in vuln:
-                vuln[m[1]] = set()
-            vuln[m[1]].add(m[0])
+        results = get_default_context_execution2(f"TFTP File Brute", self.threads, hosts, self.single, nm=nm, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
             
-        command1 = ["msfconsole", "-q", "-x", f"color false; use auxiliary/scanner/tftp/tftpbrute; set RHOSTS {result}; set DICTIONARY {nmap_file}; set THREADS {self.threads}; set ConnectTimeout {self.timeout}; run; exit"]
-        result1 = subprocess.run(command1, text=True, capture_output=True)
-
-        matches1 = re.findall(pattern, result1.stdout, re.MULTILINE)
-        
-        for m in matches1:
-            if m[1] not in vuln:
-                vuln[m[1]] = set()
-            vuln[m[1]].add(m[0])
-            
-        if vuln:
+        if results:
             self.print_output(i18n.t('main.tftp_files_found'))
-            for k,v in vuln.items():
-                self.print_output(f"{k}:")
-                for a in v:
-                    self.print_output(f"    {a}")
+            #for k,v in results.items():
+            #    self.print_output(f"{k}:")
+            #    for a in v:
+            #        self.print_output(f"    {a}")
+
+    @error_handler(["host"])
+    def single(self, host, **kwargs):
+        nm:nmap.PortScanner = kwargs.get("nm") # type: ignore
+        ip = host.ip
+        port = host.port
+
+        nm.scan(ip, port, arguments=f'-sU --script tftp-enum')
+        if ip in nm.all_hosts():
+            nmap_host = nm[ip]
+            if 'udp' in nmap_host and int(port) in nmap_host['udp']:
+                tcp_info = nmap_host['udp'][int(port)]
+                print(tcp_info)
         
 class TFTPServiceClass(BaseServiceClass):
     def __init__(self) -> None:
