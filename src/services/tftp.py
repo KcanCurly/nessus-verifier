@@ -279,13 +279,15 @@ class TFTPBruteSubServiceClass(BaseSubServiceClass):
             
         if results:
             self.print_output(i18n.t('main.tftp_files_found'))
-            #for k,v in results.items():
-            #    self.print_output(f"{k}:")
-            #    for a in v:
-            #        self.print_output(f"    {a}")
+            for r in results:
+
+                self.print_output(f"{r[0]}:")
+                for a in r[1]:
+                    self.print_output(f"    {a}")
 
     @error_handler(["host"])
     def single(self, host, **kwargs):
+        found = []
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         sock.settimeout(3)
 
@@ -305,9 +307,11 @@ class TFTPBruteSubServiceClass(BaseSubServiceClass):
                 opcode = struct.unpack('!H', data[:2])[0]
 
                 if opcode == 3:
-                    print(f"[+] FOUND: {file}")
+                    found.append(file)
             except Exception as e:
                 print("Error", e)
+        if found:
+            return (host, found)
         
 class TFTPServiceClass(BaseServiceClass):
     def __init__(self) -> None:
