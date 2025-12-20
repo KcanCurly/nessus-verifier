@@ -29,14 +29,13 @@ class AsteriskVersionSubServiceClass(BaseSubServiceClass):
             for host in hosts:
                 f.write(f"{host.ip}\n")
 
-        command = ["sippts", "scan", "-f", "sippts_input.txt", "-r", ports, "-p", "all", "-o", sippts_output]
+        command = ["sippts", "scan", "-i", ",".join(host.ip for host in hosts), "-r", ports, "-p", "all", "-o", sippts_output]
 
         subprocess.run(command, text=True, capture_output=True)
             
         with open(sippts_output) as f:
             self.print_output(f.read())
         os.remove(sippts_output)
-        os.remove("sippts_input.txt")
 
 class AsteriskServiceClass(BaseServiceClass):
     def __init__(self) -> None:

@@ -1,14 +1,14 @@
 import subprocess
 import re
-
 import i18n
-from src.utilities.utilities import error_handler
+from src.utilities import utilities
+from src.utilities.utilities import error_handler, get_cves, get_latest_version
 from src.services.serviceclass import BaseServiceClass
 from src.services.servicesubclass import BaseSubServiceClass
 
 class ZookeeperEnumServiceClass(BaseSubServiceClass):
     def __init__(self) -> None:
-        super().__init__("zookeeper", "Run enumeration on zookeeper targets")
+        super().__init__("enum", "Run enumeration on zookeeper targets")
 
     @error_handler([])
     def nv(self, hosts, **kwargs):
@@ -52,20 +52,45 @@ class ZookeeperEnumServiceClass(BaseSubServiceClass):
                     
             except: pass
                 
-
+        cpe = "cpe:2.3:a:apache:zookeeper:"
+        eol_product_code = "zookeeper"
+        cve_list = set()
 
         if versions:
             versions = dict(sorted(versions.items(), reverse=True))
             self.print_output(i18n.t('main.version_title', name='Apache Zookeeper'))
             for k,v in versions.items():
-                self.print_output(f"Apache Zookeeper {k.strip()}:")
+                k = k.strip()
+                cves = []
+                if self.should_print_cves:
+                    cves = get_cves(cpe+k)
+                    cve_list.update(cves)
+                if cves:
+                    self.print_output(f"Apache Zookeeper {k} ({",".join(cves)}):")
+                else:
+                    self.print_output(f"Apache Zookeeper {k}:")
                 for a in v:
                     self.print_output(f"    {a}")
+            
+            if self.should_print_latest_version:
+                vs = get_latest_version(eol_product_code)
+                self.print_output(i18n.t('main.latest_version_title', name="Apache Zookeeper"))
+                self.print_output(', '.join(vs or []))
+
+        if self.should_print_poc and cve_list:
+            pocs = utilities.get_poc_from_cves(cve_list)
+            if pocs:
+                self.print_output(i18n.t('main.poc_title'))
+                for cve, poc_list in pocs.items():
+                    self.print_output(f"{cve}:")
+                    for poc in poc_list:
+                        self.print_output(f"{poc}")
+                    self.print_output("")
                     
         if info_vuln:
             self.print_output(i18n.t('main.zookeeper_information_disclosure'))
             for k,v in info_vuln.items():
-                self.print_output(f"{k}:")
+                self.print_output(k)
                 for a in v:
                     self.print_output(f"    {a}")
 

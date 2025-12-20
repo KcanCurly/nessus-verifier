@@ -1,6 +1,5 @@
 import subprocess
 import re
-
 import i18n
 from src.services.serviceclass import BaseServiceClass
 from src.services.servicesubclass import BaseSubServiceClass

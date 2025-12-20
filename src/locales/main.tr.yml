@@ -33,6 +33,7 @@ tr:
   tls_vulnerable_versions_title: "Zayıf TLS Sürümü Tespit Edilen Sistemler:"
   tls_vulnerable_ciphers_title: "Zayıf TLS Şifreleme Kullanıldığı Tespit Edilen Sistemler:"
   tls_misconfigured_hosts_title: "Yanlış Yapılandırılmış TLS Sistemleri Tespit Edildi:"
+  tls_short_key_length_title: "Düşük Anahtar Uzunluğu Olan Algoritmaların Kullanıldığı Tespit Edilen Sistemler:"
   tls_expired_certificates_title: "Süresi Dolmuş Sertifikaya Sahip Sistemler:"
   latest_version_title: "Güncel %{name} sürümleri:"
   poc_title: "CVE'ler için Bulunan POC'ler:"

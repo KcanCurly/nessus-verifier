@@ -1,6 +1,4 @@
 import threading
-from typing import Tuple
-
 import i18n
 from src.utilities import utilities
 from src.utilities.utilities import add_default_serviceclass_arguments, add_default_version_subservice_arguments, get_cves, get_hosts_from_file2, error_handler
@@ -59,6 +57,7 @@ class BaseSubServiceClass():
                     self.print_output(f"{cve}:")
                     for poc in poc_list:
                         self.print_output(f"{poc}")
+                    self.print_output("")
 
     @error_handler([])
     def print_output(self, message, normal_print = True):

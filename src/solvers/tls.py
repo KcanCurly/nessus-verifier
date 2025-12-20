@@ -104,18 +104,19 @@ class TLSSolverClass(BaseSolverClass):
                 
                 if cipher_line and line:
                     cipher = line.split()[4]
+                    bit = line.split()[2]
                     if "[32m" not in cipher: # Non-green
                         if allow_white_ciphers: # We allow white ciphers
                             if "[" in cipher: # Non-white
                                 weak_ciphers.add(re.sub(r'^\x1b\[[0-9;]*m', '', cipher))
-                                bit = line.split()[2]
-                                if "[33m]" in bit: # If it is a green or white output and bit is low
+                            else:
+                                if "[33m" in bit: # If it is a green or white output and bit is low
                                     weak_bits.append(re.sub(r'^\x1b\[[0-9;]*m', '', bit) + "->" + re.sub(r'^\x1b\[[0-9;]*m', '', cipher))
                         else:
                             weak_ciphers.add(re.sub(r'^\x1b\[[0-9;]*m', '', cipher))
-                            bit = line.split()[2] # If it is a green output and bit is low
-                            if "[33m]" in bit:
-                                weak_bits.append(re.sub(r'^\x1b\[[0-9;]*m', '', bit) + "->" + re.sub(r'^\x1b\[[0-9;]*m', '', cipher))
+                    else:
+                        if "[33m" in bit:
+                            weak_bits.append(re.sub(r'^\x1b\[[0-9;]*m', '', bit) + "->" + re.sub(r'^\x1b\[[0-9;]*m', '', cipher))
         except Exception as e:
             pass
                 
@@ -160,27 +161,22 @@ class TLSSolverClass(BaseSolverClass):
                 expired_cert_hosts.append(f"{r.host} - {r.is_cert_expired}")
         
         if weak_ciphers:       
-            self.print_output(i18n.t('main.tls_vulnerable_ciphers_title'))             
+            self.print_output(i18n.t('main.tls_vulnerable_ciphers_title'))
             for key, value in weak_ciphers.items():
                 self.print_output(f"    {key} - {", ".join(value)}")
         
         if weak_versions: 
-            self.print_output(i18n.t('main.tls_vulnerable_versions_title'))            
+            self.print_output(i18n.t('main.tls_vulnerable_versions_title'))
             for key, value in weak_versions.items():
                 self.print_output(f"    {key} - {", ".join(value)}")
             self.print_output("")
                 
         if weak_bits:
-            self.print_output("Low Bits on Good Algorithms on Hosts:")
+            self.print_output(i18n.t('main.tls_short_key_length_title'))
             for key, value in weak_bits.items():
                 self.print_output(f"    {key} - {", ".join(value)}")
             self.print_output("")
         
-        if wrong_hosts:
-            self.print_output("Wrong hostnames on certficate on hosts:")
-            for v in wrong_hosts:
-                self.print_output(f"    {v}")
-            self.print_output("")
                 
         if expired_cert_hosts:
             self.print_output(i18n.t('main.tls_expired_certificates_title'))

@@ -2526,7 +2526,7 @@
   plugin-regex: []
   plugin-ids: [161439, 155705, 119775, 17367, 189514, 160218, 35786, 152484, 214333,
   76054, 185163, 71495, 104660, 215121, 208080, 10757, 63692, 29222, 49069, 91340, 47619,
-  186009, 159843, 14255, 121471, 129979, 53258, 92468]
+  186009, 159843, 14255, 121471, 129979, 53258, 92468, 39446, 1723, 186649, 106375]
   # 161439 - ManageEngine PAM360 Detection
   # 155705 - QNAP QTS/QES/QuTS hero - Web Detection
   # 119775 - GPON ONT Home Gateway Router Detection
@@ -2555,3 +2555,7 @@
   # 129979 - Harbor Web Interface Detection
   # 53258 - Oracle BI Publisher Enterprise Detection
   # 92468 - Sonatype Nexus Repository Manager Detection
+  # 39446 - Apache Tomcat Detection
+  # 1723 - Apache Web Server Detection
+  # 186649 - Apache ActiveMQ Detection
+  # 106375 - nginx HTTP Server Detection

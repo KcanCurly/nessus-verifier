@@ -1,11 +1,9 @@
 import stomp
-from stomp import PrintingListener
 import time
-from src.utilities.utilities import error_handler, generate_random_string, get_cves, get_default_context_execution2, nmap_identify_service_single
+from src.utilities.utilities import error_handler, generate_random_string, get_cves, get_default_context_execution2
 from src.services.serviceclass import BaseServiceClass
 from src.services.servicesubclass import BaseSubServiceClass
 import i18n
-from src.utilities.utilities import get_hosts_from_file
 
 class Listener(stomp.ConnectionListener):
     def __init__(self):
