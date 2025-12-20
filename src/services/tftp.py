@@ -297,7 +297,7 @@ class TFTPBruteSubServiceClass(BaseSubServiceClass):
             packet = struct.pack('!H', 1) + file.encode() + b'\x00' + mode + b'\x00'
 
             try:
-                sock.sendto(packet, (host.ip, host.port))
+                sock.sendto(packet, (host.ip, int(host.port)))
                 data, addr = sock.recvfrom(516)  # 512 bytes + 4 header
 
                 # Opcode 3 = DATA, Opcode 5 = ERROR
