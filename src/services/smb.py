@@ -145,7 +145,7 @@ class SMBNullGuestSubServiceClass(BaseSubServiceClass):
         command = ["nmblookup", "-A", ip]
         result = subprocess.run(command, text=True, capture_output=True, timeout=self.timeout)
         netbios_re = r"\s+(.*)\s+<20>"
-        
+        guest_vuln = {}
         s = re.search(netbios_re, result.stdout)
         if s:
             nbname = s.group()
@@ -160,7 +160,8 @@ class SMBNullGuestSubServiceClass(BaseSubServiceClass):
                             if file.filename == "." or file.filename == "..": continue
                             guest_vuln[share.name].append(file.filename)
                     except Exception: pass
-            return NullGuest_Vuln_Data(host, None, guest_vuln)
+            if guest_vuln:
+                return NullGuest_Vuln_Data(host, None, guest_vuln)
         
     @error_handler(["host"])
     def single_null(self, host, **kwargs):

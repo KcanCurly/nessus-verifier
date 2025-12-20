@@ -1,12 +1,9 @@
 import socket
 import struct
-import subprocess
-import re
 import i18n
 from src.services.serviceclass import BaseServiceClass
 from src.services.servicesubclass import BaseSubServiceClass
 from src.utilities.utilities import error_handler, get_default_context_execution2
-import nmap
 
 files = [
 "000000000000-directory.xml",
@@ -273,9 +270,8 @@ class TFTPBruteSubServiceClass(BaseSubServiceClass):
     @error_handler([])
     def nv(self, hosts, **kwargs):
         super().nv(hosts, kwargs=kwargs)
-        nm = nmap.PortScanner()
 
-        results = get_default_context_execution2(f"TFTP File Brute", self.threads, hosts, self.single, nm=nm, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
+        results = get_default_context_execution2(f"TFTP File Brute", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
             
         if results:
             self.print_output(i18n.t('main.tftp_files_found'))
