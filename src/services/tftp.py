@@ -290,13 +290,14 @@ class TFTPBruteSubServiceClass(BaseSubServiceClass):
         sock.settimeout(3)
 
         for file in files:
-
-            # TFTP Opcode 1: Read Request (RRQ)
-            # Format: opcode (2 bytes) + filename + null + mode + null
-            mode = b'octet'  # or b'netascii'
-            packet = struct.pack('!H', 1) + file.encode() + b'\x00' + mode + b'\x00'
-
             try:
+
+                # TFTP Opcode 1: Read Request (RRQ)
+                # Format: opcode (2 bytes) + filename + null + mode + null
+                mode = b'octet'  # or b'netascii'
+                packet = struct.pack('!H', 1) + file.encode() + b'\x00' + mode + b'\x00'
+
+
                 sock.sendto(packet, (host.ip, int(host.port)))
                 data, addr = sock.recvfrom(516)  # 512 bytes + 4 header
 
