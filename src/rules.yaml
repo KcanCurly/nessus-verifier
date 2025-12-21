@@ -2546,6 +2546,18 @@
   # 58038 - LDAP 'Domain Admins' Group Membership Enumeration
   # 45477 - LDAP Group Enumeration
 
+- name: SNMP Info Enumeration/Disclosure
+  id: 56
+  should-group-total: false
+  plugin-regex: []
+  plugin-ids: [10969, 10800, 10551, 19763, 10550, 34022]
+  # 10969 - SNMP Request Cisco Router Information Disclosure
+  # 10800 - SNMP Query System Information Disclosure
+  # 10551 - SNMP Request Network Interfaces Enumeration
+  # 19763 - SNMP Query Installed Software Disclosure
+  # 10550 - SNMP Query Running Process List Disclosure
+  # 34022 - SNMP Query Routing Information Disclosure
+
 - name: Microsoft Windows SMB (GENERIC)
   id: 50
   should-group-total: true
