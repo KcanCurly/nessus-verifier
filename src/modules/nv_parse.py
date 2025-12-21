@@ -449,6 +449,20 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                             m = m.strip()
                             if not m == "":
                                 print(f"            {m}", file=f)
+                    elif key == "HTTP Methods Allowed (per directory)":
+                        plugin_output = get_plugin_output("HTTP Methods Allowed (per directory)", z)
+                        matches = plugin_output.splitlines() # type: ignore
+                        for m in matches:
+                            m = m.strip()
+                            if not m == "":
+                                print(f"            {m}", file=f)
+                    elif key == "Web Server / Application favicon.ico Vendor Fingerprinting":
+                        plugin_output = get_plugin_output("Web Server / Application favicon.ico Vendor Fingerprinting", z)
+                        matches = plugin_output.splitlines() # type: ignore
+                        for m in matches:
+                            m = m.strip()
+                            if m.startswith("Web"):
+                                print(f"            {m}", file=f)
 
 
     with open(args.output_json_file, "w") as file:
