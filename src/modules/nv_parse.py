@@ -336,6 +336,14 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                             m = m.strip()
                             if not m == "":
                                 print(f"            {m}", file=f)
+                    elif key == "SMB Use Host SID to Enumerate Local Users":
+                        pattern = r"- .*"
+                        plugin_output = get_plugin_output("SMB Use Host SID to Enumerate Local Users", z)
+                        matches = re.findall(pattern, plugin_output) # type: ignore
+                        for m in matches:
+                            m = m.strip()
+                            if not m == "":
+                                print(f"            {m}", file=f)
                     elif key == "SMB Use Domain SID to Enumerate Users":
                         pattern = r"- .*"
                         plugin_output = get_plugin_output("SMB Use Domain SID to Enumerate Users", z)

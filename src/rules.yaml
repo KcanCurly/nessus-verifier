@@ -2527,9 +2527,10 @@
   id: 54
   should-group-total: false
   plugin-regex: []
-  plugin-ids: [56211, 10399]
+  plugin-ids: [56211, 10399, 10860]
   # 56211 - SMB Use Host SID to Enumerate Local Users Without Credentials
   # 10399 - SMB Use Domain SID to Enumerate Users
+  # 10860 - SMB Use Host SID to Enumerate Local Users
 
 - name: DNS Server Zone Transfer Information Disclosure (AXFR)
   id: 55
