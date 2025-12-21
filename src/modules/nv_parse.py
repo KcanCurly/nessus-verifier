@@ -16,6 +16,19 @@ def read_nessus_file(filename):
     nessus_xml_tree = ET.parse(filename)
     return nessus_xml_tree
 
+def handle_unkwon_banners(tree):
+    root = tree.getroot()
+    with open("nv-unknown-banners.txt") as f:
+        for host in root.findall(".//Report/ReportHost"):
+            host_ip = host.attrib['name']
+            for item in host.findall(".//ReportItem"):
+                if item.attrib.get("pluginName") == "Unknown Service Detection: Banner Retrieval":
+                    f.write(f"{host_ip}:\n")
+                    f.write(item.findtext('plugin_output'))
+                    f.write("\n")
+                    
+
+
 # Function to parse the Nessus file (.nessus format) and extract services and associated hosts
 def parse_nessus_file(tree, include = None, exclude = None):
     global sitemap_shortcut
@@ -471,3 +484,4 @@ def main():
     output = parse_nessus_output(tree)
     rules = group_up(output, args.severity0)
     write_to_file(rules, args)
+    handle_unkwon_banners(tree)
