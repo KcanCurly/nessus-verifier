@@ -414,6 +414,13 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                                 print(f"            {m}", file=f)
                             if m.startswith("Nessus was able to gather the following information from the web server"):
                                 zz = True
+                    elif key == "Apple Mac OS X Find-By-Content .DS_Store Web Directory Listing":
+                        plugin_output = get_plugin_output("Apple Mac OS X Find-By-Content .DS_Store Web Directory Listing", z)
+                        matches = plugin_output.splitlines() # type: ignore
+                        for m in matches:
+                            m = m.strip()
+                            if not m == "":
+                                print(f"            {m}", file=f)
 
 
     with open(args.output_json_file, "w") as file:

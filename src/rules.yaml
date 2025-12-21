@@ -2565,6 +2565,13 @@
   plugin-ids: [11239]
   # 11239 - Web Server Crafted Request Vendor/Version Information Disclosure
 
+- name: Apple Mac OS X Find-By-Content .DS_Store Web Directory Listing
+  id: 59
+  should-group-total: false
+  plugin-regex: []
+  plugin-ids: [10756]
+  # 10756 - Apple Mac OS X Find-By-Content .DS_Store Web Directory Listing
+
 - name: Microsoft Windows SMB (GENERIC)
   id: 50
   should-group-total: true
