@@ -320,7 +320,7 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                         lines = plugin_output.splitlines() # type: ignore
                         for la in lines:
                             la = la.strip()
-                            if not la.startswith("Here") and la == "":
+                            if not (la.startswith("Here") or la == ""):
                                 print(f"            {la}", file=f)
                     elif key == "Apache Multiviews Arbitrary Directory Listing":
                         pattern = r"https?://.*"
