@@ -328,6 +328,18 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                         match = re.search(pattern, plugin_output) # type: ignore
                         if match:
                             print(f"            {match.group()}", file=f)
+                    elif key == "SMB Use Host SID to Enumerate Local Users Without Credentials":
+                        pattern = r"- .*"
+                        plugin_output = get_plugin_output("SMB Use Host SID to Enumerate Local Users Without Credentials", z)
+                        matches = re.findall(pattern, plugin_output) # type: ignore
+                        for m in matches:
+                            print(f"            {m}", file=f)
+                    elif key == "SMB Use Domain SID to Enumerate Users":
+                        pattern = r"- .*"
+                        plugin_output = get_plugin_output("SMB Use Domain SID to Enumerate Users", z)
+                        matches = re.findall(pattern, plugin_output) # type: ignore
+                        for m in matches:
+                            print(f"            {m}", file=f)
                         
     with open(args.output_json_file, "w") as file:
         for v in l:

@@ -2490,8 +2490,8 @@
   id: 49
   should-group-total: false
   plugin-regex: []
-  plugin-ids: [35371]
-  # 35371 - DNS Server Version Detection
+  plugin-ids: [72779]
+  # 72779 - DNS Server Version Detection
 
 - name: HTTP login page
   id: 50
@@ -2520,6 +2520,14 @@
   plugin-regex: []
   plugin-ids: [10192]
   # 10192 - Apache Multiviews Arbitrary Directory Listing
+
+- name: SMB User Enumeration
+  id: 54
+  should-group-total: false
+  plugin-regex: []
+  plugin-ids: [56211, 10399]
+  # 56211 - SMB Use Host SID to Enumerate Local Users Without Credentials
+  # 10399 - SMB Use Domain SID to Enumerate Users
 
 - name: Microsoft Windows SMB (GENERIC)
   id: 50
@@ -2561,7 +2569,7 @@
   22269, 108953, 108804, 44394, 20301, 50577, 92842, 57396, 63061, 55930, 55929, 12295,
   11738, 62009, 97020, 46883, 136734, 173896, 105161, 31861, 35712, 35711, 177346, 26197,
   161864, 109553, 62292, 58184, 36128, 100621, 50704, 40876, 142362, 10746, 202698, 30051
-  174748, 10051, 127859, 22318, 121396]
+  174748, 10051, 127859, 22318, 121396, 180021, 163498, 121434, 24326, 111549, 66318, 76257]
   # 161439 - ManageEngine PAM360 Detection
   # 155705 - QNAP QTS/QES/QuTS hero - Web Detection
   # 119775 - GPON ONT Home Gateway Router Detection
@@ -2636,3 +2644,10 @@
   # 127859 - Apache Nifi Web Interface Detection
   # 22318 - HP OpenView BBC Service Detection
   # 121396 - Oracle WebLogic Web Services Test Client Detection
+  # 180021 - Ivanti Sentry System Manager Portal Detection
+  # 163498 - EyesOfNetwork HTTP API Detection
+  # 121434 - Lenel OnGuard License Administrator
+  # 24326 - HP LoadRunner Agent Service Detection
+  # 111549 - Sendmail Service Detection
+  # 66318 - Trellix ePolicy Orchestrator Application Server Detection
+  # 76257 - Cloudera Manager Detection
