@@ -322,7 +322,7 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                             if not la.startswith("Here"):
                                 print(f"            {la.strip()}", file=f)
                     elif key == "Apache Multiviews Arbitrary Directory Listing":
-                        pattern = r"https?://"
+                        pattern = r"https?://.*"
                         plugin_output = get_plugin_output("Apache Multiviews Arbitrary Directory Listing", z)
                         match = re.search(pattern, plugin_output) # type: ignore
                         if match:

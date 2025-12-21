@@ -2500,15 +2500,22 @@
   plugin-ids: [11149]
   # 11149 - HTTP login page
 
-- name: Apache Multiviews Arbitrary Directory Listing
+- name: Multiple Mail Server EXPN/VRFY Information Disclosure
   id: 51
+  should-group-total: false
+  plugin-regex: []
+  plugin-ids: [10249]
+  # 10249 - Multiple Mail Server EXPN/VRFY Information Disclosure
+
+- name: Apache Multiviews Arbitrary Directory Listing
+  id: 52
   should-group-total: false
   plugin-regex: []
   plugin-ids: [10704]
   # 10704 - Apache Multiviews Arbitrary Directory Listing
 
 - name: HTTP Proxy CONNECT Request Relaying
-  id: 52
+  id: 53
   should-group-total: false
   plugin-regex: []
   plugin-ids: [10192]
