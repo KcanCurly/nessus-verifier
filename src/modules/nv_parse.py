@@ -18,7 +18,7 @@ def read_nessus_file(filename):
 
 def handle_unkwon_banners(tree):
     root = tree.getroot()
-    with open("nv-unknown-banners.txt") as f:
+    with open("nv-unknown-banners.txt", "w") as f:
         for host in root.findall(".//Report/ReportHost"):
             host_ip = host.attrib['name']
             for item in host.findall(".//ReportItem"):
