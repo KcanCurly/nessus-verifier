@@ -2547,7 +2547,7 @@
   # 45477 - LDAP Group Enumeration
 
 - name: SNMP Info Enumeration/Disclosure
-  id: 56
+  id: 57
   should-group-total: false
   plugin-regex: []
   plugin-ids: [10969, 10800, 10551, 19763, 10550, 34022]

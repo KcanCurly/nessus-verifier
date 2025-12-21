@@ -333,23 +333,23 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                         plugin_output = get_plugin_output("SMB Use Host SID to Enumerate Local Users Without Credentials", z)
                         matches = re.findall(pattern, plugin_output) # type: ignore
                         for m in matches:
-                            print(f"            {m}", file=f)
+                            m = m.strip()
+                            if not m == "":
+                                print(f"            {m}", file=f)
                     elif key == "SMB Use Domain SID to Enumerate Users":
                         pattern = r"- .*"
                         plugin_output = get_plugin_output("SMB Use Domain SID to Enumerate Users", z)
                         matches = re.findall(pattern, plugin_output) # type: ignore
                         for m in matches:
-                            print(f"            {m}", file=f)
+                            m = m.strip()
+                            if not m == "":
+                                print(f"            {m}", file=f)
                     elif key == "DNS Server Zone Transfer Information Disclosure (AXFR)":
                         plugin_output = get_plugin_output("DNS Server Zone Transfer Information Disclosure (AXFR)", z)
                         for m in plugin_output.splitlines(): # type: ignore
-                            print(f"            {m}", file=f)
-                    elif key == "LDAP &apos;Domain Admins&apos; Group Membership Enumeration":
-                        pattern = r"\| .*"
-                        plugin_output = get_plugin_output("LDAP &apos;Domain Admins&apos; Group Membership Enumeration", z)
-                        matches = re.findall(pattern, plugin_output) # type: ignore
-                        for m in matches:
-                            print(f"            {m}", file=f)
+                            m = m.strip()
+                            if not m == "":
+                                print(f"            {m}", file=f)
                     elif key == "LDAP 'Domain Admins' Group Membership Enumeration":
                         pattern = r"\| .*"
                         plugin_output = get_plugin_output("LDAP 'Domain Admins' Group Membership Enumeration", z)
@@ -367,37 +367,49 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                         plugin_output = get_plugin_output("SNMP Request Cisco Router Information Disclosure", z)
                         matches = plugin_output.splitlines() # type: ignore
                         for m in matches:
-                            print(f"            {m.strip()}", file=f)
+                            m = m.strip()
+                            if not m == "":
+                                print(f"            {m}", file=f)
                     elif key == "SNMP Query System Information Disclosure":
                         pattern = r"\| .*"
                         plugin_output = get_plugin_output("SNMP Query System Information Disclosure", z)
                         matches = plugin_output.splitlines() # type: ignore
                         for m in matches:
-                            print(f"            {m.strip()}", file=f)
+                            m = m.strip()
+                            if not m == "":
+                                print(f"            {m}", file=f)
                     elif key == "SNMP Request Network Interfaces Enumeration":
                         pattern = r"\| .*"
                         plugin_output = get_plugin_output("SNMP Request Network Interfaces Enumeration", z)
                         matches = plugin_output.splitlines() # type: ignore
                         for m in matches:
-                            print(f"            {m.strip()}", file=f)
+                            m = m.strip()
+                            if not m == "":
+                                print(f"            {m}", file=f)
                     elif key == "SNMP Query Installed Software Disclosure":
                         pattern = r"\| .*"
                         plugin_output = get_plugin_output("SNMP Query Installed Software Disclosure", z)
                         matches = plugin_output.splitlines() # type: ignore
                         for m in matches:
-                            print(f"            {m.strip()}", file=f)
+                            m = m.strip()
+                            if not m == "":
+                                print(f"            {m}", file=f)
                     elif key == "SNMP Query Running Process List Disclosure":
                         pattern = r"\| .*"
                         plugin_output = get_plugin_output("SNMP Query Running Process List Disclosure", z)
                         matches = plugin_output.splitlines() # type: ignore
                         for m in matches:
-                            print(f"            {m.strip()}", file=f)
+                            m = m.strip()
+                            if not m == "":
+                                print(f"            {m}", file=f)
                     elif key == "SNMP Query Routing Information Disclosure":
                         pattern = r"\| .*"
                         plugin_output = get_plugin_output("SNMP Query Routing Information Disclosure", z)
                         matches = plugin_output.splitlines() # type: ignore
                         for m in matches:
-                            print(f"            {m.strip()}", file=f)
+                            m = m.strip()
+                            if not m == "":
+                                print(f"            {m}", file=f)
 
 
     with open(args.output_json_file, "w") as file:
