@@ -442,6 +442,13 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                             m = m.strip()
                             if not m == "":
                                 print(f"            {m}", file=f)
+                    elif key == "Web Server Unconfigured - Default Install Page Present":
+                        plugin_output = get_plugin_output("Web Server Unconfigured - Default Install Page Present", z)
+                        matches = plugin_output.splitlines() # type: ignore
+                        for m in matches:
+                            m = m.strip()
+                            if not m == "":
+                                print(f"            {m}", file=f)
 
 
     with open(args.output_json_file, "w") as file:
