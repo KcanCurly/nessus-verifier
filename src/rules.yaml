@@ -2500,6 +2500,20 @@
   plugin-ids: [11149]
   # 11149 - HTTP login page
 
+- name: Apache Multiviews Arbitrary Directory Listing
+  id: 51
+  should-group-total: false
+  plugin-regex: []
+  plugin-ids: [10704]
+  # 10704 - Apache Multiviews Arbitrary Directory Listing
+
+- name: HTTP Proxy CONNECT Request Relaying
+  id: 52
+  should-group-total: false
+  plugin-regex: []
+  plugin-ids: [10192]
+  # 10192 - Apache Multiviews Arbitrary Directory Listing
+
 - name: Microsoft Windows SMB (GENERIC)
   id: 50
   should-group-total: true
@@ -2539,7 +2553,8 @@
   186009, 159843, 14255, 121471, 129979, 53258, 92468, 39446, 1723, 186649, 106375, 25037,
   22269, 108953, 108804, 44394, 20301, 50577, 92842, 57396, 63061, 55930, 55929, 12295,
   11738, 62009, 97020, 46883, 136734, 173896, 105161, 31861, 35712, 35711, 177346, 26197,
-  161864, 109553, 62292, 58184, 36128, 100621]
+  161864, 109553, 62292, 58184, 36128, 100621, 50704, 40876, 142362, 10746, 202698, 30051
+  174748, 10051, 127859, 22318, 121396]
   # 161439 - ManageEngine PAM360 Detection
   # 155705 - QNAP QTS/QES/QuTS hero - Web Detection
   # 119775 - GPON ONT Home Gateway Router Detection
@@ -2603,3 +2618,14 @@
   # 58184 - HP Printer PJL Interface Detection
   # 36128 - HP LaserJet Printer Detection
   # 100621 - Oracle GoldenGate Manager Version Detection
+  # 50704 - Sybase PowerDesigner Repository Proxy Detection
+  # 40876 - Citrix Licensing Service Detection
+  # 142362 - Apache Cassandra CQL Shell Service Detection
+  # 10746 - HP System Management Homepage Detection
+  # 202698 - Ignite Realtime Openfire Admin Console Detection
+  # 30051 - Crystal Reports Central Management Server Detection
+  # 174748 - PaperCut NG Detection
+  # 10051 - CVS pserver Detection
+  # 127859 - Apache Nifi Web Interface Detection
+  # 22318 - HP OpenView BBC Service Detection
+  # 121396 - Oracle WebLogic Web Services Test Client Detection
