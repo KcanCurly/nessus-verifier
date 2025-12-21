@@ -317,10 +317,16 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                             print(f"            {s}", file=f)
                     elif key == "Multiple Mail Server EXPN/VRFY Information Disclosure":
                         plugin_output = get_plugin_output("Multiple Mail Server EXPN/VRFY Information Disclosure", z)
-                        print(plugin_output)
+                        lines = plugin_output.splitlines() # type: ignore
+                        for la in lines:
+                            if not la.startswith("Here"):
+                                print(f"            {la.strip()}", file=f)
                     elif key == "Apache Multiviews Arbitrary Directory Listing":
+                        pattern = r"https?://"
                         plugin_output = get_plugin_output("Apache Multiviews Arbitrary Directory Listing", z)
-                        print(plugin_output)
+                        match = re.search(pattern, plugin_output) # type: ignore
+                        if match:
+                            print(f"            {match.group()}", file=f)
                         
     with open(args.output_json_file, "w") as file:
         for v in l:
