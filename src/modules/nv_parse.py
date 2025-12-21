@@ -319,7 +319,7 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                         plugin_output = get_plugin_output("Multiple Mail Server EXPN/VRFY Information Disclosure", z)
                         lines = plugin_output.splitlines() # type: ignore
                         for la in lines:
-                            if not la.startswith("Here"):
+                            if not la.startswith("Here") or la.strip() == "":
                                 print(f"            {la.strip()}", file=f)
                     elif key == "Apache Multiviews Arbitrary Directory Listing":
                         pattern = r"https?://.*"
