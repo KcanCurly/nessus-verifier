@@ -2538,6 +2538,13 @@
   plugin-ids: [10595]
   # 10595 - DNS Server Zone Transfer Information Disclosure (AXFR)
 
+- name: LDAP Group Enumeration
+  id: 56
+  should-group-total: false
+  plugin-regex: []
+  plugin-ids: [58038, 45477]
+  # 58038 - LDAP 'Domain Admins' Group Membership Enumeration
+  # 45477 - LDAP Group Enumeration
 
 - name: Microsoft Windows SMB (GENERIC)
   id: 50
@@ -2580,7 +2587,13 @@
   11738, 62009, 97020, 46883, 136734, 173896, 105161, 31861, 35712, 35711, 177346, 26197,
   161864, 109553, 62292, 58184, 36128, 100621, 50704, 40876, 142362, 10746, 202698, 30051
   174748, 10051, 127859, 22318, 121396, 180021, 163498, 121434, 24326, 111549, 66318, 76257,
-  69445, 48434, 132871, 152197, 106628, 66233, 10666, 125311, 146928, 62117, 22228, 65892]
+  69445, 48434, 132871, 152197, 106628, 66233, 10666, 125311, 146928, 62117, 22228, 65892,
+  90764, 66269, 132584, 38157, 51922]
+  # 51922 - Apache CouchDB Detection
+  # 38157 - Microsoft SharePoint Server Detection
+  # 132584 - Palo Alto Expedition Web Detection
+  # 66269 - IBM Endpoint Manager Web Server Detection
+  # 90764 - VMware vRealize Automation Web UI Detection
   # 65892 - IBM InfoSphere Data Replication Dashboard Detection
   # 22228 - Informix Detection
   # 62117 - SolarWinds Orion Product Detection

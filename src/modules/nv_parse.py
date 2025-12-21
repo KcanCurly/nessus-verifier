@@ -344,6 +344,24 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                         plugin_output = get_plugin_output("DNS Server Zone Transfer Information Disclosure (AXFR)", z)
                         for m in plugin_output.splitlines(): # type: ignore
                             print(f"            {m}", file=f)
+                    elif key == "LDAP &apos;Domain Admins&apos; Group Membership Enumeration":
+                        pattern = r"\| .*"
+                        plugin_output = get_plugin_output("LDAP &apos;Domain Admins&apos; Group Membership Enumeration", z)
+                        matches = re.findall(pattern, plugin_output) # type: ignore
+                        for m in matches:
+                            print(f"            {m}", file=f)
+                    elif key == "LDAP &apos;Domain Admins&apos; Group Membership Enumeration":
+                        pattern = r"\| .*"
+                        plugin_output = get_plugin_output("LDAP &apos;Domain Admins&apos; Group Membership Enumeration", z)
+                        matches = re.findall(pattern, plugin_output) # type: ignore
+                        for m in matches:
+                            print(f"            {m}", file=f)
+                    elif key == "LDAP Group Enumeration":
+                        pattern = r"\| .*"
+                        plugin_output = get_plugin_output("LDAP Group Enumeration", z)
+                        matches = re.findall(pattern, plugin_output) # type: ignore
+                        for m in matches:
+                            print(f"            {m}", file=f)
                         
     with open(args.output_json_file, "w") as file:
         for v in l:
