@@ -129,7 +129,7 @@
   id: 7
   should-group-total: true
   plugin-regex: []
-  plugin-ids: [87733, 42263, 54582, 98615, 3018, 34324, 15854, 15855, 10891]
+  plugin-ids: [87733, 42263, 54582, 98615, 3018, 34324, 15854, 15855, 87736]
   # 87733 - AMQP Cleartext Authentication
   # 42263 - Unencrypted Telnet Server
   # 54582 - SMTP Service Cleartext Login Permitted
@@ -138,7 +138,7 @@
   # 34324 - FTP Supports Cleartext Authentication
   # 15854 - POP2 Cleartext Logins Permitted
   # 15855 - POP3 Cleartext Logins Permitted
-  # 10891 - X Display Manager Control Protocol (XDMCP) Detection
+  # 87736 - XMPP Cleartext Authentication
 
 - name: Terminal Services Misconfigurations
   id: 8
@@ -2557,6 +2557,13 @@
   # 19763 - SNMP Query Installed Software Disclosure
   # 10550 - SNMP Query Running Process List Disclosure
   # 34022 - SNMP Query Routing Information Disclosure
+
+- name: Web Server Crafted Request Vendor/Version Information Disclosure
+  id: 58
+  should-group-total: false
+  plugin-regex: []
+  plugin-ids: [11239]
+  # 11239 - Web Server Crafted Request Vendor/Version Information Disclosure
 
 - name: Microsoft Windows SMB (GENERIC)
   id: 50

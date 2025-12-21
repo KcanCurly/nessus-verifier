@@ -363,7 +363,6 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                         for m in matches:
                             print(f"            {m}", file=f)
                     elif key == "SNMP Request Cisco Router Information Disclosure":
-                        pattern = r"\| .*"
                         plugin_output = get_plugin_output("SNMP Request Cisco Router Information Disclosure", z)
                         matches = plugin_output.splitlines() # type: ignore
                         for m in matches:
@@ -371,7 +370,6 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                             if not m == "":
                                 print(f"            {m}", file=f)
                     elif key == "SNMP Query System Information Disclosure":
-                        pattern = r"\| .*"
                         plugin_output = get_plugin_output("SNMP Query System Information Disclosure", z)
                         matches = plugin_output.splitlines() # type: ignore
                         for m in matches:
@@ -379,7 +377,6 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                             if not m == "":
                                 print(f"            {m}", file=f)
                     elif key == "SNMP Request Network Interfaces Enumeration":
-                        pattern = r"\| .*"
                         plugin_output = get_plugin_output("SNMP Request Network Interfaces Enumeration", z)
                         matches = plugin_output.splitlines() # type: ignore
                         for m in matches:
@@ -387,7 +384,6 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                             if not m == "":
                                 print(f"            {m}", file=f)
                     elif key == "SNMP Query Installed Software Disclosure":
-                        pattern = r"\| .*"
                         plugin_output = get_plugin_output("SNMP Query Installed Software Disclosure", z)
                         matches = plugin_output.splitlines() # type: ignore
                         for m in matches:
@@ -395,7 +391,6 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                             if not m == "":
                                 print(f"            {m}", file=f)
                     elif key == "SNMP Query Running Process List Disclosure":
-                        pattern = r"\| .*"
                         plugin_output = get_plugin_output("SNMP Query Running Process List Disclosure", z)
                         matches = plugin_output.splitlines() # type: ignore
                         for m in matches:
@@ -403,13 +398,22 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                             if not m == "":
                                 print(f"            {m}", file=f)
                     elif key == "SNMP Query Routing Information Disclosure":
-                        pattern = r"\| .*"
                         plugin_output = get_plugin_output("SNMP Query Routing Information Disclosure", z)
                         matches = plugin_output.splitlines() # type: ignore
                         for m in matches:
                             m = m.strip()
                             if not m == "":
                                 print(f"            {m}", file=f)
+                    elif key == "Web Server Crafted Request Vendor/Version Information Disclosure":
+                        plugin_output = get_plugin_output("Web Server Crafted Request Vendor/Version Information Disclosure", z)
+                        matches = plugin_output.splitlines() # type: ignore
+                        zz = False
+                        for m in matches:
+                            m = m.strip()
+                            if zz:
+                                print(f"            {m}", file=f)
+                            if m.startswith("Nessus was able to gather the following information from the web server"):
+                                zz = True
 
 
     with open(args.output_json_file, "w") as file:
