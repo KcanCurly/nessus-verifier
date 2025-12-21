@@ -21,6 +21,7 @@ class SMBSolverClass(BaseSolverClass):
         if hosts: 
             SMBNullSessionSubServiceClass().nv(self.hosts, threads=args.threads, timeout=args.timeout, errors=args.errors, verbose=args.verbose, output=self.output)
         hosts = self.subhosts.get("Microsoft Windows SMBv1 Multiple Vulnerabilities", [])
+        hosts = hosts + self.subhosts.get("Server Message Block (SMB) Protocol Version 1 Enabled (uncredentialed check)", [])
         if hosts: 
             SMBv1SubServiceClass().nv(self.hosts, threads=args.threads, timeout=args.timeout, errors=args.errors, verbose=args.verbose, output=self.output)
         self.create_windowcatcher_action()

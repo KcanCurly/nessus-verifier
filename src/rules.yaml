@@ -44,7 +44,8 @@
   should-group-total: true
   plugin-regex: []
   plugin-ids: [20007, 104743, 157288, 31705, 66848, 26928, 94437, 65821, 42873, 83738, 
-  81606, 7282, 132675, 7222, 45411, 35291, 69551, 15901, 78479, 83875, 91572, 60108, 42880]
+  81606, 7282, 132675, 7222, 45411, 35291, 69551, 15901, 78479, 83875, 91572, 60108, 42880,
+  53360]
   # 42880 - SSL / TLS Renegotiation Handshakes MiTM Plaintext Data Injection
   # 60108 - SSL Certificate Chain Contains Weak RSA Keys
   # 91572 - OpenSSL AES-NI Padding Oracle MitM Information Disclosure
@@ -68,6 +69,7 @@
   # 15901 - SSL Certificate Expiry
   # 78479 - SSLv3 Padding Oracle On Downgraded Legacy Encryption Vulnerability (POODLE)
   # 83875 - SSL/TLS Diffie-Hellman Modulus <= 1024 Bits (Logjam)
+  # 53360 - SSL Server Accepts Weak Diffie-Hellman Keys
 
 - name: SMTP - Open Relay
   id: 2
@@ -105,10 +107,11 @@
   id: 5
   should-group-total: true
   plugin-regex: []
-  plugin-ids: [57608, 26920, 100464]
+  plugin-ids: [57608, 26920, 100464, 96982]
   # 57608 - SMB Signing not required
   # 26920 - SMB NULL Session Authentication
   # 100464 - Microsoft Windows SMBv1 Multiple Vulnerabilities
+  # 96982 - Server Message Block (SMB) Protocol Version 1 Enabled (uncredentialed check)
 
 - name: SNMP Service Misconfigurations
   id: 6
@@ -2490,6 +2493,13 @@
   plugin-ids: [35371]
   # 35371 - DNS Server Version Detection
 
+- name: HTTP login page
+  id: 50
+  should-group-total: false
+  plugin-regex: []
+  plugin-ids: [11149]
+  # 11149 - HTTP login page
+
 - name: Microsoft Windows SMB (GENERIC)
   id: 50
   should-group-total: true
@@ -2526,7 +2536,10 @@
   plugin-regex: []
   plugin-ids: [161439, 155705, 119775, 17367, 189514, 160218, 35786, 152484, 214333,
   76054, 185163, 71495, 104660, 215121, 208080, 10757, 63692, 29222, 49069, 91340, 47619,
-  186009, 159843, 14255, 121471, 129979, 53258, 92468, 39446, 1723, 186649, 106375]
+  186009, 159843, 14255, 121471, 129979, 53258, 92468, 39446, 1723, 186649, 106375, 25037,
+  22269, 108953, 108804, 44394, 20301, 50577, 92842, 57396, 63061, 55930, 55929, 12295,
+  11738, 62009, 97020, 46883, 136734, 173896, 105161, 31861, 35712, 35711, 177346, 26197,
+  161864, 109553, 62292, 58184, 36128, 100621]
   # 161439 - ManageEngine PAM360 Detection
   # 155705 - QNAP QTS/QES/QuTS hero - Web Detection
   # 119775 - GPON ONT Home Gateway Router Detection
@@ -2559,3 +2572,34 @@
   # 1723 - Apache Web Server Detection
   # 186649 - Apache ActiveMQ Detection
   # 106375 - nginx HTTP Server Detection
+  # 25037 - Printer Job Language (PJL) Detection
+  # 22269 - Firebird / InterBase Database Server Detection
+  # 108953 - CyberArk Password Vault Web Access Detection
+  # 108804 - Microsoft Exchange Server Detection (Uncredentialed)
+  # 44394 - IBM Tivoli Monitoring Service Console Detection
+  # 20301 - VMware ESX/GSX Server detection
+  # 50577 - Ricoh Printer Detection
+  # 92842 - VMware Aria Operations for Logs Web UI Detection
+  # 57396 - VMware vSphere Detect
+  # 63061 - VMware vCenter Detect
+  # 55930 - Oracle GlassFish HTTP Server Version
+  # 55929 - Oracle GlassFish Server Administration Console
+  # 12295 - Dell OpenManage Server Administrator Detection
+  # 11738 - RADIUS Server Detection
+  # 62009 - Symantec Messaging Gateway Detection
+  # 97020 - IBM DataPower Gateway Detection
+  # 46883 - Beanstalkd Detection
+  # 136734 - SaltStack Salt Master Detection
+  # 173896 - Cacti Detection
+  # 105161 - Cisco Smart Install Detection
+  # 31861 - Symantec Storage Foundation Scheduler Service Detection
+  # 35712 - Web Server UPnP Detection
+  # 35711 - Universal Plug and Play (UPnP) Protocol Detection
+  # 177346 - VMware Aria Operations For Networks Web Interface Detection
+  # 26197 - memcached Detection
+  # 161864 - VMware Cloud Foundation Web Detection
+  # 109553 - Oracle WebLogic HTTP Detection
+  # 62292 - SAP Control SOAP Web Service Detection
+  # 58184 - HP Printer PJL Interface Detection
+  # 36128 - HP LaserJet Printer Detection
+  # 100621 - Oracle GoldenGate Manager Version Detection

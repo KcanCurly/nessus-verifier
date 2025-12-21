@@ -315,6 +315,9 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                         sections = plugin_output.split("|") # type: ignore
                         for s in sections:
                             print(f"            {s}", file=f)
+                    elif key == "Multiple Mail Server EXPN/VRFY Information Disclosure":
+                        plugin_output = get_plugin_output("Multiple Mail Server EXPN/VRFY Information Disclosure", z)
+                        print(plugin_output)
                         
     with open(args.output_json_file, "w") as file:
         for v in l:
