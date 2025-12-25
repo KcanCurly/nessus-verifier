@@ -475,6 +475,7 @@ def main():
     parser = argparse.ArgumentParser(description="nessus-verifier.")
     parser.add_argument("-f", "--file", type=str, required=True, help="Path to a Nessus file.")
     parser.add_argument('--severity0', action="store_true", help='Parse serverity 0 findings.')
+    parser.add_argument('--write-unknown-banners', action="store_true", help='Writes unknown banners plugin output to a file.')
     parser.add_argument('--skip-ignored', action="store_true", help='Do not write ignored vulnerabilities to txt output.')
     parser.add_argument('-o', '--output-file', type=str, required=False, default="output.txt", help='Vulnerability Groups output file name txt (Default: output.txt).')
     parser.add_argument('-oj', '--output-json-file', type=str, required=False, default="output.ndjson", help='Vulnerability Groups output file name json (Default: output.ndjson).')
@@ -505,4 +506,5 @@ def main():
     output = parse_nessus_output(tree)
     rules = group_up(output, args.severity0)
     write_to_file(rules, args)
-    handle_unkwon_banners(tree)
+    if args.write_unknown_banners:
+        handle_unkwon_banners(tree)

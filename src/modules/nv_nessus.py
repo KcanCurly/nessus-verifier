@@ -3,6 +3,7 @@ import argparse, argcomplete
 import copy
 import xml.etree.ElementTree as ET
 import cidr_man
+from openpyxl import Workbook
 
 def filter_nessus(args):
     input_file = args.file
@@ -77,6 +78,31 @@ def split(args):
             encoding="utf-8",
         )
 
+def portreport(args):
+    input_file = args.file
+
+    tree = ET.parse(input_file)
+    root = tree.getroot()
+
+    wb = Workbook()
+    wb.create_sheet("portScanData")
+    ws = wb["portScanData"]
+    ws.append(["IP Address", "Protocol", "Port", "Sevice Name"])
+
+    for host in root.findall(".//Report/ReportHost"):
+        host_ip = host.attrib['name']  # Extract the host IP
+        for item in host.findall(".//ReportItem"):
+            service_name = item.attrib.get('svc_name', '').lower()
+            port = item.attrib.get('port', 0)
+            protocol = item.attrib.get('protocol')
+
+            if not port: # Skip port 0
+                continue
+            if service_name == "general":
+                continue
+
+            ws.append([host_ip, protocol, port, service_name])
+
 
 def main():
     parser = argparse.ArgumentParser(description="Nessus Module")
@@ -96,8 +122,9 @@ def main():
     p2.set_defaults(func=split)
 
     # Command 3
-    #p3 = subparsers.add_parser("three", help="Run command three")
-    #p3.set_defaults(func=cmd_three)
+    p3 = subparsers.add_parser("portreport", help="Port Report")
+    p3.add_argument("-f", "--file", required=True, help="Input .nessus file")
+    p3.set_defaults(func=portreport)
 
     args = parser.parse_args()
     argcomplete.autocomplete(parser)
