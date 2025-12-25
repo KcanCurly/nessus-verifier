@@ -69,7 +69,7 @@ def split(args):
             index = len(new_roots) - 1
         new_roots[index].find(".//Report").append(host) # type: ignore
 
-    new_name = input_file.remove(".nessus")
+    new_name = input_file.replace(".nessus", "")
 
     for i, root in enumerate(new_roots):
         ET.ElementTree(root).write(
