@@ -316,7 +316,7 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                             print(f"            {p}", file=f)
                     elif key == "Web Server robots.txt Information Disclosure":
                         plugin_output = get_plugin_output("Web Server robots.txt Information Disclosure", z)
-                        plugin_output_s = plugin_output.split() # type: ignore
+                        plugin_output_s = plugin_output.splitlines() # type: ignore
                         print(f"            {plugin_output_s}", file=f)
                     elif key == "Backup Files Disclosure":
                         plugin_output = get_plugin_output("Backup Files Disclosure", z)
