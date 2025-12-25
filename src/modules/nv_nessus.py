@@ -65,8 +65,8 @@ def split(args):
     for i, host in enumerate(report.findall("ReportHost")): # type: ignore
         i += 1
         index = i // magic_number
-        if index > len(new_roots):
-            index = len(new_roots)
+        if index > len(new_roots) - 1:
+            index = len(new_roots) - 1
         new_roots[index].find(".//Report").append(host) # type: ignore
 
     for i, root in enumerate(new_roots):
