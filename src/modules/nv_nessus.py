@@ -102,6 +102,7 @@ def portreport(args):
                 continue
 
             ws.append([host_ip, protocol, port, service_name])
+    wb.save("portreport.xlsx")
 
 
 def main():
