@@ -5,8 +5,8 @@ import xml.etree.ElementTree as ET
 import cidr_man
 
 def filter_nessus(args):
-    input_file = args.input_file
-    output_file = args.output_file
+    input_file = args.file
+    output_file = args.output
     include = args.include
     exclude = args.exclude
     # Parse Nessus XML
@@ -38,7 +38,7 @@ def filter_nessus(args):
     tree.write(output_file, encoding="utf-8", xml_declaration=True)
 
 def split(args):
-    input_file = args.input_file
+    input_file = args.file
     n = args.number
 
 
