@@ -90,7 +90,7 @@ def main():
     # Command 2
     p2 = subparsers.add_parser("split", help="Splits the nessus file evenly across multiple files")
     p2.add_argument("-f", "--file", required=True, help="Input .nessus file")
-    p2.add_argument("-n", "--number", required=True, help="Number of files")
+    p2.add_argument("-n", "--number", type=int, required=True, help="Number of files")
     p2.set_defaults(func=split)
 
     # Command 3
