@@ -1,10 +1,14 @@
 #!/usr/bin/env python3
 import argparse, argcomplete
+import copy
 import xml.etree.ElementTree as ET
-
 import cidr_man
 
-def filter_nessus(input_file, output_file, include, exclude):
+def filter_nessus(args):
+    input_file = args.input_file
+    output_file = args.output_file
+    include = args.include
+    exclude = args.exclude
     # Parse Nessus XML
     tree = ET.parse(input_file)
     root = tree.getroot()
@@ -33,27 +37,69 @@ def filter_nessus(input_file, output_file, include, exclude):
     # Save filtered Nessus file
     tree.write(output_file, encoding="utf-8", xml_declaration=True)
 
+def split(args):
+    input_file = args.input_file
+    n = args.number
+
+
+    # Parse Nessus XML
+    tree = ET.parse(input_file)
+    root = tree.getroot()
+
+    # Find <Report> block
+    report = root.find("Report")
+    count  = len(report.findall("ReportHost")) # type: ignore
+    magic_number = count // n
+
+    new_root = copy.deepcopy(root)
+
+    new_report = new_root.find(".//Report")
+
+    # Remove all hosts
+    for rh in new_report.findall("ReportHost"): # type: ignore
+        new_report.remove(rh) # type: ignore
+
+    new_roots = [copy.deepcopy(new_root) for _ in range(0, n)]
+
+
+    for i, host in enumerate(report.findall("ReportHost")): # type: ignore
+        i += 1
+        index = i // magic_number
+        if index > len(new_roots):
+            index = len(new_roots)
+        new_roots[index].find(".//Report").append(host) # type: ignore
+
+    for i, root in enumerate(new_roots):
+        ET.ElementTree(root).write(
+            input_file + "_s" + i,
+            encoding="utf-8",
+        )
+
+
 def main():
-    parser = argparse.ArgumentParser(description="Filter Nessus file by subnets")
-    parser.add_argument("-f", "--file", required=True, help="Input .nessus file")
-    parser.add_argument("-o", "--output", required=True, help="Output .nessus file")
-    parser.add_argument('--include-list', type=str, required=False, help='Only process IPs that is in the given file.')
-    parser.add_argument('--exclude-list', type=str, required=False, help='Only process IPs that is NOT in the given file.')
+    parser = argparse.ArgumentParser(description="Nessus ModuleFilter Nessus file by subnets")
+    subparsers = parser.add_subparsers(dest="command", required=True)
+    # Command 1
+    p1 = subparsers.add_parser("filter", help="Filters nessus file according to include")
+    p1.add_argument("-f", "--file", required=True, help="Input .nessus file")
+    p1.add_argument("-o", "--output", required=True, help="Output .nessus file")
+    p1.add_argument("-i", '--include', type=str, required=False, help='Only process IPs that is in the given file.')
+    p1.add_argument("-e", '--exclude', type=str, required=False, help='Only process IPs that is NOT in the given file.')
+    p1.set_defaults(func=filter_nessus)
+
+    # Command 2
+    p2 = subparsers.add_parser("split", help="Splits the nessus file evenly across multiple files")
+    p1.add_argument("-f", "--file", required=True, help="Input .nessus file")
+    p2.add_argument("-n", "--number", required=True, help="Number of files")
+    p2.set_defaults(func=split)
+
+    # Command 3
+    #p3 = subparsers.add_parser("three", help="Run command three")
+    #p3.set_defaults(func=cmd_three)
+
     args = parser.parse_args()
     argcomplete.autocomplete(parser)
-
-    include = None
-    exclude = None
-
-    if args.include_list:
-        with open(args.include_list, "r") as f:
-            include = [cidr_man.CIDR(i) for i in f]
-
-    if args.exclude_list:
-        with open(args.exclude_list, "r") as f:
-            exclude = [cidr_man.CIDR(i) for i in f]
-
-    filter_nessus(args.file, args.output, include, exclude)
+    args.func(args)
 
 if __name__ == "__main__":
     main()

@@ -43,6 +43,7 @@ setup(
         "pika",
         "xmpppy",
         "jmxquery",
+        "openpyxl",
     ],
     classifiers=[
         "Programming Language :: Python :: 3",
