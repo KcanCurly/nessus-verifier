@@ -87,6 +87,7 @@ def portreport(args):
     h = {}
 
     wb = Workbook()
+    wb.remove(wb.active) # type: ignore
     wb.create_sheet("portScanData")
     ws = wb["portScanData"]
     ws.append(["IP Address", "Protocol", "Port", "Sevice Name"])
