@@ -84,6 +84,8 @@ def portreport(args):
     tree = ET.parse(input_file)
     root = tree.getroot()
 
+    h = {}
+
     wb = Workbook()
     wb.create_sheet("portScanData")
     ws = wb["portScanData"]
@@ -100,8 +102,12 @@ def portreport(args):
                 continue
             if service_name == "general":
                 continue
+            if host_ip not in h:
+                h[host_ip] = set()
+            if not port in h[host_ip]:
+                ws.append([host_ip, protocol, port, service_name])
+                h[host_ip].add(port)
 
-            ws.append([host_ip, protocol, port, service_name])
     wb.save("portreport.xlsx")
 
 
