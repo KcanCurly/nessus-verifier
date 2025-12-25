@@ -77,7 +77,7 @@ def split(args):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Nessus ModuleFilter Nessus file by subnets")
+    parser = argparse.ArgumentParser(description="Nessus Module")
     subparsers = parser.add_subparsers(dest="command", required=True)
     # Command 1
     p1 = subparsers.add_parser("filter", help="Filters nessus file according to include")
