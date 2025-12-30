@@ -44,7 +44,6 @@ setup(
         "xmpppy",
         "jmxquery",
         "openpyxl",
-        "pyejabberd",
     ],
     classifiers=[
         "Programming Language :: Python :: 3",

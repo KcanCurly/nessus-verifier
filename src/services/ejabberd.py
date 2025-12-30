@@ -2,8 +2,6 @@ import i18n
 from src.utilities.utilities import get_default_context_execution2, error_handler
 from src.services.serviceclass import BaseServiceClass
 from src.services.servicesubclass import BaseSubServiceClass
-from traceback import print_exc
-from pyejabberd import EjabberdAPIClient
 import xmpp
 
 class EjabberdBruteforceDomainSubServiceClass(BaseSubServiceClass):
