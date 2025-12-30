@@ -593,11 +593,8 @@ def check_basic_auth(resp):
         (requires_auth: bool)
     """
     try:
-        if resp.status_code == 401:
-            # Check for WWW-Authenticate header
-            www_auth = resp.headers.get("WWW-Authenticate", "")
-            if www_auth:
-                return True
+        if resp.status_code == 401 and resp.headers.get("WWW-Authenticate", ""):
+            return True
         else:
             return False
     except Exception as e:
