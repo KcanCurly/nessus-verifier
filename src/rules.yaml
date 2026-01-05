@@ -3,7 +3,7 @@
   should-group-total: false
   plugin-regex: []
   plugin-ids: [142960, 10114, 34850, 51192, 12085, 11213, 98048, 136929, 
-  57582, 24244, 10759, 12224, 18391, 44135, 85582, 42057, 26194,
+  57582, 24244, 10759, 12224, 18391, 44135, 85582, 42057, 26194, 45411,
   10407, 10263, 10437, 33270, 58363]
   # 58363 - IIS Detailed Error Information Disclosure
   # 33270 - ASP.NET DEBUG Method Enabled
@@ -27,6 +27,7 @@
   # 42057 - Web Server Allows Password Auto-Completion
   # 26194 - Web Server Transmits Cleartext Credentials
   # 10407 - X Server Detection
+  # 45411 - SSL Certificate with Wrong Hostname
 
 - name: Actionables
   id: 0
@@ -44,7 +45,7 @@
   should-group-total: true
   plugin-regex: []
   plugin-ids: [20007, 104743, 157288, 31705, 66848, 26928, 94437, 65821, 42873, 83738, 
-  81606, 7282, 132675, 7222, 45411, 35291, 69551, 15901, 78479, 83875, 91572, 60108, 42880,
+  81606, 7282, 132675, 7222, 35291, 69551, 15901, 78479, 83875, 91572, 60108, 42880,
   53360, 89058, 95631]
   # 42880 - SSL / TLS Renegotiation Handshakes MiTM Plaintext Data Injection
   # 60108 - SSL Certificate Chain Contains Weak RSA Keys
@@ -63,7 +64,6 @@
   # 7282 - SSL RC4 Cipher Suites Supported (Bar Mitzvah)
   # 132675 - SSL/TLS Deprecated Ciphers Unsupported
   # 7222 - SSL 64-bit Block Size Cipher Suites Supported (SWEET32)
-  # 45411 - SSL Certificate with Wrong Hostname
   # 35291 - SSL Certificate Signed Using Weak Hashing Algorithm
   # 69551 - SSL Certificate Chain Contains RSA Keys Less Than 2048 bits
   # 15901 - SSL Certificate Expiry
@@ -2636,7 +2636,8 @@
   161864, 109553, 62292, 58184, 36128, 100621, 50704, 40876, 142362, 10746, 202698, 30051,
   174748, 10051, 127859, 22318, 121396, 180021, 163498, 121434, 24326, 111549, 66318, 76257,
   69445, 48434, 132871, 152197, 106628, 66233, 10666, 125311, 146928, 62117, 22228, 65892,
-  90764, 66269, 132584, 38157, 51922, 92725, 71843, 109943, 49692, 146273, 57034]
+  90764, 66269, 132584, 38157, 51922, 92725, 71843, 109943, 49692, 146273, 57034, 278501]
+  # 278501 - Smartbedded Meteobridge Web Detection
   # 57034 - IBM WebSphere Application Server Detection
   # 146273 - SAP BusinessObjects Business Intelligence Platform Web Detection
   # 49692 - Squid Proxy Version Detection

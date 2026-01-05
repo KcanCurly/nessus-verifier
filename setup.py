@@ -44,6 +44,7 @@ setup(
         "xmpppy",
         "jmxquery",
         "openpyxl",
+        "oracledb",
     ],
     classifiers=[
         "Programming Language :: Python :: 3",
