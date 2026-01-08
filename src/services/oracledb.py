@@ -26,9 +26,18 @@ class OracleDBMiniShellSubServiceClass(BaseSubServiceClass):
 
         with oracledb.connect(user=username, password=password, dsn=cs) as connection:
             with connection.cursor() as cursor:
-                sql = "SELECT * FROM user_tab_privs "
-                for r in cursor.execute(sql):
-                    print(r)
+                exit = False
+                while not exit:
+                    command = input("oracledb-mini-shell> ")
+                    if command.lower() in ["exit", "quit"]:
+                        exit = True
+                        continue
+                    else:
+                        try:
+                            for r in cursor.execute(command):
+                                print(r)
+                        except Exception as e:
+                            print(f"Error executing command: {e}")
 
 class OracleDBServiceClass(BaseServiceClass):
     def __init__(self) -> None:

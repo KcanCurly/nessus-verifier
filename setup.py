@@ -45,6 +45,7 @@ setup(
         "jmxquery",
         "openpyxl",
         "oracledb",
+        "prompt_toolkit",
     ],
     classifiers=[
         "Programming Language :: Python :: 3",
