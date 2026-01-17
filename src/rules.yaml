@@ -2289,13 +2289,14 @@
   id: 33
   should-group-total: false
   plugin-regex: []
-  plugin-ids: [10815, 44136, 39466, 49067, 55903, 47831]
+  plugin-ids: [10815, 44136, 39466, 49067, 55903, 47831, 47830]
   # 55903 - CGI Generic XSS (extended patterns)
   # 10815 - Web Server Generic XSS
   # 44136 - CGI Generic Cookie Injection Scripting
   # 39466 - CGI Generic XSS (quick test)
   # 49067 - CGI Generic HTML Injections (quick test)
   # 47831 - CGI Generic XSS (comprehensive test)
+  # 47830 - CGI Generic Injectable Parameter
 
 - name: Web/CGI Actionable
   id: 34
@@ -2587,6 +2588,13 @@
   plugin-ids: [11422]
   # 11422 - Web Server Unconfigured - Default Install Page Present
 
+- name: HTTP Server Type and Version
+  id: 62
+  should-group-total: false
+  plugin-regex: []
+  plugin-ids: [10107]
+  # 10107 - HTTP Server Type and Version
+
 - name: Apple Mac OS X Find-By-Content .DS_Store Web Directory Listing
   id: 59
   should-group-total: false
@@ -2595,7 +2603,7 @@
   # 10756 - Apple Mac OS X Find-By-Content .DS_Store Web Directory Listing
 
 - name: Microsoft Windows SMB (GENERIC)
-  id: 50
+  id: 999995
   should-group-total: true
   plugin-regex: ["^Microsoft Windows SMB"]
   plugin-ids: []
@@ -2624,7 +2632,7 @@
   plugin-regex: ["^(s|S)plunk (e|E)nterprise"]
   plugin-ids: []
 
-- name: Application Detection
+- name: Service/Application Detection
   id: 1000000
   should-group-total: false
   plugin-regex: []
@@ -2636,7 +2644,15 @@
   161864, 109553, 62292, 58184, 36128, 100621, 50704, 40876, 142362, 10746, 202698, 30051,
   174748, 10051, 127859, 22318, 121396, 180021, 163498, 121434, 24326, 111549, 66318, 76257,
   69445, 48434, 132871, 152197, 106628, 66233, 10666, 125311, 146928, 62117, 22228, 65892,
-  90764, 66269, 132584, 38157, 51922, 92725, 71843, 109943, 49692, 146273, 57034, 278501]
+  90764, 66269, 132584, 38157, 51922, 92725, 71843, 109943, 49692, 146273, 57034, 278501,
+  61645, 160470, 22073, 10719, 26024, 10092, 109552]
+  # 109552 - Oracle WebLogic T3 Protocol Detection
+  # 10092 - FTP Server Detection
+  # 22073 - Oracle Database Detection
+  # 10719 - MySQL Server Detection
+  # 26024 - PostgreSQL Server Detection
+  # 160470 - Trend Micro Apex One Management Web Console Detection
+  # 61645 - Oracle Integrated Lights Out Manager Web Detection
   # 278501 - Smartbedded Meteobridge Web Detection
   # 57034 - IBM WebSphere Application Server Detection
   # 146273 - SAP BusinessObjects Business Intelligence Platform Web Detection
