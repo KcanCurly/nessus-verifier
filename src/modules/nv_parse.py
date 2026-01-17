@@ -469,7 +469,8 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                         matches = re.findall(pattern, plugin_output) # type: ignore
                         for m in matches:
                             m = m.strip()
-                            print(f"            {m}", file=f)
+                            if not m.startswith("URL"):
+                                print(f"            {m}", file=f)
 
 
     with open(args.output_json_file, "w") as file:
