@@ -478,9 +478,7 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                             print(f"            {m}", file=f)
                     elif key == "HTTP Server Type and Version":
                         plugin_output = get_plugin_output("HTTP Server Type and Version", z)
-                        for m in plugin_output.splitlines(): # type: ignore
-                            m = m.strip()
-                            print(f"            {m}", file=f)
+                        print(f"            {plugin_output.splitlines()[2]}", file=f)  # type: ignore
 
 
     with open(args.output_json_file, "w") as file:
