@@ -473,9 +473,7 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                                 print(f"            {m}", file=f)
                     elif key == "LDAP Crafted Search Request Server Information Disclosure":
                         plugin_output = get_plugin_output("LDAP Crafted Search Request Server Information Disclosure", z)
-                        pattern = r"\| (.*)"
-                        matches = re.findall(pattern, plugin_output) # type: ignore
-                        for m in matches:
+                        for m in plugin_output.splitlines(): # type: ignore
                             m = m.strip()
                             print(f"            {m}", file=f)
                     elif key == "HTTP Server Type and Version":

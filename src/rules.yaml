@@ -2595,6 +2595,13 @@
   plugin-ids: [10107]
   # 10107 - HTTP Server Type and Version
 
+- name: LDAP Crafted Search Request Server Information Disclosure
+  id: 63
+  should-group-total: false
+  plugin-regex: []
+  plugin-ids: [25701]
+  # 25701 - LDAP Crafted Search Request Server Information Disclosure
+
 - name: Apple Mac OS X Find-By-Content .DS_Store Web Directory Listing
   id: 59
   should-group-total: false
