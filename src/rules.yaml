@@ -2652,7 +2652,24 @@
   174748, 10051, 127859, 22318, 121396, 180021, 163498, 121434, 24326, 111549, 66318, 76257,
   69445, 48434, 132871, 152197, 106628, 66233, 10666, 125311, 146928, 62117, 22228, 65892,
   90764, 66269, 132584, 38157, 51922, 92725, 71843, 109943, 49692, 146273, 57034, 278501,
-  61645, 160470, 22073, 10719, 26024, 10092, 109552, 50845]
+  61645, 160470, 22073, 10719, 26024, 10092, 109552, 50845, 11935, 185519, 10940, 33139,
+  10829, 20870, 10761, 10884, 11002, 100635, 174933, 22319, 106658, 122364, 10342, 42255]
+  # 42255 - NFS Server Superfluous
+  # 10342 - VNC Software Detection
+  # 122364 - Python Remote HTTP Detection
+  # 106658 - JQuery Detection
+  # 22319 - MSRPC Service Detection
+  # 174933 - Microsoft Message Queuing Detection
+  # 100635 - Redis Server Detection
+  # 11002 - DNS Server Detection
+  # 10884 - Network Time Protocol (NTP) Server Detection
+  # 10761 - COM+ Internet Services (CIS) Server Detection
+  # 20870 - LDAP Server Detection
+  # 10829 - UPnP Client Detection
+  # 33139 - WS-Management Server Detection
+  # 10940 - Remote Desktop Protocol Service Detection
+  # 185519 - SNMP Server Detection
+  # 11935 - IPSEC Internet Key Exchange (IKE) Version 1 Detection
   # 50845 - OpenSSL Detection
   # 109552 - Oracle WebLogic T3 Protocol Detection
   # 10092 - FTP Server Detection
