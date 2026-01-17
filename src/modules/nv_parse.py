@@ -476,14 +476,14 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                         pattern = r"\| (.*)"
                         matches = re.findall(pattern, plugin_output) # type: ignore
                         for m in matches:
-                            m = m.group(1).strip()
+                            m = m.strip()
                             print(f"            {m}", file=f)
                     elif key == "HTTP Server Type and Version":
                         plugin_output = get_plugin_output("HTTP Server Type and Version", z)
                         pattern = r": (.*)"
                         matches = re.findall(pattern, plugin_output) # type: ignore
                         for m in matches:
-                            m = m.group(1).strip()
+                            m = m.strip()
                             print(f"            {m}", file=f)
 
 
