@@ -463,6 +463,13 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                             m = m.strip()
                             if m.startswith("Web"):
                                 print(f"            {m}", file=f)
+                    elif key == "External URLs":
+                        plugin_output = get_plugin_output("External URLs", z)
+                        pattern = r".* - .*"
+                        matches = re.findall(pattern, plugin_output) # type: ignore
+                        for m in matches:
+                            m = m.strip()
+                            print(f"            {m}", file=f)
 
 
     with open(args.output_json_file, "w") as file:

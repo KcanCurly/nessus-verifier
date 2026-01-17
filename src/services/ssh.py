@@ -184,8 +184,6 @@ class SSHBruteSubServiceClass(BaseSubServiceClass):
             print(e)
             return f"[!] Error connecting to {host} ({username}:{password}): {e}"
 
-        
-
 
 class SSHVersionSubServiceClass(BaseSubServiceClass):
     def __init__(self) -> None:
