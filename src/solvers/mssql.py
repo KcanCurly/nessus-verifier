@@ -14,5 +14,5 @@ class MSSQLSolverClass(BaseSolverClass):
         if not self.hosts:
             return
 
-        MSSQLVersionSubServiceClass().nv(self.hosts, threads=args.threads, timeout=args.timeout, errors=args.errors, verbose=args.verbose, output=self.output)
+        MSSQLVersionSubServiceClass().nv(self.hosts, threads=args.threads, timeout=args.timeout, errors=args.errors, verbose=args.verbose, output=self.output, print_latest_version=args.print_latest_version, print_pocs=args.print_pocs, print_cve=args.print_cve)
         self.create_windowcatcher_action()

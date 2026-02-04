@@ -4,6 +4,7 @@ import copy
 import xml.etree.ElementTree as ET
 import cidr_man
 from openpyxl import Workbook
+import csv
 
 def filter_nessus(args):
     input_file = args.file
@@ -110,6 +111,28 @@ def portreport(args):
                 h[host_ip].add(port)
 
     wb.save("portreport.xlsx")
+
+    h = {}
+
+    with open("portreport.csv", mode="w", newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow(["IP Address", "Protocol", "Port", "Service Name"])
+        for host in root.findall(".//Report/ReportHost"):
+            host_ip = host.attrib['name']  # Extract the host IP
+            for item in host.findall(".//ReportItem"):
+                service_name = item.attrib.get('svc_name', '').lower()
+                port = item.attrib.get('port', 0)
+                protocol = item.attrib.get('protocol')
+
+                if not port: # Skip port 0
+                    continue
+                if service_name == "general":
+                    continue
+                if host_ip not in h:
+                    h[host_ip] = set()
+                if not port in h[host_ip]:
+                    writer.writerow([host_ip, protocol, port, service_name])
+                    h[host_ip].add(port)
 
 
 def main():

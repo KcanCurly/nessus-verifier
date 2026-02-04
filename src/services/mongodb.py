@@ -5,7 +5,7 @@ import pymongo
 from packaging.version import parse
 from src.utilities.utilities import Version_Vuln_Host_Data, get_default_context_execution2, error_handler, get_hosts_from_file, get_hosts_from_file2, add_default_serviceclass_arguments, Host, get_cves
 from src.services.serviceclass import BaseServiceClass
-from src.services.servicesubclass import BaseSubServiceClass
+from src.services.servicesubclass import BaseSubServiceClass, VersionSubService
 from traceback import print_exc
 
 class MongoDBPostSubServiceClass(BaseSubServiceClass):
@@ -185,42 +185,32 @@ class MongoDBUnauthSubServiceClass(BaseSubServiceClass):
             dbs = client.list_databases()
             return host
 
-class MongoDBVersionSubServiceClass(BaseSubServiceClass):
+class MongoDBVersionSubServiceClass(VersionSubService):
     def __init__(self) -> None:
-        super().__init__("version", "Checks version")
+        super().__init__("version", "Checks version", [("MongoDB", "mongodb")])
 
     @error_handler([])
-    def nv(self, hosts, **kwargs):
+    def nv(self, hosts, **kwargs) -> None:
         super().nv(hosts, kwargs=kwargs)
-
+        
+        results: list[Version_Vuln_Host_Data] = get_default_context_execution2(f"{self.products[0][0]} Version", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
         versions = {}
-        results: list[Version_Vuln_Host_Data] = get_default_context_execution2("MongoDB Version", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
-        
-        
+
         for r in results:
             if r.version not in versions:
                 versions[r.version] = set()
             versions[r.version].add(r.host)
 
-        if versions:      
-            versions = dict(
-                sorted(versions.items(), key=lambda x: parse(x[0]), reverse=True)
-            )
-            self.print_output(i18n.t('main.version_title', name="MongoDB"))
+        if versions:
+            versions = dict(sorted(versions.items(), reverse=True))
+            self.print_output(i18n.t('main.version_title', name=self.products[0][0]))
+            
             for key, value in versions.items():
-                cves = []
-                if self.should_print_cves:
-                    cves = get_cves(f"cpe:2.3:a:mongodb:mongodb:{key}")
-                if cves: self.print_output(f"MongoDB {key} ({", ".join(cves)}):")
-                else: self.print_output(f"MongoDB {key}:")  
-                for v in value:
-                    self.print_output(f"    {v}")
-            if self.should_print_latest_version:
-                latest_versions = self.parent_service.get_latest_version()
-                if latest_versions:
-                    self.print_output(f"Latest version for {self.parent_service.eol_product_name}")
-                    for version in latest_versions:
-                        self.print_output(version)
+
+                self.print_single_version_result("MongoDB", value, key, "cpe:2.3:a:mongodb:mongodb:")
+
+            self.print_latest_versions()
+            self.print_pocs()
 
     @error_handler(["host"])
     def single(self, host, **kwargs):

@@ -9,6 +9,7 @@ def connect_and_get_response_single(host, **kwargs):
     message = kwargs.get("message", "info")
     use_ssl = kwargs.get("ssl", False)
     use_ssl = True if use_ssl == "ssl" else False
+    
 
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.settimeout(timeout)

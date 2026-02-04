@@ -26,4 +26,4 @@ class ApacheSolverClass(BaseSolverClass):
 
         if not self.hosts:
             return
-        TomcatVersionSubServiceClass().nv(self.hosts, threads=args.threads, timeout=args.timeout, errors=args.errors, verbos=args.verbose, output=self.output)
+        TomcatVersionSubServiceClass().nv(self.hosts, threads=args.threads, timeout=args.timeout, errors=args.errors, verbos=args.verbose, output=self.output, print_latest_version=args.print_latest_version, print_pocs=args.print_pocs, print_cve=args.print_cve)
