@@ -17,6 +17,13 @@ def filter_nessus(args):
     tree = ET.parse(input_file)
     root = tree.getroot()
 
+    if exclude:
+        with open(exclude, 'r') as f:
+            exclude = [line.strip() for line in f if line.strip()]
+    if include:
+        with open(include, 'r') as f:
+            include = [line.strip() for line in f if line.strip()]
+
     # Find <Report> block
     report = root.find("Report")
 
