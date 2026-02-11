@@ -217,7 +217,7 @@ def main():
     p4 = subparsers.add_parser("accesscheck", help="Checks if any ports are accessible on given scope")
     p4.add_argument("-f", "--file", required=True, help="Input .nessus file")
     p4.add_argument("-s", "--scope", required=True, help="Input scope file")
-    p4.add_argument("--ignore-ports", ttype=parse_ports, help="Comma separated list of ports to ignore",  nargs="+", required=False)
+    p4.add_argument("--ignore-ports", type=parse_ports, help="Comma separated list of ports to ignore",  nargs="+", required=False)
     p4.set_defaults(func=checkaccess)
 
     args = parser.parse_args()
