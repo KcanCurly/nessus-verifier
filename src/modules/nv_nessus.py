@@ -30,8 +30,15 @@ def filter_nessus(args):
                 to_remove.append(host)
 
         if exclude:
-            if any(cidr_man.CIDR(ip) in cidr_man.CIDR(net) for net in exclude):
-                to_remove.append(host)
+            for net in exclude:
+                try:
+                    if cidr_man.CIDR(ip) in cidr_man.CIDR(net):
+                            to_remove.append(host)
+                            break
+                except Exception as e:
+                    print(f"Error processing CIDR {ip} - {net}: {e}")
+            #if any(cidr_man.CIDR(ip) in cidr_man.CIDR(net) for net in exclude):
+            #    to_remove.append(host)
 
 
     # Remove non-matching hosts
