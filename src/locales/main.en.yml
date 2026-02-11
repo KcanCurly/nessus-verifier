@@ -41,3 +41,4 @@ en:
   anonymous_creds_title: "Anonymous Access Enabled for %{name}:"
   activemq_unauth_access: "ActiveMQ Anonymous Access Enabled or Authentication Not Configured on Systems:"
   non_tls_connection_accepted: "%{name} Accepts Non-SSL Connection on Systems:"
+  check_access: "IPs in scope %{name} not found in nessus file:"

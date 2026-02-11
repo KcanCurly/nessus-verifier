@@ -74,10 +74,9 @@ class EchoUsageSubServiceClass(BaseSubServiceClass):
         try:
 
             jid = xmpp.protocol.JID(jabberid)
-            print("1")
+
             connection = xmpp.Client(None, debug=True)
 
-            print("2")
             connection.connect((host.ip, host.port))
             #print(connection.isConnected())
 

@@ -5,6 +5,8 @@ import xml.etree.ElementTree as ET
 import cidr_man
 from openpyxl import Workbook
 import csv
+import ipaddress
+import i18n
 
 def filter_nessus(args):
     input_file = args.file
@@ -24,11 +26,11 @@ def filter_nessus(args):
         ip = host.get("name")
 
         if include:
-            if not any(cidr_man.CIDR(ip) in net for net in include):
+            if not any(cidr_man.CIDR(ip) in cidr_man.CIDR(net) for net in include):
                 to_remove.append(host)
 
         if exclude:
-            if any(cidr_man.CIDR(ip) in net for net in exclude):
+            if any(cidr_man.CIDR(ip) in cidr_man.CIDR(net) for net in exclude):
                 to_remove.append(host)
 
 
@@ -85,37 +87,37 @@ def portreport(args):
     tree = ET.parse(input_file)
     root = tree.getroot()
 
-    h = {}
-
-    wb = Workbook()
-    wb.remove(wb.active) # type: ignore
-    wb.create_sheet("portScanData")
-    ws = wb["portScanData"]
-    ws.append(["IP Address", "Protocol", "Port", "Sevice Name"])
-
-    for host in root.findall(".//Report/ReportHost"):
-        host_ip = host.attrib['name']  # Extract the host IP
-        for item in host.findall(".//ReportItem"):
-            service_name = item.attrib.get('svc_name', '').lower()
-            port = item.attrib.get('port', 0)
-            protocol = item.attrib.get('protocol')
-
-            if not port: # Skip port 0
-                continue
-            if service_name == "general":
-                continue
-            if host_ip not in h:
-                h[host_ip] = set()
-            if not port in h[host_ip]:
-                ws.append([host_ip, protocol, port, service_name])
-                h[host_ip].add(port)
-
-    wb.save("portreport.xlsx")
-
+    #h = {}
+#
+    #wb = Workbook()
+    #wb.remove(wb.active) # type: ignore
+    #wb.create_sheet("portScanData")
+    #ws = wb["portScanData"]
+    #ws.append(["IP Address", "Protocol", "Port", "Sevice Name"])
+#
+    #for host in root.findall(".//Report/ReportHost"):
+    #    host_ip = host.attrib['name']  # Extract the host IP
+    #    for item in host.findall(".//ReportItem"):
+    #        service_name = item.attrib.get('svc_name', '').lower()
+    #        port = item.attrib.get('port', 0)
+    #        protocol = item.attrib.get('protocol')
+#
+    #        if not port: # Skip port 0
+    #            continue
+    #        if service_name == "general":
+    #            continue
+    #        if host_ip not in h:
+    #            h[host_ip] = set()
+    #        if not port in h[host_ip]:
+    #            ws.append([host_ip, protocol, port, service_name])
+    #            h[host_ip].add(port)
+#
+    #wb.save("portreport.xlsx")
+#
     h = {}
 
     with open("portreport.csv", mode="w", newline='') as file:
-        writer = csv.writer(file)
+        writer = csv.writer(file, delimiter=";")
         writer.writerow(["IP Address", "Protocol", "Port", "Service Name"])
         for host in root.findall(".//Report/ReportHost"):
             host_ip = host.attrib['name']  # Extract the host IP
@@ -134,6 +136,60 @@ def portreport(args):
                     writer.writerow([host_ip, protocol, port, service_name])
                     h[host_ip].add(port)
 
+
+
+def checkaccess(args):
+    input_file = args.file
+    scope_file = args.scope
+    ignore_ports = parse_ports(args.ignore_ports) if args.ignore_ports else []
+
+    # Load scope CIDRs
+    scope_nets = []
+    found_ips = set()
+    with open(scope_file, 'r') as sf:
+        for line in sf:
+            scope_nets.append(line.strip())
+
+    tree = ET.parse(input_file)
+    root = tree.getroot()
+
+    report = root.find("Report")
+
+    for host in report.findall("ReportHost"): # type: ignore
+        ip = host.get("name")
+        port = host.get('port', 0)
+        if ip and port and int(port) not in ignore_ports:
+            found_ips.add(ip)
+
+    for scope in scope_nets:
+        if "/" in scope:
+            not_found = expand_cidr_range(scope)
+            for ip in found_ips:
+                if ip in cidr_man.CIDR(scope):
+                    not_found.remove(ip)
+            if len(not_found) > 0:
+                print(i18n.t('main.check_access', name=scope))
+                for ip in not_found:
+                    print(f"  {ip}")
+        else:
+            if scope not in found_ips:
+                print(f"{scope}")
+
+def expand_cidr_range(cidr):
+    """
+    Expand CIDR ranges
+    """
+    return [str(host) for host in ipaddress.ip_network(cidr, strict=False).hosts()]  # Expand the CIDR range
+
+def parse_ports(value):
+    ports = set()
+    for part in value.split(","):
+        if "-" in part:
+            start, end = part.split("-")
+            ports.update(range(int(start), int(end) + 1))
+        else:
+            ports.add(int(part))
+    return sorted(ports)
 
 def main():
     parser = argparse.ArgumentParser(description="Nessus Module")
@@ -156,6 +212,13 @@ def main():
     p3 = subparsers.add_parser("portreport", help="Port Report")
     p3.add_argument("-f", "--file", required=True, help="Input .nessus file")
     p3.set_defaults(func=portreport)
+
+    # Command 4
+    p4 = subparsers.add_parser("accesscheck", help="Checks if any ports are accessible on given scope")
+    p4.add_argument("-f", "--file", required=True, help="Input .nessus file")
+    p4.add_argument("-s", "--scope", required=True, help="Input scope file")
+    p4.add_argument("--ignore-ports", ttype=parse_ports, help="Comma separated list of ports to ignore",  nargs="+", required=False)
+    p4.set_defaults(func=checkaccess)
 
     args = parser.parse_args()
     argcomplete.autocomplete(parser)
