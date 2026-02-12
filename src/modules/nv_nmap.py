@@ -10,7 +10,7 @@ def identify_service_single(host,**kwargs):
     if int(port) in exclude_ports:
         return
     result = subprocess.run(
-        ["nmap", "-sV", "-p", port, "--version-all", ip],
+        ["nmap", "-sV", "-sT", "-p", port, "--version-all", ip],
         stdout=subprocess.PIPE,
         stderr=subprocess.DEVNULL,
         text=True
