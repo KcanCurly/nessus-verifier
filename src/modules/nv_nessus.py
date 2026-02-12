@@ -228,7 +228,14 @@ def main():
     p3.set_defaults(func=portreport)
 
     # Command 4
-    p4 = subparsers.add_parser("accesscheck", help="Checks if any ports are accessible on given scope")
+    p4 = subparsers.add_parser("accesscheck", help="Checks if nessus was able to find anything on the assets in the scope")
+    p4.add_argument("-f", "--file", required=True, help="Input .nessus file")
+    p4.add_argument("-s", "--scope", required=True, help="Input scope file")
+    p4.add_argument("--ignore-ports", type=parse_ports, help="Comma separated list of ports to ignore",  nargs="+", required=False)
+    p4.set_defaults(func=checkaccess)
+
+    # Command 4
+    p4 = subparsers.add_parser("portcheck", help="Checks if any ports are accessible on given scope")
     p4.add_argument("-f", "--file", required=True, help="Input .nessus file")
     p4.add_argument("-s", "--scope", required=True, help="Input scope file")
     p4.add_argument("--ignore-ports", type=parse_ports, help="Comma separated list of ports to ignore",  nargs="+", required=False)

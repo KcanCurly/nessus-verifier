@@ -89,7 +89,7 @@ def parse_ports(value):
 def main():
     parser = argparse.ArgumentParser(description="Nmap scanner for nessus unknown ports.")
     parser.add_argument("-f", "--file", type=str, required=True, help="Path to a file containing a list of hosts, each in 'ip:port' format, one per line.")
-    parser.add_argument("--exclude-ports", ttype=parse_ports, default="9100", nargs="+", help="Exclude ports (Default: 9100).")
+    parser.add_argument("--exclude-ports", type=parse_ports, default="9100", nargs="+", help="Exclude ports (Default: 9100).")
     parser.add_argument("-o", "--output", type=str, default="nv-known.txt", help="Output file for knowns (Default: nv-known.txt).")
     parser.add_argument("-uo", "--unknown-output", type=str, default="nv-unknown.txt", help="Output file for unknowns (Default: nv-unknown.txt).")
     parser.add_argument("--threads", type=int, default=10, help="Amount of threads (Default = 10).")
