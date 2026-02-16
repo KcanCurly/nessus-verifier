@@ -19,6 +19,7 @@ from rich.panel import Panel
 from src.url.templates import ArisconnectTemplate, FlexNetPublishTemplate, FortigateTemplate, URL_STATUS, FujitsuWebServerTemplate, GrafanaTemplate, HighAvailabilityManagementTemplate, IBMSoftwareAGTemplate, IPECSIPPhoneTemplate, IRISIDICAMTemplate, JHipsterRegistryManagementTemplate, LogparseTemplate, MyQTemplate, NetGearTemplate, NetscalerConsoleTemplate, NexthinkConsoleTemplate, OpinnateTemplate, OracleLightsoutManagerTemplate, PiranhaManagementTemplate, SiteTemplateBase, StoredIQTemplate, StorwareTemplate, SynergySkyTemplate, UNISPHERETemplate, WatsonTemplate, XormonTemplate, XoruxTemplate, ZabbixTemplate, iDRACTemplate
 from selenium import webdriver
 from selenium.webdriver.firefox.options import Options
+from selenium.webdriver.firefox.service import Service
 
 disable_warnings(InsecureRequestWarning)
 warnings.filterwarnings("ignore", category=XMLParsedAsHTMLWarning)
@@ -903,13 +904,13 @@ def main():
 
         global driver
         options = Options()
-        options.binary_location = "/usr/local/bin/geckodriver"
+        service = Service("/usr/local/bin/geckodriver")
         options.add_argument("--headless")
         options.add_argument("--no-sandbox")
         options.add_argument("--disable-dev-shm-usage")
         options.add_argument("--window-size=1280,720")
         options.set_preference("permissions.default.image", 2)
-        driver = webdriver.Firefox(options=options)
+        driver = webdriver.Firefox(options=options, service=service)
 
         with Live(progress_group):
             overall_progress.update(overall_task_id, total=len(hosts))
