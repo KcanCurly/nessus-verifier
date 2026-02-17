@@ -18,21 +18,45 @@ def connect_and_get_response_single(host, **kwargs):
         sock = context.wrap_socket(sock, server_hostname=host)
 
     sock.connect((host.ip, int(host.port)))
-
+    response = ""
     try:
-        response = sock.recv(4096)  # Try receiving data
+        while True:
+            try:
+                data = sock.recv(4096)
+                if not data:
+                    break
+                response += data.decode(errors="replace")
+            except socket.timeout:
+                break
         if response:
-            return Version_Vuln_Host_Data(host, response.decode(errors="replace").strip())
+            return Version_Vuln_Host_Data(host, response.strip())
     except socket.timeout:
+        if response:
+            return Version_Vuln_Host_Data(host, response.strip())
         pass  # No response within timeout
     except Exception as e:
-        print(e)
+        pass
 
-    # If no response, send "info"
     sock.sendall(bytes(message))
 
-    response = sock.recv(4096)  # Receive response after sending "info"
-    return Version_Vuln_Host_Data(host, response.decode(errors="replace").strip())
+    try:
+        while True:
+            try:
+                data = sock.recv(4096)
+                if not data:
+                    break
+                response += data.decode(errors="replace")
+            except socket.timeout:
+                break
+        if response:
+            return Version_Vuln_Host_Data(host, response.strip())
+    except socket.timeout:
+        if response:
+            return Version_Vuln_Host_Data(host, response.strip())
+        pass  # No response within timeout
+    except Exception as e:
+        pass
+    return Version_Vuln_Host_Data(host, response.strip())
 
     
 def connect_and_get_response_multiple(hosts, output, message, ssl, threads, timeout):
