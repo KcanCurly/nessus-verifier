@@ -21,7 +21,7 @@ class RedisPostSubServiceClass(BaseSubServiceClass):
         ip = host.ip
         port = host.port
 
-        client = redis.Redis(host=ip, port=int(port), password=None, decode_responses=True)
+        client = redis.Redis(host=ip, port=int(port), password=None, decode_responses=True, socket_timeout=self.timeout)
 
         max_dbs = 16  # Default max DBs (configurable in Redis)
         
@@ -64,7 +64,7 @@ class RedisVersionSubServiceClass(BaseSubServiceClass):
 
     @error_handler(["host"])
     def single(self, host, **kwargs):
-        client = redis.StrictRedis(host=host.ip, port=int(host.port), password=None, decode_responses=True)
+        client = redis.StrictRedis(host=host.ip, port=int(host.port), password=None, decode_responses=True, socket_timeout=self.timeout)
 
         # Check if the connection is successful
         inf = client.info()  # type: ignore
@@ -91,7 +91,7 @@ class RedisUnauthSubServiceClass(BaseSubServiceClass):
 
     @error_handler(["host"])
     def single(self, host, **kwargs):
-        client = redis.StrictRedis(host=host.ip, port=int(host.port), password=None, decode_responses=True)
+        client = redis.StrictRedis(host=host.ip, port=int(host.port), password=None, decode_responses=True, socket_timeout=self.timeout)
 
         # Check if the connection is successful
         if client.info():
