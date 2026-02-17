@@ -2654,7 +2654,11 @@
   90764, 66269, 132584, 38157, 51922, 92725, 71843, 109943, 49692, 146273, 57034, 278501,
   61645, 160470, 22073, 10719, 26024, 10092, 109552, 50845, 11935, 185519, 10940, 33139,
   10829, 20870, 10761, 10884, 11002, 100635, 174933, 22319, 106658, 122364, 10342, 42255,
-  159893]
+  159893, 22526, 19507, 124029, 10891]
+  # 10891 - X Display Manager Control Protocol (XDMCP) Detection
+  # 124029 - Docker Remote API Detection
+  # 19507 - Cisco CallManager TFTP File Detection
+  # 22526 - Zabbix Server Detection
   # 159893 - Trend Micro Apex Central Management Web Console Detection
   # 42255 - NFS Server Superfluous
   # 10342 - VNC Software Detection
