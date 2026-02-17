@@ -24,9 +24,7 @@ class NoPasswordDBSolverClass(BaseSolverClass):
     @error_handler(["host"])
     def solve_elastic_version_single(self, host, timeout, errors, verbose):
         resp = get_url_response(f"{str(host)}/*", timeout=timeout)
-        if not resp:
-            return
-        if resp.status_code in [200]:
+        if resp and resp.headers.get("Content-Length", "0") >= "1000":
             return host
 
         
