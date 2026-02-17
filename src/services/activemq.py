@@ -33,7 +33,10 @@ class ActiveMQVersionSubServiceClass(BaseSubServiceClass):
                 if self.should_print_cves:
                     cves = get_cves(cve_base + version)
                     cve_set.update(cves)
-                self.print_output(f"Apache ActiveMQ {version}{" (" + ''.join(cves) + ")"}:")
+                if cves:
+                    self.print_output(f"Apache ActiveMQ {version}({', '.join(cves)}):")
+                else:
+                    self.print_output(f"Apache ActiveMQ {version}:")
                 for a in hosts:
                     self.print_output(f"    {a}")
 

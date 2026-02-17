@@ -52,6 +52,10 @@ no_template_lock = threading.Lock()
 login_page_lock = threading.Lock()
 non_login_page_lock = threading.Lock()
 maybe_something_lock = threading.Lock()
+nv_iis_lock = threading.Lock()
+nv_tomcat_lock = threading.Lock()
+nv_nginx_lock = threading.Lock()
+nv_apache_lock = threading.Lock()
 
 NV_VALID_URL = "nv-url-valid-url.txt"
 NV_SUCCESS = "nv-url-success.txt"
@@ -65,6 +69,10 @@ NV_401 = "nv-url-401-basic-digest.txt"
 NV_LOGIN_PAGE = "nv-url-login-pages.txt"
 NV_NON_LOGIN_PAGE = "nv-url-non-login-pages.txt"
 NV_MAYBE_SOMETHING = "nv-url-maybe-something.txt"
+NV_IIS = "nv-url-iis.txt"
+NV_TOMCAT = "nv-url-tomcat.txt"
+NV_NGINX = "nv-url-nginx.txt"
+NV_APACHE = "nv-url-apache.txt"
 
 REQUESTS_TIMEOUT = 15
 
@@ -326,7 +334,7 @@ def check_if_loginpage_exists(source_code):
         print(e)
         return False
 
-def check_if_known_Bad(response: requests.Response):
+def check_if_known_Bad(url, response: requests.Response):
     for header, value in response.headers.items():
         if "ClickHouse" in header: return "ClickHouse"
     if "Dynatrace Managed" in response.text:
@@ -362,6 +370,9 @@ def check_if_known_Bad(response: requests.Response):
     if "SSL Visibility Appliance" in response.text:
         return "Symantec SSL Visibility"
     if "IIS Windows Server" in response.text:
+        with nv_iis_lock:
+            with open(NV_IIS, "a") as file:
+                file.write(url + "\n")
         return "IIS Windows Server"
     if "Unigy Management System" in response.text or "Unigy(TM) Management System" in response.text:
         return "Unigy Management System"
@@ -502,10 +513,16 @@ def check_if_known_Bad(response: requests.Response):
     if "Prometheus Time Series Collection and Processing Server" in response.text:
         return "Prometheus Time Series Collection and Processing Server" # No login
     if "If you're seeing this, you've successfully installed Tomcat. Congratulations!" in response.text:
+        with nv_tomcat_lock:
+            with open(NV_TOMCAT, "a") as file:
+                file.write(url + "\n")
         return "Apache Tomcat Default homepage" # No login
     if "<title>Eureka</title>" in response.text and "<h1>System Status</h1>" in response.text:
         return "Eureka" # No login
     if "<title>Test Page for the Nginx HTTP Server on" in response.text:
+        with nv_nginx_lock:
+            with open(NV_NGINX, "a") as file:
+                file.write(url + "\n")
         return "Test Page for the Nginx HTTP Server" # No login 
     if "<title>Wazuh</title>" in response.text:
         return "Wazuh" # No default password
@@ -668,7 +685,7 @@ def authcheck(url, templates: list[type[SiteTemplateBase]], verbose, wasprocesse
             return
 
         # Check bads
-        bad = check_if_known_Bad(response)
+        bad = check_if_known_Bad(url, response)
         if bad:
             with known_bads_lock:
                 with open(NV_BAD, "a") as file:
