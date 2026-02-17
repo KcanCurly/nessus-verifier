@@ -1787,7 +1787,7 @@
   id: 22
   should-group-total: true
   plugin-regex: []
-  plugin-ids: [186028, 184129, 184357, 190601, 181464, 208027, 183776, 211633, 211576, 9765, 192023, 181419, 193176, 215000, 240850, 242132,
+  plugin-ids: [186028, 184129, 184357, 190601, 181464, 208027, 183776, 211633, 211576, 192023, 193176, 215000, 240850, 242132,
   241364, 242626, 241355, 237905, 242625]
   # 242625 - Grafana Labs XSS (CVE-2025-6023)
   # 237905 - Grafana Labs < 11.6.1+security-01 Authorization Bypass (CVE-2025-3260)
@@ -1806,9 +1806,7 @@
   # 183776 - Grafana Labs Directory Traversal (CVE-2021-43798)
   # 211633 - Grafana Labs Privilege Escalation (CVE-2024-9476)
   # 211576 - Grafana Labs SQL expressions allowing for RCE (CVE-2024-9264)
-  # 9765 - Grafana Detection
   # 192023 - Grafana Labs 10.0.x < 10.0.12 / 10.1.x < 10.1.8 / 10.2.x < 10.2.5 / 10.3.x < 10.3.4 / 8.5.x < 9.5.7 (CVE-2024-1442)
-  # 181419 - Grafana Labs Web Detection
   # 193176 - Grafana Labs 9.5 < 9.5.18, 10.0 < 10.0.13, 10.1 < 10.1.9, 10.2 < 10.2.6, 10.3 < 10.3.5 (CVE-2024-1313)
 
 - name: Python Unsupported Version
@@ -2654,7 +2652,9 @@
   90764, 66269, 132584, 38157, 51922, 92725, 71843, 109943, 49692, 146273, 57034, 278501,
   61645, 160470, 22073, 10719, 26024, 10092, 109552, 50845, 11935, 185519, 10940, 33139,
   10829, 20870, 10761, 10884, 11002, 100635, 174933, 22319, 106658, 122364, 10342, 42255,
-  159893, 22526, 19507, 124029, 10891]
+  159893, 22526, 19507, 124029, 10891, 181419, 9765]
+  # 181419 - Grafana Labs Web Detection
+  # 9765 - Grafana Detection
   # 10891 - X Display Manager Control Protocol (XDMCP) Detection
   # 124029 - Docker Remote API Detection
   # 19507 - Cisco CallManager TFTP File Detection
