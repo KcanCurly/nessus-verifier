@@ -5,7 +5,7 @@ import ssl
 
 @error_handler(["host"])
 def connect_and_get_response_single(host, **kwargs):
-    timeout = kwargs.get("timeout", 3)  # Default timeout is 3 seconds
+    timeout = kwargs.get("timeout", 5)  # Default timeout is 5 seconds
     message = kwargs.get("message", "info")
     use_ssl = kwargs.get("ssl", False)
     use_ssl = True if use_ssl == "ssl" else False
@@ -20,7 +20,7 @@ def connect_and_get_response_single(host, **kwargs):
     sock.connect((host.ip, int(host.port)))
 
     try:
-        response = sock.recv(1024)  # Try receiving data
+        response = sock.recv(4096)  # Try receiving data
         if response:
             return Version_Vuln_Host_Data(host, response.decode(errors="replace").strip())
     except socket.timeout:
@@ -31,8 +31,8 @@ def connect_and_get_response_single(host, **kwargs):
     # If no response, send "info"
     sock.sendall(bytes(message))
 
-    response = sock.recv(1024)  # Receive response after sending "info"
-    return Version_Vuln_Host_Data(host, response.decode().strip())
+    response = sock.recv(4096)  # Receive response after sending "info"
+    return Version_Vuln_Host_Data(host, response.decode(errors="replace").strip())
 
     
 def connect_and_get_response_multiple(hosts, output, message, ssl, threads, timeout):
