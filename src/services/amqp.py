@@ -104,10 +104,9 @@ class AMQPVersionSubServiceClass(BaseSubServiceClass):
             if ver.strip() == "filtered":
                 filtered.append(ip_port)
                 continue
-            version = ver.split()[3].strip()
-            if version not in version_dict:
-                version_dict[version] = []
-            version_dict[version].append(ip_port)
+            if ver not in version_dict:
+                version_dict[ver] = []
+            version_dict[ver].append(ip_port)
 
         cve_set = set()
 
