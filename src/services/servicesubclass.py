@@ -135,4 +135,4 @@ class VersionSubService(BaseSubServiceClass):
         else:
             self.print_output(f"{name} {version}:")
         for v in results:
-            self.print_output(" " * self.space + str(v))
+            self.print_output("    " + str(v))
