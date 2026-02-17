@@ -118,6 +118,7 @@ class AMQPVersionSubServiceClass(BaseSubServiceClass):
             for version, hosts in version_dict.items():
                 cves = []
                 if "rabbitmq" in version.lower():
+                    print("Version:", version)
                     _, pure_version, _ = version.split(" ")
                     if self.should_print_cves:
                         cves = get_cves("cpe:2.3:a:vmware:rabbitmq:" + pure_version)
@@ -144,7 +145,6 @@ class AMQPVersionSubServiceClass(BaseSubServiceClass):
         d = nmap_identify_service_single(host)
         if d:
             version = d["version"]
-            print("Version:", version)
             if d["state"] == "filtered":
                 return f"{host.ip}:{host.port} => filtered"
             else:
