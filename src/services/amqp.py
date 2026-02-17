@@ -118,15 +118,16 @@ class AMQPVersionSubServiceClass(BaseSubServiceClass):
             for version, hosts in version_dict.items():
                 cves = []
                 if "rabbitmq" in version.lower():
-                    print("Version:", version)
                     _, pure_version, _ = version.strip().split(" ")
                     if self.should_print_cves:
-                        cves = get_cves("cpe:2.3:a:vmware:rabbitmq:" + pure_version)
+                        cves = get_cves("cpe:2.3:a:broadcom:rabbitmq_server:" + pure_version)
                         cve_set.update(cves)
                     if cves:
                         self.print_output(f"RabbitMQ {pure_version}({', '.join(cves)}):")
                     else:
                         self.print_output(f"RabbitMQ {pure_version}:")
+                else:
+                    self.print_output(f"[Unknown] {version}:")
                 for a in hosts:
                     self.print_output(f"    {a}")
 
