@@ -47,12 +47,6 @@ class TomcatSolverClass(BaseSolverClass):
                 for v in value:
                     self.print_output(f"    {v}")
                     
-            poc_printed = False
-            if "CVE-2025-24813" in total_cves:
-                if not poc_printed: 
-                    self.print_output("\nPOC:")
-                    poc_printed = True
-                self.print_output("CVE-2025-24813 => https://github.com/absholi7ly/POC-CVE-2025-24813")
             self.create_windowcatcher_action()
             for cve in all_cves:
                 links = get_poc_cve_github_link(cve)

@@ -1,13 +1,5 @@
-import os
-
-import i18n
-from src.utilities.utilities import Version_Vuln_Host_Data, error_handler, get_header_from_url, get_default_context_execution, get_cves, get_poc_cve_github_link
-import re
-from packaging.version import parse
 from src.solvers.solverclass import BaseSolverClass, WindowCatcherData
-from src.services.apache_tomcat import TomcatVersionSubServiceClass
-
-shodan_cves_to_skip = ["CVE-2006-20001"]
+from src.services.apache import ApacheVersionSubServiceClass
 
 class ApacheVersionWindowCatcherData(WindowCatcherData):
     def __init__(self, name, code, output) -> None:
@@ -26,4 +18,4 @@ class ApacheSolverClass(BaseSolverClass):
 
         if not self.hosts:
             return
-        TomcatVersionSubServiceClass().nv(self.hosts, threads=args.threads, timeout=args.timeout, errors=args.errors, verbos=args.verbose, output=self.output, print_latest_version=args.print_latest_version, print_pocs=args.print_pocs, print_cve=args.print_cve)
+        ApacheVersionSubServiceClass().nv(self.hosts, threads=args.threads, timeout=args.timeout, errors=args.errors, verbos=args.verbose, output=self.output, print_latest_version=args.print_latest_version, print_poc=args.print_poc, print_cve=args.print_cve)

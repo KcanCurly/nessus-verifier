@@ -29,10 +29,10 @@ class TomcatPuttestSubServiceClass(BaseSubServiceClass):
         verbose = kwargs.get("verbose", False)
 
         s = generate_random_string()
-        resp = requests.put(f"http://{host}/{s}", verify=False)
+        resp = requests.put(f"http://{host}/{s}", verify=False, timeout=timeout)
         if not resp.status_code in range(200, 400):
             return
-        resp = requests.delete(f"http://{host}/{s}", verify=False)
+        resp = requests.delete(f"http://{host}/{s}", verify=False, timeout=timeout)
         if not resp.status_code in range(200, 400):
             return
         return host
@@ -100,7 +100,7 @@ class TomcatShutdownSubServiceClass(BaseSubServiceClass):
 
 class TomcatVersionSubServiceClass(VersionSubService):
     def __init__(self) -> None:
-        super().__init__("version", "Checks version", [("Apache Tomcat", "apache-http-server")])
+        super().__init__("version", "Checks version", [("Apache Tomcat", "tomcat")])
 
     @error_handler([])
     def nv(self, hosts, **kwargs) -> None:
@@ -120,7 +120,7 @@ class TomcatVersionSubServiceClass(VersionSubService):
             
             for key, value in versions.items():
 
-                self.print_single_version_result("Apache Tomcat", value, key, "cpe:2.3:a:apache:http_server:")
+                self.print_single_version_result("Apache Tomcat", value, key, "cpe:2.3:a:apache:tomcat:")
 
             self.print_latest_versions()
             self.print_pocs()
