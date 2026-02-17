@@ -2,7 +2,7 @@ import re
 import socket
 import requests
 import i18n
-from src.utilities.utilities import error_handler, generate_random_string, get_default_context_execution2, Version_Vuln_Host_Data, get_header_from_url, get_url_response
+from src.utilities.utilities import error_handler, generate_random_string, get_cves, get_default_context_execution2, Version_Vuln_Host_Data, get_header_from_url, get_url_response
 from src.services.serviceclass import BaseServiceClass
 from src.services.servicesubclass import BaseSubServiceClass, VersionSubService
 import requests
@@ -98,15 +98,15 @@ class TomcatShutdownSubServiceClass(BaseSubServiceClass):
             pass
 
 
-class TomcatVersionSubServiceClass(VersionSubService):
+class TomcatVersionSubServiceClass(BaseSubServiceClass):
     def __init__(self) -> None:
-        super().__init__("version", "Checks version", [("Apache Tomcat", "tomcat")])
+        super().__init__("version", "Checks version")
 
     @error_handler([])
     def nv(self, hosts, **kwargs) -> None:
         super().nv(hosts, kwargs=kwargs)
         
-        results: list[Version_Vuln_Host_Data] = get_default_context_execution2(f"{self.products[0][0]} Version", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
+        results: list[Version_Vuln_Host_Data] = get_default_context_execution2(f"Apache Tomcat Version", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
         versions = {}
 
         for r in results:
@@ -114,16 +114,29 @@ class TomcatVersionSubServiceClass(VersionSubService):
                 versions[r.version] = set()
             versions[r.version].add(r.host)
 
+        cve_set = set()
+
         if versions:
             versions = dict(sorted(versions.items(), reverse=True))
-            self.print_output(i18n.t('main.version_title', name=self.products[0][0]))
-            
-            for key, value in versions.items():
+            self.print_output(i18n.t('main.version_title', name='Apache Tomcat'))
+            for version, hosts in versions.items():
+                cves = []
 
-                self.print_single_version_result("Apache Tomcat", value, key, "cpe:2.3:a:apache:tomcat:")
 
-            self.print_latest_versions()
-            self.print_pocs()
+                if self.should_print_cves:
+                    cves = get_cves("cpe:2.3:a:apache:tomcat:" + version)
+                    cve_set.update(cves)
+                if cves:
+                    self.print_output(f"Apache Tomcat {version}({', '.join(cves)}):")
+                else:
+                    self.print_output(f"Apache Tomcat {version}:")
+
+                for a in hosts:
+                    self.print_output(f"    {a}")
+
+            self.print_latest_versions("tomcat", "Apache Tomcat")
+            self.print_pocs(cve_set)
+
 
 
 
