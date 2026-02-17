@@ -50,8 +50,9 @@ class ApacheVersionSubServiceClass(VersionSubService):
                 if " " in m:
                     m = m.split()[0]
                 return Version_Vuln_Host_Data(host, m)
-        else:
-            resp = get_url_response(host)
+
+        resp = get_url_response(host)
+        if resp:
             m = re.search(version_regex, resp.text) # type: ignore
             if m:
                 m = m.group(1)
