@@ -478,8 +478,9 @@ def error_handler(variables):
 def nmap_identify_service_single(host,**kwargs):
     ip = host.ip
     port = host.port
+    nmap_arguements = kwargs.get("nmap_arguments", "")
     result = subprocess.run(
-        ["nmap", "-sV", "-p", port, "--version-all", ip],
+        ["nmap", nmap_arguements, "-sV", "-p", port, "--version-all", ip],
         stdout=subprocess.PIPE,
         stderr=subprocess.DEVNULL,
         text=True

@@ -1,5 +1,5 @@
 import i18n
-from src.utilities.utilities import error_handler, generate_random_string, get_cves, get_default_context_execution2, Version_Vuln_Host_Data
+from src.utilities.utilities import error_handler, generate_random_string, get_cves, get_default_context_execution2, Version_Vuln_Host_Data, nmap_identify_service_single
 from src.services.serviceclass import BaseServiceClass
 from src.services.servicesubclass import BaseSubServiceClass, VersionSubService
 import nmap
@@ -104,9 +104,11 @@ class AMQPVersionSubServiceClass(VersionSubService):
             self.print_output(i18n.t('main.version_title', name=self.products[0][0]))
             
             for key, value in versions.items():
-                _, pure_version = key.rsplit(" ", 1)
                 if "rabbitmq" in key.lower():
+                    _, pure_version = key.rsplit(" ", 1)
                     self.print_single_version_result("RabbitMQ", value, pure_version, "cpe:2.3:a:vmware:rabbitmq:")
+                else:
+                    self.print_single_version_result(key, value, key, "")
 
             self.print_latest_versions()
             self.print_pocs()
