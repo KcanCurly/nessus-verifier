@@ -17,9 +17,15 @@ class ActiveMQVersionSubServiceClass(BaseSubServiceClass):
 
         version_dict = {}
 
+        filtered = []
+
         for r in results:
             ip_port = r.split("=>")[0].strip()
-            version = r.split("=>")[1].split()[3].strip()
+            ver = r.split("=>")[1]
+            if ver.strip() == "filtered":
+                filtered.append(ip_port)
+                continue
+            version = ver.split()[3].strip()
             if version not in version_dict:
                 version_dict[version] = []
             version_dict[version].append(ip_port)
@@ -43,6 +49,11 @@ class ActiveMQVersionSubServiceClass(BaseSubServiceClass):
             self.print_latest_versions("apache-activemq", "Apache ActiveMQ")
             self.print_pocs(cve_set)
 
+        if filtered:
+            self.print_output(i18n.t('main.filtered_title'))
+            for f in filtered:
+                self.print_output(f"    {f}")
+
     @error_handler(["host"])
     def single(self, host, **kwargs):
         d = nmap_identify_service_single(host)
@@ -50,7 +61,8 @@ class ActiveMQVersionSubServiceClass(BaseSubServiceClass):
             version = d["version"]
             if version and version.startswith("ActiveMQ OpenWire transport"):
                 return f"{host.ip}:{host.port} => {version}"
-
+            if d["state"] == "filtered":
+                return f"{host.ip}:{host.port} => filtered"
 
 
 class AMQPServiceClass(BaseServiceClass):

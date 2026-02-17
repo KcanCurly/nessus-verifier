@@ -489,21 +489,21 @@ def nmap_identify_service_single(host,**kwargs):
         if line.startswith(port):
             try:
                 parts = line.split(maxsplit=3)
-                if parts[1] == "open":
-                    return {
-                        "ip": ip,
-                        "port": port,
-                        "protocol": parts[0].split("/")[1],
-                        "service": parts[2],
-                        "version": parts[3]
-                    }
+                return {
+                    "ip": ip,
+                    "port": port,
+                    "protocol": parts[0].split("/")[1],
+                    "service": parts[2],
+                    "version": parts[3],
+                    "state": parts[1]
+                }
             except:
                 parts = line.split(maxsplit=2)
-                if parts[1] == "open":
-                    return {
-                        "ip": ip,
-                        "port": port,
-                        "protocol": parts[0].split("/")[1],
-                        "service": parts[2],
-                        "version": ""
-                    }
+                return {
+                    "ip": ip,
+                    "port": port,
+                    "protocol": parts[0].split("/")[1],
+                    "service": parts[2],
+                    "version": "",
+                    "state": parts[1]
+                }
