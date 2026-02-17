@@ -119,7 +119,7 @@ class AMQPVersionSubServiceClass(BaseSubServiceClass):
                 cves = []
                 if "rabbitmq" in version.lower():
                     print("Version:", version)
-                    _, pure_version, _ = version.split(" ")
+                    _, pure_version, _ = version.strip().split(" ")
                     if self.should_print_cves:
                         cves = get_cves("cpe:2.3:a:vmware:rabbitmq:" + pure_version)
                         cve_set.update(cves)
