@@ -144,6 +144,7 @@ class AMQPVersionSubServiceClass(BaseSubServiceClass):
         d = nmap_identify_service_single(host)
         if d:
             version = d["version"]
+            print("Version:", version)
             if d["state"] == "filtered":
                 return f"{host.ip}:{host.port} => filtered"
             else:
