@@ -342,16 +342,14 @@ def add_default_solver_parser_arguments(parser):
 def get_url_response(url, timeout=5, redirect = True):
     try:
         resp = requests.get(f"http://{url}", allow_redirects=redirect, verify=False, timeout=timeout)
-        print(resp.text)
         if "You're speaking plain HTTP to an SSL-enabled server port" in resp.text: 
+            print("https")
             return requests.get(f"https://{url}", allow_redirects=redirect, verify=False, timeout=timeout)
         return resp
     except Exception as e:
-        print("exception", e)
         try:
             return requests.get(f"https://{url}", allow_redirects=redirect, verify=False, timeout=timeout)
         except Exception:
-            print("None")
             return None
         
 def get_poc_from_cves(cve_list):
