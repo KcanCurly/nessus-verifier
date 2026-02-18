@@ -156,7 +156,8 @@ class VmwareSolverClass(BaseSolverClass):
                                 vv = "8.0"
                             u = esxi_map[build]
                             if self.print_cve:
-                                cves = get_cves(f"cpe:2.3:o:vmware:esxi:{vv}:{u}")
+                                if not ["EOL"] in cves:
+                                    cves = get_cves(f"cpe:2.3:o:vmware:esxi:{vv}:{u}")
                 elif "vcenter server" in key.lower(): 
                     r = r"VMware vCenter Server (\d+\.\d+\.\d+) build-(\d+)"
                     m = re.search(r, key)
@@ -173,7 +174,8 @@ class VmwareSolverClass(BaseSolverClass):
                                 vv = "8.0"
                             u = vcenter_map[build].lower()
                             if self.print_cve:
-                                cves = get_cves(f"cpe:2.3:a:vmware:vcenter_server:{vv}:{u}")
+                                if not ["EOL"] in cves:
+                                    cves = get_cves(f"cpe:2.3:a:vmware:vcenter_server:{vv}:{u}")
                         
                 if cves: 
                     all_cves.update(cves)

@@ -148,7 +148,6 @@ class TomcatVersionSubServiceClass(BaseSubServiceClass):
         version_regex = r"Apache Tomcat/(\d+\.\d+\.\d+)"
         header = get_header_from_url(host, "Server", timeout, errors, verbose)
         if header:
-            print("Header: " + header) # type: ignore
             m = re.search(version_regex, header)
             if m:
                 m = m.group(1)
@@ -158,8 +157,6 @@ class TomcatVersionSubServiceClass(BaseSubServiceClass):
 
         resp = get_url_response(host)
         if resp:
-
-            print("Response: " + resp.text) # type: ignore
             m = re.search(version_regex, resp.text) # type: ignore
             if m:
                 m = m.group(1)
