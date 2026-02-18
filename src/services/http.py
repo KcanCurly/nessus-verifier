@@ -73,7 +73,7 @@ class HTTP401BruteSubServiceClass(BaseSubServiceClass):
                     username, password = cred.split(":")
                     resp = requests.get(host, verify=False, auth=(username, password), timeout=10)
 
-                    if resp.status_code not in range(400, 600):
+                    if resp.status_code not in [401]:
                         if not found_so_far: found_so_far = f"[green]Found -> [/green]"
                         else: found_so_far += "[green], [/green]"
                         found_so_far += f"[green]{username}:{password}[/green]"
