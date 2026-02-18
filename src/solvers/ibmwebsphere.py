@@ -24,7 +24,7 @@ class IBMWebSphereSolverClass(BaseSolverClass):
         r = r"<title>WebSphere Application Server V(.*)</title>"
         liberty = r"<title>WebSphere Liberty (.*)</title>"
         resp = get_url_response(host)
-        if resp:
+        if resp is not None:
             m = re.search(r, resp.text)
             if m:
                 version = m.group(1)

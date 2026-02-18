@@ -52,7 +52,7 @@ class ApacheVersionSubServiceClass(VersionSubService):
                 return Version_Vuln_Host_Data(host, m)
 
         resp = get_url_response(host)
-        if resp:
+        if resp is not None:
             m = re.search(version_regex, resp.text) # type: ignore
             if m:
                 m = m.group(1)
