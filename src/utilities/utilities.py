@@ -343,8 +343,10 @@ def get_url_response(url, timeout=5, redirect = True):
     try:
         resp = requests.get(f"http://{url}", allow_redirects=redirect, timeout=timeout)
         if "You're speaking plain HTTP to an SSL-enabled server port" in resp.text: 
-            print("https")
-            return requests.get(f"https://{url}", allow_redirects=redirect, verify=False, timeout=timeout)
+            resp = requests.get(f"https://{url}", allow_redirects=redirect, verify=False, timeout=timeout)
+            print(resp.text)
+            print(resp.headers)
+            return resp
         return resp
     except Exception as e:
         print(f"Error connecting to {url} with http: {e}")
