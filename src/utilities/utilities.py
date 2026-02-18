@@ -226,9 +226,9 @@ def find_scan(file_path: str, target_id: int):
 def get_header_from_url(host, header, timeout = 5, errors = False, verbose = False) -> str | None:
     resp = get_url_response(host, timeout=timeout)
     print("===================================")
-    print(resp.text)
     if resp:
         return resp.headers.get(header, None) # type: ignore
+    print("No response")
     return None
 
 def get_classic_single_progress():
@@ -346,8 +346,6 @@ def get_url_response(url, timeout=5, redirect = True):
         resp = requests.get(f"http://{url}", allow_redirects=redirect, timeout=timeout)
         if "You're speaking plain HTTP to an SSL-enabled server port" in resp.text: 
             resp = requests.get(f"https://{url}", allow_redirects=redirect, verify=False, timeout=timeout)
-            print(resp.text)
-            print(resp.headers)
             return resp
         return resp
     except Exception as e:
