@@ -226,10 +226,7 @@ def find_scan(file_path: str, target_id: int):
 def get_header_from_url(host, header, timeout = 5, errors = False, verbose = False) -> str | None:
     resp = get_url_response(host, timeout=timeout)
     if resp:
-        print(resp.text)
-        print(resp.headers)
         return resp.headers.get(header, None) # type: ignore
-    print("No resp")
     return None
 
 def get_classic_single_progress():
@@ -345,13 +342,16 @@ def add_default_solver_parser_arguments(parser):
 def get_url_response(url, timeout=5, redirect = True):
     try:
         resp = requests.get(f"http://{url}", allow_redirects=redirect, verify=False, timeout=timeout)
+        print(resp.text)
         if "You're speaking plain HTTP to an SSL-enabled server port" in resp.text: 
             return requests.get(f"https://{url}", allow_redirects=redirect, verify=False, timeout=timeout)
         return resp
-    except Exception:
+    except Exception as e:
+        print("exception", e)
         try:
             return requests.get(f"https://{url}", allow_redirects=redirect, verify=False, timeout=timeout)
         except Exception:
+            print("None")
             return None
         
 def get_poc_from_cves(cve_list):
