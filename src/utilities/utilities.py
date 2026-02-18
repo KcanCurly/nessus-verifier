@@ -224,7 +224,7 @@ def find_scan(file_path: str, target_id: int):
 
 
 def get_header_from_url(host, header, timeout = 5, errors = False, verbose = False) -> str | None:
-    resp = get_url_response(host, timeout=timeout)
+    resp = get_url_response(host, timeout=timeout, errors=errors, verbose=verbose)
 
     if resp is not None:
         return resp.headers.get(header, None) # type: ignore
@@ -341,19 +341,20 @@ def add_default_solver_parser_arguments(parser):
     group.add_argument("-f", "--file", type=str, help="JSON file")
     group.add_argument("-lf", "--list-file", type=str, help="List file")
     
-def get_url_response(url, timeout=5, redirect = True):
+def get_url_response(url, timeout=5, redirect = True, errors = False, verbose = False):
     try:
         resp = requests.get(f"http://{url}", allow_redirects=redirect, timeout=timeout)
         if "You're speaking plain HTTP to an SSL-enabled server port" in resp.text: 
-            resp = requests.get(f"https://{url}", allow_redirects=redirect, verify=False, timeout=timeout)
-            return resp
+            return requests.get(f"https://{url}", allow_redirects=redirect, verify=False, timeout=timeout)
         return resp
     except Exception as e:
-        print(f"Error connecting to {url} with http: {e}")
+        if errors:
+            print(f"Error connecting to {url} with http: {e}")
         try:
             return requests.get(f"https://{url}", allow_redirects=redirect, verify=False, timeout=timeout)
         except Exception as ee:
-            print(f"Error connecting to {url} with https: {ee}")
+            if errors:
+                print(f"Error connecting to {url} with https: {ee}")
             return None
         
 def get_poc_from_cves(cve_list):
