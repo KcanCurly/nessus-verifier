@@ -7,15 +7,15 @@
 import sys
 import warnings
 
-from external.pyasn1 import debug
-from external.pyasn1 import error
-from external.pyasn1.codec.ber import eoo
-from external.pyasn1.compat import _MISSING
-from external.pyasn1.compat.integer import to_bytes
-from external.pyasn1.type import char
-from external.pyasn1.type import tag
-from external.pyasn1.type import univ
-from external.pyasn1.type import useful
+from src.external.pyasn1 import debug
+from src.external.pyasn1 import error
+from src.external.pyasn1.codec.ber import eoo
+from src.external.pyasn1.compat import _MISSING
+from src.external.pyasn1.compat.integer import to_bytes
+from src.external.pyasn1.type import char
+from src.external.pyasn1.type import tag
+from src.external.pyasn1.type import univ
+from src.external.pyasn1.type import useful
 
 __all__ = ['Encoder', 'encode']
 

@@ -9,21 +9,21 @@ import os
 import sys
 import warnings
 
-from external.pyasn1 import debug
-from external.pyasn1 import error
-from external.pyasn1.codec.ber import eoo
-from external.pyasn1.codec.streaming import asSeekableStream
-from external.pyasn1.codec.streaming import isEndOfStream
-from external.pyasn1.codec.streaming import peekIntoStream
-from external.pyasn1.codec.streaming import readFromStream
-from external.pyasn1.compat import _MISSING
-from external.pyasn1.error import PyAsn1Error
-from external.pyasn1.type import base
-from external.pyasn1.type import char
-from external.pyasn1.type import tag
-from external.pyasn1.type import tagmap
-from external.pyasn1.type import univ
-from external.pyasn1.type import useful
+from src.external.pyasn1 import debug
+from src.external.pyasn1 import error
+from src.external.pyasn1.codec.ber import eoo
+from src.external.pyasn1.codec.streaming import asSeekableStream
+from src.external.pyasn1.codec.streaming import isEndOfStream
+from src.external.pyasn1.codec.streaming import peekIntoStream
+from src.external.pyasn1.codec.streaming import readFromStream
+from src.external.pyasn1.compat import _MISSING
+from src.external.pyasn1.error import PyAsn1Error
+from src.external.pyasn1.type import base
+from src.external.pyasn1.type import char
+from src.external.pyasn1.type import tag
+from src.external.pyasn1.type import tagmap
+from src.external.pyasn1.type import univ
+from src.external.pyasn1.type import useful
 
 __all__ = ['StreamingDecoder', 'Decoder', 'decode']
 

@@ -6,10 +6,10 @@
 #
 import datetime
 
-from external.pyasn1 import error
-from external.pyasn1.type import char
-from external.pyasn1.type import tag
-from external.pyasn1.type import univ
+from src.external.pyasn1 import error
+from src.external.pyasn1.type import char
+from src.external.pyasn1.type import tag
+from src.external.pyasn1.type import univ
 
 __all__ = ['ObjectDescriptor', 'GeneralizedTime', 'UTCTime']
 

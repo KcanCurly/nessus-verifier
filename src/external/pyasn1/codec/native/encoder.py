@@ -7,14 +7,14 @@
 from collections import OrderedDict
 import warnings
 
-from external.pyasn1 import debug
-from external.pyasn1 import error
-from external.pyasn1.compat import _MISSING
-from external.pyasn1.type import base
-from external.pyasn1.type import char
-from external.pyasn1.type import tag
-from external.pyasn1.type import univ
-from external.pyasn1.type import useful
+from src.external.pyasn1 import debug
+from src.external.pyasn1 import error
+from src.external.pyasn1.compat import _MISSING
+from src.external.pyasn1.type import base
+from src.external.pyasn1.type import char
+from src.external.pyasn1.type import tag
+from src.external.pyasn1.type import univ
+from src.external.pyasn1.type import useful
 
 __all__ = ['encode']
 

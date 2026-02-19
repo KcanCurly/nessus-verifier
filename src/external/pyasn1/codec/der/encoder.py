@@ -6,9 +6,9 @@
 #
 import warnings
 
-from external.pyasn1 import error
-from external.pyasn1.codec.cer import encoder
-from external.pyasn1.type import univ
+from src.external.pyasn1 import error
+from src.external.pyasn1.codec.cer import encoder
+from src.external.pyasn1.type import univ
 
 __all__ = ['Encoder', 'encode']
 

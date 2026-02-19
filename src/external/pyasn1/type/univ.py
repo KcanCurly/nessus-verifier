@@ -7,15 +7,15 @@
 import math
 import sys
 
-from external.pyasn1 import error
-from external.pyasn1.codec.ber import eoo
-from external.pyasn1.compat import integer
-from external.pyasn1.type import base
-from external.pyasn1.type import constraint
-from external.pyasn1.type import namedtype
-from external.pyasn1.type import namedval
-from external.pyasn1.type import tag
-from external.pyasn1.type import tagmap
+from src.external.pyasn1 import error
+from src.external.pyasn1.codec.ber import eoo
+from src.external.pyasn1.compat import integer
+from src.external.pyasn1.type import base
+from src.external.pyasn1.type import constraint
+from src.external.pyasn1.type import namedtype
+from src.external.pyasn1.type import namedval
+from src.external.pyasn1.type import tag
+from src.external.pyasn1.type import tagmap
 
 NoValue = base.NoValue
 noValue = NoValue()

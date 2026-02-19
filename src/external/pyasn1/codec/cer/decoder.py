@@ -6,10 +6,10 @@
 #
 import warnings
 
-from external.pyasn1 import error
-from external.pyasn1.codec.streaming import readFromStream
-from external.pyasn1.codec.ber import decoder
-from external.pyasn1.type import univ
+from src.external.pyasn1 import error
+from src.external.pyasn1.codec.streaming import readFromStream
+from src.external.pyasn1.codec.ber import decoder
+from src.external.pyasn1.type import univ
 
 __all__ = ['decode', 'StreamingDecoder']
 

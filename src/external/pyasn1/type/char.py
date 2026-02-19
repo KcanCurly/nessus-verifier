@@ -6,9 +6,9 @@
 #
 import sys
 
-from external.pyasn1 import error
-from external.pyasn1.type import tag
-from external.pyasn1.type import univ
+from src.external.pyasn1 import error
+from src.external.pyasn1.type import tag
+from src.external.pyasn1.type import univ
 
 __all__ = ['NumericString', 'PrintableString', 'TeletexString', 'T61String', 'VideotexString',
            'IA5String', 'GraphicString', 'VisibleString', 'ISO646String',

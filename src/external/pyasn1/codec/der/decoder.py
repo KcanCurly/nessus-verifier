@@ -6,8 +6,8 @@
 #
 import warnings
 
-from external.pyasn1.codec.cer import decoder
-from external.pyasn1.type import univ
+from src.external.pyasn1.codec.cer import decoder
+from src.external.pyasn1.type import univ
 
 __all__ = ['decode', 'StreamingDecoder']
 
