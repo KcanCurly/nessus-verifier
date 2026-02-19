@@ -130,7 +130,7 @@ class AMQPVersionSubServiceClass(BaseSubServiceClass):
                     self.print_output(f"    {a}")
 
             self.print_latest_versions("rabbitmq", "RabbitMQ")
-            self.print_pocs(cve_set)
+            self.print_poc(cve_set)
 
         if filtered:
             self.print_output(i18n.t('main.filtered_title'))

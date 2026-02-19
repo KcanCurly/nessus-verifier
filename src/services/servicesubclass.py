@@ -46,7 +46,7 @@ class BaseSubServiceClass():
                 self.print_output(i18n.t('main.latest_version_title', name=product_name))
                 self.print_output(', '.join(lv or []))
 
-    def print_pocs(self, cve_list):
+    def print_poc(self, cve_list):
         if self.should_print_poc and cve_list:
             pocs = get_poc_from_cves(cve_list)
             if pocs:
@@ -110,7 +110,7 @@ class VersionSubService(BaseSubServiceClass):
                     self.print_output(i18n.t('main.latest_version_title', name=name))
                     self.print_output(', '.join(lv or []))
 
-    def print_pocs(self):
+    def print_poc(self):
         if self.should_print_poc and self.cves:
             pocs = get_poc_from_cves(self.cves)
             if pocs:

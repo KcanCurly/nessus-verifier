@@ -32,7 +32,7 @@ class ApacheVersionSubServiceClass(VersionSubService):
                 self.print_single_version_result("Apache HTTP Web Server", value, key, "cpe:2.3:a:apache:http_server:")
 
             self.print_latest_versions()
-            self.print_pocs()
+            self.print_poc()
 
 
 

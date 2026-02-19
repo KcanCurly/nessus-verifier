@@ -135,7 +135,7 @@ class TomcatVersionSubServiceClass(BaseSubServiceClass):
                     self.print_output(f"    {a}")
 
             self.print_latest_versions("tomcat", "Apache Tomcat")
-            self.print_pocs(cve_set)
+            self.print_poc(cve_set)
 
 
 

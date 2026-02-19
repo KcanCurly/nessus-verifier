@@ -210,7 +210,7 @@ class MongoDBVersionSubServiceClass(VersionSubService):
                 self.print_single_version_result("MongoDB", value, key, "cpe:2.3:a:mongodb:mongodb:")
 
             self.print_latest_versions()
-            self.print_pocs()
+            self.print_poc()
 
     @error_handler(["host"])
     def single(self, host, **kwargs):

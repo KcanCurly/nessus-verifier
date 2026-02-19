@@ -47,7 +47,7 @@ class ActiveMQVersionSubServiceClass(BaseSubServiceClass):
                     self.print_output(f"    {a}")
 
             self.print_latest_versions("apache-activemq", "Apache ActiveMQ")
-            self.print_pocs(cve_set)
+            self.print_poc(cve_set)
 
         if filtered:
             self.print_output(i18n.t('main.filtered_title'))
