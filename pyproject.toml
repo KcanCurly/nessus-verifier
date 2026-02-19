@@ -77,5 +77,6 @@ packages = [
     "src.services",
     "src.url",
     "src.utilities",
+    "src.external"
 ]
 
