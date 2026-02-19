@@ -1,8 +1,7 @@
 import i18n
-from src.utilities.utilities import error_handler, generate_random_string, get_cves, get_default_context_execution2, Version_Vuln_Host_Data, nmap_identify_service_single
+from src.utilities.utilities import error_handler, get_cves, get_default_context_execution2, nmap_identify_service_single
 from src.services.serviceclass import BaseServiceClass
-from src.services.servicesubclass import BaseSubServiceClass, VersionSubService
-import nmap
+from src.services.servicesubclass import BaseSubServiceClass
 from pika import PlainCredentials, ConnectionParameters, BlockingConnection, exceptions
 
 class RabbitMQConnection:
@@ -90,8 +89,7 @@ class AMQPVersionSubServiceClass(BaseSubServiceClass):
         super().nv(hosts, kwargs=kwargs)
         
 
-        nm = nmap.PortScanner()
-        results = get_default_context_execution2(f"AMQP Version", self.threads, hosts, self.single, nm=nm, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
+        results = get_default_context_execution2(f"AMQP Version", self.threads, hosts, self.single, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
 
 
         version_dict = {}
