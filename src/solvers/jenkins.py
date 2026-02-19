@@ -1,8 +1,8 @@
 import i18n
-from utilities.utilities import Host, Version_Vuln_Host_Data, error_handler, get_cves, get_poc_cve_github_link, get_url_response, get_default_context_execution, get_header_from_url
+from src.utilities.utilities import Host, Version_Vuln_Host_Data, error_handler, get_cves, get_poc_cve_github_link, get_url_response, get_default_context_execution, get_header_from_url
 import re
 from packaging.version import parse
-from solvers.solverclass import BaseSolverClass
+from src.solvers.solverclass import BaseSolverClass
 
 class JenkinsSolverClass(BaseSolverClass):
     def __init__(self) -> None:

@@ -3,9 +3,9 @@ import i18n
 from pymongo import MongoClient
 import pymongo
 from packaging.version import parse
-from utilities.utilities import Version_Vuln_Host_Data, get_default_context_execution2, error_handler, get_hosts_from_file, get_hosts_from_file2, add_default_serviceclass_arguments, Host, get_cves
-from services.serviceclass import BaseServiceClass
-from services.servicesubclass import BaseSubServiceClass, VersionSubService
+from src.utilities.utilities import Version_Vuln_Host_Data, get_default_context_execution2, error_handler, get_hosts_from_file, get_hosts_from_file2, add_default_serviceclass_arguments, Host, get_cves
+from src.services.serviceclass import BaseServiceClass
+from src.services.servicesubclass import BaseSubServiceClass, VersionSubService
 from traceback import print_exc
 
 class MongoDBPostSubServiceClass(BaseSubServiceClass):

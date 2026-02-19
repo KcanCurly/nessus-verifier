@@ -1,10 +1,10 @@
 import subprocess
 
 import i18n
-from utilities.utilities import error_handler, get_default_context_execution2, Version_Vuln_List_Host_Data
-from services.consts import DEFAULT_ERRORS, DEFAULT_THREAD, DEFAULT_TIMEOUT, DEFAULT_VERBOSE
-from services.serviceclass import BaseServiceClass
-from services.servicesubclass import BaseSubServiceClass
+from src.utilities.utilities import error_handler, get_default_context_execution2, Version_Vuln_List_Host_Data
+from src.services.consts import DEFAULT_ERRORS, DEFAULT_THREAD, DEFAULT_TIMEOUT, DEFAULT_VERBOSE
+from src.services.serviceclass import BaseServiceClass
+from src.services.servicesubclass import BaseSubServiceClass
 
 class RPC_Vuln_Data():
     def __init__(self, host: str, version: list[str]):

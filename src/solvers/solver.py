@@ -1,9 +1,9 @@
 import argparse, argcomplete
 import shutil
-from solvers import grafana, mdns, openssl, php, python, tls, kibana, elastic, mongo, oracle, smb, ssh, snmp, tomcat, apache, nginx, vmware, openssh, smtp_relay, mssql, idrac, ipmi, terminal, cleartext, ibmwebsphere, obsolete_protocols, postgresql, nopasswddb, actionables, ftp, ntp, nfs, queuejumper, \
+from src.solvers import grafana, mdns, openssl, php, python, tls, kibana, elastic, mongo, oracle, smb, ssh, snmp, tomcat, apache, nginx, vmware, openssh, smtp_relay, mssql, idrac, ipmi, terminal, cleartext, ibmwebsphere, obsolete_protocols, postgresql, nopasswddb, actionables, ftp, ntp, nfs, queuejumper, \
     openssl, webcgi_actionable, webcgi_generic, hpilo, jenkins
-from modules.nv_parse import GroupNessusScanOutput
-from solvers.solverclass import BaseSolverClass
+from src.modules.nv_parse import GroupNessusScanOutput
+from src.solvers.solverclass import BaseSolverClass
 import utilities.utilities
 import os
 

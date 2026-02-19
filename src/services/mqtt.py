@@ -1,8 +1,8 @@
 from time import sleep
 import i18n
-from utilities.utilities import error_handler, generate_random_string, get_cves, get_default_context_execution2, Version_Vuln_Host_Data
-from services.serviceclass import BaseServiceClass
-from services.servicesubclass import BaseSubServiceClass
+from src.utilities.utilities import error_handler, generate_random_string, get_cves, get_default_context_execution2, Version_Vuln_Host_Data
+from src.services.serviceclass import BaseServiceClass
+from src.services.servicesubclass import BaseSubServiceClass
 import nmap
 import paho.mqtt.client as mqtt
 from paho.mqtt.enums import CallbackAPIVersion

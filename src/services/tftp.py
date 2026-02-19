@@ -1,9 +1,9 @@
 import socket
 import struct
 import i18n
-from services.serviceclass import BaseServiceClass
-from services.servicesubclass import BaseSubServiceClass
-from utilities.utilities import error_handler, get_default_context_execution2
+from src.services.serviceclass import BaseServiceClass
+from src.services.servicesubclass import BaseSubServiceClass
+from src.utilities.utilities import error_handler, get_default_context_execution2
 
 files = [
 "000000000000-directory.xml",

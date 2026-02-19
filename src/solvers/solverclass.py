@@ -1,5 +1,5 @@
 from ast import arg
-from utilities.utilities import Host, add_default_serviceclass_arguments, add_default_solver_parser_arguments, find_scan, get_hosts_from_file2, get_latest_version
+from src.utilities.utilities import Host, add_default_serviceclass_arguments, add_default_solver_parser_arguments, find_scan, get_hosts_from_file2, get_latest_version
 import traceback
 import os
 import i18n

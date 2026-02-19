@@ -2,7 +2,7 @@ import argparse
 import configparser
 import os
 from pathlib import Path
-from utilities.utilities import get_hosts_from_file
+from src.utilities.utilities import get_hosts_from_file
 
 def check(directory_path, hosts):
     if os.path.exists(os.path.join(directory_path, hosts)):

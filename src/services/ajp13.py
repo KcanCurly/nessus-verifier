@@ -1,9 +1,9 @@
 import re
 import subprocess
-from utilities.utilities import Host, error_handler, get_cves, get_default_context_execution2, Version_Vuln_Host_Data
-from services.serviceclass import BaseServiceClass
-from services.servicesubclass import BaseSubServiceClass
-from services.consts import DEFAULT_ERRORS, DEFAULT_THREAD, DEFAULT_TIMEOUT, DEFAULT_VERBOSE
+from src.utilities.utilities import Host, error_handler, get_cves, get_default_context_execution2, Version_Vuln_Host_Data
+from src.services.serviceclass import BaseServiceClass
+from src.services.servicesubclass import BaseSubServiceClass
+from src.services.consts import DEFAULT_ERRORS, DEFAULT_THREAD, DEFAULT_TIMEOUT, DEFAULT_VERBOSE
 
 class AJP13GhostcatSubServiceClass(BaseSubServiceClass):
     def __init__(self) -> None:

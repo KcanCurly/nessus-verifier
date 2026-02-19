@@ -1,6 +1,6 @@
 import i18n
-from utilities.utilities import Host, Version_Vuln_Host_Data, error_handler, get_cves, get_poc_cve_github_link, get_url_response, get_default_context_execution
-from solvers.solverclass import BaseSolverClass
+from src.utilities.utilities import Host, Version_Vuln_Host_Data, error_handler, get_cves, get_poc_cve_github_link, get_url_response, get_default_context_execution
+from src.solvers.solverclass import BaseSolverClass
 
 "cpe:2.3:o:hpe:integrated_lights-out_6_firmware:1.55"
 "cpe:2.3:o:hpe:integrated_lights-out_6:1.55"

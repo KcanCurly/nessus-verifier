@@ -1,9 +1,9 @@
 import subprocess
 import os
-from utilities.utilities import error_handler, get_hosts_from_file2, add_default_serviceclass_arguments
-from services.consts import DEFAULT_ERRORS, DEFAULT_THREAD, DEFAULT_TIMEOUT, DEFAULT_VERBOSE
-from services.serviceclass import BaseServiceClass
-from services.servicesubclass import BaseSubServiceClass
+from src.utilities.utilities import error_handler, get_hosts_from_file2, add_default_serviceclass_arguments
+from src.services.consts import DEFAULT_ERRORS, DEFAULT_THREAD, DEFAULT_TIMEOUT, DEFAULT_VERBOSE
+from src.services.serviceclass import BaseServiceClass
+from src.services.servicesubclass import BaseSubServiceClass
 
 class AsteriskVersionSubServiceClass(BaseSubServiceClass):
     def __init__(self) -> None:

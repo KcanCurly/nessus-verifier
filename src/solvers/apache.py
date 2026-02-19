@@ -1,5 +1,5 @@
-from solvers.solverclass import BaseSolverClass, WindowCatcherData
-from services.apache import ApacheVersionSubServiceClass
+from src.solvers.solverclass import BaseSolverClass, WindowCatcherData
+from src.services.apache import ApacheVersionSubServiceClass
 
 class ApacheVersionWindowCatcherData(WindowCatcherData):
     def __init__(self, name, code, output) -> None:

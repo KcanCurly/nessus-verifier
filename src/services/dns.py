@@ -7,10 +7,10 @@ import dns.reversename
 import dns.update
 import dns.zone
 import re
-from utilities.utilities import Version_Vuln_Host_Data, error_handler, get_default_context_execution2, get_hosts_from_file2, add_default_serviceclass_arguments
-from services.consts import DEFAULT_ERRORS, DEFAULT_THREAD, DEFAULT_TIMEOUT, DEFAULT_VERBOSE
-from services.serviceclass import BaseServiceClass
-from services.servicesubclass import BaseSubServiceClass
+from src.utilities.utilities import Version_Vuln_Host_Data, error_handler, get_default_context_execution2, get_hosts_from_file2, add_default_serviceclass_arguments
+from src.services.consts import DEFAULT_ERRORS, DEFAULT_THREAD, DEFAULT_TIMEOUT, DEFAULT_VERBOSE
+from src.services.serviceclass import BaseServiceClass
+from src.services.servicesubclass import BaseSubServiceClass
 from traceback import print_exc
 
 def find_domain_name(ip):

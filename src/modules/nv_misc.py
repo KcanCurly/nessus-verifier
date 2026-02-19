@@ -1,6 +1,5 @@
 import argparse, argcomplete
-from utilities import utilities
-from utilities.utilities import get_cves
+from src.utilities.utilities import get_cves, get_latest_version
 
 def main():
     parser = argparse.ArgumentParser(description="Misc functions for nv.")
@@ -20,5 +19,5 @@ def main():
         cves = get_cves(args.cpe, limit=args.count)
         print(", ".join(cves))
     elif args.command == "latest":
-        latest_versions = utilities.get_latest_version(args.app.lower())
+        latest_versions = get_latest_version(args.app.lower())
         print(", ".join(latest_versions)) # type: ignore

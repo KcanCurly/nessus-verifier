@@ -2,8 +2,8 @@ import subprocess
 import re
 
 import i18n
-from solvers.solverclass import BaseSolverClass
-from utilities.utilities import error_handler
+from src.solvers.solverclass import BaseSolverClass
+from src.utilities.utilities import error_handler
 
 class QueueJumperSolverClass(BaseSolverClass):
     def __init__(self) -> None:

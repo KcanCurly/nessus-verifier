@@ -1,8 +1,8 @@
 import i18n
-from utilities.utilities import Version_Vuln_Host_Data, error_handler, get_header_from_url, get_default_context_execution, get_poc_cve_github_link
+from src.utilities.utilities import Version_Vuln_Host_Data, error_handler, get_header_from_url, get_default_context_execution, get_poc_cve_github_link
 import re
 from packaging.version import parse
-from solvers.solverclass import BaseSolverClass
+from src.solvers.solverclass import BaseSolverClass
 
 class PythonSolverClass(BaseSolverClass):
     def __init__(self) -> None:

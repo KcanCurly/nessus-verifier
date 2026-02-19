@@ -1,6 +1,6 @@
 import imaplib
 import ssl
-from utilities.utilities import get_hosts_from_file, add_default_serviceclass_arguments
+from src.utilities.utilities import get_hosts_from_file, add_default_serviceclass_arguments
 
 def tls_nv(hosts: list[str], errors, verbose):
     tls_enabled = []

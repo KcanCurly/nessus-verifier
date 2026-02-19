@@ -1,5 +1,5 @@
-from solvers.solverclass import BaseSolverClass
-from services.snmp import SNMPDefaultSubServiceClass
+from src.solvers.solverclass import BaseSolverClass
+from src.services.snmp import SNMPDefaultSubServiceClass
 
 class SNMPSolverClass(BaseSolverClass):
     def __init__(self) -> None:

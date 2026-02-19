@@ -1,7 +1,7 @@
 import i18n
 import nmap
-from solvers.solverclass import BaseSolverClass
-from utilities.utilities import error_handler
+from src.solvers.solverclass import BaseSolverClass
+from src.utilities.utilities import error_handler
 
 class ObsoleteProtocolSolverClass(BaseSolverClass):
     def __init__(self) -> None:

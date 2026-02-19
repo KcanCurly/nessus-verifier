@@ -1,5 +1,5 @@
-from utilities.utilities import Version_Vuln_Host_Data, error_handler, get_poc_cve_github_link, get_url_response, get_default_context_execution, get_cves
-from solvers.solverclass import BaseSolverClass
+from src.utilities.utilities import Version_Vuln_Host_Data, error_handler, get_poc_cve_github_link, get_url_response, get_default_context_execution, get_cves
+from src.solvers.solverclass import BaseSolverClass
 import re
 from packaging.version import parse
 

@@ -1,10 +1,9 @@
 import subprocess
 import re
 import i18n
-from utilities import utilities
-from utilities.utilities import error_handler, get_cves, get_latest_version
-from services.serviceclass import BaseServiceClass
-from services.servicesubclass import BaseSubServiceClass
+from src.utilities.utilities import error_handler, get_cves, get_latest_version, get_poc_from_cves
+from src.services.serviceclass import BaseServiceClass
+from src.services.servicesubclass import BaseSubServiceClass
 
 class ZookeeperEnumServiceClass(BaseSubServiceClass):
     def __init__(self) -> None:
@@ -78,7 +77,7 @@ class ZookeeperEnumServiceClass(BaseSubServiceClass):
                 self.print_output(', '.join(vs or []))
 
         if self.should_print_poc and cve_list:
-            pocs = utilities.get_poc_from_cves(cve_list)
+            pocs = get_poc_from_cves(cve_list)
             if pocs:
                 self.print_output(i18n.t('main.poc_title'))
                 for cve, poc_list in pocs.items():

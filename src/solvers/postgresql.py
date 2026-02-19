@@ -1,5 +1,5 @@
-from services.postgresql import PSQLDefaultSubServiceClass
-from solvers.solverclass import BaseSolverClass
+from src.services.postgresql import PSQLDefaultSubServiceClass
+from src.solvers.solverclass import BaseSolverClass
 
 class PSQLSolverClass(BaseSolverClass):
     def __init__(self) -> None:

@@ -1,6 +1,6 @@
-from services.apache_tomcat import TomcatVersionSubServiceClass
-from utilities.utilities import error_handler
-from solvers.solverclass import BaseSolverClass
+from src.services.apache_tomcat import TomcatVersionSubServiceClass
+from src.utilities.utilities import error_handler
+from src.solvers.solverclass import BaseSolverClass
 
 class TomcatSolverClass(BaseSolverClass):
     def __init__(self) -> None:

@@ -5,9 +5,9 @@ import socket
 import tomllib
 
 import i18n
-from utilities.utilities import error_handler, find_scan, add_default_solver_parser_arguments, add_default_serviceclass_arguments, get_default_context_execution, Host
-from modules.nv_parse import GroupNessusScanOutput
-from solvers.solverclass import BaseSolverClass
+from src.utilities.utilities import error_handler, find_scan, add_default_solver_parser_arguments, add_default_serviceclass_arguments, get_default_context_execution, Host
+from src.modules.nv_parse import GroupNessusScanOutput
+from src.solvers.solverclass import BaseSolverClass
 
 class TLS_Vuln_Data():
     def __init__(self, host: Host, weak_versions: list[str], weak_ciphers: list[str], weak_bits: list[str], is_wrong_hostname: bool, is_cert_expired: str):

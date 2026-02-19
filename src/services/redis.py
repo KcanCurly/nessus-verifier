@@ -1,10 +1,10 @@
 import i18n
 import redis
 import redis.exceptions
-from utilities.utilities import Version_Vuln_Host_Data, get_cves, get_default_context_execution2, error_handler
-from services.consts import DEFAULT_ERRORS, DEFAULT_THREAD, DEFAULT_TIMEOUT, DEFAULT_VERBOSE
-from services.serviceclass import BaseServiceClass
-from services.servicesubclass import BaseSubServiceClass
+from src.utilities.utilities import Version_Vuln_Host_Data, get_cves, get_default_context_execution2, error_handler
+from src.services.consts import DEFAULT_ERRORS, DEFAULT_THREAD, DEFAULT_TIMEOUT, DEFAULT_VERBOSE
+from src.services.serviceclass import BaseServiceClass
+from src.services.servicesubclass import BaseSubServiceClass
 
 class RedisPostSubServiceClass(BaseSubServiceClass):
     def __init__(self) -> None:

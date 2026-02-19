@@ -1,7 +1,6 @@
-from utilities.utilities import find_scan
-from modules.nv_parse import GroupNessusScanOutput
-from utilities import logger
-from solvers.solverclass import BaseSolverClass
+from src.utilities.utilities import find_scan
+from src.modules.nv_parse import GroupNessusScanOutput
+from src.solvers.solverclass import BaseSolverClass
 
 class ActionablesSolverClass(BaseSolverClass):
     def __init__(self) -> None:

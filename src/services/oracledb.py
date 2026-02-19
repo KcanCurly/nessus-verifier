@@ -1,7 +1,7 @@
 import oracledb
-from services.serviceclass import BaseServiceClass
-from services.servicesubclass import BaseSubServiceClass
-from utilities.utilities import error_handler, get_hosts_from_file2
+from src.services.serviceclass import BaseServiceClass
+from src.services.servicesubclass import BaseSubServiceClass
+from src.utilities.utilities import error_handler, get_hosts_from_file2
 
 class OracleDBMiniShellSubServiceClass(BaseSubServiceClass):
     def __init__(self) -> None:

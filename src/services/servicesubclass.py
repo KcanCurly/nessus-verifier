@@ -1,9 +1,8 @@
 import threading
 import i18n
-from utilities import utilities
-from utilities.utilities import add_default_serviceclass_arguments, add_default_version_subservice_arguments, get_cves, get_hosts_from_file2, error_handler
-from services.consts import DEFAULT_ERRORS, DEFAULT_THREAD, DEFAULT_TIMEOUT, DEFAULT_VERBOSE
-from services.serviceclass import BaseServiceClass as base_service
+from src.utilities.utilities import add_default_serviceclass_arguments, add_default_version_subservice_arguments, get_cves, get_hosts_from_file2, error_handler, get_latest_version, get_poc_from_cves
+from src.services.consts import DEFAULT_ERRORS, DEFAULT_THREAD, DEFAULT_TIMEOUT, DEFAULT_VERBOSE
+from src.services.serviceclass import BaseServiceClass as base_service
 from dataclasses import dataclass
 
 lock = threading.Lock()
@@ -42,14 +41,14 @@ class BaseSubServiceClass():
 
     def print_latest_versions(self, product_code, product_name):
         if self.should_print_latest_version:
-            lv = utilities.get_latest_version(product_code, True)
+            lv = get_latest_version(product_code, True)
             if lv:
                 self.print_output(i18n.t('main.latest_version_title', name=product_name))
                 self.print_output(', '.join(lv or []))
 
     def print_pocs(self, cve_list):
         if self.should_print_poc and cve_list:
-            pocs = utilities.get_poc_from_cves(cve_list)
+            pocs = get_poc_from_cves(cve_list)
             if pocs:
                 self.print_output(i18n.t('main.poc_title'))
                 
@@ -106,14 +105,14 @@ class VersionSubService(BaseSubServiceClass):
     def print_latest_versions(self):
         if self.should_print_latest_version and self.products:
             for name, code in self.products:
-                lv = utilities.get_latest_version(code, True)
+                lv = get_latest_version(code, True)
                 if lv:
                     self.print_output(i18n.t('main.latest_version_title', name=name))
                     self.print_output(', '.join(lv or []))
 
     def print_pocs(self):
         if self.should_print_poc and self.cves:
-            pocs = utilities.get_poc_from_cves(self.cves)
+            pocs = get_poc_from_cves(self.cves)
             if pocs:
                 self.print_output(i18n.t('main.poc_title'))
                 for cve, poc_list in pocs.items():

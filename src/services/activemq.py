@@ -1,6 +1,6 @@
-from utilities.utilities import error_handler, get_cves, get_default_context_execution2, nmap_identify_service_single
-from services.serviceclass import BaseServiceClass
-from services.servicesubclass import BaseSubServiceClass
+from src.utilities.utilities import error_handler, get_cves, get_default_context_execution2, nmap_identify_service_single
+from src.services.serviceclass import BaseServiceClass
+from src.services.servicesubclass import BaseSubServiceClass
 import i18n
 
 class ActiveMQVersionSubServiceClass(BaseSubServiceClass):

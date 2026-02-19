@@ -1,7 +1,7 @@
 import i18n
-from utilities.utilities import get_default_context_execution2, error_handler, get_url_response
-from services.serviceclass import BaseServiceClass
-from services.servicesubclass import BaseSubServiceClass
+from src.utilities.utilities import get_default_context_execution2, error_handler, get_url_response
+from src.services.serviceclass import BaseServiceClass
+from src.services.servicesubclass import BaseSubServiceClass
 
 class iDRAC_Version_Vuln_Data():
     def __init__(self, host: str, main_version:str, version: str):

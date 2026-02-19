@@ -1,6 +1,6 @@
 import i18n
-from solvers.solverclass import BaseSolverClass
-from utilities.utilities import error_handler
+from src.solvers.solverclass import BaseSolverClass
+from src.utilities.utilities import error_handler
 from external.rdpy import RDPConfig, LU_ISSUES
 
 class TerminalSolverClass(BaseSolverClass):

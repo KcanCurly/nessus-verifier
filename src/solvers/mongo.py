@@ -1,5 +1,5 @@
-from services import mongodb
-from solvers.solverclass import BaseSolverClass
+from src.services import mongodb
+from src.solvers.solverclass import BaseSolverClass
 
 class MongoSolverClass(BaseSolverClass):
     def __init__(self) -> None:
