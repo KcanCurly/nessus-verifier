@@ -124,7 +124,7 @@ import socket
 import struct
 import time
 import re
-from external.pyasn1.codec.ber import decoder
+from src.external.pyasn1.codec.ber import decoder
 import errno
 
 # custom errors
