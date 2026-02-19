@@ -32,7 +32,7 @@ class TerminalSolverClass(BaseSolverClass):
         if not self.hosts: 
             return
 
-        results = get_default_context_execution2("banner grab", args.threads, self.hosts, self.solve_single, timeout=args.timeout)
+        results = get_default_context_execution2("RDP Security Check", args.threads, self.hosts, self.solve_single, timeout=args.timeout)
                 
         if results:
             self.print_output(i18n.t('main.terminal_misconfiguration_title'))
