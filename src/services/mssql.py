@@ -1,3 +1,4 @@
+from concurrent.futures import ThreadPoolExecutor
 import i18n
 import pymssql
 import nmap
@@ -5,6 +6,11 @@ from src.utilities.utilities import Version_Vuln_Host_Data, get_cves, get_defaul
 from src.services.consts import DEFAULT_ERRORS, DEFAULT_THREAD, DEFAULT_TIMEOUT, DEFAULT_VERBOSE
 from src.services.serviceclass import BaseServiceClass
 from src.services.servicesubclass import BaseSubServiceClass
+from rich.live import Live
+from rich.progress import TextColumn, Progress, BarColumn, TimeElapsedColumn
+from rich.table import Column
+from rich.console import Group
+from rich.panel import Panel
 
 def connect_to_server(ip, username, password, database, port, domain, login_timeout = 10):
     try:
@@ -31,9 +37,26 @@ class MSSQL_Brute_Vuln_Data():
         self.host = host
         self.creds = creds
 
+
 class MSSQLBruteSubServiceClass(BaseSubServiceClass):
     def __init__(self) -> None:
         super().__init__("brute", "Bruteforce")
+
+    text_column1 = TextColumn("{task.fields[taskid]}", table_column=Column(ratio=1), style= "bold")
+    text_column2 = TextColumn("{task.fields[status]}", table_column=Column(ratio=1), style= "dim")
+
+    progress = Progress(
+        text_column1, BarColumn(), text_column2, refresh_per_second= 1)
+
+    overall_progress = Progress(
+        TimeElapsedColumn(), BarColumn(), TextColumn("{task.completed}/{task.total}")
+    )
+    overall_task_id = overall_progress.add_task("", start=False)
+
+    progress_group = Group(
+        Panel(progress, title="SSH Brute", expand=False),
+        overall_progress,
+    )
 
     def helper_parse(self, subparsers):
         parser = subparsers.add_parser(self.command_name, help = self.help_description)
@@ -51,8 +74,18 @@ class MSSQLBruteSubServiceClass(BaseSubServiceClass):
         super().nv(hosts, kwargs=kwargs)
         creds = kwargs.get("creds", [])
         domain = kwargs.get("domain", "")
+        threads = kwargs.get("threads", 10)
 
-        results: list[MSSQL_Brute_Vuln_Data] = get_default_context_execution2("MSSQL Brute", self.threads, hosts, self.single, creds=creds, domain=domain, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
+        with Live(MSSQLBruteSubServiceClass.progress_group):
+            MSSQLBruteSubServiceClass.overall_progress.update(MSSQLBruteSubServiceClass.overall_task_id, total=len(hosts))
+            MSSQLBruteSubServiceClass.overall_progress.start_task(MSSQLBruteSubServiceClass.overall_task_id)
+            with ThreadPoolExecutor(threads) as executor:
+                for host in hosts:
+                    task_id = MSSQLBruteSubServiceClass.progress.add_task("brute", start=False, taskid=f"{host.ip}:{host.port}", status="status")
+                    MSSQLBruteSubServiceClass.progress.update(task_id, visible=False)
+                    executor.submit(self.single, task_id, host.ip, host.port, creds, domain)
+
+        results: list[MSSQL_Brute_Vuln_Data] = get_default_context_execution2("MSSQL Bruteforce", self.threads, hosts, self.single, creds=creds, domain=domain, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
         
         if results:
             self.print_output("MSSQL Credentials Found on Hosts:")               
@@ -60,23 +93,28 @@ class MSSQLBruteSubServiceClass(BaseSubServiceClass):
                 self.print_output(f"    {a.host} - {", ".join(a.creds)}")
 
     @error_handler(["host"])
-    def single(self, host, **kwargs):
-        creds = kwargs.get("creds", [])
-        domain = kwargs.get("domain", "")
-        ip = host.ip
-        port = host.port
-
-        c = []
-
-        for cred in creds:
-            username, password = cred.split(":")
-            if connect_to_server(ip, username, password, "master", str(port), domain, login_timeout=10):
-                c.append(f"{username}:{password}")
-        
-        if c:
-            return MSSQL_Brute_Vuln_Data(f"{ip}:{port}", c)
-        else:
-            return None
+    def single(self, task_id, ip, port, creds, domain):
+        cred_len = len(creds)
+        try:
+            MSSQLBruteSubServiceClass.progress.update(task_id, status=f"[yellow]Processing[/yellow]", total=cred_len, visible=True)
+            MSSQLBruteSubServiceClass.progress.start_task(task_id)
+            found_so_far = ""
+            for i, cred in enumerate(creds):
+                username, password = cred.split(":", 1)
+                if connect_to_server(ip, username, password, "master", str(port), domain, login_timeout=10):
+                    if not found_so_far: found_so_far = f"[green]Found -> [/green]"
+                    else: found_so_far += "[green], [/green]"
+                    found_so_far += f"[green]{username}:{password}[/green]"
+                    self.print_output(f"{ip}:{port} => {username}:{password}", normal_print=False)
+                    
+                MSSQLBruteSubServiceClass.progress.update(task_id, status=f"[yellow]Trying Credentials {i+1}/{cred_len}[/yellow] {found_so_far}", advance=1)
+                
+            if not found_so_far:
+                MSSQLBruteSubServiceClass.progress.update(task_id, visible=False)
+            MSSQLBruteSubServiceClass.overall_progress.update(MSSQLBruteSubServiceClass.overall_task_id, advance=1)
+        except Exception as e:
+            MSSQLBruteSubServiceClass.overall_progress.update(MSSQLBruteSubServiceClass.overall_task_id, advance=1)
+            MSSQLBruteSubServiceClass.progress.update(task_id, status=f"[red]Error {e}[/red]")
 
 
 
