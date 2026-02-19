@@ -1,0 +1,73 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "nessus_verifier"
+version = "0.0.1"
+description = "Pentests services from nessus file"
+readme = { file = "README.md", content-type = "text/markdown" }
+authors = [
+    { name = "kcancurly" }
+]
+license = { text = "MIT" }
+requires-python = ">=3.8"
+
+dependencies = [
+    "argcomplete",
+    "requests",
+    "bs4",
+    "dnspython",
+    "impacket",
+    "pyaml",
+    "pysmb",
+    "pymongo",
+    "python-nmap",
+    "rich",
+    "psycopg",
+    "paramiko",
+    "toml",
+    "stomp.py",
+    "pymssql",
+    "asyncssh[bcrypt]",
+    "colorama",
+    "pymysql",
+    "packaging",
+    "pika",
+    "redis[hiredis]",
+    "BAC0",
+    "nvdlib",
+    "cidr_man",
+    "selenium",
+    "html5lib",
+    "python-i18n",
+    "paho-mqtt",
+    "xmpppy",
+    "jmxquery",
+    "openpyxl",
+    "oracledb",
+    "prompt_toolkit",
+]
+
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+Homepage = "https://github.com/kcancurly/nessus-verifier"
+
+[project.scripts]
+nv-parse = "src.modules.nv_parse:main"
+nv-solver = "src.solvers.solver:main"
+nv-nmap = "src.modules.nv_nmap:main"
+nv-nuclei = "src.modules.nv_nuclei:main"
+nv-ncat = "src.modules.nv_ncat:main"
+nv-service = "src.services.nv_services:main"
+nv-url = "src.url.url:main"
+nv-nessus = "src.modules.nv_nessus:main"
+nv-misc = "src.modules.nv_misc:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

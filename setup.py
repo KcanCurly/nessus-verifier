@@ -58,7 +58,7 @@ setup(
             "nv-solver=src.solvers.solver:main",
             "nv-nmap=src.modules.nv_nmap:main",
             "nv-nuclei=src.modules.nv_nuclei:main",
-            "nv-nc=src.modules.nv_nc:main",
+            "nv-ncat=src.modules.nv_ncat:main",
             "nv-service=src.services.nv_services:main",
             "nv-url=src.url.url:main",
             "nv-nessus=src.modules.nv_nessus:main",

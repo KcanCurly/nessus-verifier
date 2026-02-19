@@ -2,6 +2,7 @@ from src.utilities.utilities import error_handler, get_default_context_execution
 import argparse, argcomplete
 import socket
 import ssl
+import subprocess
 
 @error_handler(["host"])
 def connect_and_get_response_single(host, **kwargs):
@@ -9,54 +10,18 @@ def connect_and_get_response_single(host, **kwargs):
     message = kwargs.get("message", "info")
     use_ssl = kwargs.get("ssl", False)
     use_ssl = True if use_ssl == "ssl" else False
-    
-
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    sock.settimeout(timeout)
-    if use_ssl:
-        context = ssl._create_unverified_context()
-        sock = context.wrap_socket(sock, server_hostname=host)
-
-    sock.connect((host.ip, int(host.port)))
-    response = ""
-    try:
-        while True:
-            try:
-                data = sock.recv(4096)
-                if not data:
-                    break
-                response += data.decode(errors="replace")
-            except socket.timeout:
-                break
-        if response:
-            return Version_Vuln_Host_Data(host, response.strip())
-    except socket.timeout:
-        if response:
-            return Version_Vuln_Host_Data(host, response.strip())
-        pass  # No response within timeout
-    except Exception as e:
-        pass
-
-    sock.sendall(bytes(message))
 
     try:
-        while True:
-            try:
-                data = sock.recv(4096)
-                if not data:
-                    break
-                response += data.decode(errors="replace")
-            except socket.timeout:
-                break
-        if response:
-            return Version_Vuln_Host_Data(host, response.strip())
-    except socket.timeout:
-        if response:
-            return Version_Vuln_Host_Data(host, response.strip())
-        pass  # No response within timeout
-    except Exception as e:
-        pass
-    return Version_Vuln_Host_Data(host, response.strip())
+        result = subprocess.run(
+            ["ncat", host.ip, host.port],
+            timeout=5,
+            capture_output=True,
+            text=True
+        )
+        return Version_Vuln_Host_Data(host, result.stdout.strip())
+
+    except subprocess.TimeoutExpired as e:
+        return Version_Vuln_Host_Data(host, result.stdout.strip())
 
     
 def connect_and_get_response_multiple(hosts, output, message, ssl, threads, timeout):
