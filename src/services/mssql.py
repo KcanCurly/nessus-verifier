@@ -19,17 +19,18 @@ def connect_to_server(ip, username, password, database, port, domain, login_time
         try:
             conn = pymssql.connect(ip, username, password, database, port=port, login_timeout=login_timeout, timeout=login_timeout, tds_version="7.0")
         except Exception:
-            try:
-                conn = pymssql.connect(
-                    host=ip,
-                    user=f'{domain}\\{username}',
-                    password=password,
-                    database=database,
-                    login_timeout=login_timeout,
-                    timeout=login_timeout
-                )
-            except Exception:
-                return None
+            if domain:
+                try:
+                    conn = pymssql.connect(
+                        host=ip,
+                        user=f'{domain}\\{username}',
+                        password=password,
+                        database=database,
+                        login_timeout=login_timeout,
+                        timeout=login_timeout
+                    )
+                except Exception:
+                    return None
     return conn
 
 class MSSQL_Brute_Vuln_Data():
