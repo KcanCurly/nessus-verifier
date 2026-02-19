@@ -2,9 +2,9 @@ import re
 import socket
 import requests
 import i18n
-from src.utilities.utilities import error_handler, generate_random_string, get_default_context_execution2, Version_Vuln_Host_Data, get_header_from_url, get_url_response
-from src.services.serviceclass import BaseServiceClass
-from src.services.servicesubclass import BaseSubServiceClass, VersionSubService
+from utilities.utilities import error_handler, generate_random_string, get_default_context_execution2, Version_Vuln_Host_Data, get_header_from_url, get_url_response
+from services.serviceclass import BaseServiceClass
+from services.servicesubclass import BaseSubServiceClass, VersionSubService
 import requests
 
 class ApacheVersionSubServiceClass(VersionSubService):

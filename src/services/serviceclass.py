@@ -1,4 +1,4 @@
-from src.utilities.utilities import get_latest_version
+from utilities.utilities import get_latest_version
 
 
 class BaseServiceClass():

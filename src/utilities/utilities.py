@@ -8,7 +8,7 @@ import re
 import ssl
 import socket
 import requests
-from src.modules.nv_parse import GroupNessusScanOutput
+from modules.nv_parse import GroupNessusScanOutput
 from rich.progress import TextColumn, Progress, BarColumn, TimeElapsedColumn, SpinnerColumn
 from rich.console import Console
 from rich.table import Column

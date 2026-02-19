@@ -4,8 +4,8 @@
 # Copyright (c) 2005-2020, Ilya Etingof <etingof@gmail.com>
 # License: https://pyasn1.readthedocs.io/en/latest/license.html
 #
-from src.external.pyasn1.type import base
-from src.external.pyasn1.type import tag
+from external.pyasn1.type import base
+from external.pyasn1.type import tag
 
 __all__ = ['endOfOctets']
 

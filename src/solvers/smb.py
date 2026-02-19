@@ -1,5 +1,5 @@
-from src.solvers.solverclass import BaseSolverClass
-from src.services.smb import SMBNullSessionSubServiceClass, SMBSignSubServiceClass, SMBv1SubServiceClass
+from solvers.solverclass import BaseSolverClass
+from services.smb import SMBNullSessionSubServiceClass, SMBSignSubServiceClass, SMBv1SubServiceClass
 
 class SMBSolverClass(BaseSolverClass):
     def __init__(self) -> None:

@@ -7,8 +7,8 @@
 import io
 import os
 
-from src.external.pyasn1 import error
-from src.external.pyasn1.type import univ
+from external.pyasn1 import error
+from external.pyasn1.type import univ
 
 class CachingStreamWrapper(io.IOBase):
     """Wrapper around non-seekable streams.

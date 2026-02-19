@@ -1,5 +1,5 @@
-from src.services.ntp import NTPMode6SubServiceClass, NTPMonlistSubServiceClass
-from src.solvers.solverclass import BaseSolverClass
+from services.ntp import NTPMode6SubServiceClass, NTPMonlistSubServiceClass
+from solvers.solverclass import BaseSolverClass
 
 class NTPSolverClass(BaseSolverClass):
     def __init__(self) -> None:

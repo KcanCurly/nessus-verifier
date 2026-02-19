@@ -1,4 +1,4 @@
-from src.utilities.utilities import get_hosts_from_file
+from utilities.utilities import get_hosts_from_file
 import argparse
 
 def process(hosts):

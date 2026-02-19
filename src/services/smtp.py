@@ -1,7 +1,7 @@
 import smtplib
-from src.utilities.utilities import confirm_prompt, get_hosts_from_file2, get_hosts_from_file, add_default_serviceclass_arguments, error_handler
-from src.services.serviceclass import BaseServiceClass
-from src.services.servicesubclass import BaseSubServiceClass
+from utilities.utilities import confirm_prompt, get_hosts_from_file2, get_hosts_from_file, add_default_serviceclass_arguments, error_handler
+from services.serviceclass import BaseServiceClass
+from services.servicesubclass import BaseSubServiceClass
 
 
 def userenum_nv(hosts, domain, threads, timeout, errors, verbose):

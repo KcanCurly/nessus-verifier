@@ -1,8 +1,8 @@
 import re
 
 import i18n
-from src.utilities.utilities import Host, Version_Vuln_Host_Data, error_handler, get_cves, get_url_response, get_default_context_execution, get_poc_cve_github_link
-from src.solvers.solverclass import BaseSolverClass
+from utilities.utilities import Host, Version_Vuln_Host_Data, error_handler, get_cves, get_url_response, get_default_context_execution, get_poc_cve_github_link
+from solvers.solverclass import BaseSolverClass
 from packaging.version import parse
 
 class KibanaSolverClass(BaseSolverClass):

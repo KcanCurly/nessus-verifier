@@ -1,7 +1,7 @@
 import socket
-from src.utilities.utilities import Version_Vuln_Host_Data, get_default_context_execution2, error_handler
-from src.services.serviceclass import BaseServiceClass
-from src.services.servicesubclass import BaseSubServiceClass
+from utilities.utilities import Version_Vuln_Host_Data, get_default_context_execution2, error_handler
+from services.serviceclass import BaseServiceClass
+from services.servicesubclass import BaseSubServiceClass
 
 class SystatBannerSubServiceClass(BaseSubServiceClass):
     def __init__(self) -> None:

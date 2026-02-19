@@ -1,7 +1,7 @@
 import i18n
-from src.utilities.utilities import Version_Vuln_Host_Data, error_handler, get_url_response, get_default_context_execution, get_cves, get_poc_cve_github_link
+from utilities.utilities import Version_Vuln_Host_Data, error_handler, get_url_response, get_default_context_execution, get_cves, get_poc_cve_github_link
 from packaging.version import parse
-from src.solvers.solverclass import BaseSolverClass
+from solvers.solverclass import BaseSolverClass
 
 class ElasticsearchSolverClass(BaseSolverClass):
     def __init__(self) -> None:

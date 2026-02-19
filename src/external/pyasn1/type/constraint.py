@@ -8,7 +8,7 @@
 #
 import sys
 
-from src.external.pyasn1.type import error
+from external.pyasn1.type import error
 
 __all__ = ['SingleValueConstraint', 'ContainedSubtypeConstraint',
            'ValueRangeConstraint', 'ValueSizeConstraint',

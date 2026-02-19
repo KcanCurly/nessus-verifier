@@ -7,8 +7,8 @@
 import logging
 import sys
 
-from src.external.pyasn1 import __version__
-from src.external.pyasn1 import error
+from external.pyasn1 import __version__
+from external.pyasn1 import error
 
 __all__ = ['Debug', 'setLogger', 'hexdump']
 

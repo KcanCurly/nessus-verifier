@@ -6,7 +6,7 @@
 #
 # ASN.1 named integers
 #
-from src.external.pyasn1 import error
+from external.pyasn1 import error
 
 __all__ = ['NamedValues']
 

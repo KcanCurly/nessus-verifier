@@ -1,10 +1,10 @@
 import subprocess
 import re
 import i18n
-from src.utilities import utilities
-from src.utilities.utilities import error_handler, get_cves, get_latest_version
-from src.services.serviceclass import BaseServiceClass
-from src.services.servicesubclass import BaseSubServiceClass
+from utilities import utilities
+from utilities.utilities import error_handler, get_cves, get_latest_version
+from services.serviceclass import BaseServiceClass
+from services.servicesubclass import BaseSubServiceClass
 
 class ZookeeperEnumServiceClass(BaseSubServiceClass):
     def __init__(self) -> None:

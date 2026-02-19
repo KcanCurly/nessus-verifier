@@ -1,6 +1,6 @@
 import argparse, argcomplete
-from src.utilities import utilities
-from src.utilities.utilities import get_cves
+from utilities import utilities
+from utilities.utilities import get_cves
 
 def main():
     parser = argparse.ArgumentParser(description="Misc functions for nv.")

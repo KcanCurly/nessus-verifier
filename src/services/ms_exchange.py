@@ -1,7 +1,7 @@
 import requests
 from urllib3 import disable_warnings
 from urllib3.exceptions import InsecureRequestWarning
-from src.utilities.utilities import get_hosts_from_file
+from utilities.utilities import get_hosts_from_file
 
 # Suppress only the InsecureRequestWarning
 disable_warnings(category=InsecureRequestWarning)

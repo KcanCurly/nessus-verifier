@@ -6,9 +6,9 @@
 #
 import sys
 
-from src.external.pyasn1 import error
-from src.external.pyasn1.type import tag
-from src.external.pyasn1.type import tagmap
+from external.pyasn1 import error
+from external.pyasn1.type import tag
+from external.pyasn1.type import tagmap
 
 __all__ = ['NamedType', 'OptionalNamedType', 'DefaultedNamedType',
            'NamedTypes']

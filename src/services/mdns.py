@@ -1,8 +1,8 @@
 import i18n
 import nmap
-from src.utilities.utilities import Version_Vuln_List_Host_Data, get_default_context_execution2, error_handler
-from src.services.serviceclass import BaseServiceClass
-from src.services.servicesubclass import BaseSubServiceClass
+from utilities.utilities import Version_Vuln_List_Host_Data, get_default_context_execution2, error_handler
+from services.serviceclass import BaseServiceClass
+from services.servicesubclass import BaseSubServiceClass
 
 def is_empty_or_spaces(s):
     return s.strip() == ""

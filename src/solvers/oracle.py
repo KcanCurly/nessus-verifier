@@ -1,7 +1,7 @@
 import re
 import subprocess
-from src.utilities.utilities import Version_Vuln_Data, error_handler, get_default_context_execution
-from src.solvers.solverclass import BaseSolverClass
+from utilities.utilities import Version_Vuln_Data, error_handler, get_default_context_execution
+from solvers.solverclass import BaseSolverClass
 
 class OracleSolverClass(BaseSolverClass):
     def __init__(self) -> None:

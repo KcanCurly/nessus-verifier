@@ -1,10 +1,10 @@
 from ftplib import FTP
 from ftplib import error_perm
-from src.utilities.utilities import error_handler, get_default_context_execution, Host
-from src.services.telnet import TelnetUsageSubServiceClass
+from utilities.utilities import error_handler, get_default_context_execution, Host
+from services.telnet import TelnetUsageSubServiceClass
 import nmap
 import requests
-from src.solvers.solverclass import BaseSolverClass
+from solvers.solverclass import BaseSolverClass
 
 class CleartextSolverClass(BaseSolverClass):
     def __init__(self) -> None:

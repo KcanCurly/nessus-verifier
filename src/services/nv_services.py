@@ -1,11 +1,11 @@
 import argparse, argcomplete
 import os
 import subprocess
-from src.services import jmx, activemq, ajp13, amqp, asterisk, chargen, daytime, discard, dns, echo, finger, ftp, http, ident, ldap, mdns, mongodb, mqtt, ms_exchange, mssql, netstat, oracledb, qotd, smb, ssh, snmp, nfs, rpc, smtp, snmp, stomp, systat, telnet, tftp, time, mssql, idrac, zookeeper, postgresql, mysql, redis
-from src.services.apache import ApacheServiceClass
-from src.services.apache_tomcat import TomcatServiceClass
-from src.services.ejabberd import EjabberDServiceClass
-from src.services.serviceclass import BaseServiceClass
+from services import jmx, activemq, ajp13, amqp, asterisk, chargen, daytime, discard, dns, echo, finger, ftp, http, ident, ldap, mdns, mongodb, mqtt, ms_exchange, mssql, netstat, oracledb, qotd, smb, ssh, snmp, nfs, rpc, smtp, snmp, stomp, systat, telnet, tftp, time, mssql, idrac, zookeeper, postgresql, mysql, redis
+from services.apache import ApacheServiceClass
+from services.apache_tomcat import TomcatServiceClass
+from services.ejabberd import EjabberDServiceClass
+from services.serviceclass import BaseServiceClass
 from traceback import print_exc
 import i18n
 

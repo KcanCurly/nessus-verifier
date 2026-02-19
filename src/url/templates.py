@@ -34,14 +34,14 @@ class SiteTemplateBase:
         raise NotImplementedError("check() must be implemented by subclasses.")
     
     def on_success(self, url, hostname, username, password):
-        from src.url.url import valid_lock, NV_SUCCESS
+        from url.url import valid_lock, NV_SUCCESS
         with valid_lock:
             with open(NV_SUCCESS, "a") as file:
                 file.write(f"{url}{f' | {hostname}' if hostname else ''} => {self.name} => {username}:{password}\n")
         print(f"{url} => {self.name}{f' | {hostname}' if hostname else ''} => {username}:{password}")
 
     def on_failure(self, url, hostname):
-        from src.url.url import valid_template_lock, NV_NOT_VALID
+        from url.url import valid_template_lock, NV_NOT_VALID
         with valid_template_lock:
             with open(NV_NOT_VALID, "a") as file:
                 file.write(f"{url}{f' | {hostname}' if hostname else ''} => {self.name}\n")

@@ -4,7 +4,7 @@
 # Copyright (c) 2005-2020, Ilya Etingof <etingof@gmail.com>
 # License: https://pyasn1.readthedocs.io/en/latest/license.html
 #
-from src.external.pyasn1 import error
+from external.pyasn1 import error
 
 __all__ = ['tagClassUniversal', 'tagClassApplication', 'tagClassContext',
            'tagClassPrivate', 'tagFormatSimple', 'tagFormatConstructed',

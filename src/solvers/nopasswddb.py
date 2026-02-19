@@ -1,7 +1,7 @@
 import i18n
-from src.utilities.utilities import Host, error_handler, get_default_context_execution, get_url_response
-from src.services import mongodb, postgresql, redis
-from src.solvers.solverclass import BaseSolverClass
+from utilities.utilities import Host, error_handler, get_default_context_execution, get_url_response
+from services import mongodb, postgresql, redis
+from solvers.solverclass import BaseSolverClass
 
 class NoPasswordDBSolverClass(BaseSolverClass):
     def __init__(self) -> None:

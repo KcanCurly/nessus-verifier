@@ -1,7 +1,7 @@
 import i18n
-from src.solvers.solverclass import BaseSolverClass
-from src.utilities import utilities
-from src.utilities.utilities import error_handler, get_cves, get_poc_cve_github_link
+from solvers.solverclass import BaseSolverClass
+from utilities import utilities
+from utilities.utilities import error_handler, get_cves, get_poc_cve_github_link
 import re
 import subprocess
 import requests

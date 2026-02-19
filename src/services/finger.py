@@ -1,8 +1,8 @@
 import subprocess
 import re
-from src.utilities.utilities import error_handler
-from src.services.serviceclass import BaseServiceClass
-from src.services.servicesubclass import BaseSubServiceClass
+from utilities.utilities import error_handler
+from services.serviceclass import BaseServiceClass
+from services.servicesubclass import BaseSubServiceClass
 
 class FingerUserenumSubServiceClass(BaseSubServiceClass):
     def __init__(self) -> None:

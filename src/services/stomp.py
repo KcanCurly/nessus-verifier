@@ -1,8 +1,8 @@
 import stomp
 import time
-from src.utilities.utilities import error_handler, generate_random_string, get_cves, get_default_context_execution2
-from src.services.serviceclass import BaseServiceClass
-from src.services.servicesubclass import BaseSubServiceClass
+from utilities.utilities import error_handler, generate_random_string, get_cves, get_default_context_execution2
+from services.serviceclass import BaseServiceClass
+from services.servicesubclass import BaseSubServiceClass
 import i18n
 
 class Listener(stomp.ConnectionListener):

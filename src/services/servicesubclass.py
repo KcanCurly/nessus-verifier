@@ -1,9 +1,9 @@
 import threading
 import i18n
-from src.utilities import utilities
-from src.utilities.utilities import add_default_serviceclass_arguments, add_default_version_subservice_arguments, get_cves, get_hosts_from_file2, error_handler
-from src.services.consts import DEFAULT_ERRORS, DEFAULT_THREAD, DEFAULT_TIMEOUT, DEFAULT_VERBOSE
-from src.services.serviceclass import BaseServiceClass as base_service
+from utilities import utilities
+from utilities.utilities import add_default_serviceclass_arguments, add_default_version_subservice_arguments, get_cves, get_hosts_from_file2, error_handler
+from services.consts import DEFAULT_ERRORS, DEFAULT_THREAD, DEFAULT_TIMEOUT, DEFAULT_VERBOSE
+from services.serviceclass import BaseServiceClass as base_service
 from dataclasses import dataclass
 
 lock = threading.Lock()

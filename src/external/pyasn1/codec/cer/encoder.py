@@ -6,10 +6,10 @@
 #
 import warnings
 
-from src.external.pyasn1 import error
-from src.external.pyasn1.codec.ber import encoder
-from src.external.pyasn1.type import univ
-from src.external.pyasn1.type import useful
+from external.pyasn1 import error
+from external.pyasn1.codec.ber import encoder
+from external.pyasn1.type import univ
+from external.pyasn1.type import useful
 
 __all__ = ['Encoder', 'encode']
 

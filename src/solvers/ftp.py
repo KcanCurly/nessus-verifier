@@ -1,5 +1,5 @@
-from src.services.ftp import FTPAnonSubServiceClass
-from src.solvers.solverclass import BaseSolverClass
+from services.ftp import FTPAnonSubServiceClass
+from solvers.solverclass import BaseSolverClass
 
 class FTPSolverClass(BaseSolverClass):
     def __init__(self) -> None:

@@ -1,10 +1,10 @@
 import argparse, argcomplete
 import shutil
-from src.solvers import grafana, mdns, openssl, php, python, tls, kibana, elastic, mongo, oracle, smb, ssh, snmp, tomcat, apache, nginx, vmware, openssh, smtp_relay, mssql, idrac, ipmi, terminal, cleartext, ibmwebsphere, obsolete_protocols, postgresql, nopasswddb, actionables, ftp, ntp, nfs, queuejumper, \
+from solvers import grafana, mdns, openssl, php, python, tls, kibana, elastic, mongo, oracle, smb, ssh, snmp, tomcat, apache, nginx, vmware, openssh, smtp_relay, mssql, idrac, ipmi, terminal, cleartext, ibmwebsphere, obsolete_protocols, postgresql, nopasswddb, actionables, ftp, ntp, nfs, queuejumper, \
     openssl, webcgi_actionable, webcgi_generic, hpilo, jenkins
-from src.modules.nv_parse import GroupNessusScanOutput
-from src.solvers.solverclass import BaseSolverClass
-import src.utilities.utilities
+from modules.nv_parse import GroupNessusScanOutput
+from solvers.solverclass import BaseSolverClass
+import utilities.utilities
 import os
 
 solver_dict: dict[int, type[BaseSolverClass]] = {
@@ -109,7 +109,7 @@ def main():
     
     if hasattr(args, "func"):
         if hasattr(args, "nvd_api_key") and args.nvd_api_key is not None:
-            src.utilities.utilities.nvd_api_key = args.nvd_api_key
+            utilities.utilities.nvd_api_key = args.nvd_api_key
         args.func(args)
     else:
         parser.print_help()

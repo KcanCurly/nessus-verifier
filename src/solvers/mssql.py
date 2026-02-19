@@ -1,5 +1,5 @@
-from src.services.mssql import MSSQLVersionSubServiceClass
-from src.solvers.solverclass import BaseSolverClass
+from services.mssql import MSSQLVersionSubServiceClass
+from solvers.solverclass import BaseSolverClass
 
 class MSSQLSolverClass(BaseSolverClass):
     def __init__(self) -> None:

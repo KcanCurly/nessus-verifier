@@ -1,6 +1,6 @@
-from src.services import ssh
-from src.services.ssh import SSHAuditSubServiceClass
-from src.solvers.solverclass import BaseSolverClass
+from services import ssh
+from services.ssh import SSHAuditSubServiceClass
+from solvers.solverclass import BaseSolverClass
 
 class SSHAuditSolverClass(BaseSolverClass):
     def __init__(self) -> None:

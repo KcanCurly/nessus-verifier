@@ -1,9 +1,9 @@
 import i18n
 import nmap
 import pymysql
-from src.utilities.utilities import Version_Vuln_Host_Data, get_default_context_execution2, error_handler, get_hosts_from_file2, add_default_serviceclass_arguments
-from src.services.serviceclass import BaseServiceClass
-from src.services.servicesubclass import BaseSubServiceClass
+from utilities.utilities import Version_Vuln_Host_Data, get_default_context_execution2, error_handler, get_hosts_from_file2, add_default_serviceclass_arguments
+from services.serviceclass import BaseServiceClass
+from services.servicesubclass import BaseSubServiceClass
 
 class MYSQLPostSubServiceClass(BaseSubServiceClass):
     def __init__(self) -> None:

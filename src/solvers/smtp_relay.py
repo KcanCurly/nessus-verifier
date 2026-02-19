@@ -1,7 +1,7 @@
 import tomllib
-from src.utilities.utilities import add_default_solver_parser_arguments, add_default_serviceclass_arguments
-from src.solvers.solverclass import BaseSolverClass
-from src.services.smtp import SMTPOpenRelaySubServiceClass
+from utilities.utilities import add_default_solver_parser_arguments, add_default_serviceclass_arguments
+from solvers.solverclass import BaseSolverClass
+from services.smtp import SMTPOpenRelaySubServiceClass
 
 class SMTPSolverClass(BaseSolverClass):
     def __init__(self) -> None:

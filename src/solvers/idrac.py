@@ -1,5 +1,5 @@
-from src.services.idrac import IDRACVersionSubServiceClass
-from src.solvers.solverclass import BaseSolverClass
+from services.idrac import IDRACVersionSubServiceClass
+from solvers.solverclass import BaseSolverClass
 
 class IDRACSolverClass(BaseSolverClass):
     def __init__(self) -> None:

@@ -1,5 +1,5 @@
-from src.services.nfs import NFSListServiceClass
-from src.solvers.solverclass import BaseSolverClass
+from services.nfs import NFSListServiceClass
+from solvers.solverclass import BaseSolverClass
 
 class NFSSolverClass(BaseSolverClass):
     def __init__(self) -> None:

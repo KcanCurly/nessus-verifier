@@ -4,9 +4,9 @@ import re
 import i18n
 from impacket.smbconnection import SMBConnection # type: ignore
 from smb import SMBConnection as pysmbconn
-from src.utilities.utilities import error_handler, get_default_context_execution2
-from src.services.serviceclass import BaseServiceClass
-from src.services.servicesubclass import BaseSubServiceClass
+from utilities.utilities import error_handler, get_default_context_execution2
+from services.serviceclass import BaseServiceClass
+from services.servicesubclass import BaseSubServiceClass
         
 class NullGuest_Vuln_Data():
     def __init__(self, host: str, null_files: dict[str, list[str]], guest_files: dict[str, list[str]]):

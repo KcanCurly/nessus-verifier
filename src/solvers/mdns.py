@@ -1,5 +1,5 @@
-from src.services.mdns import MDNSDiscoverySubServiceClass
-from src.solvers.solverclass import BaseSolverClass
+from services.mdns import MDNSDiscoverySubServiceClass
+from solvers.solverclass import BaseSolverClass
 
 class MDNSSolverClass(BaseSolverClass):
     def __init__(self) -> None:

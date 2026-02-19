@@ -3,9 +3,9 @@ from ftplib import Error
 from ftplib import FTP_TLS
 
 import i18n
-from src.utilities.utilities import add_default_serviceclass_arguments, get_default_context_execution2, error_handler, get_cves, Host, normalize_line_endings, get_hosts_from_file, get_hosts_from_file2
-from src.services.serviceclass import BaseServiceClass
-from src.services.servicesubclass import BaseSubServiceClass
+from utilities.utilities import add_default_serviceclass_arguments, get_default_context_execution2, error_handler, get_cves, Host, normalize_line_endings, get_hosts_from_file, get_hosts_from_file2
+from services.serviceclass import BaseServiceClass
+from services.servicesubclass import BaseSubServiceClass
 import argparse
 from concurrent.futures import ThreadPoolExecutor
 import threading
@@ -15,8 +15,8 @@ from rich.progress import TextColumn, Progress, BarColumn, TimeElapsedColumn
 from rich.table import Column
 from rich.console import Group
 from rich.panel import Panel
-from src.services.serviceclass import BaseServiceClass
-from src.services.servicesubclass import BaseSubServiceClass
+from services.serviceclass import BaseServiceClass
+from services.servicesubclass import BaseSubServiceClass
 import nmap
 
 class FTP_Anon_Vuln_Data():

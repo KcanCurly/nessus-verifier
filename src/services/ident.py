@@ -1,8 +1,8 @@
 import subprocess
 import re
-from src.utilities.utilities import error_handler, get_hosts_from_file2, add_default_serviceclass_arguments
-from src.services.serviceclass import BaseServiceClass
-from src.services.servicesubclass import BaseSubServiceClass
+from utilities.utilities import error_handler, get_hosts_from_file2, add_default_serviceclass_arguments
+from services.serviceclass import BaseServiceClass
+from services.servicesubclass import BaseSubServiceClass
 from traceback import print_exc
 
 class IdentUsersSubServiceClass(BaseSubServiceClass):

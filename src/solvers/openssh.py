@@ -1,5 +1,5 @@
-from src.services.ssh import SSHVersionSubServiceClass
-from src.solvers.solverclass import BaseSolverClass
+from services.ssh import SSHVersionSubServiceClass
+from solvers.solverclass import BaseSolverClass
 
 class OpenSSHSolverClass(BaseSolverClass):
     def __init__(self) -> None:
