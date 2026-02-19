@@ -247,10 +247,10 @@ def are_respones_same(response1: requests.Response, response2: requests.Response
     if response1.status_code != response2.status_code:
         return False
     
-    if response1.headers["Content-Length"] != response2.headers["Content-Length"]:
+    if "Content-Length" in response1.headers and "Content-Length" in response2.headers and response1.headers["Content-Length"] != response2.headers["Content-Length"]:
         return False
     
-    if response1.headers.get("Location", "l") != response2.headers.get("Location", "l"):
+    if "Location" in response1.headers and "Location" in response2.headers and response1.headers["Location"] != response2.headers["Location"]:
         return False
     
     return True
