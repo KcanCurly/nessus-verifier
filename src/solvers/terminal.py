@@ -36,8 +36,9 @@ class TerminalSolverClass(BaseSolverClass):
                 
         if results:
             self.print_output(i18n.t('main.terminal_misconfiguration_title'))
-            for key, value in results.items():
-                self.print_output(f"{key}")
-                for v in value:
-                    self.print_output(f"    {v}")
-            self.create_windowcatcher_action()
+            for item in results:
+                for key, value in item.items():
+                    self.print_output(f"{key}")
+                    for v in value:
+                        self.print_output(f"    {v}")
+                self.create_windowcatcher_action()
