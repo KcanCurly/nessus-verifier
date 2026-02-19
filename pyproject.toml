@@ -59,15 +59,15 @@ classifiers = [
 Homepage = "https://github.com/kcancurly/nessus-verifier"
 
 [project.scripts]
-nv-parse = "modules.nv_parse:main"
-nv-solver = "solvers.solver:main"
-nv-nmap = "modules.nv_nmap:main"
-nv-nuclei = "modules.nv_nuclei:main"
-nv-ncat = "modules.nv_ncat:main"
-nv-service = "services.nv_services:main"
-nv-url = "url.url:main"
-nv-nessus = "modules.nv_nessus:main"
-nv-misc = "modules.nv_misc:main"
+nv-parse = "src.modules.nv_parse:main"
+nv-solver = "src.solvers.solver:main"
+nv-nmap = "src.modules.nv_nmap:main"
+nv-nuclei = "src.modules.nv_nuclei:main"
+nv-ncat = "src.modules.nv_ncat:main"
+nv-service = "src.services.nv_services:main"
+nv-url = "src.url.url:main"
+nv-nessus = "src.modules.nv_nessus:main"
+nv-misc = "src.modules.nv_misc:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
