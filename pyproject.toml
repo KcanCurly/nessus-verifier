@@ -75,6 +75,7 @@ packages = [
     "src.modules",
     "src.solvers",
     "src.services",
-    "src.url"
+    "src.url",
+    "src.utilities",
 ]
 

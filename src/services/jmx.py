@@ -1,15 +1,9 @@
-import re
 import subprocess
-import requests
-import i18n
 from src.utilities.utilities import add_default_serviceclass_arguments, error_handler, get_default_context_execution2, Version_Vuln_Host_Data, get_header_from_url, get_hosts_from_file2, get_url_response
 from src.services.serviceclass import BaseServiceClass
-from src.services.servicesubclass import BaseSubServiceClass, VersionSubService
-import requests
+from src.services.servicesubclass import BaseSubServiceClass
 import jmxquery
 from enum import Enum
-import socket
-import time
 
 class PREDEFINED_QUERY(Enum):
     TOMCAT_SERVER_INFO = "Tomcat Server Info"
