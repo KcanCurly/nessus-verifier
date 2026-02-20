@@ -283,6 +283,7 @@ class TFTPBruteSubServiceClass(BaseSubServiceClass):
 
     @error_handler(["host"])
     def single(self, host, **kwargs):
+        errors = kwargs.get("errors", [])
         found = []
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         sock.settimeout(3)
@@ -305,7 +306,8 @@ class TFTPBruteSubServiceClass(BaseSubServiceClass):
                 if opcode == 3:
                     found.append(file)
             except Exception as e:
-                print("Error", e)
+                if errors:
+                    print("Error", e)
         if found:
             return (host, found)
         
