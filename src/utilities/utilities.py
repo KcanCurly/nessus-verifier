@@ -341,7 +341,7 @@ def add_default_solver_parser_arguments(parser):
     group.add_argument("-f", "--file", type=str, help="JSON file")
     group.add_argument("-lf", "--list-file", type=str, help="List file")
     
-def get_url_response(url, timeout=5, redirect = True):
+def get_url_response(url, timeout=5, redirect = True, errors = False, verbose = False):
     try:
         resp = requests.get(f"http://{url}", allow_redirects=redirect, timeout=timeout)
         if "You're speaking plain HTTP to an SSL-enabled server port" in resp.text: 
@@ -349,11 +349,13 @@ def get_url_response(url, timeout=5, redirect = True):
             return resp
         return resp
     except Exception as e:
-        print(f"Error connecting to {url} with http: {e}")
+        if errors:
+            print(f"Error connecting to {url} with http: {e}")
         try:
             return requests.get(f"https://{url}", allow_redirects=redirect, verify=False, timeout=timeout)
         except Exception as ee:
-            print(f"Error connecting to {url} with https: {ee}")
+            if errors:
+                print(f"Error connecting to {url} with https: {ee}")
             return None
         
 def get_poc_from_cves(cve_list):
