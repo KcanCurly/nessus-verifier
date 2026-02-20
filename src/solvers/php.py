@@ -24,7 +24,6 @@ class PHPSolverClass(BaseSolverClass):
         version_regex = r"PHP\/(\d+\.\d+\.\d+)"
         powered_by = get_header_from_url(str(host), "X-Powered-By")
         if not powered_by: 
-            print(f"{host} - Z")
             return
         m = re.search(version_regex, powered_by)
         if m:
