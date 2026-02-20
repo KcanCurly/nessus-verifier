@@ -286,30 +286,44 @@ class TFTPBruteSubServiceClass(BaseSubServiceClass):
         errors = kwargs.get("errors", [])
         found = []
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        sock.settimeout(3)
+        sock.settimeout(5)
+        try:
+            # TFTP RRQ packet
+            # opcode 1 (RRQ) + filename + null + mode + null
+            filename = "test"
+            mode = "octet"
 
-        for file in files:
-            try:
+            packet = b"\x00\x01" + filename.encode() + b"\x00" + mode.encode() + b"\x00"
 
-                # TFTP Opcode 1: Read Request (RRQ)
-                # Format: opcode (2 bytes) + filename + null + mode + null
-                mode = b'octet'  # or b'netascii'
-                packet = struct.pack('!H', 1) + file.encode() + b'\x00' + mode + b'\x00'
+            sock.sendto(packet, (host, 69))
+
+            data, addr = sock.recvfrom(516)
+
+            for file in files:
+                try:
+
+                    # TFTP Opcode 1: Read Request (RRQ)
+                    # Format: opcode (2 bytes) + filename + null + mode + null
+                    mode = b'octet'  # or b'netascii'
+                    packet = struct.pack('!H', 1) + file.encode() + b'\x00' + mode + b'\x00'
 
 
-                sock.sendto(packet, (host.ip, int(host.port)))
-                data, addr = sock.recvfrom(516)  # 512 bytes + 4 header
+                    sock.sendto(packet, (host.ip, int(host.port)))
+                    data, addr = sock.recvfrom(516)  # 512 bytes + 4 header
 
-                # Opcode 3 = DATA, Opcode 5 = ERROR
-                opcode = struct.unpack('!H', data[:2])[0]
+                    # Opcode 3 = DATA, Opcode 5 = ERROR
+                    opcode = struct.unpack('!H', data[:2])[0]
 
-                if opcode == 3:
-                    found.append(file)
-            except Exception as e:
-                if errors:
-                    print("Error", e)
-        if found:
-            return (host, found)
+                    if opcode == 3:
+                        found.append(file)
+                except Exception as e:
+                    if errors:
+                        print(f"{host.ip}:{host.port} - {file} - Error: ", e)
+            if found:
+                return (host, found)
+        except socket.timeout:
+            return 
+
         
 class TFTPServiceClass(BaseServiceClass):
     def __init__(self) -> None:
