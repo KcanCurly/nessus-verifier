@@ -7,7 +7,7 @@ import re
 import ipaddress
 
 def get_ips(filename):
-    ip_pattern = r"\b(?:\d{1,3}\.){3}\d{1,3}\b"
+    ip_pattern = r"\b((?:\d{1,3}\.){3}\d{1,3}):(\d{1,5})\b"
     ips = set()
 
     with open(filename, "r") as f:
