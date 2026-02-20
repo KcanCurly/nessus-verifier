@@ -44,6 +44,7 @@ def command_single(host, **kwargs):
     ip, port = host
     cmd = [
         "nmap",
+        "-Pn",
         "-p", str(port),
         "-oX", "-",      # XML output to stdout
         ip
