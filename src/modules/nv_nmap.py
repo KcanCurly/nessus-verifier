@@ -41,7 +41,7 @@ def command_status(args):
             out.close()
 
 def command_single(host, **kwargs):
-    ip, port = host.split(":")
+    ip, port = host
     cmd = [
         "nmap",
         "-p", str(port),
