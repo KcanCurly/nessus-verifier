@@ -58,8 +58,7 @@ class BaseSolverClass():
         latest_versions = self.get_latest_version()
         if latest_versions:
             self.print_output(f"Latest version for {self.eol_product_name}")
-            for version in latest_versions:
-                self.print_output(version)
+            self.print_output(f"{self.eol_product_name}:" + ", ".join(latest_versions))
 
     def print_output(self, message):
         print(message)
