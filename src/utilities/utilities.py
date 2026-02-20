@@ -225,8 +225,9 @@ def find_scan(file_path: str, target_id: int):
 
 def get_header_from_url(host, header, timeout = 5, errors = False, verbose = False) -> str | None:
     resp = get_url_response(host, timeout=timeout, redirect=False)
-    print(resp)
+    
     if resp is not None:
+        print(resp.headers)
         return resp.headers.get(header, None) # type: ignore
 
     return None
