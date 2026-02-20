@@ -7,19 +7,24 @@ import re
 import ipaddress
 
 def get_ips(filename):
-    ip_pattern = r"\b((?:\d{1,3}\.){3}\d{1,3}):(\d{1,5})\b"
-    ips = set()
+    pattern = re.compile(r"\b((?:\d{1,3}\.){3}\d{1,3}):(\d{1,5})\b")
+
+    results = set()
 
     with open(filename, "r") as f:
         for line in f:
-            for match in re.findall(ip_pattern, line):
+            for ip_str, port_str in pattern.findall(line):
                 try:
-                    ip = ipaddress.ip_address(match)
-                    ips.add(str(ip))
+                    ip = ipaddress.ip_address(ip_str)
+                    port = int(port_str)
+
+                    if 0 <= port <= 65535:
+                        results.add((str(ip), port))
+
                 except ValueError:
                     pass
 
-    return ips
+    return results
 
 def command_status(args):
     hosts = get_ips(args.file)
