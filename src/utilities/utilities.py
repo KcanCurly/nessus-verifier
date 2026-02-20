@@ -227,6 +227,9 @@ def get_header_from_url(host, header, timeout = 5, errors = False, verbose = Fal
     resp = get_url_response(host, timeout=timeout, redirect=False)
     
     if resp is not None:
+        print(f"ZZZ {host}")
+        print(resp.__dict__)
+        print(resp.headers)
         return resp.headers.get(header, None) # type: ignore
 
     return None
