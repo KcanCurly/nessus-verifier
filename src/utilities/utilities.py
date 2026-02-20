@@ -227,9 +227,6 @@ def get_header_from_url(host, header, timeout = 5, errors = False, verbose = Fal
     resp = get_url_response(host, timeout=timeout, redirect=False)
     
     if resp is not None:
-        print(f"ZZZ {host}")
-        print(resp.__dict__)
-        print(resp.headers)
         return resp.headers.get(header, None) # type: ignore
 
     return None
@@ -347,7 +344,7 @@ def add_default_solver_parser_arguments(parser):
 def get_url_response(url, timeout=5, redirect = True, errors = False, verbose = False):
     try:
         resp = requests.get(f"http://{url}", allow_redirects=redirect, timeout=timeout)
-        if "You're speaking plain HTTP to an SSL-enabled server port" in resp.text: 
+        if "You're speaking plain HTTP to an SSL-enabled server port" in resp.text or "HTTP request sent to HTTPS port" in resp.text: 
             resp = requests.get(f"https://{url}", allow_redirects=redirect, verify=False, timeout=timeout)
             return resp
         return resp
