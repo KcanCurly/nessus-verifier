@@ -295,7 +295,7 @@ class TFTPBruteSubServiceClass(BaseSubServiceClass):
 
             packet = b"\x00\x01" + filename.encode() + b"\x00" + mode.encode() + b"\x00"
 
-            sock.sendto(packet, (host, 69))
+            sock.sendto(packet, (host.ip, int(host.port)))
 
             data, addr = sock.recvfrom(516)
 
