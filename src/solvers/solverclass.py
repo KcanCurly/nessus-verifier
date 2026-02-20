@@ -115,7 +115,7 @@ class BaseSolverClass():
         if args.file:
             scan = find_scan(args.file, self.id)
             if not scan: 
-                if args.is_all: 
+                if hasattr(args, "is_all") and args.is_all: 
                     return
                 print("File not found")
                 return
