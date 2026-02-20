@@ -1,6 +1,64 @@
 import subprocess
+import sys
 from src.utilities.utilities import error_handler, get_default_context_execution2, get_hosts_from_file2
 import argparse, argcomplete
+import xml.etree.ElementTree as ET
+import re
+import ipaddress
+
+def get_ips(filename):
+    ip_pattern = r"\b(?:\d{1,3}\.){3}\d{1,3}\b"
+    ips = set()
+
+    with open(filename, "r") as f:
+        for line in f:
+            for match in re.findall(ip_pattern, line):
+                try:
+                    ip = ipaddress.ip_address(match)
+                    ips.add(str(ip))
+                except ValueError:
+                    pass
+
+    return ips
+
+def command_status(args):
+    hosts = get_ips(args.file)
+
+    results = get_default_context_execution2("Nmap Status Check", args.threads, hosts, command_single)
+
+    out = open(args.output, "w") if hasattr(args, "output") and args.output else sys.stdout
+
+    try:
+        for r in results:
+            out.write(r)
+    finally:
+        if out is not sys.stdout:
+            out.close()
+
+def command_single(host, **kwargs):
+    ip = host.ip
+    port = host.port
+    cmd = [
+        "nmap",
+        "-p", str(port),
+        "-oX", "-",      # XML output to stdout
+        ip
+        ]
+    
+    result = subprocess.run(
+        cmd,
+        capture_output=True,
+        text=True
+    )
+
+        # Parse XML
+    root = ET.fromstring(result.stdout)
+
+    for port in root.findall(".//port"):
+        state = port.find("state").attrib["state"] # type: ignore
+        return f"{ip}:{port} => {state}"
+
+    return None
 
 @error_handler(["host"])
 def identify_service_single(host,**kwargs):
@@ -75,7 +133,10 @@ def identify_service(hosts, exclude_ports, output, output2, threads, verbose = F
                 with open(f"{s}.txt", "a") as f:
                     f.writelines(left + "\n")
         
-        
+
+def command_scan(args):
+    identify_service(args.file, args.exclude_ports, args.output if args.output else None, args.unknown_output if args.unknown_output else None, args.threads, verbose=True)
+
 def parse_ports(value):
     ports = set()
     for part in value.split(","):
@@ -87,13 +148,26 @@ def parse_ports(value):
     return sorted(ports)
 
 def main():
-    parser = argparse.ArgumentParser(description="Nmap scanner for nessus unknown ports.")
-    parser.add_argument("-f", "--file", type=str, required=True, help="Path to a file containing a list of hosts, each in 'ip:port' format, one per line.")
-    parser.add_argument("--exclude-ports", type=parse_ports, default="9100", nargs="+", help="Exclude ports (Default: 9100).")
-    parser.add_argument("-o", "--output", type=str, default="nv-known.txt", help="Output file for knowns (Default: nv-known.txt).")
-    parser.add_argument("-uo", "--unknown-output", type=str, default="nv-unknown.txt", help="Output file for unknowns (Default: nv-unknown.txt).")
-    parser.add_argument("--threads", type=int, default=10, help="Amount of threads (Default = 10).")
+    parser = argparse.ArgumentParser(description="Nmap module")
+    subparsers = parser.add_subparsers(dest="command", required=True)
+
+    # Command 1
+    p1 = subparsers.add_parser("status", help="Gets status of the ports")
+    p1.add_argument("-f", "--file", required=True, help="Input file with hosts in 'ip:port' format")
+    p1.add_argument("-o", "--output", required=False, help="Output file")
+    p1.add_argument("--threads", type=int, default=10, help="Amount of threads (Default = 10).")
+    p1.set_defaults(func=command_status)
+
+    # Command 2
+    p2 = subparsers.add_parser("scan", help="Get version of the services running on the ports")
+    p2.add_argument("-f", "--file", type=str, required=True, help="Path to a file containing a list of hosts, each in 'ip:port' format, one per line.")
+    p2.add_argument("--exclude-ports", type=parse_ports, default="9100", nargs="+", help="Exclude ports (Default: 9100).")
+    p2.add_argument("-o", "--output", type=str, default="nv-known.txt", help="Output file for knowns (Default: nv-known.txt).")
+    p2.add_argument("-uo", "--unknown-output", type=str, default="nv-unknown.txt", help="Output file for unknowns (Default: nv-unknown.txt).")
+    p2.add_argument("--threads", type=int, default=10, help="Amount of threads (Default = 10).")
+    p2.set_defaults(func=command_scan)
+
     args = parser.parse_args()
     argcomplete.autocomplete(parser)
+    args.func(args)
     
-    identify_service(args.file, args.exclude_ports, args.output if args.output else None, args.unknown_output if args.unknown_output else None, args.threads)
