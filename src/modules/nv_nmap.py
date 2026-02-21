@@ -55,6 +55,7 @@ def command_single(host, **kwargs):
         capture_output=True,
         text=True
     )
+    print(result.stdout)
 
         # Parse XML
     root = ET.fromstring(result.stdout)
