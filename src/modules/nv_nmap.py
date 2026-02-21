@@ -18,7 +18,7 @@ def get_ips(filename):
                     ip = ipaddress.ip_address(ip_str)
                     port = int(port_str)
 
-                    if 0 <= port <= 65535:
+                    if 0 < port <= 65535:
                         results.add((str(ip), port))
 
                 except ValueError:
@@ -32,12 +32,16 @@ def command_status(args):
     results = get_default_context_execution2("Nmap Status Check", args.threads, hosts, command_single)
 
     out = open(args.output, "w") if hasattr(args, "output") and args.output else sys.stdout
+    print(results)
 
     try:
         for r in results:
+            print(r)
             out.write(r)
     finally:
+        print("Done.")
         if out is not sys.stdout:
+            print("Close")
             out.close()
 
 def command_single(host, **kwargs):
@@ -61,7 +65,6 @@ def command_single(host, **kwargs):
     try:
         for port in root.findall(".//port"):
             state = port.find("state").attrib["state"] # type: ignore
-            print(state)
             return f"{ip}:{port} => {state}"
     except Exception as e:
         pass
