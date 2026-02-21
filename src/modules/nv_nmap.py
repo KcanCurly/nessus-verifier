@@ -32,7 +32,6 @@ def command_status(args):
     results = get_default_context_execution2("Nmap Status Check", args.threads, hosts, command_single)
 
     out = open(args.output, "w") if hasattr(args, "output") and args.output else sys.stdout
-    print(results)
 
     try:
         for r in results:
