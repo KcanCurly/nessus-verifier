@@ -36,12 +36,9 @@ def command_status(args):
 
     try:
         for r in results:
-            print(r)
             out.write(r)
     finally:
-        print("Done.")
         if out is not sys.stdout:
-            print("Close")
             out.close()
 
 def command_single(host, **kwargs):
@@ -63,8 +60,8 @@ def command_single(host, **kwargs):
     root = ET.fromstring(result.stdout)
 
     try:
-        for port in root.findall(".//port"):
-            state = port.find("state").attrib["state"] # type: ignore
+        for p in root.findall(".//port"):
+            state = p.find("state").attrib["state"] # type: ignore
             return f"{ip}:{port} => {state}"
     except Exception as e:
         pass
