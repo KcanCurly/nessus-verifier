@@ -55,14 +55,16 @@ def command_single(host, **kwargs):
         capture_output=True,
         text=True
     )
-    print(result.stdout)
-
         # Parse XML
     root = ET.fromstring(result.stdout)
 
-    for port in root.findall(".//port"):
-        state = port.find("state").attrib["state"] # type: ignore
-        return f"{ip}:{port} => {state}"
+    try:
+        for port in root.findall(".//port"):
+            state = port.find("state").attrib["state"] # type: ignore
+            print(state)
+            return f"{ip}:{port} => {state}"
+    except Exception as e:
+        pass
 
     return None
 
