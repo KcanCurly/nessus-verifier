@@ -36,7 +36,7 @@ def command_status(args):
 
     try:
         for r in results:
-            out.write(r)
+            out.write(f"{r}\n")
     finally:
         if out is not sys.stdout:
             out.close()
