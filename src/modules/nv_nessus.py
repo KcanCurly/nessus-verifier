@@ -226,7 +226,7 @@ def access_check(args):
         if "/" in scope:
             not_found = expand_cidr_range(scope)
             for ip in found_ips:
-                if ip in cidr_man.CIDR(scope):
+                if ip in ipaddress.IPv4Network(scope, strict=False):
                     not_found.remove(ip)
             if len(not_found) > 0:
                 print(i18n.t('main.check_access', name=scope))
