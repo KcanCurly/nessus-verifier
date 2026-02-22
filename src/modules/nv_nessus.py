@@ -153,7 +153,7 @@ def portreport(args):
 
 
 
-def checkaccess(args):
+def access_check(args):
     input_file = args.file
     scope_file = args.scope
     ignore_ports = parse_ports(args.ignore_ports) if args.ignore_ports else []
@@ -250,17 +250,20 @@ def main():
     p1.add_argument("-o", "--output", required=True, help="Output .nessus file")
     p1.add_argument("-i", '--include', type=str, required=False, help='Only process IPs that is in the given file.')
     p1.add_argument("-e", '--exclude', type=str, required=False, help='Only process IPs that is NOT in the given file.')
+    p1.add_argument("-l", "--language",  type=str, default="en", help="Language of the output")
     p1.set_defaults(func=filter_nessus)
 
     # Command 2
     p2 = subparsers.add_parser("split", help="Splits the nessus file evenly across multiple files")
     p2.add_argument("-f", "--file", required=True, help="Input .nessus file")
     p2.add_argument("-n", "--number", type=int, required=True, help="Number of files")
+    p2.add_argument("-l", "--language",  type=str, default="en", help="Language of the output")
     p2.set_defaults(func=split)
 
     # Command 3
     p3 = subparsers.add_parser("portreport", help="Port Report")
     p3.add_argument("-f", "--file", required=True, help="Input .nessus file")
+    p3.add_argument("-l", "--language",  type=str, default="en", help="Language of the output")
     p3.set_defaults(func=portreport)
 
     # Command 4
@@ -268,14 +271,16 @@ def main():
     p4.add_argument("-f", "--file", required=True, help="Input .nessus file")
     p4.add_argument("-s", "--scope", required=True, help="Input scope file")
     p4.add_argument("--ignore-ports", type=parse_ports, help="Comma separated list of ports to ignore",  nargs="+", required=False)
-    p4.set_defaults(func=checkaccess)
+    p4.add_argument("-l", "--language",  type=str, default="en", help="Language of the output")
+    p4.set_defaults(func=access_check)
 
-    # Command 4
-    p4 = subparsers.add_parser("portcheck", help="Checks if any ports are accessible on given scope")
-    p4.add_argument("-f", "--file", required=True, help="Input .nessus file")
-    p4.add_argument("-s", "--scope", required=True, help="Input scope file")
-    p4.add_argument("--ignore-ports", type=parse_ports, help="Comma separated list of ports to ignore",  nargs="+", required=False)
-    p4.set_defaults(func=checkaccess)
+    # Command 5
+    # p5 = subparsers.add_parser("portcheck", help="Checks if any ports are accessible on given scope")
+    # p5.add_argument("-f", "--file", required=True, help="Input .nessus file")
+    # p5.add_argument("-s", "--scope", required=True, help="Input scope file")
+    # p5.add_argument("--ignore-ports", type=parse_ports, help="Comma separated list of ports to ignore",  nargs="+", required=False)
+    # p5.add_argument("-l", "--language",  type=str, default="en", help="Language of the output")
+    # p5.set_defaults(func=access_check)
 
     args = parser.parse_args()
     argcomplete.autocomplete(parser)
