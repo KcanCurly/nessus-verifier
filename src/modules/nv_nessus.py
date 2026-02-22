@@ -199,31 +199,46 @@ def access_check(args):
                 print(f"{scope}")
 
 
+import ipaddress
+
 def expand_ip_range(ip_range: str):
-    """
-    Expands shorthand range like:
-    1.1.1.1-55  -> 1.1.1.1 ... 1.1.1.55
-    """
+    start_str, end_str = [x.strip() for x in ip_range.split("-", 1)]
 
-    base, end = ip_range.split("-")
+    # Validate start IP
+    start_ip = ipaddress.IPv4Address(start_str)
 
-    # Validate base IP
-    ip = ipaddress.IPv4Address(base)
+    # Case 1: shorthand last-octet range
+    if "." not in end_str:
+        if not end_str.isdigit():
+            raise ValueError(f"{ip_range} Invalid shorthand range")
 
-    # Extract last octet start
-    parts = base.split(".")
-    start = int(parts[-1])
-    end = int(end)
+        end_octet = int(end_str)
 
-    if not (0 <= start <= 255 and 0 <= end <= 255):
-        raise ValueError(f"{ip_range} - Invalid IP range")
+        if not (0 <= end_octet <= 255):
+            raise ValueError(f"{ip_range} Invalid end octet")
 
-    if end < start:
-        raise ValueError(f"{ip_range} - End must be >= start")
+        parts = start_str.split(".")
+        start_octet = int(parts[-1])
 
-    prefix = ".".join(parts[:-1])
+        if end_octet < start_octet:
+            raise ValueError(f"{ip_range} End octet must be >= start octet")
 
-    return [f"{prefix}.{i}" for i in range(start, end + 1)]
+        prefix = ".".join(parts[:-1])
+        end_ip = ipaddress.IPv4Address(f"{prefix}.{end_octet}")
+
+    # Case 2: full IP range
+    else:
+        end_ip = ipaddress.IPv4Address(end_str)
+
+        if end_ip < start_ip:
+            raise ValueError(f"{ip_range} End IP must be >= start IP")
+
+    # Expand range
+    current = start_ip
+    while current <= end_ip:
+        yield str(current)
+        current += 1
+
 
 def expand_cidr_range(cidr):
     """
