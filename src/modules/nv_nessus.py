@@ -165,11 +165,15 @@ def access_check(args):
         for line in sf:
             scope_nets.append(line.strip())
 
+    new_scope_nets = []
+
     for scope in scope_nets:
         if "-" in scope:
-            expanded = expand_ip_range(scope)
-            scope_nets.remove(scope)
-            scope_nets.extend(expanded)
+            new_scope_nets.extend(expand_ip_range(scope))
+        else:
+            new_scope_nets.append(scope)
+
+    scope_nets = new_scope_nets
 
 
 
@@ -209,8 +213,6 @@ def expand_ip_range(ip_range: str):
 
     # Case 1: shorthand last-octet range
     if "." not in end_str:
-        if not end_str.isdigit():
-            raise ValueError(f"{ip_range} Invalid shorthand range")
 
         end_octet = int(end_str)
 
