@@ -202,44 +202,44 @@ def access_check(args):
             if scope not in found_ips:
                 print(f"{scope}")
 
-
-import ipaddress
-
 def expand_ip_range(ip_range: str):
-    start_str, end_str = [x.strip() for x in ip_range.split("-", 1)]
+    ip_range = ip_range.strip()
 
-    # Validate start IP
+    # Single IP
+    if "-" not in ip_range:
+        yield str(ipaddress.IPv4Address(ip_range))
+        return
+
+    start_str, end_str = map(str.strip, ip_range.split("-", 1))
+
     start_ip = ipaddress.IPv4Address(start_str)
 
-    # Case 1: shorthand last-octet range
+    # Shorthand case (last octet only)
     if "." not in end_str:
+        if not end_str.isdigit():
+            raise ValueError(f"{ip_range} - Invalid shorthand range")
 
         end_octet = int(end_str)
-
-        if not (0 <= end_octet <= 255):
-            raise ValueError(f"{ip_range} Invalid end octet")
+        if not 0 <= end_octet <= 255:
+            raise ValueError(f"{ip_range} - Invalid end octet")
 
         parts = start_str.split(".")
-        start_octet = int(parts[-1])
-
-        if end_octet < start_octet:
-            raise ValueError(f"{ip_range} End octet must be >= start octet")
-
         prefix = ".".join(parts[:-1])
         end_ip = ipaddress.IPv4Address(f"{prefix}.{end_octet}")
 
-    # Case 2: full IP range
+    # Full IP range
     else:
         end_ip = ipaddress.IPv4Address(end_str)
 
-        if end_ip < start_ip:
-            raise ValueError(f"{ip_range} End IP must be >= start IP")
+    start_int = int(start_ip)
+    end_int = int(end_ip)
 
-    # Expand range
-    current = start_ip
-    while current <= end_ip:
-        yield str(current)
-        current += 1
+    # Determine direction
+    step = 1 if end_int >= start_int else -1
+
+    for ip_int in range(start_int, end_int + step, step):
+        yield str(ipaddress.IPv4Address(ip_int))
+
 
 
 def expand_cidr_range(cidr):
