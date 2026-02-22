@@ -262,15 +262,31 @@ def expand_ip_range(ip_range: str):
 
     # Full IP range
     else:
-        start_octet = int(start_str.split(".")[-1])
-        end_octet = int(end_str.split(".")[-1])
-        prefix = ".".join(start_str.split(".")[:-1])
-        if start_octet > end_octet:
-            for a in range(start_octet, end_octet - 1, -1):
-                yield f"{prefix}.{a}"
+        if int(start_str.split(".")[-2]) != int(end_str.split(".")[-2]):
+            start_octet_1 = int(start_str.split(".")[-1])
+            end_octet_1 = int(end_str.split(".")[-2])
+            prefix = ".".join(start_str.split(".")[:-2])
+            for b in range(start_octet_1, end_octet_1 + 1):
+                if b == start_octet_1:
+                    for a in range(start_octet_1, 256):
+                        yield f"{prefix}.{b}.{a}"
+                elif b == end_octet_1:
+                    for a in range(0, int(end_str.split(".")[-1]) + 1):
+                        yield f"{prefix}.{b}.{a}"
+                else:
+                    for a in range(0, 256):
+                        yield f"{prefix}.{b}.{a}"
+
         else:
-            for a in range(end_octet, start_octet - 1, -1):
-                yield f"{prefix}.{a}"
+            start_octet = int(start_str.split(".")[-1])
+            end_octet = int(end_str.split(".")[-1])
+            prefix = ".".join(start_str.split(".")[:-1])
+            if start_octet > end_octet:
+                for a in range(start_octet, end_octet - 1, -1):
+                    yield f"{prefix}.{a}"
+            else:
+                for a in range(end_octet, start_octet - 1, -1):
+                    yield f"{prefix}.{a}"
 
 def expand_cidr_range(cidr):
     """
