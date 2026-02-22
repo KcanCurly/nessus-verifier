@@ -271,10 +271,10 @@ def expand_ip_range(ip_range: str):
                     for a in range(start_octet_1, 256):
                         yield f"{prefix}.{b}.{a}"
                 elif b == end_octet_1:
-                    for a in range(0, int(end_str.split(".")[-1]) + 1):
+                    for a in range(1, int(end_str.split(".")[-1]) + 1):
                         yield f"{prefix}.{b}.{a}"
                 else:
-                    for a in range(0, 256):
+                    for a in range(1, 256):
                         yield f"{prefix}.{b}.{a}"
 
         else:
