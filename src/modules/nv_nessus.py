@@ -216,7 +216,7 @@ def expand_ip_range(ip_range: str):
     end = int(end)
 
     if not (0 <= start <= 255 and 0 <= end <= 255):
-        raise ValueError("Invalid IP range")
+        raise ValueError(f"{ip_range} - Invalid IP range")
 
     if end < start:
         raise ValueError(f"{ip_range} - End must be >= start")
