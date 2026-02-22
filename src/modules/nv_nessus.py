@@ -172,7 +172,7 @@ def nessus_has_but_not_in_scope(args):
             new_scope_nets.append(scope)
 
     scope_nets = new_scope_nets
-    new_scope_nets = [ipaddress.IPv4Network(scope) for scope in scope_nets] 
+    new_scope_nets = [ipaddress.IPv4Network(scope, strict=False) for scope in scope_nets] 
 
     tree = ET.parse(input_file)
     root = tree.getroot()
