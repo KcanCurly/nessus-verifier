@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import argparse, argcomplete
+import os
 import copy
 import xml.etree.ElementTree as ET
 import cidr_man
@@ -164,6 +165,14 @@ def checkaccess(args):
         for line in sf:
             scope_nets.append(line.strip())
 
+    for scope in scope_nets:
+        if "-" in scope:
+            expanded = expand_ip_range(scope)
+            scope_nets.remove(scope)
+            scope_nets.extend(expanded)
+
+
+
     tree = ET.parse(input_file)
     root = tree.getroot()
 
@@ -188,6 +197,33 @@ def checkaccess(args):
         else:
             if scope not in found_ips:
                 print(f"{scope}")
+
+
+def expand_ip_range(ip_range: str):
+    """
+    Expands shorthand range like:
+    1.1.1.1-55  -> 1.1.1.1 ... 1.1.1.55
+    """
+
+    base, end = ip_range.split("-")
+
+    # Validate base IP
+    ip = ipaddress.IPv4Address(base)
+
+    # Extract last octet start
+    parts = base.split(".")
+    start = int(parts[-1])
+    end = int(end)
+
+    if not (0 <= start <= 255 and 0 <= end <= 255):
+        raise ValueError("Invalid IP range")
+
+    if end < start:
+        raise ValueError("End must be >= start")
+
+    prefix = ".".join(parts[:-1])
+
+    return [f"{prefix}.{i}" for i in range(start, end + 1)]
 
 def expand_cidr_range(cidr):
     """
@@ -243,6 +279,11 @@ def main():
 
     args = parser.parse_args()
     argcomplete.autocomplete(parser)
+    current_script_path = os.path.abspath(__file__)
+    dir_up = os.path.abspath(os.path.join(current_script_path, "../../"))
+    locales_dir = os.path.join(dir_up, "locales")
+    i18n.load_path.append(locales_dir) # type: ignore
+    i18n.set('locale', args.language) # type: ignore
     args.func(args)
 
 if __name__ == "__main__":
