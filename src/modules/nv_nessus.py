@@ -172,6 +172,7 @@ def nessus_has_but_not_in_scope(args):
             new_scope_nets.append(scope)
 
     scope_nets = new_scope_nets
+    new_scope_nets = [ipaddress.IPv4Network(scope) for scope in scope_nets] 
 
     tree = ET.parse(input_file)
     root = tree.getroot()
@@ -183,10 +184,8 @@ def nessus_has_but_not_in_scope(args):
             if port and int(port) not in ignore_ports:
                 found_ips.add(host_ip)
 
-    cidrs = [cidr_man.CIDR(scope) for scope in scope_nets]
-
     for ip in found_ips:
-        if cidr_man.CIDR(ip) not in cidrs:
+        if ipaddress.IPv4Network(ip) not in new_scope_nets:
             print(f"{ip}")
 
 def access_check(args):
