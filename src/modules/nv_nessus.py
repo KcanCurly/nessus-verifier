@@ -205,12 +205,7 @@ def access_check(args):
 def expand_ip_range(ip_range: str):
     ip_range = ip_range.strip()
 
-    # Single IP
-    if "-" not in ip_range:
-        yield str(ipaddress.IPv4Address(ip_range))
-        return
-
-    start_str, end_str = map(str.strip, ip_range.split("-", 1))
+    start_str, end_str = ip_range.split("-", 1)
 
     start_ip = ipaddress.IPv4Address(start_str)
 
@@ -225,20 +220,26 @@ def expand_ip_range(ip_range: str):
 
         parts = start_str.split(".")
         prefix = ".".join(parts[:-1])
-        end_ip = ipaddress.IPv4Address(f"{prefix}.{end_octet}")
+        start_octet = int(parts[-1])
+        if start_octet > end_octet:
+            for a in range(start_octet, end_octet - 1, -1):
+                yield f"{prefix}.{a}"
+        else:
+            for a in range(end_octet, start_octet - 1, -1):
+                yield f"{prefix}.{a}"
 
     # Full IP range
     else:
-        end_ip = ipaddress.IPv4Address(end_str)
+        start_octet = int(start_str.split(".")[-1])
+        end_octet = int(end_str.split(".")[-1])
+        prefix = ".".join(start_str.split(".")[:-1])
+        if start_octet > end_octet:
+            for a in range(start_octet, end_octet - 1, -1):
+                yield f"{prefix}.{a}"
+        else:
+            for a in range(end_octet, start_octet - 1, -1):
+                yield f"{prefix}.{a}"
 
-    start_int = int(start_ip)
-    end_int = int(end_ip)
-
-    # Determine direction
-    step = 1 if end_int >= start_int else -1
-
-    for ip_int in range(start_int, end_int + step, step):
-        yield str(ipaddress.IPv4Address(ip_int))
 
 
 
