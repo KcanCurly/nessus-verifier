@@ -151,7 +151,42 @@ def portreport(args):
                     writer.writerow([host_ip, protocol, port, service_name])
                     h[host_ip].add(port)
 
+def nessus_has_but_not_in_scope(args):
+    input_file = args.file
+    scope_file = args.scope
+    ignore_ports = parse_ports(args.ignore_ports) if args.ignore_ports else []
 
+    # Load scope CIDRs
+    scope_nets = []
+    found_ips = set()
+    with open(scope_file, 'r') as sf:
+        for line in sf:
+            scope_nets.append(line.strip())
+
+    new_scope_nets = []
+
+    for scope in scope_nets:
+        if "-" in scope:
+            new_scope_nets.extend(expand_ip_range(scope))
+        else:
+            new_scope_nets.append(scope)
+
+    scope_nets = new_scope_nets
+
+    tree = ET.parse(input_file)
+    root = tree.getroot()
+
+    report = root.find("Report")
+
+    for host in report.findall("ReportHost"): # type: ignore
+        ip = host.get("name")
+        port = host.get('port', 0)
+        if ip and port and int(port) not in ignore_ports:
+            found_ips.add(ip)
+
+    for ip in found_ips:
+        if cidr_man.CIDR(ip) not in [cidr_man.CIDR(scope) for scope in scope_nets]:
+            print(f"{ip}")
 
 def access_check(args):
     input_file = args.file
@@ -174,8 +209,6 @@ def access_check(args):
             new_scope_nets.append(scope)
 
     scope_nets = new_scope_nets
-
-
 
     tree = ET.parse(input_file)
     root = tree.getroot()
@@ -206,8 +239,6 @@ def expand_ip_range(ip_range: str):
     ip_range = ip_range.strip()
 
     start_str, end_str = ip_range.split("-", 1)
-
-    start_ip = ipaddress.IPv4Address(start_str)
 
     # Shorthand case (last octet only)
     if "." not in end_str:
@@ -285,7 +316,7 @@ def main():
     p3.set_defaults(func=portreport)
 
     # Command 4
-    p4 = subparsers.add_parser("accesscheck", help="Checks if nessus was able to find anything on the assets in the scope")
+    p4 = subparsers.add_parser("accesscheck", help="Prints IP addresses that is in scope but nessus didn't find anything")
     p4.add_argument("-f", "--file", required=True, help="Input .nessus file")
     p4.add_argument("-s", "--scope", required=True, help="Input scope file")
     p4.add_argument("--ignore-ports", type=parse_ports, help="Comma separated list of ports to ignore",  nargs="+", required=False)
@@ -293,12 +324,12 @@ def main():
     p4.set_defaults(func=access_check)
 
     # Command 5
-    # p5 = subparsers.add_parser("portcheck", help="Checks if any ports are accessible on given scope")
-    # p5.add_argument("-f", "--file", required=True, help="Input .nessus file")
-    # p5.add_argument("-s", "--scope", required=True, help="Input scope file")
-    # p5.add_argument("--ignore-ports", type=parse_ports, help="Comma separated list of ports to ignore",  nargs="+", required=False)
-    # p5.add_argument("-l", "--language",  type=str, default="en", help="Language of the output")
-    # p5.set_defaults(func=access_check)
+    p5 = subparsers.add_parser("scopecheck", help="Checks if nessus was able to find something that wasn't in scope")
+    p5.add_argument("-f", "--file", required=True, help="Input .nessus file")
+    p5.add_argument("-s", "--scope", required=True, help="Input scope file")
+    p5.add_argument("--ignore-ports", type=parse_ports, help="Comma separated list of ports to ignore",  nargs="+", required=False)
+    p5.add_argument("-l", "--language",  type=str, default="en", help="Language of the output")
+    p5.set_defaults(func=nessus_has_but_not_in_scope)
 
     args = parser.parse_args()
     argcomplete.autocomplete(parser)
