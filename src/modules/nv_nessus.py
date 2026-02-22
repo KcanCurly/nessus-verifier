@@ -219,7 +219,7 @@ def expand_ip_range(ip_range: str):
         raise ValueError("Invalid IP range")
 
     if end < start:
-        raise ValueError("End must be >= start")
+        raise ValueError(f"{ip_range} - End must be >= start")
 
     prefix = ".".join(parts[:-1])
 
