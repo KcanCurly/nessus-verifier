@@ -227,14 +227,22 @@ def access_check(args):
             not_found = expand_cidr_range(scope)
             for ip in found_ips:
                 if ipaddress.IPv4Address(ip) in ipaddress.IPv4Network(scope, strict=False):
-                    not_found.remove(ip)
+                    try:
+                        not_found.remove(ip)
+                    except Exception as e:
+                        print(f"Error removing IP {ip} from {scope}: {e}")
             if len(not_found) > 0:
                 print(i18n.t('main.check_access', name=scope))
                 for ip in not_found:
                     print(f"  {ip}")
-        else:
-            if scope not in found_ips:
-                print(f"{scope}")
+
+
+    new_scope_nets = [ipaddress.IPv4Network(scope, strict=False) for scope in scope_nets] 
+    for ip in found_ips:
+        ip_obj = ipaddress.IPv4Address(ip)
+
+        if not any(ip_obj in net for net in new_scope_nets):
+            print(ip)
 
 def expand_ip_range(ip_range: str):
     ip_range = ip_range.strip()
