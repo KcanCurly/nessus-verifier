@@ -185,8 +185,10 @@ def nessus_has_but_not_in_scope(args):
                 found_ips.add(host_ip)
 
     for ip in found_ips:
-        if ipaddress.IPv4Network(ip) not in new_scope_nets:
-            print(f"{ip}")
+        ip_obj = ipaddress.IPv4Address(ip)
+
+        if not any(ip_obj in net for net in new_scope_nets):
+            print(ip)
 
 def access_check(args):
     input_file = args.file
