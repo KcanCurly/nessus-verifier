@@ -300,7 +300,7 @@ def expand_cidr_range(cidr):
     """
     Expand CIDR ranges
     """
-    return [str(host) for host in ipaddress.ip_network(cidr, strict=False).hosts()]  # Expand the CIDR range
+    return [str(host) for host in ipaddress.ip_network(cidr, strict=False)]  # Expand the CIDR range
 
 def parse_ports(value):
     ports = set()
