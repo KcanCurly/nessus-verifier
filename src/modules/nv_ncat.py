@@ -8,7 +8,10 @@ import subprocess
 def normal_connect_and_get_response_single(host, **kwargs):
     timeout = kwargs.get("timeout", 5)  # Default timeout is 5 seconds
     message = kwargs.get("message", "info")
-    command = "nc" if not kwargs.get("use_nc", False) else "ncat"
+    if kwargs.get("use_nc", False):
+        command = "nc"
+    else:
+        command = "ncat"
 
     if command == "nc":
         real_command = ["timeout", f"{timeout}s", "nc", host.ip, host.port]
@@ -21,7 +24,9 @@ def normal_connect_and_get_response_single(host, **kwargs):
             real_command,
             timeout=timeout+1,
             capture_output=True,
-            text=True
+            text=True,
+            errors="replace",
+            universal_newlines=True
         )
         if result.stdout:
             return Version_Vuln_Host_Data(host, result.stdout.strip())
