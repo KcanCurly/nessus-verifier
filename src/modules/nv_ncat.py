@@ -8,7 +8,7 @@ import subprocess
 def normal_connect_and_get_response_single(host, **kwargs):
     timeout = kwargs.get("timeout", 5)  # Default timeout is 5 seconds
     message = kwargs.get("message", "info")
-    command = "ncat" if not kwargs.get("use_nc", False) else "nc"
+    command = "nc" if not kwargs.get("use_nc", False) else "ncat"
 
     if command == "nc":
         real_command = ["timeout", f"{timeout}s", "nc", host.ip, host.port]
