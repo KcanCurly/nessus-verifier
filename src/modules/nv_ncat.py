@@ -83,8 +83,8 @@ def ssl_connect_and_get_response(hosts, output, message, threads, timeout):
                 print("", file=f)
                 print("", file=f)
 
-def normal_connect_and_get_response(hosts, output, message, threads, timeout):
-    results: list[Version_Vuln_Host_Data] = get_default_context_execution2("banner grab", threads, hosts, normal_connect_and_get_response_single, message=message, timeout=timeout)
+def normal_connect_and_get_response(hosts, output, message, threads, timeout, use_nc):
+    results: list[Version_Vuln_Host_Data] = get_default_context_execution2("banner grab", threads, hosts, normal_connect_and_get_response_single, message=message, timeout=timeout, use_nc=use_nc)
     
     for result in results:
         print(result.host)
@@ -132,6 +132,6 @@ def main():
     argcomplete.autocomplete(parser)
 
     if args.command == "normal":
-        normal_connect_and_get_response(get_hosts_from_file2(args.file), args.output if args.output else None, args.message, args.threads, args.timeout)
+        normal_connect_and_get_response(get_hosts_from_file2(args.file), args.output if args.output else None, args.message, args.threads, args.timeout, args.use_nc)
     elif args.command == "ssl":
         ssl_connect_and_get_response(get_hosts_from_file2(args.file), args.output if args.output else None, args.message, args.threads, args.timeout)
