@@ -18,7 +18,6 @@ def normal_connect_and_get_response_single(host, **kwargs):
     elif command == "ncat":
         real_command = ["ncat", host.ip, host.port, "--wait", str(timeout)]
 
-
     try:
         result = subprocess.run(
             real_command,
@@ -39,7 +38,7 @@ def normal_connect_and_get_response_single(host, **kwargs):
                     text=True,
                     errors="replace",
                     universal_newlines=True,
-                    input=message
+                    input=f"{message}\n"
                 )
                 if result.stdout.strip():
                     return Version_Vuln_Host_Data(host, result.stdout.strip())
