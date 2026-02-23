@@ -16,7 +16,7 @@ def normal_connect_and_get_response_single(host, **kwargs):
     if command == "nc":
         real_command = ["timeout", f"{timeout}s", "nc", host.ip, host.port]
     elif command == "ncat":
-        real_command = ["ncat", host.ip, host.port, "--recv-only", "--wait", str(timeout)]
+        real_command = ["ncat", host.ip, host.port, "--wait", str(timeout)]
 
 
     try:
@@ -28,10 +28,28 @@ def normal_connect_and_get_response_single(host, **kwargs):
             errors="replace",
             universal_newlines=True
         )
-        if result.stdout:
+        if result.stdout.strip():
             return Version_Vuln_Host_Data(host, result.stdout.strip())
+        else:
+            try:
+                result = subprocess.run(
+                    real_command,
+                    timeout=timeout+1,
+                    capture_output=True,
+                    text=True,
+                    errors="replace",
+                    universal_newlines=True,
+                    input=message
+                )
+                if result.stdout.strip():
+                    return Version_Vuln_Host_Data(host, result.stdout.strip())
+            except subprocess.TimeoutExpired as e:
+                if result.stdout.strip():
+                    return Version_Vuln_Host_Data(host, result.stdout.strip())
+            except Exception as e:
+                print(f"Error connecting to {host.ip}:{host.port} - {e}")
     except subprocess.TimeoutExpired as e:
-        if result.stdout:
+        if result.stdout.strip():
             return Version_Vuln_Host_Data(host, result.stdout.strip())
     except Exception as e:
         print(f"Error connecting to {host.ip}:{host.port} - {e}")
@@ -40,10 +58,13 @@ def normal_connect_and_get_response_single(host, **kwargs):
 def ssl_connect_and_get_response_single(host, **kwargs):
     timeout = kwargs.get("timeout", 5)
     message = kwargs.get("message", "info")
-    command = "ncat" if not kwargs.get("use_openssl", False) else "nc"
+    if kwargs.get("use_openssl", False):
+        command = "openssl"
+    else:
+        command = "ncat"
 
-    if command == "nc":
-        real_command = ["timeout", f"{timeout}s", "nc", host.ip, host.port]
+    if command == "openssl":
+        real_command = ["timeout", f"{timeout}s", "openssl", "s_client", "-connect", f"{host.ip}:{host.port}", "-quiet", "2>/dev/null"]
     elif command == "ncat":
         real_command = ["ncat", host.ip, host.port, "--recv-only", "--wait", str(timeout)]
 
@@ -62,8 +83,8 @@ def ssl_connect_and_get_response_single(host, **kwargs):
             return Version_Vuln_Host_Data(host, result.stdout.strip())
 
     
-def ssl_connect_and_get_response(hosts, output, message, threads, timeout):
-    results: list[Version_Vuln_Host_Data] = get_default_context_execution2("banner grab", threads, hosts, ssl_connect_and_get_response_single, message=message, timeout=timeout)
+def ssl_connect_and_get_response(hosts, output, message, threads, timeout, use_openssl):
+    results: list[Version_Vuln_Host_Data] = get_default_context_execution2("banner grab", threads, hosts, ssl_connect_and_get_response_single, message=message, timeout=timeout, use_openssl=use_openssl)
     
     for result in results:
         print(result.host)
@@ -134,4 +155,4 @@ def main():
     if args.command == "normal":
         normal_connect_and_get_response(get_hosts_from_file2(args.file), args.output if args.output else None, args.message, args.threads, args.timeout, args.use_nc)
     elif args.command == "ssl":
-        ssl_connect_and_get_response(get_hosts_from_file2(args.file), args.output if args.output else None, args.message, args.threads, args.timeout)
+        ssl_connect_and_get_response(get_hosts_from_file2(args.file), args.output if args.output else None, args.message, args.threads, args.timeout, args.use_openssl)
