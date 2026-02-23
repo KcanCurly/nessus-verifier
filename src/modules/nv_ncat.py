@@ -28,6 +28,8 @@ def normal_connect_and_get_response_single(host, **kwargs):
     except subprocess.TimeoutExpired as e:
         if result.stdout:
             return Version_Vuln_Host_Data(host, result.stdout.strip())
+    except Exception as e:
+        print(f"Error connecting to {host.ip}:{host.port} - {e}")
         
 @error_handler(["host"])
 def ssl_connect_and_get_response_single(host, **kwargs):
