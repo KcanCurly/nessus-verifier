@@ -107,7 +107,7 @@ def main():
     parser_normal.add_argument("--message", type=str, default="info", help="Message to send for bannger grab.")
     parser_normal.add_argument("--timeout", type=int, default=3, help="Timeout for socket connection (default: 3 seconds).")
     parser_normal.add_argument("--threads", type=int, default=10, help="Amount of threads (Default = 10).")
-    parser_normal.add_argument("--use-nc", type=bool, default=False, help="Use nc instead of ncat.")
+    parser_normal.add_argument("--use-nc", action="store_true", help="Use nc instead of ncat.")
 
     parser_ssl = subparsers.add_parser("ssl", help="Runs with ssl")
     parser_ssl.add_argument("-f", "--file", type=str, required=True, help="Path to a file containing a list of hosts, each in 'ip:port' format, one per line.")
@@ -115,7 +115,7 @@ def main():
     parser_ssl.add_argument("--message", type=str, default="info", help="Message to send for bannger grab.")
     parser_ssl.add_argument("--timeout", type=int, default=3, help="Timeout for socket connection (default: 3 seconds).")
     parser_ssl.add_argument("--threads", type=int, default=10, help="Amount of threads (Default = 10).")
-    parser_ssl.add_argument("--use-openssl", type=bool, default=False, help="Use openssl connect instead of ncat.")
+    parser_ssl.add_argument("--use-openssl", action="store_true", help="Use openssl connect instead of ncat.")
 
     args = parser.parse_args()
     argcomplete.autocomplete(parser)
