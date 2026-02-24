@@ -55,8 +55,11 @@ class SMBShareAndFileACLEnumerateSubServiceClass(BaseSubServiceClass):
             nbname = s.group()
             conn = pysmbconn.SMBConnection(username, password, '', nbname, is_direct_tcp=True)
             if conn.connect(ip, 445): 
+                print(1)
                 shares = conn.listShares()
+                print(2)
                 for share in shares:
+                    print(3)
                     self.directory_recursive(conn, share, "/", ip)
 
     @error_handler(["host"])
