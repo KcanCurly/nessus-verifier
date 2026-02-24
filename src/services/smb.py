@@ -1,10 +1,9 @@
 import subprocess
 import re
-
 import i18n
 from impacket.smbconnection import SMBConnection # type: ignore
 from smb import SMBConnection as pysmbconn
-from src.utilities.utilities import error_handler, get_default_context_execution2
+from src.utilities.utilities import add_default_serviceclass_arguments, error_handler, get_default_context_execution2, get_hosts_from_file2
 from src.services.serviceclass import BaseServiceClass
 from src.services.servicesubclass import BaseSubServiceClass
         
@@ -14,9 +13,88 @@ class NullGuest_Vuln_Data():
         self.null_files = null_files
         self.guest_files = guest_files
 
+class SMBShareAndFileACLEnumerateSubServiceClass(BaseSubServiceClass):
+    def __init__(self) -> None:
+        super().__init__("smbacl", "Enumerates SMB Shares and ACLs")
+
+    def helper_parse(self, subparsers):
+        parser = subparsers.add_parser(self.command_name, help = self.help_description)
+        parser.add_argument("target", type=str, help="File name or targets seperated by space")
+        parser.add_argument("username", type=str, default="postgres", help="Username (Default = postgres)")
+        parser.add_argument("password", type=str, default="", help="Username (Default = '')")
+        add_default_serviceclass_arguments(parser, False)
+        parser.set_defaults(func=self.console)
+
+    def console(self, args):
+        self.nv(get_hosts_from_file2(args.target), username=args.username, password=args.password, threads=args.threads, timeout=args.timeout, 
+                errors=args.errors, verbose=args.verbose)
+    
+    @error_handler([])
+    def nv(self, hosts, **kwargs):
+        username = kwargs.get("username")
+        password = kwargs.get("password")
+
+        results = get_default_context_execution2("SMB Null Session Check", self.threads, hosts, self.single, username=username, password=password, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
+
+    @error_handler(["host"])
+    def single(self, host, **kwargs):
+        ip = host.ip
+        port = host.port
+        username = kwargs.get("username")
+        password = kwargs.get("password")
+
+        # Get NetBIOS of the remote computer
+        command = ["nmblookup", "-A", ip]
+        result = subprocess.run(command, text=True, capture_output=True, timeout=self.timeout)
+        netbios_re = r"\s+(.*)\s+<20>"
+        guest_vuln = {}
+        s = re.search(netbios_re, result.stdout)
+        if s:
+            nbname = s.group()
+            conn = pysmbconn.SMBConnection(username, password, '', nbname, is_direct_tcp=True)
+            if conn.connect(ip, 445): 
+                shares = conn.listShares()
+                for share in shares:
+                    try:
+                        files = conn.listPath(share.name, "/")
+                        for file in files:
+                            s = conn.getSecurity(share.name, file.filename)
+                            print(f"{ip} => {share.name}/{file.filename} => {s}")
+
+                    except Exception: pass
+
+
+
 class SMBNullSessionSubServiceClass(BaseSubServiceClass):
     def __init__(self) -> None:
         super().__init__("null-session", "Checks null ession")
+
+    @error_handler(["host"])
+    def single_guest(self, host, **kwargs):
+
+        ip = host.ip
+        port = host.port
+
+        # Get NetBIOS of the remote computer
+        command = ["nmblookup", "-A", ip]
+        result = subprocess.run(command, text=True, capture_output=True, timeout=self.timeout)
+        netbios_re = r"\s+(.*)\s+<20>"
+        guest_vuln = {}
+        s = re.search(netbios_re, result.stdout)
+        if s:
+            nbname = s.group()
+            conn = pysmbconn.SMBConnection('guest', '', '', nbname, is_direct_tcp=True)
+            if conn.connect(ip, 445): 
+                shares = conn.listShares()
+                for share in shares:
+                    try:
+                        files = conn.listPath(share.name, "/")
+                        guest_vuln[share.name] = []
+                        for file in files:
+                            if file.filename == "." or file.filename == "..": continue
+                            guest_vuln[share.name].append(file.filename)
+                    except Exception: pass
+            return NullGuest_Vuln_Data(host, {}, guest_vuln)
 
     @error_handler(["host"])
     def nv(self, hosts, **kwargs):
@@ -244,3 +322,4 @@ class SMBServiceClass(BaseServiceClass):
         self.register_subservice(SMBNullGuestSubServiceClass())
         self.register_subservice(SMBOSVersionSubServiceClass())
         self.register_subservice(SMBNullSessionSubServiceClass())
+        self.register_subservice(SMBShareAndFileACLEnumerateSubServiceClass())

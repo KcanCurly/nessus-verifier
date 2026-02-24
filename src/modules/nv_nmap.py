@@ -163,6 +163,7 @@ def main():
     p1.add_argument("-f", "--file", required=True, help="Input file with hosts in 'ip:port' format")
     p1.add_argument("-o", "--output", required=False, help="Output file")
     p1.add_argument("--threads", type=int, default=10, help="Amount of threads (Default = 10).")
+    p1.add_argument('--skip-ignored', action="store_true", help='Do not write ignored vulnerabilities to txt output.')
     p1.set_defaults(func=command_status)
 
     # Command 2
