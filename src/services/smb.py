@@ -58,15 +58,21 @@ class SMBShareAndFileACLEnumerateSubServiceClass(BaseSubServiceClass):
                 shares = conn.listShares()
                 for share in shares:
                     try:
-                        files = conn.listPath(share.name, "/")
-                        for file in files:
-                            try:
-                                s = conn.getSecurity(share.name, file.filename)
-                                print(f"{ip} => {share.name}/{file.filename} => {s.dacl}")
-                            except Exception: pass
-
+                        self.directory_recursive(conn, share, "/", ip)
                     except Exception: pass
-
+    def directory_recursive(self, conn, share, path, ip):
+        try:
+            files = conn.listPath(share.name, path)
+            for file in files:
+                if file.filename == "." or file.filename == "..": continue
+                attributes: conn.getAttributes(share.name, f"{path}/{file.filename}") # type: ignore
+                try:
+                    s = conn.getSecurity(share.name, f"{path}/{file.filename}")
+                    print(f"{ip} => {share.name}/{path}/{file.filename} => {s.dacl.acl}")
+                except Exception: pass
+                if file.isDirectory:
+                    self.directory_recursive(conn, share, f"{path}/{file.filename}", ip)
+        except Exception: pass
 
 
 class SMBNullSessionSubServiceClass(BaseSubServiceClass):
