@@ -55,21 +55,24 @@ class SMBShareAndFileACLEnumerateSubServiceClass(BaseSubServiceClass):
             nbname = s.group()
             conn = pysmbconn.SMBConnection(username, password, '', nbname, is_direct_tcp=True)
             if conn.connect(ip, 445): 
-                print(1)
                 shares = conn.listShares()
-                print(2)
                 for share in shares:
-                    print(3)
                     self.directory_recursive(conn, share, "/", ip)
 
     @error_handler(["host"])
     def directory_recursive(self, conn, share, path, ip):
-
+        
         files = conn.listPath(share.name, path)
+        print(1)
+        if path == "/":
+            path = ""
         for file in files:
+            print(2)
             if file.filename == "." or file.filename == "..": continue
             try:
+                print(3)
                 s = conn.getSecurity(share.name, f"{path}/{file.filename}")
+                print(4)
                 print(f"{ip} => {share.name}/{path}/{file.filename} => {s.dacl.acl}")
             except Exception: pass
             if file.isDirectory:
