@@ -63,16 +63,16 @@ class SMBShareAndFileACLEnumerateSubServiceClass(BaseSubServiceClass):
     def directory_recursive(self, conn, share, path, ip):
         
         files = conn.listPath(share.name, path)
-        print(1)
+
         if path == "/":
             path = ""
         for file in files:
-            print(2)
+
             if file.filename == "." or file.filename == "..": continue
             try:
-                print(3)
+
                 s = conn.getSecurity(share.name, f"{path}/{file.filename}")
-                print(4)
+
                 print(f"{ip} => {share.name}/{path}/{file.filename} => {s.dacl.acl}")
             except Exception: pass
             if file.isDirectory:
