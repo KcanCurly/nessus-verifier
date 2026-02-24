@@ -36,7 +36,7 @@ class SMBShareAndFileACLEnumerateSubServiceClass(BaseSubServiceClass):
         username = kwargs.get("username")
         password = kwargs.get("password")
 
-        results = get_default_context_execution2("SMB Null Session Check", self.threads, hosts, self.single, username=username, password=password, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
+        results = get_default_context_execution2("SMB ACL Check", self.threads, hosts, self.single, username=username, password=password, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
 
     @error_handler(["host"])
     def single(self, host, **kwargs):
@@ -57,23 +57,20 @@ class SMBShareAndFileACLEnumerateSubServiceClass(BaseSubServiceClass):
             if conn.connect(ip, 445): 
                 shares = conn.listShares()
                 for share in shares:
-                    try:
-                        self.directory_recursive(conn, share, "/", ip)
-                    except Exception: pass
+                    self.directory_recursive(conn, share, "/", ip)
 
     @error_handler(["host"])
     def directory_recursive(self, conn, share, path, ip):
-        try:
-            files = conn.listPath(share.name, path)
-            for file in files:
-                if file.filename == "." or file.filename == "..": continue
-                try:
-                    s = conn.getSecurity(share.name, f"{path}/{file.filename}")
-                    print(f"{ip} => {share.name}/{path}/{file.filename} => {s.dacl.acl}")
-                except Exception: pass
-                if file.isDirectory:
-                    self.directory_recursive(conn, share, f"{path}/{file.filename}", ip)
-        except Exception: pass
+
+        files = conn.listPath(share.name, path)
+        for file in files:
+            if file.filename == "." or file.filename == "..": continue
+            try:
+                s = conn.getSecurity(share.name, f"{path}/{file.filename}")
+                print(f"{ip} => {share.name}/{path}/{file.filename} => {s.dacl.acl}")
+            except Exception: pass
+            if file.isDirectory:
+                self.directory_recursive(conn, share, f"{path}/{file.filename}", ip)
 
 
 class SMBNullSessionSubServiceClass(BaseSubServiceClass):
