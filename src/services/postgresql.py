@@ -74,8 +74,6 @@ class PSQLDefaultSubServiceClass(BaseSubServiceClass):
             for r in results:
                 self.print_output(f"{r.host}: {i18n.t('main.databases')}: {", ".join(r.version)}")
 
-
-
     @error_handler(["host"])
     def single(self, host, **kwargs):
         ip = host.ip

@@ -20,8 +20,8 @@ class SMBShareAndFileACLEnumerateSubServiceClass(BaseSubServiceClass):
     def helper_parse(self, subparsers):
         parser = subparsers.add_parser(self.command_name, help = self.help_description)
         parser.add_argument("target", type=str, help="File name or targets seperated by space")
-        parser.add_argument("username", type=str, default="postgres", help="Username (Default = postgres)")
-        parser.add_argument("password", type=str, default="", help="Username (Default = '')")
+        parser.add_argument("username", type=str)
+        parser.add_argument("password", type=str)
         add_default_serviceclass_arguments(parser, False)
         parser.set_defaults(func=self.console)
 
@@ -31,6 +31,8 @@ class SMBShareAndFileACLEnumerateSubServiceClass(BaseSubServiceClass):
     
     @error_handler([])
     def nv(self, hosts, **kwargs):
+        super().nv(hosts, kwargs=kwargs)
+
         username = kwargs.get("username")
         password = kwargs.get("password")
 
@@ -47,7 +49,7 @@ class SMBShareAndFileACLEnumerateSubServiceClass(BaseSubServiceClass):
         command = ["nmblookup", "-A", ip]
         result = subprocess.run(command, text=True, capture_output=True, timeout=self.timeout)
         netbios_re = r"\s+(.*)\s+<20>"
-        guest_vuln = {}
+
         s = re.search(netbios_re, result.stdout)
         if s:
             nbname = s.group()
