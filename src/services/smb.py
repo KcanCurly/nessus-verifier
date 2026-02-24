@@ -60,8 +60,10 @@ class SMBShareAndFileACLEnumerateSubServiceClass(BaseSubServiceClass):
                     try:
                         files = conn.listPath(share.name, "/")
                         for file in files:
-                            s = conn.getSecurity(share.name, file.filename)
-                            print(f"{ip} => {share.name}/{file.filename} => {s}")
+                            try:
+                                s = conn.getSecurity(share.name, file.filename)
+                                print(f"{ip} => {share.name}/{file.filename} => {s.dacl}")
+                            except Exception: pass
 
                     except Exception: pass
 
