@@ -73,7 +73,7 @@ class SMBShareAndFileACLEnumerateSubServiceClass(BaseSubServiceClass):
 
                 s = conn.getSecurity(share.name, f"{path}/{file.filename}")
 
-                print(f"{ip} => {share.name} | {path}/{file.filename} => {s.dacl}")
+                print(f"{ip} => {share.name} | {path}/{file.filename} => {s.dacl.aces}")
             except Exception: pass
             if file.isDirectory:
                 self.directory_recursive(conn, share, f"{path}/{file.filename}", ip)
