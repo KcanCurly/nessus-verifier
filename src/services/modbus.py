@@ -24,7 +24,7 @@ class ActiveMQVersionSubServiceClass(BaseSubServiceClass):
             print("Connected to Modbus device")
             print("Identifying Modbus service...")
             response = client.read_device_information()
-            print("Device Information: ", " ".join(response.information.values())) # type: ignore
+            print("Device Information: ", b" ".join(response.information.values())) # type: ignore
 
             print("Reading Modbus registers...")
 
