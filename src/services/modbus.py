@@ -20,7 +20,12 @@ class ActiveMQVersionSubServiceClass(BaseSubServiceClass):
         connection = client.connect()
         if connection:
             print("Connected to Modbus device")
+            print("Identifying Modbus service...")
+            response = client.read_device_information()
+            print(response.__dict__)
+
             print("Reading Modbus registers...")
+            
             for id in range(1, 11):  # Try different unit IDs (1-10)
                 response = client.read_coils(0, count=100, device_id=id)  # Read coils starting at address 0, read 100 coils
                 print(response.__dict__)
