@@ -5,6 +5,7 @@ from src.services import jmx, activemq, ajp13, amqp, asterisk, chargen, daytime,
 from src.services.apache import ApacheServiceClass
 from src.services.apache_tomcat import TomcatServiceClass
 from src.services.ejabberd import EjabberDServiceClass
+from src.services.modbus import ModbusServiceClass
 from src.services.serviceclass import BaseServiceClass
 from traceback import print_exc
 import i18n
@@ -52,6 +53,7 @@ service_dict: list[type[BaseServiceClass]] = [
     jmx.JMXServiceClass,
     oracledb.OracleDBServiceClass,
     ApacheServiceClass,
+    ModbusServiceClass,
 ]
 
 
