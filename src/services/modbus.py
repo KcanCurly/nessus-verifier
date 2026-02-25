@@ -1,3 +1,4 @@
+import re
 from src.utilities.utilities import error_handler, get_cves, get_default_context_execution2, nmap_identify_service_single
 from src.services.serviceclass import BaseServiceClass
 from src.services.servicesubclass import BaseSubServiceClass
@@ -35,6 +36,17 @@ class ActiveMQVersionSubServiceClass(BaseSubServiceClass):
             response = client.read_discrete_inputs(0, count=count)  # Read discrete inputs starting at address 0, read 100 inputs
             for c in range(0, count+1):
                 print(f"Discrete Input {c}: {response.bits[c] if c < len(response.bits) else 'N/A'}")  # type: ignore
+
+            response = client.read_holding_registers(0, count=count)  # Read holding registers starting at address 0, read 100 registers
+            for c in range(0, count+1):
+                print(f"Holding Register {c}: {response.registers[c] if c < len(response.registers) else 'N/A'}")  # type: ignore
+
+            response = client.read_input_registers(0, count=count)  # Read input registers starting at address 0, read 100 registers
+            for c in range(0, count+1):
+                print(f"Input Register {c}: {response.registers[c] if c < len(response.registers) else 'N/A'}")  # type: ignore
+
+            response = client.report_device_id()
+            print("Device ID: ", response.__dict__)  # type: ignore
 
 
         else:
