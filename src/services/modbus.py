@@ -3,6 +3,7 @@ from src.services.serviceclass import BaseServiceClass
 from src.services.servicesubclass import BaseSubServiceClass
 import i18n
 from pymodbus.client import ModbusTcpClient
+from pymodbus.pdu.mei_message import ReadDeviceInformationResponse
 
 class ActiveMQVersionSubServiceClass(BaseSubServiceClass):
     def __init__(self) -> None:
@@ -18,17 +19,20 @@ class ActiveMQVersionSubServiceClass(BaseSubServiceClass):
     def single(self, host, **kwargs):
         client = ModbusTcpClient(host.ip, port=int(host.port))
         connection = client.connect()
+        count = 10
         if connection:
             print("Connected to Modbus device")
             print("Identifying Modbus service...")
             response = client.read_device_information()
-            print(response.__dict__)
+            print("Device Information:", " ".join(response.information.values)) # type: ignore
 
             print("Reading Modbus registers...")
-            
-            for id in range(1, 11):  # Try different unit IDs (1-10)
-                response = client.read_coils(0, count=100, device_id=id)  # Read coils starting at address 0, read 100 coils
-                print(response.__dict__)
+
+            response = client.read_coils(0, count=count)  # Read coils starting at address 0, read 100 coils
+            for c in range(0, count+1):
+                print(f"Coil {c}: {response.bits[c] if c < len(response.bits) else 'N/A'}")  # type: ignore
+
+
         else:
             print("Failed to connect to Modbus device")
 
