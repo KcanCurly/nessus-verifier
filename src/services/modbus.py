@@ -24,13 +24,17 @@ class ActiveMQVersionSubServiceClass(BaseSubServiceClass):
             print("Connected to Modbus device")
             print("Identifying Modbus service...")
             response = client.read_device_information()
-            print("Device Information: ", response.information) # type: ignore
+            print("Device Information: ", " ".join(response.information.values())) # type: ignore
 
             print("Reading Modbus registers...")
 
             response = client.read_coils(0, count=count)  # Read coils starting at address 0, read 100 coils
             for c in range(0, count+1):
                 print(f"Coil {c}: {response.bits[c] if c < len(response.bits) else 'N/A'}")  # type: ignore
+
+            response = client.read_discrete_inputs(0, count=count)  # Read discrete inputs starting at address 0, read 100 inputs
+            for c in range(0, count+1):
+                print(f"Discrete Input {c}: {response.bits[c] if c < len(response.bits) else 'N/A'}")  # type: ignore
 
 
         else:
