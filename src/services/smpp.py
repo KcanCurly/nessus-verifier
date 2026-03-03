@@ -42,9 +42,11 @@ class SMPPExperimentalSubServiceClass(BaseSubServiceClass):
             lambda pdu: sys.stdout.write('sent {} {}\n'.format(pdu.sequence, pdu.message_id)))
         client.set_message_received_handler(
             lambda pdu: sys.stdout.write('delivered {}\n'.format(pdu.receipted_message_id)))
+        client.set_error_pdu_handler(
+            lambda pdu: sys.stdout.write('error {}\n'.format(pdu.sequence)))
 
         client.connect()
-        client.bind_transceiver(system_id='login', password='secretsecret')
+        client.bind_transceiver(system_id='sys', password='sys')
 
         #for part in parts:
         #    pdu = client.send_message(
