@@ -1,3 +1,4 @@
+from pydoc import cli
 import subprocess
 
 import i18n
@@ -43,7 +44,7 @@ class SMPPExperimentalSubServiceClass(BaseSubServiceClass):
             lambda pdu: sys.stdout.write('delivered {}\n'.format(pdu.receipted_message_id)))
 
         client.connect()
-        client.bind_transceiver(system_id='login', password='secret')
+        client.bind_transceiver(system_id='login', password='secretsecret')
 
         #for part in parts:
         #    pdu = client.send_message(
@@ -65,7 +66,8 @@ class SMPPExperimentalSubServiceClass(BaseSubServiceClass):
         #    print(pdu.sequence)
             
         # Enters a loop, waiting for incoming PDUs
-        client.listen()
+        # client.listen()
+        client.disconnect()
 
 class SMPPServiceClass(BaseServiceClass):
     def __init__(self) -> None:
