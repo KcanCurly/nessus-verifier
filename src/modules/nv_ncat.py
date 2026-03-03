@@ -1,7 +1,5 @@
 from src.utilities.utilities import error_handler, get_default_context_execution2, get_hosts_from_file2, Version_Vuln_Host_Data
 import argparse, argcomplete
-import socket
-import ssl
 import subprocess
 
 @error_handler(["host"])
@@ -27,7 +25,7 @@ def normal_connect_and_get_response_single(host, **kwargs):
             errors="replace",
             universal_newlines=True
         )
-        if result.stdout.strip():
+        if result and result.stdout and result.stdout.strip():
             return Version_Vuln_Host_Data(host, result.stdout.strip())
         else:
             try:
@@ -40,13 +38,13 @@ def normal_connect_and_get_response_single(host, **kwargs):
                     universal_newlines=True,
                     input=f"{message}\n"
                 )
-                if result.stdout.strip():
+                if result and result.stdout and result.stdout.strip():
                     return Version_Vuln_Host_Data(host, result.stdout.strip())
             except subprocess.TimeoutExpired as e:
-                if result.stdout.strip():
+                if result and result.stdout and result.stdout.strip():
                     return Version_Vuln_Host_Data(host, result.stdout.strip())
     except subprocess.TimeoutExpired as e:
-        if result.stdout.strip():
+        if result and result.stdout and result.stdout.strip():
             return Version_Vuln_Host_Data(host, result.stdout.strip())
         
 @error_handler(["host"])

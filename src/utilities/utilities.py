@@ -18,6 +18,8 @@ import os
 from datetime import datetime
 from traceback import print_exc
 import nvdlib
+import functools
+import inspect
 
 nvd_api_key = None
 
@@ -442,45 +444,35 @@ def get_cves(cpe, sort_by_epss = False, limit = 10, cves_to_skip = []):
     except Exception:
         return []
     
-
-import functools
-
-def error_handler(variables):
+def error_handler(variables_to_watch):
     def decorator(func):
         @functools.wraps(func)
         def wrapper(*args, **kwargs):
             try:
-                # Execute the function
                 return func(*args, **kwargs)
             except Exception as e:
-                # Capture function name
-                function_name = func.__name__
+                # 1. Map args and kwargs to their actual names
+                sig = inspect.signature(func)
+                bound_args = sig.bind(*args, **kwargs)
+                bound_args.apply_defaults()
                 
-                # Get the values of the specified variables from the function
+                # 2. Extract the values you asked for
                 variable_values = []
-                for var in variables:
-                    # Check if the variable is in kwargs
-                    value = kwargs.get(var, None)
-                    
-                    # If it's not in kwargs, check if it's in args (positional arguments)
-                    if value is None:
-                        try:
-                            index = func.__code__.co_varnames.index(var)
-                            value = args[index]
-                        except (ValueError, IndexError):
-                            pass
-                    
-                    variable_values.append(f"{var}={value}")
+                for var in variables_to_watch:
+                    val = bound_args.arguments.get(var, "Not Found")
+                    variable_values.append(f"{var}={val}")
 
-
-                value = kwargs.get("errors", None)
-                if value in [1, 2]:
-                    print(f"Error in function '{function_name}': {e}")
-                    print("Variable values:", ", ".join(variable_values))
-                if value == 2:
+                # 3. Check for the 'errors' flag in kwargs
+                error_level = kwargs.get("errors", 0)
+                
+                if error_level in [1, 2]:
+                    print(f"\n[!] Error in '{func.__name__}': {e}")
+                    print(f"[*] Context: {', '.join(variable_values)}")
+                
+                if error_level == 2:
                     print_exc()
-                return None  # Handle error gracefully
-
+                
+                return None
         return wrapper
     return decorator
 
