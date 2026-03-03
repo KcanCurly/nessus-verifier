@@ -21,7 +21,7 @@ class SMPPExperimentalSubServiceClass(BaseSubServiceClass):
         super().nv(hosts, kwargs=kwargs)
 
         # if you want to know what's happening
-        logging.basicConfig(level='DEBUG')
+        # logging.basicConfig(level='DEBUG')
 
         # Two parts, UCS2, SMS with UDH
         parts, encoding_flag, msg_type_flag = smpplib.gsm.make_parts(u'Hello World\n'*10)
@@ -49,7 +49,7 @@ class SMPPExperimentalSubServiceClass(BaseSubServiceClass):
             client.connect()
             print("Connected to SMPP server")
 
-            client.bind_transceiver(system_id='sys', password='sys')
+            client.bind_transceiver(system_id='admin', password='sys')
             print("Bound to SMPP server as transceiver")
 
             #for part in parts:
