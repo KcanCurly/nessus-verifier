@@ -29,7 +29,10 @@ class SNMPDefaultSubServiceClass(BaseSubServiceClass):
             for m in matches:
                 if m[0] not in vuln:
                     vuln[m[0]] = []
-                vuln[m[0]].append(f"{m[1]} - {m[2]}")
+                if m[2]:
+                    vuln[m[0]].append(f"{m[1]} - {m[2]}")
+                else:
+                    vuln[m[0]].append(f"{m[1]}")
                     
         except Exception as e:
             if self.errors: print(f"Error: {e}")

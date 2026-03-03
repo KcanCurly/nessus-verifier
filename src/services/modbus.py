@@ -4,7 +4,6 @@ from src.services.serviceclass import BaseServiceClass
 from src.services.servicesubclass import BaseSubServiceClass
 import i18n
 from pymodbus.client import ModbusTcpClient
-from pymodbus.pdu.mei_message import ReadDeviceInformationResponse
 
 class ActiveMQVersionSubServiceClass(BaseSubServiceClass):
     def __init__(self) -> None:
@@ -45,8 +44,7 @@ class ActiveMQVersionSubServiceClass(BaseSubServiceClass):
             for c in range(0, count+1):
                 print(f"Input Register {c}: {response.registers[c] if c < len(response.registers) else 'N/A'}")  # type: ignore
 
-            response = client.report_device_id()
-            print("Device ID: ", response.__dict__)  # type: ignore
+
 
 
         else:
