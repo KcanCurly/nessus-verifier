@@ -2,6 +2,7 @@ from src.utilities.utilities import error_handler, get_default_context_execution
 import argparse, argcomplete
 import subprocess
 
+
 @error_handler(["host"])
 def normal_connect_and_get_response_single(host, **kwargs):
     timeout = kwargs.get("timeout", 5)  # Default timeout is 5 seconds
@@ -21,25 +22,29 @@ def normal_connect_and_get_response_single(host, **kwargs):
             real_command,
             timeout=timeout+1,
             capture_output=True,
+            text=True,
+            errors="replace",
         )
-        if result and result.stdout:
-            return Version_Vuln_Host_Data(host, result.stdout.decode(errors="replace").strip())
+        if result and result.stdout and result.stdout.strip():
+            return Version_Vuln_Host_Data(host, result.stdout.strip())
         else:
             try:
                 result = subprocess.run(
                     real_command,
                     timeout=timeout+1,
                     capture_output=True,
-                    input=f"{message}\n"
+                    text=True,
+                    errors="replace",
+                    input=f"{message}\r\n"
                 )
-                if result and result.stdout:
-                    return Version_Vuln_Host_Data(host, result.stdout.decode(errors="replace").strip())
+                if result and result.stdout and result.stdout.strip():
+                    return Version_Vuln_Host_Data(host, result.stdout.strip())
             except subprocess.TimeoutExpired as e:
-                if result and result.stdout:
-                    return Version_Vuln_Host_Data(host, result.stdout.decode(errors="replace").strip())
+                if result and result.stdout and result.stdout.strip():
+                    return Version_Vuln_Host_Data(host, result.stdout.strip())
     except subprocess.TimeoutExpired as e:
-        if result and result.stdout:
-            return Version_Vuln_Host_Data(host, result.stdout.decode(errors="replace").strip())
+        if result and result.stdout and result.stdout.strip():
+            return Version_Vuln_Host_Data(host, result.stdout.strip())
         
 @error_handler(["host"])
 def ssl_connect_and_get_response_single(host, **kwargs):
