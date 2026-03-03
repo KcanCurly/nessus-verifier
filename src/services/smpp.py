@@ -45,31 +45,37 @@ class SMPPExperimentalSubServiceClass(BaseSubServiceClass):
         client.set_error_pdu_handler(
             lambda pdu: sys.stdout.write('error {}\n'.format(pdu.sequence)))
 
-        client.connect()
-        client.bind_transceiver(system_id='sys', password='sys')
+        try:
+            client.connect()
+            print("Connected to SMPP server")
 
-        #for part in parts:
-        #    pdu = client.send_message(
-        #        source_addr_ton=smpplib.consts.SMPP_TON_INTL,
-        #        #source_addr_npi=smpplib.consts.SMPP_NPI_ISDN,
-        #        # Make sure it is a byte string, not unicode:
-        #        source_addr='SENDERPHONENUM',
-#
-        #        dest_addr_ton=smpplib.consts.SMPP_TON_INTL,
-        #        #dest_addr_npi=smpplib.consts.SMPP_NPI_ISDN,
-        #        # Make sure thease two params are byte strings, not unicode:
-        #        destination_addr='PHONENUMBER',
-        #        short_message=part,
-#
-        #        data_coding=encoding_flag,
-        #        esm_class=msg_type_flag,
-        #        registered_delivery=True,
-        #    )
-        #    print(pdu.sequence)
-            
-        # Enters a loop, waiting for incoming PDUs
-        client.listen()
-        # client.disconnect()
+            client.bind_transceiver(system_id='sys', password='sys')
+            print("Bound to SMPP server as transceiver")
+
+            #for part in parts:
+            #    pdu = client.send_message(
+            #        source_addr_ton=smpplib.consts.SMPP_TON_INTL,
+            #        #source_addr_npi=smpplib.consts.SMPP_NPI_ISDN,
+            #        # Make sure it is a byte string, not unicode:
+            #        source_addr='SENDERPHONENUM',
+    #
+            #        dest_addr_ton=smpplib.consts.SMPP_TON_INTL,
+            #        #dest_addr_npi=smpplib.consts.SMPP_NPI_ISDN,
+            #        # Make sure thease two params are byte strings, not unicode:
+            #        destination_addr='PHONENUMBER',
+            #        short_message=part,
+    #
+            #        data_coding=encoding_flag,
+            #        esm_class=msg_type_flag,
+            #        registered_delivery=True,
+            #    )
+            #    print(pdu.sequence)
+                
+            # Enters a loop, waiting for incoming PDUs
+            client.listen()
+            # client.disconnect()
+        except Exception as e:
+            print(f"Error: {e}")
 
 class SMPPServiceClass(BaseServiceClass):
     def __init__(self) -> None:
