@@ -99,8 +99,8 @@ def ssl_connect_and_get_response(hosts, output, message, threads, timeout, use_o
                 print("", file=f)
                 print("", file=f)
 
-def normal_connect_and_get_response(hosts, output, message, threads, timeout, use_nc):
-    results: list[Version_Vuln_Host_Data] = get_default_context_execution2("banner grab", threads, hosts, normal_connect_and_get_response_single, message=message, timeout=timeout, use_nc=use_nc)
+def normal_connect_and_get_response(hosts, output, message, threads, timeout, errors, use_nc):
+    results: list[Version_Vuln_Host_Data] = get_default_context_execution2("banner grab", threads, hosts, normal_connect_and_get_response_single, message=message, timeout=timeout, errors=errors, use_nc=use_nc)
     
     for result in results:
         print(result.host)
@@ -126,7 +126,7 @@ def main():
     subparsers = parser.add_subparsers(dest="command")  # Create subparsers
     parser_normal = subparsers.add_parser("normal", help="Runs without ssl")
     parser_normal.add_argument("-f", "--file", type=str, required=True, help="Path to a file containing a list of hosts, each in 'ip:port' format, one per line.")
-    parser_normal.add_argument("-o", "--output", type=str, default="nv-nc-output.txt", help="Output file. (Default: nv-nc-ssl-output.txt)")
+    parser_normal.add_argument("-o", "--output", type=str, default="nv-nc-output.txt", help="Output file. (Default: nv-nc-output.txt)")
     parser_normal.add_argument("--message", type=str, default="info", help="Message to send for bannger grab.")
     parser_normal.add_argument("--timeout", type=int, default=3, help="Timeout for socket connection (default: 3 seconds).")
     parser_normal.add_argument("--threads", type=int, default=10, help="Amount of threads (Default = 10).")
@@ -148,6 +148,6 @@ def main():
     argcomplete.autocomplete(parser)
 
     if args.command == "normal":
-        normal_connect_and_get_response(get_hosts_from_file2(args.file), args.output if args.output else None, args.message, args.threads, args.timeout, args.use_nc)
+        normal_connect_and_get_response(get_hosts_from_file2(args.file), args.output if args.output else None, args.message, args.threads, args.timeout, args.errors, args.use_nc)
     elif args.command == "ssl":
         ssl_connect_and_get_response(get_hosts_from_file2(args.file), args.output if args.output else None, args.message, args.threads, args.timeout, args.use_openssl)
