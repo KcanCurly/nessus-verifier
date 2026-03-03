@@ -21,8 +21,6 @@ def normal_connect_and_get_response_single(host, **kwargs):
             real_command,
             timeout=timeout+1,
             capture_output=True,
-            text=True,
-            errors="replace",
             universal_newlines=True
         )
         if result and result.stdout and result.stdout.strip():
@@ -33,8 +31,6 @@ def normal_connect_and_get_response_single(host, **kwargs):
                     real_command,
                     timeout=timeout+1,
                     capture_output=True,
-                    text=True,
-                    errors="replace",
                     universal_newlines=True,
                     input=f"{message}\n"
                 )
