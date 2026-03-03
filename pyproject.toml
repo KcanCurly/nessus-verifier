@@ -48,6 +48,7 @@ dependencies = [
     "oracledb",
     "prompt_toolkit",
     "pymodbus",
+    "smpplib @ git+https://github.com/python-smpplib/python-smpplib.git",
 ]
 
 classifiers = [

@@ -10,6 +10,8 @@ from src.services.serviceclass import BaseServiceClass
 from traceback import print_exc
 import i18n
 
+from src.services.smpp import SMPPServiceClass
+
 service_dict: list[type[BaseServiceClass]] = [
     dns.DNSServiceClass,
     finger.FingerServiceClass,
@@ -54,6 +56,7 @@ service_dict: list[type[BaseServiceClass]] = [
     oracledb.OracleDBServiceClass,
     ApacheServiceClass,
     ModbusServiceClass,
+    SMPPServiceClass,
 ]
 
 
