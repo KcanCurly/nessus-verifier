@@ -66,8 +66,8 @@ class SMPPExperimentalSubServiceClass(BaseSubServiceClass):
         #    print(pdu.sequence)
             
         # Enters a loop, waiting for incoming PDUs
-        # client.listen()
-        client.disconnect()
+        client.listen()
+        # client.disconnect()
 
 class SMPPServiceClass(BaseServiceClass):
     def __init__(self) -> None:
