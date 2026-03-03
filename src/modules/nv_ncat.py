@@ -21,27 +21,25 @@ def normal_connect_and_get_response_single(host, **kwargs):
             real_command,
             timeout=timeout+1,
             capture_output=True,
-            universal_newlines=True
         )
-        if result and result.stdout and result.stdout.strip():
-            return Version_Vuln_Host_Data(host, result.stdout.strip())
+        if result and result.stdout:
+            return Version_Vuln_Host_Data(host, result.stdout.decode(errors="replace").strip())
         else:
             try:
                 result = subprocess.run(
                     real_command,
                     timeout=timeout+1,
                     capture_output=True,
-                    universal_newlines=True,
                     input=f"{message}\n"
                 )
-                if result and result.stdout and result.stdout.strip():
-                    return Version_Vuln_Host_Data(host, result.stdout.strip())
+                if result and result.stdout:
+                    return Version_Vuln_Host_Data(host, result.stdout.decode(errors="replace").strip())
             except subprocess.TimeoutExpired as e:
-                if result and result.stdout and result.stdout.strip():
-                    return Version_Vuln_Host_Data(host, result.stdout.strip())
+                if result and result.stdout:
+                    return Version_Vuln_Host_Data(host, result.stdout.decode(errors="replace").strip())
     except subprocess.TimeoutExpired as e:
-        if result and result.stdout and result.stdout.strip():
-            return Version_Vuln_Host_Data(host, result.stdout.strip())
+        if result and result.stdout:
+            return Version_Vuln_Host_Data(host, result.stdout.decode(errors="replace").strip())
         
 @error_handler(["host"])
 def ssl_connect_and_get_response_single(host, **kwargs):
