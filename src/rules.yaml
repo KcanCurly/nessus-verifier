@@ -2715,6 +2715,13 @@
   plugin-ids: [18262]
   # 18262 - TFTP Traversal Arbitrary File Access
 
+- name: Oracle WebLogic Unsupported Version Detection
+  id: 75
+  should-group-total: false
+  plugin-regex: []
+  plugin-ids: [109345]
+  # 109345 - Oracle WebLogic Unsupported Version Detection
+
 - name: Microsoft Windows SMB (GENERIC)
   id: 999995
   should-group-total: true

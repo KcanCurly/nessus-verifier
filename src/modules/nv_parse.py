@@ -556,7 +556,15 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                         matches = plugin_output.splitlines()
                         for m in matches:
                             m = m.strip()
-                            print(f"            {m}", file=f)
+                            if m:
+                                print(f"            {m}", file=f)
+                    elif key == "Oracle WebLogic Unsupported Version Detection":
+                        plugin_output = get_plugin_output(key, z)
+                        matches = plugin_output.splitlines()
+                        for m in matches:
+                            m = m.strip()
+                            if m.startswith("Installed version"):
+                                print(f"            {m}", file=f)
                     elif key == "Web Site Client Access Policy File Detection":
                         plugin_output = get_plugin_output(key, z)
                         matches = plugin_output.splitlines()
