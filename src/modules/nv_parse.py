@@ -472,7 +472,11 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                                 print(f"            {m}", file=f)
                     elif key == "rsync Writeable Module Detection":
                         plugin_output = get_plugin_output(key, z)
-                        print(f"            {plugin_output}", file=f)  # type: ignore
+                        pattern = r".* - .*"
+                        matches = re.findall(pattern, plugin_output) # type: ignore
+                        for m in matches:
+                            m = m.strip()
+                            print(f"            {m}", file=f)
                     elif key == "Nonexistent Page (404) Physical Path Disclosure":
                         plugin_output = get_plugin_output(key, z)
                         print(f"            {plugin_output}", file=f)  # type: ignore
