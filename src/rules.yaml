@@ -2729,6 +2729,27 @@
   plugin-ids: [34460]
   # 34460 - Unsupported Web Server Detection
 
+- name: Samba Version
+  id: 77
+  should-group-total: false
+  plugin-regex: []
+  plugin-ids: [104887]
+  # 104887 - Samba Version
+
+- name: IPMI Versions Supported
+  id: 78
+  should-group-total: false
+  plugin-regex: []
+  plugin-ids: [72063]
+  # 72063 - IPMI Versions Supported
+
+- name: SSH Protocol Versions Supported
+  id: 79
+  should-group-total: false
+  plugin-regex: []
+  plugin-ids: [10881]
+  # 10881 - SSH Protocol Versions Supported
+
 - name: Microsoft Windows SMB (GENERIC)
   id: 999995
   should-group-total: true
@@ -2775,13 +2796,13 @@
   61645, 160470, 22073, 10719, 26024, 10092, 109552, 50845, 11935, 185519, 10940, 33139,
   10829, 20870, 10761, 10884, 11002, 100635, 174933, 22319, 106658, 122364, 10342, 42255,
   159893, 22526, 19507, 124029, 10891, 181419, 9765, 10223, 21642, 24018, 11822, 11819, 56009, 
-  26971, 10227, 56283, 19689, 10144, 10281, 21186, 11765, 62695, 62349, 100297, 62351, 20175, 
+  26971, 10227, 56238, 19689, 10144, 10281, 21186, 11765, 62695, 62349, 100297, 62351, 20175, 
   10147, 22410, 22416, 48243, 20148, 105375, 65822, 74119, 56979, 44315, 52658, 93374, 70740, 
-  10942, 90151, 24243, 10185, 23778, 121516, 25240, 110267, 91000, 10883, 57323, 117883, 
+  10942, 90151, 24243, 10185, 23778, 121516, 25240, 110267, 91000, 10833, 57323, 117883, 
   105160, 10762, 22227, 62291, 71882, 23777, 31132, 11389, 12243, 20147, 56981, 138499, 
   11140, 45555, 124336, 25201, 11929, 19557, 21676, 83465, 183240, 94672, 73567, 166624, 
   51185, 40448, 35296, 103869, 169487, 31097, 165587, 10273, 31644, 52703, 11907, 149523, 
-  61489, 29700, 56022, 67022, 67022, 131081, 45580]
+  61489, 29700, 56022, 67022, 67023, 131081, 45580]
   # 10223 - RPC portmapper Service Detection
   # 21642 - Session Initiation Protocol Detection
   # 24018 - TCP Channel Detection
@@ -2790,7 +2811,7 @@
   # 56009 - Solstice Enterprise Agent SNMP (snmpdx) Detection
   # 26971 - X Font Service Detection
   # 10227 - RPC rstatd Service Detection
-  # 56283 - Symantec Veritas Enterprise Administrator Service (vxsvc) Detection
+  # 56238 - Symantec Veritas Enterprise Administrator Service (vxsvc) Detection
   # 19689 - Embedded Web Server Detection
   # 10144 - Microsoft SQL Server TCP/IP Listener Detection
   # 10281 - Telnet Server Detection
@@ -2823,7 +2844,7 @@
   # 25240 - Samba Server Detection
   # 110267 - Apache Zookeeper Server Detection
   # 91000 - BMC BladeLogic Server Automation RSCD Agent Detection
-  # 10883 - CDE Subprocess Control Service (dtspcd) Detection
+  # 10833 - CDE Subprocess Control Service (dtspcd) Detection
   # 57323 - OpenSSL Version Detection
   # 117883 - AXIS FTP Server Detection
   # 105160 - AXIS Web Interface Detection
@@ -2865,7 +2886,7 @@
   # 61489 - EMC AutoStart ftAgent Detection
   # 29700 - iSCSI Target Detection
   # 56022 - OpenVPN Server Detection
-  # 67022 - Hazelcast Memcached Interface Detection
+  # 67023 - Hazelcast Memcached Interface Detection
   # 67022 - Hazelcast Wire Protocol Detection
   # 131081 - Tenable Core Web Interface Detection
   # 45580 - STUN Detection

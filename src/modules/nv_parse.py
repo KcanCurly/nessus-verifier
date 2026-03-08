@@ -17,7 +17,7 @@ def read_nessus_file(filename):
     nessus_xml_tree = ET.parse(filename)
     return nessus_xml_tree
 
-def handle_unkwon_banners(tree):
+def handle_unkwonn_banners(tree):
     root = tree.getroot()
     with open("nv-unknown-banners.txt", "w") as f:
         for host in root.findall(".//Report/ReportHost"):
@@ -25,7 +25,13 @@ def handle_unkwon_banners(tree):
             for item in host.findall(".//ReportItem"):
                 if item.attrib.get("pluginName") == "Unknown Service Detection: Banner Retrieval":
                     f.write(f"{host_ip}:\n")
-                    f.write(item.findtext('plugin_output'))
+                    plugin_output = item.findtext('plugin_output')
+                    for line in plugin_output.splitlines():
+                        line = line.strip()
+                        if line:
+                            if line.startswith("If you know") or line.startswith("identify it") or line.startswith("following output"):
+                                continue
+                            f.write(f"    {line}\n")
                     f.write("\n")
                     
 
@@ -316,7 +322,10 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                     elif key == "Web Server robots.txt Information Disclosure":
                         plugin_output = get_plugin_output(key, z)
                         plugin_output_s = plugin_output.splitlines() # type: ignore
-                        print(f"            {plugin_output_s}", file=f)
+                        for m in plugin_output_s:
+                            m = m.strip()
+                            if m:
+                                print(f"            {m}", file=f)
                     elif key == "Backup Files Disclosure":
                         plugin_output = get_plugin_output(key, z)
                         urls =re.findall(r"https?://\S+", plugin_output) # type: ignore
@@ -589,6 +598,27 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                                 print(f"            {m.strip()}", file=f)
                                 if m.startswith("Type"):
                                     print(f"            -----", file=f)
+                    elif key == "IPMI Versions Supported":
+                        plugin_output = get_plugin_output(key, z)
+                        matches = plugin_output.splitlines()
+                        for m in matches:
+                            m = m.strip()
+                            if m:
+                                print(f"            {m}", file=f)
+                    elif key == "Samba Version":
+                        plugin_output = get_plugin_output(key, z)
+                        matches = plugin_output.splitlines()
+                        for m in matches:
+                            m = m.strip()
+                            if m:
+                                print(f"            {m}", file=f)
+                    elif key == "SSH Protocol Versions Supported":
+                        plugin_output = get_plugin_output(key, z)
+                        matches = plugin_output.splitlines()
+                        for m in matches:
+                            m = m.strip()
+                            if m:
+                                print(f"            {m}", file=f)
 
 
     with open(args.output_json_file, "w") as file:
@@ -633,4 +663,4 @@ def main():
     rules = group_up(output, args.severity0)
     write_to_file(rules, args)
     if args.write_unknown_banners:
-        handle_unkwon_banners(tree)
+        handle_unkwonn_banners(tree)
