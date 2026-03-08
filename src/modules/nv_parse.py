@@ -558,6 +558,13 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                             m = m.strip()
                             if m:
                                 print(f"            {m}", file=f)
+                    elif key == "Unsupported Web Server Detection":
+                        plugin_output = get_plugin_output(key, z)
+                        matches = plugin_output.splitlines()
+                        for m in matches:
+                            m = m.strip()
+                            if m:
+                                print(f"            {m}", file=f)
                     elif key == "Oracle WebLogic Unsupported Version Detection":
                         plugin_output = get_plugin_output(key, z)
                         matches = plugin_output.splitlines()

@@ -2722,6 +2722,13 @@
   plugin-ids: [109345]
   # 109345 - Oracle WebLogic Unsupported Version Detection
 
+- name: Unsupported Web Server Detection
+  id: 76
+  should-group-total: false
+  plugin-regex: []
+  plugin-ids: [34460]
+  # 34460 - Unsupported Web Server Detection
+
 - name: Microsoft Windows SMB (GENERIC)
   id: 999995
   should-group-total: true
