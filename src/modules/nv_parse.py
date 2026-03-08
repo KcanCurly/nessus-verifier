@@ -532,10 +532,18 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                         print(f"                {plugin_output}", file=f)  # type: ignore
                     elif key == "Web Site Client Access Policy File Detection":
                         plugin_output = get_plugin_output(key, z)
-                        print(f"                {plugin_output}", file=f)  # type: ignore
+                        matches = plugin_output.splitlines()
+                        for m in matches:
+                            m = m.strip()
+                            if m:
+                                print(f"            {m}", file=f)  # type: ignore
                     elif key == "Web Site Cross-Domain Policy File Detection":
                         plugin_output = get_plugin_output(key, z)
-                        print(f"                {plugin_output}", file=f)  # type: ignore
+                        matches = plugin_output.splitlines()
+                        for m in matches:
+                            m = m.strip()
+                            if m:
+                                print(f"            {m}", file=f)  # type: ignore
                     elif key == "DCE Services Enumeration":
                         plugin_output = get_plugin_output(key, z)
                         matches = plugin_output.splitlines()
