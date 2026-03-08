@@ -551,6 +551,12 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                         for m in matches:
                             m = m.strip()
                             print(f"            {m}", file=f)
+                    elif key == "TFTP Traversal Arbitrary File Access":
+                        plugin_output = get_plugin_output(key, z)
+                        matches = plugin_output.splitlines()
+                        for m in matches:
+                            m = m.strip()
+                            print(f"            {m}", file=f)
                     elif key == "Web Site Client Access Policy File Detection":
                         plugin_output = get_plugin_output(key, z)
                         matches = plugin_output.splitlines()

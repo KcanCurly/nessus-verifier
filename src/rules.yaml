@@ -2708,6 +2708,13 @@
   plugin-ids: [10072]
   # 10072 - Finger .@host Unused Account Disclosure
 
+- name: TFTP Traversal Arbitrary File Access
+  id: 74
+  should-group-total: false
+  plugin-regex: []
+  plugin-ids: [18262]
+  # 18262 - TFTP Traversal Arbitrary File Access
+
 - name: Microsoft Windows SMB (GENERIC)
   id: 999995
   should-group-total: true
