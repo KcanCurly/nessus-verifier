@@ -520,32 +520,29 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                     elif key == "IMAP Service Banner Retrieval":
                         plugin_output = get_plugin_output(key, z)
                         matches = plugin_output.splitlines()
-                        for m in matches:
-                            m = m.strip()
-                            if m:
-                                print(f"            {m}", file=f)  # type: ignore
+                        print(f"            {matches[1].strip()}", file=f)  # type: ignore
                     elif key == "DNS Server hostname.bind Map Hostname Disclosure":
                         plugin_output = get_plugin_output(key, z)
                         matches = plugin_output.splitlines()
                         print(f"            {m[3].strip()}", file=f)
                     elif key == "Nonexistent Page (404) Physical Path Disclosure":
                         plugin_output = get_plugin_output(key, z)
-                        matches = plugin_output.splitlines()
+                        pattern = r"Path disclosed.*"
+                        matches = re.findall(pattern, plugin_output) # type: ignore
                         for m in matches:
                             m = m.strip()
-                            if m:
-                                print(f"            {m}", file=f)  # type: ignore
+                            print(f"            {m}", file=f)
                     elif key == "vsftpd Detection":
                         plugin_output = get_plugin_output(key, z)
                         print(f"                {plugin_output}", file=f)  # type: ignore
                     elif key == "Web Site Client Access Policy File Detection":
                         plugin_output = get_plugin_output(key, z)
                         matches = plugin_output.splitlines()
-                        print(f"            {matches[2].strip()}", file=f)  # type: ignore
+                        print(f"            {matches[3].strip()}", file=f)  # type: ignore
                     elif key == "Web Site Cross-Domain Policy File Detection":
                         plugin_output = get_plugin_output(key, z)
                         matches = plugin_output.splitlines()
-                        print(f"            {matches[2].strip()}", file=f)  # type: ignore
+                        print(f"            {matches[3].strip()}", file=f)  # type: ignore
                     elif key == "DCE Services Enumeration":
                         plugin_output = get_plugin_output(key, z)
                         matches = plugin_output.splitlines()
