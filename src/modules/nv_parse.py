@@ -505,7 +505,11 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                                 print(f"            {m}", file=f)  # type: ignore
                     elif key == "Finger Service Remote Information Disclosure":
                         plugin_output = get_plugin_output(key, z)
-                        print(f"            {plugin_output}", file=f)  # type: ignore
+                        matches = plugin_output.splitlines()
+                        for m in matches:
+                            m = m.strip()
+                            if m:
+                                print(f"            {m}", file=f)  # type: ignore
                     elif key == "Microsoft .NET Version Information Disclosure":
                         plugin_output = get_plugin_output(key, z)
                         print(f"            {plugin_output}", file=f)  # type: ignore
