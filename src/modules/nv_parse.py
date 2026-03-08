@@ -492,9 +492,10 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                         print(f"            {plugin_output.splitlines()[2]}", file=f)  # type: ignore
                     elif key == "Service Detection" or key == "Service Detection (GET request)" or key == "Service Detection (HELP request)" or key == "Service Detection: 3 ASCII Digit Code Responses" :
                         plugin_output = get_plugin_output(key, z)
-                        plugin_lines = plugin_output.splitlines() # type: ignore
-                        for l in plugin_lines:
-                            print(f"            {l.strip()}", file=f)  # type: ignore
+                        if plugin_output is not None:
+                            plugin_lines = plugin_output.splitlines() # type: ignore
+                            for l in plugin_lines:
+                                print(f"            {l.strip()}", file=f)  # type: ignore
                     elif key == "RPC Services Enumeration":
                         plugin_output = get_plugin_output(key, z)
                         print(f"            {plugin_output}", file=f)  # type: ignore
