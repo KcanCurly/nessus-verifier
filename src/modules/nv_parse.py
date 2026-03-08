@@ -8,6 +8,7 @@ import json
 import cidr_man
 
 sitemap_shortcut = {}
+plugin_shortcut = {}
 
 nessus_xml_tree = None
 
@@ -86,6 +87,12 @@ def parse_nessus_file(tree, include = None, exclude = None):
             # Add host IP to the service's list
             services[service_name].add(f"{host_ip}:{port}")
 
+            if f"{host_ip}:{port}" not in plugin_shortcut:
+                plugin_shortcut[f"{host_ip}:{port}"] = {}
+
+            plugin_shortcut[f"{host_ip}:{port}"][item.attrib.get("pluginName")] = item.findtext('plugin_output')
+
+
     return (services, urls)
 
 # Function to create directories and save hosts in 'hosts.txt'
@@ -113,6 +120,7 @@ def save_services(services):
                     f.write(f"{host.split(":")[0]}\n")
 
 def get_plugin_output(pluginName, ip_port):
+    return get_plugin_output2(pluginName, ip_port)
     ip, port = ip_port.split(":")
     root = nessus_xml_tree.getroot() # type: ignore
     for host in root.findall(".//Report/ReportHost"):
@@ -122,6 +130,8 @@ def get_plugin_output(pluginName, ip_port):
                 if report_item.attrib.get("pluginName") == pluginName and report_item.attrib.get('port', 0) == port:
                     return report_item.findtext('plugin_output')
 
+def get_plugin_output2(pluginName, ip_port):
+    return plugin_shortcut.get(ip_port, {}).get(pluginName, None)
 
 def save_urls(urls):
     output_file = "urls.txt"
