@@ -2701,6 +2701,13 @@
   plugin-ids: [10195]
   # 10195 - HTTP Proxy Open Relay Detection
 
+- name: Finger .@host Unused Account Disclosure
+  id: 73
+  should-group-total: false
+  plugin-regex: []
+  plugin-ids: [10072]
+  # 10072 - Finger .@host Unused Account Disclosure
+
 - name: Microsoft Windows SMB (GENERIC)
   id: 999995
   should-group-total: true
