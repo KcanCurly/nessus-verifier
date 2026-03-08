@@ -2607,6 +2607,100 @@
   plugin-ids: [10756]
   # 10756 - Apple Mac OS X Find-By-Content .DS_Store Web Directory Listing
 
+- name: rsync Writeable Module Detection
+  id: 60
+  should-group-total: false
+  plugin-regex: []
+  plugin-ids: [78428]
+  # 78428 - rsync Writeable Module Detection
+
+- name: rsync Service Detection
+  id: 61
+  should-group-total: false
+  plugin-regex: []
+  plugin-ids: [11389]
+  # 11389 - rsync Service Detection
+
+- name: DNS Server hostname.bind Map Hostname Disclosure
+  id: 62
+  should-group-total: false
+  plugin-regex: []
+  plugin-ids: [35371]
+  # 35371 - rsync Writeable Module Detection
+
+- name: Service Detection
+  id: 63
+  should-group-total: false
+  plugin-regex: []
+  plugin-ids: [22964, 17975, 14773, 11153]
+  # 22964 - Service Detection
+  # 17975 - Service Detection (GET request)
+  # 14773 - Service Detection: 3 ASCII Digit Code Responses
+  # 11153 - Service Detection (HELP Request)
+
+- name: DCE Services Enumeration
+  id: 64
+  should-group-total: false
+  plugin-regex: []
+  plugin-ids: [10736]
+  # 10736 - DCE Services Enumeration
+
+- name: RPC Services Enumeration
+  id: 65
+  should-group-total: false
+  plugin-regex: []
+  plugin-ids: [11111]
+  # 11111 - RPC Services Enumeration
+
+- name: Finger Service Remote Information Disclosure
+  id: 66
+  should-group-total: false
+  plugin-regex: []
+  plugin-ids: [10068]
+  # 10068 - Finger Service Remote Information Disclosure
+
+- name: Web Site Client Access Policy File Detection
+  id: 67
+  should-group-total: false
+  plugin-regex: []
+  plugin-ids: [72427]
+  # 72427 - Web Site Client Access Policy File Detection
+
+- name: Web Site Cross-Domain Policy File Detection
+  id: 68
+  should-group-total: false
+  plugin-regex: []
+  plugin-ids: [32318]
+  # 32318 - Web Site Cross-Domain Policy File Detection
+
+- name: Microsoft .NET Version Information Disclosure
+  id: 69
+  should-group-total: false
+  plugin-regex: []
+  plugin-ids: [24243]
+  # 24243 - Microsoft .NET Version Information Disclosure
+
+- name: IMAP Service Banner Retrieval
+  id: 70
+  should-group-total: false
+  plugin-regex: []
+  plugin-ids: [11414]
+  # 11414 - IMAP Service Banner Retrieval
+
+- name: Nonexistent Page (404) Physical Path Disclosure
+  id: 71
+  should-group-total: false
+  plugin-regex: []
+  plugin-ids: [11714]
+  # 11714 - Nonexistent Page (404) Physical Path Disclosure
+
+- name: HTTP Proxy Open Relay Detection
+  id: 72
+  should-group-total: false
+  plugin-regex: []
+  plugin-ids: [10195]
+  # 10195 - HTTP Proxy Open Relay Detection
+
 - name: Microsoft Windows SMB (GENERIC)
   id: 999995
   should-group-total: true
@@ -2652,7 +2746,101 @@
   90764, 66269, 132584, 38157, 51922, 92725, 71843, 109943, 49692, 146273, 57034, 278501,
   61645, 160470, 22073, 10719, 26024, 10092, 109552, 50845, 11935, 185519, 10940, 33139,
   10829, 20870, 10761, 10884, 11002, 100635, 174933, 22319, 106658, 122364, 10342, 42255,
-  159893, 22526, 19507, 124029, 10891, 181419, 9765]
+  159893, 22526, 19507, 124029, 10891, 181419, 9765, 10223, 21642, 24018, 11822, 11819, 56009, 
+  26971, 10227, 56283, 19689, 10144, 10281, 21186, 11765, 62695, 62349, 100297, 62351, 20175, 
+  10147, 22410, 22416, 48243, 20148, 105375, 65822, 74119, 56979, 44315, 52658, 93374, 70740, 
+  10942, 90151, 24243, 10185, 23778, 121516, 25240, 110267, 91000, 10883, 57323, 117883, 
+  105160, 10762, 22227, 62291, 71882, 23777, 31132, 11389, 12243, 20147, 56981, 138499, 
+  11140, 45555, 124336, 25201, 11929, 19557, 21676, 83465, 183240, 94672, 73567, 166624, 
+  51185, 40448, 35296, 103869, 169487, 31097, 165587, 10273, 31644, 52703, 11907, 149523, 
+  61489, 29700, 56022, 67022, 67022, 131081, 45580]
+  # 10223 - RPC portmapper Service Detection
+  # 21642 - Session Initiation Protocol Detection
+  # 24018 - TCP Channel Detection
+  # 11822 - RIP Detection
+  # 11819 - TFTP Daemon Detection
+  # 56009 - Solstice Enterprise Agent SNMP (snmpdx) Detection
+  # 26971 - X Font Service Detection
+  # 10227 - RPC rstatd Service Detection
+  # 56283 - Symantec Veritas Enterprise Administrator Service (vxsvc) Detection
+  # 19689 - Embedded Web Server Detection
+  # 10144 - Microsoft SQL Server TCP/IP Listener Detection
+  # 10281 - Telnet Server Detection
+  # 21186 - AJP Connector Detection
+  # 11765 - UPnP TCP Helper Detection
+  # 62695 - IPSEC Internet Key Exchange (IKE) Version 2 Detection
+  # 62349 - Advanced Message Queuing Protocol Detection
+  # 100297 - Pivotal RabbitMQ Management Plugin Detection
+  # 62351 - Erlang Port Mapper Daemon Detection
+  # 20175 - VERITAS Backup Agent Detection
+  # 10147 - Nessus Server Detection
+  # 22410 - Derby Network Server Detection
+  # 22416 - IBM DB2 Connection Port Detection
+  # 48243 - PHP Version Detection
+  # 20148 - VERITAS NetBackup Agent Detection
+  # 105375- GitHub Enterprise Detection
+  # 65822 - Git Protocol Detection
+  # 74119 - Oracle Containers for J2EE Detection
+  # 56979 - Oracle WebLogic Detection (Combined)
+  # 44315 - Oracle WebLogic Server Node Manager Detection
+  # 52658 - IBM Sametime Detection
+  # 93374 - SAP RMI-P4 Protocol Detection
+  # 70740 - Citrix XenDesktop Director Detection
+  # 10942 - Citrix Server Detection
+  # 90151 - Flexera FlexNet Publisher Detection
+  # 24243 - Microsoft .NET Version Information Disclosure
+  # 10185 - POP Server Detection
+  # 23778 - SLP Server Detection (UDP)
+  # 121516 - JBoss Remoting Detection
+  # 25240 - Samba Server Detection
+  # 110267 - Apache Zookeeper Server Detection
+  # 91000 - BMC BladeLogic Server Automation RSCD Agent Detection
+  # 10883 - CDE Subprocess Control Service (dtspcd) Detection
+  # 57323 - OpenSSL Version Detection
+  # 117883 - AXIS FTP Server Detection
+  # 105160 - AXIS Web Interface Detection
+  # 10762 - RTSP Server Type / Version Detection
+  # 22227 - RMI Registry Detection
+  # 62291 - SAP Control SOAP Web Service Detection
+  # 71882 - TightVNC Java Viewer Detection
+  # 23777 - SLP Server Detection (TCP)
+  # 31132 - SMPP Server Detection
+  # 11389 - rsync Service Detection
+  # 12243 - H323 Protocol / VoIP Application Detection
+  # 20147 - CA Message Queuing Service Detection
+  # 56981 - SAP Dynamic Information and Action Gateway Detection
+  # 138499 - SAP Netweaver Application Server (AS) HTTP Server Detection
+  # 11140 - Web Server UDDI Detection
+  # 45555 - Alert Standard Format / Remote Management and Control Protocol Detection
+  # 124336 - NGINX Unit HTTP Server Detection
+  # 25201 - Talk Service (talkd, in.talk, ntalk) Detection
+  # 11929 - SAP DB / MaxDB Detection
+  # 19557 - EMC Legato Networker Detection
+  # 21676 - Rendezvous Daemon Detection
+  # 83465 - Gearman Server Detection
+  # 183240 - LG LED Assistant Detection
+  # 94672 - Veritas NetBackup Appliance Web Console Detection
+  # 73567 - BACnet Protocol Detection
+  # 166624 - Cisco RESTCONF API Detection
+  # 51185 - Dell Integrated Remote Access Controller (iDRAC) Web Interface Detection
+  # 40448 - SNMP Supported Protocols Detection
+  # 35296 - SNMP Protocol Version Detection
+  # 103869 - Open Network Video Interface Forum (ONVIF) Protocol Detection
+  # 169487 - TIBCO Enterprise Message Service (EMS) Remote Detection
+  # 31097 - RTMP Server Detection
+  # 165587 - Mattermost Server Detection
+  # 10273 - Samba Web Administration Tool (SWAT) Detection
+  # 31644 - Acronis Agent Detection (TCP)
+  # 52703 - vsftpd Detection
+  # 11907 - BGP Service Detection
+  # 149523 - OPC UA opc.tcp Detection
+  # 61489 - EMC AutoStart ftAgent Detection
+  # 29700 - iSCSI Target Detection
+  # 56022 - OpenVPN Server Detection
+  # 67022 - Hazelcast Memcached Interface Detection
+  # 67022 - Hazelcast Wire Protocol Detection
+  # 131081 - Tenable Core Web Interface Detection
+  # 45580 - STUN Detection
   # 181419 - Grafana Labs Web Detection
   # 9765 - Grafana Detection
   # 10891 - X Display Manager Control Protocol (XDMCP) Detection

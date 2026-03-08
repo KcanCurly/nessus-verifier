@@ -120,17 +120,6 @@ def save_services(services):
                     f.write(f"{host.split(":")[0]}\n")
 
 def get_plugin_output(pluginName, ip_port):
-    return get_plugin_output2(pluginName, ip_port)
-    ip, port = ip_port.split(":")
-    root = nessus_xml_tree.getroot() # type: ignore
-    for host in root.findall(".//Report/ReportHost"):
-        host_ip = host.attrib['name']  # Extract the host IP
-        if ip == host_ip:
-            for report_item in host.findall(".//ReportItem"):
-                if report_item.attrib.get("pluginName") == pluginName and report_item.attrib.get('port', 0) == port:
-                    return report_item.findtext('plugin_output')
-
-def get_plugin_output2(pluginName, ip_port):
     return plugin_shortcut.get(ip_port, {}).get(pluginName, None)
 
 def save_urls(urls):
@@ -264,22 +253,22 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                 for z in value:
                     print(f"        {z}", file=f)
                     if key == "Browsable Web Directories":
-                        plugin_output = get_plugin_output("Browsable Web Directories", z)
+                        plugin_output = get_plugin_output(key, z)
                         plugin_output_s = plugin_output.split() # type: ignore
                         for p in plugin_output_s[6:]:
                             print(f"            {p}", file=f)
                     elif key == "SQL Dump Files Disclosed via Web Server":
-                        plugin_output = get_plugin_output("SQL Dump Files Disclosed via Web Server", z)
+                        plugin_output = get_plugin_output(key, z)
                         plugin_output_s = plugin_output.split() # type: ignore
                         for p in plugin_output_s[12:]:
                             print(f"            {p}", file=f)
                     elif key == "CVS (Web-Based) Entries File Information Disclosure":
-                        plugin_output = get_plugin_output("CVS (Web-Based) Entries File Information Disclosure", z)
+                        plugin_output = get_plugin_output(key, z)
                         plugin_output_s = plugin_output.split() # type: ignore
                         for p in plugin_output_s[14:]:
                             print(f"            {p}", file=f)
                     elif key == "PHP expose_php Information Disclosure":
-                        plugin_output = get_plugin_output("PHP expose_php Information Disclosure", z)
+                        plugin_output = get_plugin_output(key, z)
                         plugin_output_s = plugin_output.split() # type: ignore
                         for p in plugin_output_s[12:]:
                             print(f"            {p}", file=f)
@@ -289,7 +278,7 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                         for p in urls:
                             print(f"            {p}", file=f)
                     elif key == "Web Server Directory Enumeration":
-                        plugin_output = get_plugin_output("Web Server Directory Enumeration", z)
+                        plugin_output = get_plugin_output(key, z)
                         urls =re.findall(r"/\S+", plugin_output) # type: ignore
                         if "disc" in plugin_output: # type: ignore
                             print(f"            [NO AUTH]", file=f)
@@ -298,7 +287,7 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                         for p in urls:
                             print(f"            {p}", file=f)
                     elif key == "Web Server Harvested Email Addresses":
-                        plugin_output = get_plugin_output("Web Server Harvested Email Addresses", z)
+                        plugin_output = get_plugin_output(key, z)
                         plugin_output_s = plugin_output.split("- ") # type: ignore
                         z = plugin_output_s[1].strip().split()
                         for p in z:
@@ -311,12 +300,12 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                                 p = p.replace('/', "    /")
                             print(f"            {p}", file=f)
                     elif key == "Web mirroring":
-                        plugin_output = get_plugin_output("Web mirroring", z)
+                        plugin_output = get_plugin_output(key, z)
                         plugin_output_s = plugin_output.split("+ CGI : ") # type: ignore
                         for p in plugin_output_s[1:]:
                                 print(f"            {p.split()}", file=f)
                     elif key == "Web Server Office File Inventory":
-                        plugin_output = get_plugin_output("Web Server Office File Inventory", z)
+                        plugin_output = get_plugin_output(key, z)
                         plugin_output_s = plugin_output.split() # type: ignore
                         r = plugin_output_s[12:]
                         r.reverse()
@@ -325,21 +314,21 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                                 break
                             print(f"            {p}", file=f)
                     elif key == "Web Server robots.txt Information Disclosure":
-                        plugin_output = get_plugin_output("Web Server robots.txt Information Disclosure", z)
+                        plugin_output = get_plugin_output(key, z)
                         plugin_output_s = plugin_output.splitlines() # type: ignore
                         print(f"            {plugin_output_s}", file=f)
                     elif key == "Backup Files Disclosure":
-                        plugin_output = get_plugin_output("Backup Files Disclosure", z)
+                        plugin_output = get_plugin_output(key, z)
                         urls =re.findall(r"https?://\S+", plugin_output) # type: ignore
                         for p in urls:
                             print(f"            {p}", file=f)
                     elif key == "LDAP User Enumeration":
-                        plugin_output = get_plugin_output("LDAP User Enumeration", z)
+                        plugin_output = get_plugin_output(key, z)
                         sections = plugin_output.split("|") # type: ignore
                         for s in sections:
                             print(f"            {s}", file=f)
                     elif key == "Multiple Mail Server EXPN/VRFY Information Disclosure":
-                        plugin_output = get_plugin_output("Multiple Mail Server EXPN/VRFY Information Disclosure", z)
+                        plugin_output = get_plugin_output(key, z)
                         lines = plugin_output.splitlines() # type: ignore
                         for la in lines:
                             la = la.strip()
@@ -347,13 +336,13 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                                 print(f"            {la}", file=f)
                     elif key == "Apache Multiviews Arbitrary Directory Listing":
                         pattern = r"https?://.*"
-                        plugin_output = get_plugin_output("Apache Multiviews Arbitrary Directory Listing", z)
+                        plugin_output = get_plugin_output(key, z)
                         match = re.search(pattern, plugin_output) # type: ignore
                         if match:
                             print(f"            {match.group()}", file=f)
                     elif key == "SMB Use Host SID to Enumerate Local Users Without Credentials":
                         pattern = r"- .*"
-                        plugin_output = get_plugin_output("SMB Use Host SID to Enumerate Local Users Without Credentials", z)
+                        plugin_output = get_plugin_output(key, z)
                         matches = re.findall(pattern, plugin_output) # type: ignore
                         for m in matches:
                             m = m.strip()
@@ -361,7 +350,7 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                                 print(f"            {m}", file=f)
                     elif key == "SMB Use Host SID to Enumerate Local Users":
                         pattern = r"- .*"
-                        plugin_output = get_plugin_output("SMB Use Host SID to Enumerate Local Users", z)
+                        plugin_output = get_plugin_output(key, z)
                         matches = re.findall(pattern, plugin_output) # type: ignore
                         for m in matches:
                             m = m.strip()
@@ -369,74 +358,74 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                                 print(f"            {m}", file=f)
                     elif key == "SMB Use Domain SID to Enumerate Users":
                         pattern = r"- .*"
-                        plugin_output = get_plugin_output("SMB Use Domain SID to Enumerate Users", z)
+                        plugin_output = get_plugin_output(key, z)
                         matches = re.findall(pattern, plugin_output) # type: ignore
                         for m in matches:
                             m = m.strip()
                             if not m == "":
                                 print(f"            {m}", file=f)
                     elif key == "DNS Server Zone Transfer Information Disclosure (AXFR)":
-                        plugin_output = get_plugin_output("DNS Server Zone Transfer Information Disclosure (AXFR)", z)
+                        plugin_output = get_plugin_output(key, z)
                         for m in plugin_output.splitlines(): # type: ignore
                             m = m.strip()
                             if not m == "":
                                 print(f"            {m}", file=f)
                     elif key == "LDAP 'Domain Admins' Group Membership Enumeration":
                         pattern = r"\| .*"
-                        plugin_output = get_plugin_output("LDAP 'Domain Admins' Group Membership Enumeration", z)
+                        plugin_output = get_plugin_output(key, z)
                         matches = re.findall(pattern, plugin_output) # type: ignore
                         for m in matches:
                             print(f"            {m}", file=f)
                     elif key == "LDAP Group Enumeration":
                         pattern = r"\| .*"
-                        plugin_output = get_plugin_output("LDAP Group Enumeration", z)
+                        plugin_output = get_plugin_output(key, z)
                         matches = re.findall(pattern, plugin_output) # type: ignore
                         for m in matches:
                             print(f"            {m}", file=f)
                     elif key == "SNMP Request Cisco Router Information Disclosure":
-                        plugin_output = get_plugin_output("SNMP Request Cisco Router Information Disclosure", z)
+                        plugin_output = get_plugin_output(key, z)
                         matches = plugin_output.splitlines() # type: ignore
                         for m in matches:
                             m = m.strip()
                             if not m == "":
                                 print(f"            {m}", file=f)
                     elif key == "SNMP Query System Information Disclosure":
-                        plugin_output = get_plugin_output("SNMP Query System Information Disclosure", z)
+                        plugin_output = get_plugin_output(key, z)
                         matches = plugin_output.splitlines() # type: ignore
                         for m in matches:
                             m = m.strip()
                             if not m == "":
                                 print(f"            {m}", file=f)
                     elif key == "SNMP Request Network Interfaces Enumeration":
-                        plugin_output = get_plugin_output("SNMP Request Network Interfaces Enumeration", z)
+                        plugin_output = get_plugin_output(key, z)
                         matches = plugin_output.splitlines() # type: ignore
                         for m in matches:
                             m = m.strip()
                             if not m == "":
                                 print(f"            {m}", file=f)
                     elif key == "SNMP Query Installed Software Disclosure":
-                        plugin_output = get_plugin_output("SNMP Query Installed Software Disclosure", z)
+                        plugin_output = get_plugin_output(key, z)
                         matches = plugin_output.splitlines() # type: ignore
                         for m in matches:
                             m = m.strip()
                             if not m == "":
                                 print(f"            {m}", file=f)
                     elif key == "SNMP Query Running Process List Disclosure":
-                        plugin_output = get_plugin_output("SNMP Query Running Process List Disclosure", z)
+                        plugin_output = get_plugin_output(key, z)
                         matches = plugin_output.splitlines() # type: ignore
                         for m in matches:
                             m = m.strip()
                             if not m == "":
                                 print(f"            {m}", file=f)
                     elif key == "SNMP Query Routing Information Disclosure":
-                        plugin_output = get_plugin_output("SNMP Query Routing Information Disclosure", z)
+                        plugin_output = get_plugin_output(key, z)
                         matches = plugin_output.splitlines() # type: ignore
                         for m in matches:
                             m = m.strip()
                             if not m == "":
                                 print(f"            {m}", file=f)
                     elif key == "Web Server Crafted Request Vendor/Version Information Disclosure":
-                        plugin_output = get_plugin_output("Web Server Crafted Request Vendor/Version Information Disclosure", z)
+                        plugin_output = get_plugin_output(key, z)
                         matches = plugin_output.splitlines() # type: ignore
                         zz = False
                         for m in matches:
@@ -446,49 +435,74 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                             if m.startswith("Nessus was able to gather the following information from the web server"):
                                 zz = True
                     elif key == "Apple Mac OS X Find-By-Content .DS_Store Web Directory Listing":
-                        plugin_output = get_plugin_output("Apple Mac OS X Find-By-Content .DS_Store Web Directory Listing", z)
+                        plugin_output = get_plugin_output(key, z)
                         matches = plugin_output.splitlines() # type: ignore
                         for m in matches:
                             m = m.strip()
                             if not m == "":
                                 print(f"            {m}", file=f)
                     elif key == "Web Server Unconfigured - Default Install Page Present":
-                        plugin_output = get_plugin_output("Web Server Unconfigured - Default Install Page Present", z)
+                        plugin_output = get_plugin_output(key, z)
                         matches = plugin_output.splitlines() # type: ignore
                         for m in matches:
                             m = m.strip()
                             if not m == "":
                                 print(f"            {m}", file=f)
                     elif key == "HTTP Methods Allowed (per directory)":
-                        plugin_output = get_plugin_output("HTTP Methods Allowed (per directory)", z)
+                        plugin_output = get_plugin_output(key, z)
                         matches = plugin_output.splitlines() # type: ignore
                         for m in matches:
                             m = m.strip()
                             if not m == "":
                                 print(f"            {m}", file=f)
                     elif key == "Web Server / Application favicon.ico Vendor Fingerprinting":
-                        plugin_output = get_plugin_output("Web Server / Application favicon.ico Vendor Fingerprinting", z)
+                        plugin_output = get_plugin_output(key, z)
                         matches = plugin_output.splitlines() # type: ignore
                         for m in matches:
                             m = m.strip()
                             if m.startswith("Web"):
                                 print(f"            {m}", file=f)
                     elif key == "External URLs":
-                        plugin_output = get_plugin_output("External URLs", z)
+                        plugin_output = get_plugin_output(key, z)
                         pattern = r".* - .*"
                         matches = re.findall(pattern, plugin_output) # type: ignore
                         for m in matches:
                             m = m.strip()
                             if not m.startswith("URL"):
                                 print(f"            {m}", file=f)
-                    elif key == "LDAP Crafted Search Request Server Information Disclosure":
-                        plugin_output = get_plugin_output("LDAP Crafted Search Request Server Information Disclosure", z)
-                        for m in plugin_output.splitlines(): # type: ignore
-                            m = m.strip()
-                            print(f"            {m}", file=f)
+                    elif key == "rsync Writeable Module Detection":
+                        plugin_output = get_plugin_output(key, z)
+                        print(f"            {plugin_output}", file=f)  # type: ignore
+                    elif key == "Nonexistent Page (404) Physical Path Disclosure":
+                        plugin_output = get_plugin_output(key, z)
+                        print(f"            {plugin_output}", file=f)  # type: ignore
                     elif key == "HTTP Server Type and Version":
-                        plugin_output = get_plugin_output("HTTP Server Type and Version", z)
+                        plugin_output = get_plugin_output(key, z)
                         print(f"            {plugin_output.splitlines()[2]}", file=f)  # type: ignore
+                    elif key == "Service Detection" or key == "Service Detection (GET request)" or key == "Service Detection (HELP request)" or key == "Service Detection: 3 ASCII Digit Code Responses" :
+                        plugin_output = get_plugin_output(key, z)
+                        print(f"            {plugin_output}", file=f)  # type: ignore
+                    elif key == "RPC Services Enumeration":
+                        plugin_output = get_plugin_output(key, z)
+                        print(f"            {plugin_output}", file=f)  # type: ignore
+                    elif key == "Finger Service Remote Information Disclosure":
+                        plugin_output = get_plugin_output(key, z)
+                        print(f"            {plugin_output}", file=f)  # type: ignore
+                    elif key == "Microsoft .NET Version Information Disclosure":
+                        plugin_output = get_plugin_output(key, z)
+                        print(f"            {plugin_output}", file=f)  # type: ignore
+                    elif key == "IMAP Service Banner Retrieval":
+                        plugin_output = get_plugin_output(key, z)
+                        print(f"            {plugin_output}", file=f)  # type: ignore
+                    elif key == "DNS Server hostname.bind Map Hostname Disclosure":
+                        plugin_output = get_plugin_output(key, z)
+                        print(f"            {plugin_output}", file=f)  # type: ignore
+                    elif key == "Nonexistent Page (404) Physical Path Disclosure":
+                        plugin_output = get_plugin_output(key, z)
+                        print(f"            {plugin_output}", file=f)  # type: ignore
+                    elif key == "vsftpd Detection":
+                        plugin_output = get_plugin_output(key, z)
+                        print(f"                {plugin_output}", file=f)  # type: ignore
 
 
     with open(args.output_json_file, "w") as file:
