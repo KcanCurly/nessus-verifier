@@ -494,8 +494,8 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                         plugin_output = get_plugin_output(key, z)
                         if plugin_output is not None:
                             plugin_lines = plugin_output.splitlines() # type: ignore
-                            for l in plugin_lines:
-                                print(f"            {l.strip()}", file=f)  # type: ignore
+                            for line in plugin_lines:
+                                print(f"            {line.strip()}", file=f)  # type: ignore
                     elif key == "RPC Services Enumeration":
                         plugin_output = get_plugin_output(key, z)
                         print(f"            {plugin_output}", file=f)  # type: ignore
