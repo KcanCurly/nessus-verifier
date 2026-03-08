@@ -520,11 +520,17 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                     elif key == "IMAP Service Banner Retrieval":
                         plugin_output = get_plugin_output(key, z)
                         matches = plugin_output.splitlines()
-                        print(f"            {matches[3].strip()}", file=f)  # type: ignore
+                        for m in matches:
+                            m = m.strip()
+                            if m:
+                                print(f"            {m}", file=f)  # type: ignore
                     elif key == "DNS Server hostname.bind Map Hostname Disclosure":
                         plugin_output = get_plugin_output(key, z)
                         matches = plugin_output.splitlines()
-                        print(f"            {m[3].strip()}", file=f)
+                        for m in matches:
+                            m = m.strip()
+                            if m:
+                                print(f"            {m}", file=f)  # type: ignore
                     elif key == "Nonexistent Page (404) Physical Path Disclosure":
                         plugin_output = get_plugin_output(key, z)
                         matches = plugin_output.splitlines()
