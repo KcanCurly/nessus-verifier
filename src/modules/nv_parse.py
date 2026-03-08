@@ -512,7 +512,11 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                                 print(f"            {m}", file=f)  # type: ignore
                     elif key == "Microsoft .NET Version Information Disclosure":
                         plugin_output = get_plugin_output(key, z)
-                        print(f"            {plugin_output}", file=f)  # type: ignore
+                        matches = plugin_output.splitlines()
+                        for m in matches:
+                            m = m.strip()
+                            if m:
+                                print(f"            {m}", file=f)  # type: ignore
                     elif key == "IMAP Service Banner Retrieval":
                         plugin_output = get_plugin_output(key, z)
                         print(f"            {plugin_output}", file=f)  # type: ignore
@@ -524,6 +528,12 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                         plugin_output = get_plugin_output(key, z)
                         print(f"            {plugin_output}", file=f)  # type: ignore
                     elif key == "vsftpd Detection":
+                        plugin_output = get_plugin_output(key, z)
+                        print(f"                {plugin_output}", file=f)  # type: ignore
+                    elif key == "Web Site Client Access Policy File Detection":
+                        plugin_output = get_plugin_output(key, z)
+                        print(f"                {plugin_output}", file=f)  # type: ignore
+                    elif key == "Web Site Cross-Domain Policy File Detection":
                         plugin_output = get_plugin_output(key, z)
                         print(f"                {plugin_output}", file=f)  # type: ignore
                     elif key == "DCE Services Enumeration":
