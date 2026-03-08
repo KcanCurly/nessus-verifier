@@ -511,7 +511,8 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                     elif key == "DNS Server hostname.bind Map Hostname Disclosure":
                         plugin_output = get_plugin_output(key, z)
                         matches = plugin_output.splitlines()
-                        print(f"            {matches[2].strip()}", file=f)
+                        for m in matches:
+                            print(f"            {m.strip()}", file=f)
                     elif key == "Nonexistent Page (404) Physical Path Disclosure":
                         plugin_output = get_plugin_output(key, z)
                         print(f"            {plugin_output}", file=f)  # type: ignore
@@ -520,7 +521,13 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                         print(f"                {plugin_output}", file=f)  # type: ignore
                     elif key == "DCE Services Enumeration":
                         plugin_output = get_plugin_output(key, z)
-                        print(f"                {plugin_output}", file=f)  # type: ignore
+                        matches = plugin_output.splitlines()
+                        for m in matches:
+                            m = m.strip()
+                            if m.startswith("Object UUID") or m.startswith("UUID") or m.startswith("Description") or m.startswith("Windows process") or m.startswith("Type"):
+                                print(f"            {m.strip()}", file=f)
+                                if m.startswith("Type"):
+                                    print(f"            -----", file=f)
 
 
     with open(args.output_json_file, "w") as file:
