@@ -507,7 +507,8 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                         print(f"            {plugin_output}", file=f)  # type: ignore
                     elif key == "DNS Server hostname.bind Map Hostname Disclosure":
                         plugin_output = get_plugin_output(key, z)
-                        print(f"            {plugin_output}", file=f)  # type: ignore
+                        matches = plugin_output.splitlines()
+                        print(f"            {matches[1]}", file=f)
                     elif key == "Nonexistent Page (404) Physical Path Disclosure":
                         plugin_output = get_plugin_output(key, z)
                         print(f"            {plugin_output}", file=f)  # type: ignore
