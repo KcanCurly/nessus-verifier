@@ -576,6 +576,8 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                             print(f"            {m}", file=f)
                     elif key == "TFTP Traversal Arbitrary File Access":
                         plugin_output = get_plugin_output(key, z)
+                        if not plugin_output:
+                            continue
                         matches = plugin_output.splitlines()
                         for m in matches:
                             m = m.strip()
@@ -583,6 +585,8 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                                 print(f"            {m}", file=f)
                     elif key == "Unsupported Web Server Detection":
                         plugin_output = get_plugin_output(key, z)
+                        if not plugin_output:
+                            continue
                         matches = plugin_output.splitlines()
                         for m in matches:
                             m = m.strip()
@@ -590,6 +594,8 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                                 print(f"            {m}", file=f)
                     elif key == "Oracle WebLogic Unsupported Version Detection":
                         plugin_output = get_plugin_output(key, z)
+                        if not plugin_output:
+                            continue
                         matches = plugin_output.splitlines()
                         for m in matches:
                             m = m.strip()
@@ -597,14 +603,20 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                                 print(f"            {m}", file=f)
                     elif key == "Web Site Client Access Policy File Detection":
                         plugin_output = get_plugin_output(key, z)
+                        if not plugin_output:
+                            continue
                         matches = plugin_output.splitlines()
                         print(f"            {matches[4].strip()}", file=f)  # type: ignore
                     elif key == "Web Site Cross-Domain Policy File Detection":
                         plugin_output = get_plugin_output(key, z)
+                        if not plugin_output:
+                            continue
                         matches = plugin_output.splitlines()
                         print(f"            {matches[4].strip()}", file=f)  # type: ignore
                     elif key == "DCE Services Enumeration":
                         plugin_output = get_plugin_output(key, z)
+                        if not plugin_output:
+                            continue
                         matches = plugin_output.splitlines()
                         for m in matches:
                             m = m.strip()
@@ -614,6 +626,8 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                                     print(f"            -----", file=f)
                     elif key == "IPMI Versions Supported":
                         plugin_output = get_plugin_output(key, z)
+                        if not plugin_output:
+                            continue
                         matches = plugin_output.splitlines()
                         for m in matches:
                             m = m.strip()
@@ -621,6 +635,8 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                                 print(f"            {m}", file=f)
                     elif key == "Samba Version":
                         plugin_output = get_plugin_output(key, z)
+                        if not plugin_output:
+                            continue
                         matches = plugin_output.splitlines()
                         for m in matches:
                             m = m.strip()
@@ -628,6 +644,8 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                                 print(f"            {m}", file=f)
                     elif key == "SSH Protocol Versions Supported":
                         plugin_output = get_plugin_output(key, z)
+                        if not plugin_output:
+                            continue
                         matches = plugin_output.splitlines()
                         for m in matches:
                             m = m.strip()
