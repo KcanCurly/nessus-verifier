@@ -461,6 +461,8 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                                 print(f"            {m}", file=f)
                     elif key == "HTTP Methods Allowed (per directory)":
                         plugin_output = get_plugin_output(key, z)
+                        if not plugin_output:
+                            continue
                         matches = plugin_output.splitlines() # type: ignore
                         for m in matches:
                             m = m.strip()
@@ -468,6 +470,8 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                                 print(f"            {m}", file=f)
                     elif key == "Web Server / Application favicon.ico Vendor Fingerprinting":
                         plugin_output = get_plugin_output(key, z)
+                        if not plugin_output:
+                            continue
                         matches = plugin_output.splitlines() # type: ignore
                         for m in matches:
                             m = m.strip()
@@ -475,6 +479,8 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                                 print(f"            {m}", file=f)
                     elif key == "External URLs":
                         plugin_output = get_plugin_output(key, z)
+                        if not plugin_output:
+                            continue
                         pattern = r".* - .*"
                         matches = re.findall(pattern, plugin_output) # type: ignore
                         for m in matches:
@@ -483,6 +489,8 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                                 print(f"            {m}", file=f)
                     elif key == "rsync Writeable Module Detection":
                         plugin_output = get_plugin_output(key, z)
+                        if not plugin_output:
+                            continue
                         pattern = r".* - .*"
                         matches = re.findall(pattern, plugin_output) # type: ignore
                         for m in matches:
@@ -490,6 +498,8 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                             print(f"            {m}", file=f)
                     elif key == "rsync Service Detection":
                         plugin_output = get_plugin_output(key, z)
+                        if not plugin_output:
+                            continue
                         pattern = r".* - .*"
                         matches = re.findall(pattern, plugin_output) # type: ignore
                         for m in matches:
@@ -497,6 +507,8 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                             print(f"            {m}", file=f)
                     elif key == "HTTP Server Type and Version":
                         plugin_output = get_plugin_output(key, z)
+                        if not plugin_output:
+                            continue
                         print(f"            {plugin_output.splitlines()[2]}", file=f)  # type: ignore
                     elif key == "Service Detection" or key == "Service Detection (GET request)" or key == "Service Detection (HELP request)" or key == "Service Detection: 3 ASCII Digit Code Responses" :
                         plugin_output = get_plugin_output(key, z)
