@@ -9,6 +9,43 @@ import cidr_man
 
 sitemap_shortcut = {}
 plugin_shortcut = {}
+plugin_output_splitlines = [
+    "Web Server robots.txt Information Disclosure",
+    "MySQL Protocol Remote User Enumeration",
+    "Web Application Information Disclosure",
+    "Web Application Potentially Sensitive CGI Parameter Detection",
+    "SSH Protocol Versions Supported",
+    "Samba Version",
+    "IPMI Versions Supported",
+    "Unsupported Web Server Detection",
+    "TFTP Traversal Arbitrary File Access",
+    "Finger .@host Unused Account Disclosure",
+    "DNS Server hostname.bind Map Hostname Disclosure",
+    "Microsoft .NET Version Information Disclosure",
+    "Finger Service Remote Information Disclosure",
+    "Web Server Directory Traversal Arbitrary File Access",
+    "Web Accessible Backups",
+    "iSCSI Unauthenticated Target Detection",
+    "WebDAV Directory Enumeration",
+    "CGI Generic SQL Injection (blind, time based)",
+    "CGI Generic Header Injection",
+    "CGI Generic Open Redirection",
+    "CGI Generic XSS (extended patterns)",
+    "Web Server Generic XSS",
+    "CGI Generic Cookie Injection Scripting",
+    "CGI Generic XSS (quick test)",
+    "CGI Generic HTML Injections (quick test)",
+    "CGI Generic XSS (comprehensive test)",
+    "CGI Generic Injectable Parameter",
+    "Oracle Default SID",
+    "Oracle Default Accounts",
+]
+
+version_plugin_output = [
+    "Symantec Encryption Server Detection",
+    "Cisco IOS Version",
+    "Cisco NX-OS Version",
+]
 
 nessus_xml_tree = None
 
@@ -258,6 +295,24 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                 print(f"    {key}", file=f)
                 for z in value:
                     print(f"        {z}", file=f)
+                    if key in plugin_output_splitlines:
+                        plugin_output = get_plugin_output(key, z)
+                        if not plugin_output:
+                            continue
+                        matches = plugin_output.splitlines()
+                        for m in matches:
+                            m = m.strip()
+                            if m:
+                                print(f"            {m}", file=f)
+                    if key in plugin_output_splitlines:
+                        plugin_output = get_plugin_output(key, z)
+                        if not plugin_output:
+                            continue
+                        matches = plugin_output.splitlines()
+                        for m in matches:
+                            m = m.strip()
+                            if m:
+                                print(f"            {m}", file=f)
                     if key == "Browsable Web Directories":
                         plugin_output = get_plugin_output(key, z)
                         plugin_output_s = plugin_output.split() # type: ignore
@@ -321,13 +376,6 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                             if p == ":":
                                 break
                             print(f"            {p}", file=f)
-                    elif key == "Web Server robots.txt Information Disclosure":
-                        plugin_output = get_plugin_output(key, z)
-                        plugin_output_s = plugin_output.splitlines() # type: ignore
-                        for m in plugin_output_s:
-                            m = m.strip()
-                            if m:
-                                print(f"            {m}", file=f)
                     elif key == "Backup Files Disclosure":
                         plugin_output = get_plugin_output(key, z)
                         urls =re.findall(r"https?://\S+", plugin_output) # type: ignore
@@ -523,20 +571,6 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                             m = m.strip()
                             if m:
                                 print(f"            {m}", file=f)  # type: ignore
-                    elif key == "Finger Service Remote Information Disclosure":
-                        plugin_output = get_plugin_output(key, z)
-                        matches = plugin_output.splitlines()
-                        for m in matches:
-                            m = m.strip()
-                            if m:
-                                print(f"            {m}", file=f)  # type: ignore
-                    elif key == "Microsoft .NET Version Information Disclosure":
-                        plugin_output = get_plugin_output(key, z)
-                        matches = plugin_output.splitlines()
-                        for m in matches:
-                            m = m.strip()
-                            if m:
-                                print(f"            {m}", file=f)  # type: ignore
                     elif key == "IMAP Service Banner Retrieval":
                         plugin_output = get_plugin_output(key, z)
                         matches = plugin_output.splitlines()
@@ -547,13 +581,6 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                                 a+=1
                                 if a == 2:
                                     print(f"            {m}", file=f)  # type: ignore
-                    elif key == "DNS Server hostname.bind Map Hostname Disclosure":
-                        plugin_output = get_plugin_output(key, z)
-                        matches = plugin_output.splitlines()
-                        for m in matches:
-                            m = m.strip()
-                            if m:
-                                print(f"            {m}", file=f)  # type: ignore
                     elif key == "Nonexistent Page (404) Physical Path Disclosure":
                         plugin_output = get_plugin_output(key, z)
                         matches = plugin_output.splitlines()
@@ -567,30 +594,6 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                         for m in matches:
                             m = m.strip()
                             if m.startswith("Version"):
-                                print(f"            {m}", file=f)
-                    elif key == "Finger .@host Unused Account Disclosure":
-                        plugin_output = get_plugin_output(key, z)
-                        matches = plugin_output.splitlines()
-                        for m in matches:
-                            m = m.strip()
-                            print(f"            {m}", file=f)
-                    elif key == "TFTP Traversal Arbitrary File Access":
-                        plugin_output = get_plugin_output(key, z)
-                        if not plugin_output:
-                            continue
-                        matches = plugin_output.splitlines()
-                        for m in matches:
-                            m = m.strip()
-                            if m:
-                                print(f"            {m}", file=f)
-                    elif key == "Unsupported Web Server Detection":
-                        plugin_output = get_plugin_output(key, z)
-                        if not plugin_output:
-                            continue
-                        matches = plugin_output.splitlines()
-                        for m in matches:
-                            m = m.strip()
-                            if m:
                                 print(f"            {m}", file=f)
                     elif key == "Oracle WebLogic Unsupported Version Detection":
                         plugin_output = get_plugin_output(key, z)
@@ -624,33 +627,8 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                                 print(f"            {m.strip()}", file=f)
                                 if m.startswith("Type"):
                                     print(f"            -----", file=f)
-                    elif key == "IPMI Versions Supported":
-                        plugin_output = get_plugin_output(key, z)
-                        if not plugin_output:
-                            continue
-                        matches = plugin_output.splitlines()
-                        for m in matches:
-                            m = m.strip()
-                            if m:
-                                print(f"            {m}", file=f)
-                    elif key == "Samba Version":
-                        plugin_output = get_plugin_output(key, z)
-                        if not plugin_output:
-                            continue
-                        matches = plugin_output.splitlines()
-                        for m in matches:
-                            m = m.strip()
-                            if m:
-                                print(f"            {m}", file=f)
-                    elif key == "SSH Protocol Versions Supported":
-                        plugin_output = get_plugin_output(key, z)
-                        if not plugin_output:
-                            continue
-                        matches = plugin_output.splitlines()
-                        for m in matches:
-                            m = m.strip()
-                            if m:
-                                print(f"            {m}", file=f)
+
+
 
 
     with open(args.output_json_file, "w") as file:

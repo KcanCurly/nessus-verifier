@@ -206,7 +206,9 @@
   186366, 197847, 161181, 162502, 160891, 152183, 182811, 173256, 111068, 197827, 132413, 160894, 197843,
   197823, 197820, 148405, 147163, 121121, 106975, 103782, 88936, 106712, 194473, 152182, 147164, 235034, 
   237499, 237498, 241705, 241680, 249235, 240060, 242116, 249236, 213077, 232529, 240058, 235033, 249230,
-  271691, 271694, 271806]
+  271691, 271694, 271806, 271692, 271695]
+  # 271695 - Apache Tomcat 10.1.0.M1 < 10.1.47
+  # 271692 - Apache Tomcat 10.1.0.M1 < 10.1.45 multiple vulnerabilities
   # 271806 - Apache Tomcat 9.0.40 < 9.0.109 multiple vulnerabilities
   # 271694 - Apache Tomcat 9.0.0.M1 < 9.0.110
   # 271691 - Apache Tomcat 9.0.40 < 9.1.109 multiple vulnerabilities
@@ -1788,7 +1790,9 @@
   should-group-total: true
   plugin-regex: []
   plugin-ids: [186028, 184129, 184357, 190601, 181464, 208027, 183776, 211633, 211576, 192023, 193176, 215000, 240850, 242132,
-  241364, 242626, 241355, 237905, 242625]
+  241364, 242626, 241355, 237905, 242625, 297197, 297198]
+  # 297198 - Grafana Labs 3.0.0 < 11.6.9+security-01 / 12.0.0 < 12.0.8+security-01 / 12.1.0 < 12.1.5+security-01 / 12.2.0 < 12.2.3+security-01 / 12.3.0 < 12.3.1+security-01 DoS (CVE-2026-21720)
+  # 297197 - Grafana Labs 10.2.0 < 11.6.9+security-01 / 12.0.0 < 12.0.8+security-01 / 12.1.0 < 12.1.5+security-01 / 12.2.0 < 12.2.3+security-01 / 12.3.0 < 12.3.1+security-01 Privilege Escalation (CVE-2026-21721)
   # 242625 - Grafana Labs XSS (CVE-2025-6023)
   # 237905 - Grafana Labs < 11.6.1+security-01 Authorization Bypass (CVE-2025-3260)
   # 241355 - Grafana Labs 10.4.x < 10.4.19, 11.2.x < 11.2.10, 11.3.x < 11.3.7, 11.4 < 11.4.5, 11.5 < 11.5.5, 11.6 < 11.6.2, 12.0.x < 12.0.1 Improper Access Control (CVE-2025-3580)
@@ -1914,7 +1918,9 @@
   plugin-regex: []
   plugin-ids: [205616, 205615, 65915, 197879, 126506, 122363, 209641, 135921, 122243, 65914, 9559, 9558, 
   126648, 67243, 72334, 88931, 9972, 232848, 265330, 242170, 241991, 243288, 243397, 243058, 242979, 243059,
-  241372, 265329, 265331, 242977]
+  241372, 265329, 265331, 242977, 280124, 282478]
+  # 282478 - MongoDB Unauthenicated Uninitialized Heap Memory Leak (MongoBleed) (CVE-2025-14847) (Direct Check)
+  # 280124 - MongoDB 3.6.x / 4.0.x / 4.2.x / 4.4.x < 4.4.30 / 5.0.x < 5.0.32 / 6.0.x < 6.0.27 / 7.0.x < 7.0.28 / 8.0.x < 8.0.17 / 8.2.x < 8.2.3 Uninitialized Heap Memory Leak (CVE-2025-14847)
   # 242977 - MongoDB 6.0.x < 6.0.22 / 7.0.x < 7.0.20 / 8.0.x < 8.0.7 Privilege Escalation (SERVER-106752)
   # 265331 - MongoDB  6.0.x < 6.0.25 / 7.0.x < 7.0.22  / 8.0.x < 8.0.12 (SERVER-95524)
   # 265329 - MongoDB  6.0.x < 6.0.25 / 7.0.x < 7.0.22  / 8.0.x < 8.0.12 / 8.1.x < 8.1.2 (SERVER-99616)
@@ -2009,7 +2015,9 @@
   5559, 2183, 9628, 700523, 5782, 5358, 8663, 6868, 4521, 9971, 9465, 9800, 9463, 801060, 5358, 8791, 9934, 6400, 6400,
   9465, 9800, 9463, 6288, 8617, 5720, 9627, 8661, 9933, 801053, 9466, 8253, 9390, 6022, 9461, 8662, 11060, 12110, 8064, 
   801056, 801057, 801062, 801936, 801056, 9625, 11267, 11267, 801061, 9128, 801619, 801059, 801064, 801938, 801067,
-  801054, 801052, 801935, 801065, 801963, 801055, 93112, 74326, 237112, 266298, 266293, 266318]
+  801054, 801052, 801935, 801065, 801963, 801055, 93112, 74326, 237112, 266298, 266293, 266318, 266294, 296769]
+  # 266294 - OpenSSL 1.1.1 < 1.1.1zd Vulnerability
+  # 296769 - OpenSSL 1.1.1 < 1.1.1ze Multiple Vulnerabilities
   # 266318 - OpenSSL 1.0.2 < 1.0.2zm Vulnerability
   # 266293 - OpenSSL 3.3.0 < 3.3.5 Multiple Vulnerabilities
   # 266298 - OpenSSL 3.5.0 < 3.5.4 Multiple Vulnerabilities
@@ -2287,7 +2295,11 @@
   id: 33
   should-group-total: false
   plugin-regex: []
-  plugin-ids: [10815, 44136, 39466, 49067, 55903, 47831, 47830]
+  plugin-ids: [10815, 44136, 39466, 49067, 55903, 47831, 47830, 43160,
+  39468, 47834]
+  # 47834 - CGI Generic Open Redirection
+  # 39468 - CGI Generic Header Injection
+  # 43160 - CGI Generic SQL Injection (blind, time based)
   # 55903 - CGI Generic XSS (extended patterns)
   # 10815 - Web Server Generic XSS
   # 44136 - CGI Generic Cookie Injection Scripting
@@ -2750,6 +2762,70 @@
   plugin-ids: [10881]
   # 10881 - SSH Protocol Versions Supported
 
+- name: Web Application Potentially Sensitive CGI Parameter Detection
+  id: 80
+  should-group-total: false
+  plugin-regex: []
+  plugin-ids: [40773]
+  # 40773 - Web Application Potentially Sensitive CGI Parameter Detection
+
+- name: Web Application Information Disclosure
+  id: 80
+  should-group-total: false
+  plugin-regex: []
+  plugin-ids: [57640]
+  # 57640 - Web Application Information Disclosure
+
+- name: MySQL Protocol Remote User Enumeration
+  id: 81
+  should-group-total: false
+  plugin-regex: []
+  plugin-ids: [64263]
+  # 64263 - MySQL Protocol Remote User Enumeration
+
+- name: Web Server Directory Traversal Arbitrary File Access
+  id: 82
+  should-group-total: false
+  plugin-regex: []
+  plugin-ids: [10297]
+  # 10297 - Web Server Directory Traversal Arbitrary File Access
+
+- name: Web Accessible Backups
+  id: 83
+  should-group-total: false
+  plugin-regex: []
+  plugin-ids: [72771]
+  # 72771 - Web Accessible Backups
+
+- name: iSCSI Unauthenticated Target Detection
+  id: 84
+  should-group-total: false
+  plugin-regex: []
+  plugin-ids: [51368]
+  # 51368 - iSCSI Unauthenticated Target Detection
+
+- name: WebDAV Directory Enumeration
+  id: 85
+  should-group-total: false
+  plugin-regex: []
+  plugin-ids: [24004]
+  # 24004 - WebDAV Directory Enumeration
+
+- name: SLP Find Attributes
+  id: 86
+  should-group-total: false
+  plugin-regex: []
+  plugin-ids: [175142]
+  # 175142 - SLP Find Attributes
+
+- name: Oracle Defaults
+  id: 87
+  should-group-total: false
+  plugin-regex: []
+  plugin-ids: [22074, 22075]
+  # 22074 - Oracle Default SID
+  # 22075 - Oracle Default Accounts
+
 - name: Microsoft Windows SMB (GENERIC)
   id: 999995
   should-group-total: true
@@ -2802,7 +2878,25 @@
   105160, 10762, 22227, 62291, 71882, 23777, 31132, 11389, 12243, 20147, 56981, 138499, 
   11140, 45555, 124336, 25201, 11929, 19557, 21676, 83465, 183240, 94672, 73567, 166624, 
   51185, 40448, 35296, 103869, 169487, 31097, 165587, 10273, 31644, 52703, 11907, 149523, 
-  61489, 29700, 56022, 67022, 67023, 131081, 45580]
+  61489, 29700, 56022, 67022, 67023, 131081, 45580, 217004, 93007, 119613, 67175, 25342, 
+  11865, 53513, 57766, 17161, 45577, 139005, 72512, 66696, 47864, 91486, 118087, 234858]
+  # 234858 - Cisco Nexus Dashboard Web Detection
+  # 118087 - Citrix NetScaler Application Delivery Management (ADM)
+  # 91486 - Wireless Access Controller Detection
+  # 47864 - Cisco IOS Version
+  # 66696 - Cisco NX-OS Version
+  # 72512 - Symantec Encryption Server Detection
+  # 139005 - IBM MQ Service Detection
+  # 45577 - Atlassian JIRA Detection
+  # 17161 - Sybase TCP/IP Listener Service Detection
+  # 57766 - Symantec Endpoint Protection Manager Detection
+  # 53513 - Link-Local Multicast Name Resolution (LLMNR) Detection
+  # 11865 - SOCKS Server Detection
+  # 25342 - XMPP Server Detection
+  # 67175 - Atlassian Crowd Detection
+  # 119613 - Rancher Web Interface Detection
+  # 93007 - Pgbouncer Service Detection
+  # 217004 - Dell Integrated Remote Access Controller (iDRAC) SNMP Detection
   # 10223 - RPC portmapper Service Detection
   # 21642 - Session Initiation Protocol Detection
   # 24018 - TCP Channel Detection
