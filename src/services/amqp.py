@@ -124,6 +124,16 @@ class AMQPVersionSubServiceClass(BaseSubServiceClass):
                         self.print_output(f"RabbitMQ {pure_version}({', '.join(cves)}):")
                     else:
                         self.print_output(f"RabbitMQ {pure_version}:")
+                elif "activemq" in version.lower():
+                    _, pure_version = version.strip().rsplit(" ", 1)
+                    if pure_version != "transport":
+                        if self.should_print_cves:
+                            cves = get_cves("cpe:2.3:a:apache:activemq:" + pure_version)
+                            cve_set.update(cves)
+                        if cves:
+                            self.print_output(f"Apache ActiveMQ {pure_version}({', '.join(cves)}):")
+                        else:
+                            self.print_output(f"Apache ActiveMQ {pure_version}:")
                 else:
                     self.print_output(f"[Unknown] {version}:")
                 for a in hosts:

@@ -39,6 +39,13 @@ plugin_output_splitlines = [
     "CGI Generic Injectable Parameter",
     "Oracle Default SID",
     "Oracle Default Accounts",
+    "DNS Server Zone Transfer Information Disclosure (AXFR)",
+    "SNMP Request Cisco Router Information Disclosure",
+    "SNMP Query System Information Disclosure",
+    "SNMP Request Network Interfaces Enumeration",
+    "SNMP Query Installed Software Disclosure",
+    "SNMP Query Running Process List Disclosure",
+    "SNMP Query Routing Information Disclosure",
 ]
 
 version_plugin_output = [
@@ -304,7 +311,7 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                             m = m.strip()
                             if m:
                                 print(f"            {m}", file=f)
-                    if key in plugin_output_splitlines:
+                    if key in version_plugin_output:
                         plugin_output = get_plugin_output(key, z)
                         if not plugin_output:
                             continue
@@ -423,12 +430,6 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                             m = m.strip()
                             if not m == "":
                                 print(f"            {m}", file=f)
-                    elif key == "DNS Server Zone Transfer Information Disclosure (AXFR)":
-                        plugin_output = get_plugin_output(key, z)
-                        for m in plugin_output.splitlines(): # type: ignore
-                            m = m.strip()
-                            if not m == "":
-                                print(f"            {m}", file=f)
                     elif key == "LDAP 'Domain Admins' Group Membership Enumeration":
                         pattern = r"\| .*"
                         plugin_output = get_plugin_output(key, z)
@@ -441,48 +442,6 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                         matches = re.findall(pattern, plugin_output) # type: ignore
                         for m in matches:
                             print(f"            {m}", file=f)
-                    elif key == "SNMP Request Cisco Router Information Disclosure":
-                        plugin_output = get_plugin_output(key, z)
-                        matches = plugin_output.splitlines() # type: ignore
-                        for m in matches:
-                            m = m.strip()
-                            if not m == "":
-                                print(f"            {m}", file=f)
-                    elif key == "SNMP Query System Information Disclosure":
-                        plugin_output = get_plugin_output(key, z)
-                        matches = plugin_output.splitlines() # type: ignore
-                        for m in matches:
-                            m = m.strip()
-                            if not m == "":
-                                print(f"            {m}", file=f)
-                    elif key == "SNMP Request Network Interfaces Enumeration":
-                        plugin_output = get_plugin_output(key, z)
-                        matches = plugin_output.splitlines() # type: ignore
-                        for m in matches:
-                            m = m.strip()
-                            if not m == "":
-                                print(f"            {m}", file=f)
-                    elif key == "SNMP Query Installed Software Disclosure":
-                        plugin_output = get_plugin_output(key, z)
-                        matches = plugin_output.splitlines() # type: ignore
-                        for m in matches:
-                            m = m.strip()
-                            if not m == "":
-                                print(f"            {m}", file=f)
-                    elif key == "SNMP Query Running Process List Disclosure":
-                        plugin_output = get_plugin_output(key, z)
-                        matches = plugin_output.splitlines() # type: ignore
-                        for m in matches:
-                            m = m.strip()
-                            if not m == "":
-                                print(f"            {m}", file=f)
-                    elif key == "SNMP Query Routing Information Disclosure":
-                        plugin_output = get_plugin_output(key, z)
-                        matches = plugin_output.splitlines() # type: ignore
-                        for m in matches:
-                            m = m.strip()
-                            if not m == "":
-                                print(f"            {m}", file=f)
                     elif key == "Web Server Crafted Request Vendor/Version Information Disclosure":
                         plugin_output = get_plugin_output(key, z)
                         matches = plugin_output.splitlines() # type: ignore

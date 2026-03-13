@@ -2826,6 +2826,13 @@
   # 22074 - Oracle Default SID
   # 22075 - Oracle Default Accounts
 
+- name: Protected Web Page Detection
+  id: 88
+  should-group-total: false
+  plugin-regex: []
+  plugin-ids: [40665]
+  # 40665 - Protected Web Page Detection
+
 - name: Microsoft Windows SMB (GENERIC)
   id: 999995
   should-group-total: true
