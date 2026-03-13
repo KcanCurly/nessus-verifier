@@ -149,7 +149,8 @@ class MongoDBBruteSubServiceClass(BaseSubServiceClass):
 
         for cred in creds: # type: ignore
             username, password = cred.split(":", 1)
-            _ = MongoClient(ip, int(port), username=username, password=password)
+            client = MongoClient(ip, int(port), username=username, password=password)
+            dbs = client.list_databases()
             c.append(f"{username}:{password}")
         
         if c:
