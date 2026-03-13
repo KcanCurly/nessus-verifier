@@ -125,15 +125,14 @@ class MongoDBBruteSubServiceClass(BaseSubServiceClass):
         parser.set_defaults(func=self.console)
 
     def console(self, args):
-        self.nv(get_hosts_from_file2(args.target), creds=get_hosts_from_file(args.credential), threads=args.threads, timeout=args.timeout, errors=args.errors, domain=args.domain, verbose=args.verbose)
+        self.nv(get_hosts_from_file2(args.target), creds=get_hosts_from_file(args.credential), threads=args.threads, timeout=args.timeout, errors=args.errors, verbose=args.verbose)
 
     @error_handler([])
     def nv(self, hosts, **kwargs):
         super().nv(hosts, kwargs=kwargs)
         creds = kwargs.get("creds", [])
-        domain = kwargs.get("domain", "")
 
-        results: list[MongoDB_Brute_Vuln_Data] = get_default_context_execution2("MongoDB Brute", self.threads, hosts, self.single, creds=creds, domain=domain, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
+        results: list[MongoDB_Brute_Vuln_Data] = get_default_context_execution2("MongoDB Brute", self.threads, hosts, self.single, creds=creds, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
         
         if results:
             self.print_output("MongoDB Credentials Found on Hosts:")               
