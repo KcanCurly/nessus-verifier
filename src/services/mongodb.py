@@ -130,7 +130,7 @@ class MongoDBBruteSubServiceClass(BaseSubServiceClass):
     @error_handler([])
     def nv(self, hosts, **kwargs):
         super().nv(hosts, kwargs=kwargs)
-        creds = kwargs.get("creds", [])
+        creds = kwargs.get("creds")
 
         results: list[MongoDB_Brute_Vuln_Data] = get_default_context_execution2("MongoDB Brute", self.threads, hosts, self.single, creds=creds, timeout=self.timeout, errors=self.errors, verbose=self.verbose)
         
@@ -141,14 +141,14 @@ class MongoDBBruteSubServiceClass(BaseSubServiceClass):
 
     @error_handler(["host"])
     def single(self, host, **kwargs):
-        creds = kwargs.get("creds", [])
+        creds = kwargs.get("creds")
         ip = host.ip
         port = host.port
 
         c = []
 
-        for cred in creds:
-            username, password = cred.split(":")
+        for cred in creds: # type: ignore
+            username, password = cred.split(":", 1)
             _ = MongoClient(ip, int(port), username=username, password=password)
             c.append(f"{username}:{password}")
         

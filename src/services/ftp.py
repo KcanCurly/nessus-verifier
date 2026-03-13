@@ -58,8 +58,6 @@ class FTPBruteSubServiceClass(BaseSubServiceClass):
     def nv(self, hosts, **kwargs):
         super().nv(hosts, kwargs=kwargs)
         creds = kwargs.get("creds", [])
-
-        creds = kwargs.get("creds", [])
         threads = kwargs.get("threads", [])
         
         with Live(FTPBruteSubServiceClass.progress_group):
@@ -85,7 +83,7 @@ class FTPBruteSubServiceClass(BaseSubServiceClass):
 
             for i, cred in enumerate(creds):
                 try:
-                    username, password = cred.split(":")
+                    username, password = cred.split(":", 1)
                     ftp = FTP()
                     ftp.connect(ip, int(port), timeout=self.timeout)
                     l = ftp.login(username, password)
