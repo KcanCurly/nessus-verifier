@@ -148,10 +148,16 @@ class MongoDBBruteSubServiceClass(BaseSubServiceClass):
         c = []
 
         for cred in creds: # type: ignore
-            username, password = cred.split(":", 1)
-            client = MongoClient(ip, int(port), username=username, password=password)
-            dbs = client.list_databases()
-            c.append(f"{username}:{password}")
+            try:
+                username, password = cred.split(":", 1)
+                client = MongoClient(ip, int(port), username=username, password=password)
+                dbs = client.list_databases()
+                c.append(f"{username}:{password}")
+            except Exception as e:
+                if self.errors in [1, 2]:
+                    print(f"Error Processing {host} with credential {cred}: {e}")
+                if self.errors == 2:
+                    print_exc()
         
         if c:
             return MongoDB_Brute_Vuln_Data(f"{ip}:{port}", c)
