@@ -13,15 +13,12 @@ class TerminalSolverClass(BaseSolverClass):
 
     @error_handler(["host"])
     def single(self, host, **kwargs):
-        print("ZZZ")
+
         result = subprocess.run(
-            ["perl", "/root/rdp_check.pl", f"{host.ip}:{host.port}"],
+            ["perl", "/root/rdp-sec-check.pl", f"{host.ip}:{host.port}"],
             capture_output=True,
             text=True,
         )
-        print(result.stdout)
-        print("----")
-        print(result.stderr)
 
         issues = re.findall(r'has issue ([A-Z0-9_]+)', result.stdout)
         if issues:
