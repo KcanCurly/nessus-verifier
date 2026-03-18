@@ -12,7 +12,7 @@ class TerminalSolverClass(BaseSolverClass):
         self.action_title = "Terminal"
 
     @error_handler(["host"])
-    def solve_single(self, host, timeout, errors, verbose):
+    def single(self, host, **kwargs):
         print("ZZZ")
         result = subprocess.run(
             ["perl", "/root/rdp_check.pl", f"{host.ip}:{host.port}"],
@@ -30,12 +30,13 @@ class TerminalSolverClass(BaseSolverClass):
     @error_handler([])
     def solve(self, args):
         self.process_args(args)
-        print(args)
 
         if not self.hosts: 
             return
-        print("AAA")
-        results = get_default_context_execution2("RDP Security Check", args.threads, self.hosts, self.solve_single, timeout=args.timeout)
+        try:
+            results = get_default_context_execution2("RDP Security Check", args.threads, self.hosts, self.single)
+        except Exception as e:
+            print("Error executing RDP check:", e)
         print("BBB") 
         if results:
             self.print_output(i18n.t('main.terminal_misconfiguration_title'))
