@@ -19,6 +19,9 @@ class TerminalSolverClass(BaseSolverClass):
             capture_output=True,
             text=True,
         )
+        print(result.stdout)
+        print("----")
+        print(result.stderr)
 
         issues = re.findall(r'has issue ([A-Z0-9_]+)', result.stdout)
         if issues:
@@ -40,4 +43,4 @@ class TerminalSolverClass(BaseSolverClass):
                     self.print_output(f"{key}")
                     for v in value:
                         self.print_output(f"    {v}")
-                self.create_windowcatcher_action()
+            self.create_windowcatcher_action()
