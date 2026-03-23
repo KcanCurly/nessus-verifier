@@ -3,7 +3,6 @@ import re
 import ssl
 import socket
 import tomllib
-
 import i18n
 from src.utilities.utilities import error_handler, find_scan, add_default_solver_parser_arguments, add_default_serviceclass_arguments, get_default_context_execution, Host
 from src.modules.nv_parse import GroupNessusScanOutput
