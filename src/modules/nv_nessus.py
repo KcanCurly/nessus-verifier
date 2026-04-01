@@ -226,14 +226,16 @@ def access_check(args):
     for scope in scope_nets:
         if "/" in scope:
             not_found = expand_cidr_range(scope)
+            something_was_found = False
             for ip in found_ips:
                 if ipaddress.IPv4Address(ip) in ipaddress.IPv4Network(scope, strict=False):
                     try:
+                        something_was_found = True
                         not_found.remove(ip)
                     except Exception as e:
                         print(f"Error removing IP {ip} from {scope}: {e}")
             if len(not_found) > 0:
-                if len(not_found) == len(expand_cidr_range(scope)):
+                if not something_was_found:
                     print(i18n.t('main.check_access_nothing', name=scope))
                 else:
                     print(i18n.t('main.check_access', name=scope))
