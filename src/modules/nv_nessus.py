@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import argparse, argcomplete
+from operator import le
 import os
 import copy
 import xml.etree.ElementTree as ET
@@ -232,9 +233,12 @@ def access_check(args):
                     except Exception as e:
                         print(f"Error removing IP {ip} from {scope}: {e}")
             if len(not_found) > 0:
-                print(i18n.t('main.check_access', name=scope))
-                for ip in not_found:
-                    print(f"  {ip}")
+                if len(not_found) == len(expand_cidr_range(scope)):
+                    print(i18n.t('main.check_access_nothing', name=scope))
+                else:
+                    print(i18n.t('main.check_access', name=scope))
+                    for ip in not_found:
+                        print(f"  {ip}")
 
 
     new_scope_nets = [ipaddress.IPv4Network(scope, strict=False) for scope in scope_nets] 
