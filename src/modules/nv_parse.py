@@ -694,5 +694,6 @@ def main():
     rules = group_up(output, args.severity0)
     write_to_file(rules, args)
     save_applications(rules, args)
+    post_process(rules, args)
     if args.write_unknown_banners:
         handle_unkwonn_banners(tree)
