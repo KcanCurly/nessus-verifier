@@ -1,9 +1,7 @@
-from ast import parse
 import xml.etree.ElementTree as ET
 import os
 import argparse, argcomplete
 import re
-from pymssql import output
 import yaml
 import json
 import cidr_man

@@ -75,6 +75,7 @@ nv-misc = "src.modules.nv_misc:main"
 packages = [
     "src",
     "src.modules",
+    "src.modules.parse_post",
     "src.solvers",
     "src.services",
     "src.url",
