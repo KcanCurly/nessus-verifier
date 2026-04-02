@@ -595,6 +595,33 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
             json.dump(v.__dict__, file)
             file.write("\n")
 
+def post_process(l: list[GroupNessusScanOutput], args):
+    output_dir = 'nv-applications'
+
+    rewrite_rules = {
+
+    }
+
+    # Ensure the output directory exists
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+
+    for r in l:
+        if r.name in ["Service/Application Detection"]:
+            for key, value in r.sub_hosts.items():
+                if key.endswith("Detection"):
+                    app_name = key.replace("Detection", "").strip()
+                elif key.endswith("Version"):
+                    app_name = key.replace("Version", "").strip()
+                else:
+                    app_name = rewrite_rules.get(key, key)
+                app_dir = os.path.join(output_dir, app_name) # type: ignore
+                if not os.path.exists(app_dir):
+                    os.makedirs(app_dir)
+                with open(os.path.join(app_dir, "hosts.txt"), "w") as f:
+                    for v in value:
+                        f.write(f"{v}\n")
+
 
 def main():
     parser = argparse.ArgumentParser(description="nessus-verifier.")
@@ -631,5 +658,6 @@ def main():
     output = parse_nessus_output(tree)
     rules = group_up(output, args.severity0)
     write_to_file(rules, args)
+    post_process(rules, args)
     if args.write_unknown_banners:
         handle_unkwonn_banners(tree)
