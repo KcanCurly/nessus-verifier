@@ -1996,7 +1996,7 @@
 - name: OpenSSL
   id: 32
   should-group-total: true
-  plugin-regex: ["^(o|O)pen(s|S)sl"]
+  plugin-regex: ["^(o|O)penSSL"]
   plugin-ids: [182308, 200200, 152782, 171079, 201084, 160477, 125641, 162420, 158974, 209149, 157228, 181288, 
   144047, 162721, 121385, 173260, 192965, 184811, 178475, 148125, 128116, 148402, 121384, 132725, 128115, 128117, 
   157231, 121383, 200206, 146591, 158975, 160480, 158973, 144053, 132726, 162418, 146374, 125642, 162419, 156100, 
@@ -2833,33 +2833,39 @@
   # 40665 - Protected Web Page Detection
 
 - name: Microsoft Windows SMB
-  id: 999995
+  id: 89
   should-group-total: true
   plugin-regex: ["^Microsoft Windows SMB"]
   plugin-ids: []
 
 - name: Jenkins Plugins
-  id: 999999
+  id: 90
   should-group-total: true
   plugin-regex: ["^Jenkins (p|P)lugins"]
   plugin-ids: []
 
 - name: SonarSource SonarQube Server
-  id: 999998
+  id: 91
   should-group-total: true
   plugin-regex: ["^SonarSource (s|S)onar(Q|q)ube (s|S)erver"]
   plugin-ids: []
 
 - name: Zabbix
-  id: 999997
+  id: 92
   should-group-total: true
   plugin-regex: ["^(z|Z)abbix"]
   plugin-ids: []
 
 - name: Splunk Enterprise
-  id: 999996
+  id: 93
   should-group-total: true
   plugin-regex: ["^(s|S)plunk (e|E)nterprise"]
+  plugin-ids: []
+
+- name: Oracle WebLogic Server
+  id: 94
+  should-group-total: true
+  plugin-regex: ["^(o|O)racle (w|W)eb(l|L)ogic (s|S)erver"]
   plugin-ids: []
 
 - name: Service/Application Detection
@@ -2885,7 +2891,13 @@
   11140, 45555, 124336, 25201, 11929, 19557, 21676, 83465, 183240, 94672, 73567, 166624, 
   51185, 40448, 35296, 103869, 169487, 31097, 165587, 10273, 31644, 52703, 11907, 149523, 
   61489, 29700, 56022, 67022, 67023, 131081, 45580, 217004, 93007, 119613, 67175, 25342, 
-  11865, 53513, 57766, 17161, 45577, 139005, 72512, 66696, 47864, 91486, 118087, 234858]
+  11865, 53513, 57766, 17161, 45577, 139005, 72512, 66696, 47864, 91486, 118087, 234858,
+  15765, 15766, 29993, 138761, 51142]
+  # 51142 - Openfire Admin Console Detection
+  # 138761 - Cisco IP Phone SIP Detection
+  # 29993 - LANDesk Ping Discovery Service Detection
+  # 15766 - NetOp Products Detection (UDP)
+  # 15765 - NetOp Products Detection (TCP)
   # 234858 - Cisco Nexus Dashboard Web Detection
   # 118087 - Citrix NetScaler Application Delivery Management (ADM)
   # 91486 - Wireless Access Controller Detection

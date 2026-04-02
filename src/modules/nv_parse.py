@@ -603,6 +603,8 @@ def save_applications(l: list[GroupNessusScanOutput], args):
         "SLP Server Detection (TCP)": "SLP Server (TCP)",
         "Microsoft Exchange Server Detection (Uncredentialed)": "Microsoft Exchange Server",
         "Microsoft SQL Server TCP": "Microsoft SQL Server",
+        "NetOp Products Detection (TCP)": "NetOp Products", 
+        "NetOp Products Detection (UDP)": "NetOp Products",
     }
 
     # Ensure the output directory exists
