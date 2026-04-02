@@ -3,6 +3,7 @@ import xml.etree.ElementTree as ET
 import os
 import argparse, argcomplete
 import re
+from pymssql import output
 import yaml
 import json
 import cidr_man
@@ -595,11 +596,14 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
             json.dump(v.__dict__, file)
             file.write("\n")
 
-def post_process(l: list[GroupNessusScanOutput], args):
+def save_applications(l: list[GroupNessusScanOutput], args):
     output_dir = 'nv-applications'
 
     rewrite_rules = {
-
+        "SLP Server Detection (UDP)": "SLP Server (UDP)",
+        "SLP Server Detection (TCP)": "SLP Server (TCP)",
+        "Microsoft Exchange Server Detection (Uncredentialed)": "Microsoft Exchange Server",
+        "Microsoft SQL Server TCP": "Microsoft SQL Server",
     }
 
     # Ensure the output directory exists
@@ -609,7 +613,9 @@ def post_process(l: list[GroupNessusScanOutput], args):
     for r in l:
         if r.name in ["Service/Application Detection"]:
             for key, value in r.sub_hosts.items():
-                if key.endswith("Detection"):
+                if key.endswith("Version Detection"):
+                    app_name = key.replace("Version Detection", "").strip()
+                elif key.endswith("Detection"):
                     app_name = key.replace("Detection", "").strip()
                 elif key.endswith("Version"):
                     app_name = key.replace("Version", "").strip()
@@ -621,6 +627,35 @@ def post_process(l: list[GroupNessusScanOutput], args):
                 with open(os.path.join(app_dir, "hosts.txt"), "w") as f:
                     for v in value:
                         f.write(f"{v}\n")
+
+def post_process(l: list[GroupNessusScanOutput], args):
+    output_dir = 'nv-post'
+    v = {}
+    for r in l:
+        if r.name in ["HTTP Server Type and Version"]:
+            for host in r.hosts:
+                plugin_output = get_plugin_output(r.name, host)
+                if not plugin_output:
+                    continue
+                version = plugin_output.splitlines()[2]
+                if version in ["Check Point SVN foundation", "CPWS", "Microsoft-HTTPAPI/2.0", "Apache-Coyote/1.1", "nginx",
+                               "Application Server", "BigIP", "Microsoft-IIS/10.0", "Oracle-ILOM-Web-Server/1.0", "MinIO",
+                               "MinIO Console", "Web Server", "hypercorn-h11", "Apache", "uvicorn", "-", "Couchbase Server",
+                               "NessusWWW", "CLARC LICENSE DAEMON", "CLARC XTRACT DAEMON", "CLARC PORTAL DAEMON", "CLARC REMOTEQUERY DAEMON",
+                               "CLARC QHIX DAEMON", "CLARC ASE DAEMON", "CLARC EWORK BATCH SERVER", "CLARC WARP DAEMON", "CLARC ENTERPRISE DAEMON"]:
+                    continue
+                if version not in v:
+                    v[version] = []
+                v[version].append(host)
+
+            if not os.path.exists(output_dir):
+                os.makedirs(output_dir)
+            with open(os.path.join(output_dir, "http-servers.txt"), "w") as f:
+                for key, value in v.items():
+                    f.write(f"{key}:\n")
+                    for v in value:
+                        f.write(f"    {v}\n")
+
 
 
 def main():
@@ -658,6 +693,6 @@ def main():
     output = parse_nessus_output(tree)
     rules = group_up(output, args.severity0)
     write_to_file(rules, args)
-    post_process(rules, args)
+    save_applications(rules, args)
     if args.write_unknown_banners:
         handle_unkwonn_banners(tree)
