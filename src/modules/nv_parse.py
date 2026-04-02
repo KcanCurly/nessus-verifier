@@ -7,6 +7,7 @@ from pymssql import output
 import yaml
 import json
 import cidr_man
+from src.modules.parse_post.post_http_server import get_instances as get_http_server_instances
 
 sitemap_shortcut = {}
 plugin_shortcut = {}
@@ -630,7 +631,8 @@ def save_applications(l: list[GroupNessusScanOutput], args):
 
 def post_process(l: list[GroupNessusScanOutput], args):
     output_dir = 'nv-post'
-    v = {}
+
+    post_http_servers = get_http_server_instances()
     for r in l:
         if r.name in ["HTTP Server Type and Version"]:
             for host in r.hosts:
@@ -638,23 +640,17 @@ def post_process(l: list[GroupNessusScanOutput], args):
                 if not plugin_output:
                     continue
                 version = plugin_output.splitlines()[2]
-                if version in ["Check Point SVN foundation", "CPWS", "Microsoft-HTTPAPI/2.0", "Apache-Coyote/1.1", "nginx",
-                               "Application Server", "BigIP", "Microsoft-IIS/10.0", "Oracle-ILOM-Web-Server/1.0", "MinIO",
-                               "MinIO Console", "Web Server", "hypercorn-h11", "Apache", "uvicorn", "-", "Couchbase Server",
-                               "NessusWWW", "CLARC LICENSE DAEMON", "CLARC XTRACT DAEMON", "CLARC PORTAL DAEMON", "CLARC REMOTEQUERY DAEMON",
-                               "CLARC QHIX DAEMON", "CLARC ASE DAEMON", "CLARC EWORK BATCH SERVER", "CLARC WARP DAEMON", "CLARC ENTERPRISE DAEMON"]:
-                    continue
-                if version not in v:
-                    v[version] = []
-                v[version].append(host)
+                for s in post_http_servers:
+                    s.check(host, version)
+
 
             if not os.path.exists(output_dir):
                 os.makedirs(output_dir)
             with open(os.path.join(output_dir, "http-servers.txt"), "w") as f:
-                for key, value in v.items():
-                    f.write(f"{key}:\n")
-                    for v in value:
-                        f.write(f"    {v}\n")
+                for s in post_http_servers:
+                    if s.is_found:
+                        s.print(f)
+                        f.write("\n")
 
 
 

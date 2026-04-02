@@ -1968,7 +1968,7 @@
 - name: IBM WebSphere Application Server
   id: 29
   should-group-total: true
-  plugin-regex: []
+  plugin-regex: ["^(i|I)bm (w|W)eb(s|S)phere (a|A)pplication (s|S)erver", "^(i|I)bm (w|W)eb(s|S)phere (a|A)pplication (s|S)erver (l|L)iberty"]
   plugin-ids: [214870, 132076, 210931, 172173, 171344, 205643, 214871]
   # 214870 - IBM WebSphere Application Server Liberty 20.0.0.6 < 24.0.0.12 DoS (7174997)
   # 132076 - IBM WebSphere Application Server 7.0.0.x <= 7.0.0.45 / 8.0.0.x <= 8.0.0.15 / 8.5.x < 8.5.5.17 / 9.0.x < 9.0.5.2 / Liberty < 19.0.0.11 Information Disclosure (CVE-2019-4441)
@@ -1996,7 +1996,7 @@
 - name: OpenSSL
   id: 32
   should-group-total: true
-  plugin-regex: []
+  plugin-regex: ["^(o|O)pen(s|S)sl"]
   plugin-ids: [182308, 200200, 152782, 171079, 201084, 160477, 125641, 162420, 158974, 209149, 157228, 181288, 
   144047, 162721, 121385, 173260, 192965, 184811, 178475, 148125, 128116, 148402, 121384, 132725, 128115, 128117, 
   157231, 121383, 200206, 146591, 158975, 160480, 158973, 144053, 132726, 162418, 146374, 125642, 162419, 156100, 
@@ -2832,31 +2832,31 @@
   plugin-ids: [40665]
   # 40665 - Protected Web Page Detection
 
-- name: Microsoft Windows SMB (GENERIC)
+- name: Microsoft Windows SMB
   id: 999995
   should-group-total: true
   plugin-regex: ["^Microsoft Windows SMB"]
   plugin-ids: []
 
-- name: Jenkins Plugins (GENERIC)
+- name: Jenkins Plugins
   id: 999999
   should-group-total: true
   plugin-regex: ["^Jenkins (p|P)lugins"]
   plugin-ids: []
 
-- name: SonarSource SonarQube Server (GENERIC)
+- name: SonarSource SonarQube Server
   id: 999998
   should-group-total: true
   plugin-regex: ["^SonarSource (s|S)onar(Q|q)ube (s|S)erver"]
   plugin-ids: []
 
-- name: Zabbix (GENERIC)
+- name: Zabbix
   id: 999997
   should-group-total: true
   plugin-regex: ["^(z|Z)abbix"]
   plugin-ids: []
 
-- name: Splunk Enterprise (GENERIC)
+- name: Splunk Enterprise
   id: 999996
   should-group-total: true
   plugin-regex: ["^(s|S)plunk (e|E)nterprise"]
