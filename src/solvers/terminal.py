@@ -3,6 +3,7 @@ import i18n
 from src.solvers.solverclass import BaseSolverClass
 from src.utilities.utilities import error_handler, get_default_context_execution2
 import re
+import os
 
 class TerminalSolverClass(BaseSolverClass):
     def __init__(self) -> None:
@@ -13,12 +14,12 @@ class TerminalSolverClass(BaseSolverClass):
 
     @error_handler(["host"])
     def single(self, host, **kwargs):
-
+        path = os.path.expandvars("$HOME/rdp-sec-check/rdp-sec-check.pl")
         result = subprocess.run(
-            ["perl", "$HOME/rdp-sec-check/rdp-sec-check.pl", f"{host.ip}:{host.port}"],
+            ["perl", path, f"{host.ip}:{host.port}"],
             capture_output=True,
             text=True,
-            shell=True,
+            
         )
 
         issues = re.findall(r'has issue ([A-Z0-9_]+)', result.stdout)
