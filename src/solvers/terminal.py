@@ -15,9 +15,10 @@ class TerminalSolverClass(BaseSolverClass):
     def single(self, host, **kwargs):
 
         result = subprocess.run(
-            ["perl", "/root/rdp-sec-check.pl", f"{host.ip}:{host.port}"],
+            ["perl", "$home/rdp-sec-check/rdp-sec-check.pl", f"{host.ip}:{host.port}"],
             capture_output=True,
             text=True,
+            shell=True,
         )
 
         issues = re.findall(r'has issue ([A-Z0-9_]+)', result.stdout)
