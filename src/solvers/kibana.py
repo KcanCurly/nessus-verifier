@@ -25,7 +25,7 @@ class KibanaSolverClass(BaseSolverClass):
     def solve_version_single(self, host: Host, timeout: int, errors: bool, verbose: bool):
         version_regex = r'data="{&quot;version&quot;:&quot;(.*)&quot;,&quot;buildNumber'
         resp = get_url_response(str(host), timeout=timeout)
-        if not resp:
+        if resp is None:
             return
         m = re.search(version_regex, resp.text)
         if m:
