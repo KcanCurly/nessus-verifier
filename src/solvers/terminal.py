@@ -15,7 +15,7 @@ class TerminalSolverClass(BaseSolverClass):
     def single(self, host, **kwargs):
 
         result = subprocess.run(
-            ["perl", "$home/rdp-sec-check/rdp-sec-check.pl", f"{host.ip}:{host.port}"],
+            ["perl", "$HOME/rdp-sec-check/rdp-sec-check.pl", f"{host.ip}:{host.port}"],
             capture_output=True,
             text=True,
             shell=True,
@@ -35,7 +35,7 @@ class TerminalSolverClass(BaseSolverClass):
             results = get_default_context_execution2("RDP Security Check", args.threads, self.hosts, self.single)
         except Exception as e:
             print("Error executing RDP check:", e)
-        print("BBB") 
+
         if results:
             self.print_output(i18n.t('main.terminal_misconfiguration_title'))
             for item in results:
