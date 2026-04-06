@@ -56,9 +56,9 @@ class RedisVersionSubServiceClass(BaseSubServiceClass):
             for r, values in versions.items():
                 cves = get_cves(f"cpe:2.3:a:redis:redis:{r}")
                 if cves:
-                    self.print_output(f"{r} ({", ".join(cves)}):")
+                    self.print_output(f"Redis {r} ({", ".join(cves)}):")
                 else:
-                    self.print_output(f"{r}:")
+                    self.print_output(f"Redis {r}:")
                 for v in values:
                     self.print_output(f"    {v}")
 
