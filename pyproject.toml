@@ -49,6 +49,7 @@ dependencies = [
     "prompt_toolkit",
     "pymodbus",
     "smpplib @ git+https://github.com/python-smpplib/python-smpplib.git",
+    "tftpy",
 ]
 
 classifiers = [

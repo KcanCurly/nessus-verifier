@@ -4,6 +4,7 @@ import i18n
 from src.services.serviceclass import BaseServiceClass
 from src.services.servicesubclass import BaseSubServiceClass
 from src.utilities.utilities import error_handler, get_default_context_execution2
+import tftpy
 
 files = [
 "000000000000-directory.xml",
@@ -285,37 +286,13 @@ class TFTPBruteSubServiceClass(BaseSubServiceClass):
     def single(self, host, **kwargs):
         errors = kwargs.get("errors", [])
         found = []
-        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        sock.settimeout(5)
+        client = tftpy.TftpClient(host.ip, int(host.port))
         try:
-            # TFTP RRQ packet
-            # opcode 1 (RRQ) + filename + null + mode + null
-            filename = "test"
-            mode = "octet"
-
-            packet = b"\x00\x01" + filename.encode() + b"\x00" + mode.encode() + b"\x00"
-
-            sock.sendto(packet, (host.ip, int(host.port)))
-
-            data, addr = sock.recvfrom(516)
 
             for file in files:
                 try:
-
-                    # TFTP Opcode 1: Read Request (RRQ)
-                    # Format: opcode (2 bytes) + filename + null + mode + null
-                    mode = b'octet'  # or b'netascii'
-                    packet = struct.pack('!H', 1) + file.encode() + b'\x00' + mode + b'\x00'
-
-
-                    sock.sendto(packet, (host.ip, int(host.port)))
-                    data, addr = sock.recvfrom(516)  # 512 bytes + 4 header
-
-                    # Opcode 3 = DATA, Opcode 5 = ERROR
-                    opcode = struct.unpack('!H', data[:2])[0]
-
-                    if opcode == 3:
-                        found.append(file)
+                    client.download(file, "/dev/null", timeout=5)
+                    found.append(file)
                 except Exception as e:
                     if errors:
                         print(f"{host.ip}:{host.port} - {file} - Error: ", e)
