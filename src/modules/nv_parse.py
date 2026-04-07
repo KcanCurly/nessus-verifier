@@ -295,13 +295,24 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
             if a.should_group_total:
                 for h in a.hosts:
                     print(f"    {h}", file=f)
-
             if a.should_group_total:
                 print(file=f)
+
             for key,value in a.sub_hosts.items():
                 print(f"    {key}", file=f)
+
+    
                 for z in value:
                     print(f"        {z}", file=f)
+                    if a.name == "Service/Application Detection": # type: ignore
+                        plugin_output = get_plugin_output(key, z)
+                        if not plugin_output:
+                            continue
+                        matches = plugin_output.splitlines()
+                        for m in matches:
+                            m = m.strip()
+                            if m:
+                                print(f"            {m}", file=f)
                     if key in plugin_output_splitlines:
                         plugin_output = get_plugin_output(key, z)
                         if not plugin_output:
@@ -586,6 +597,21 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                                 print(f"            {m.strip()}", file=f)
                                 if m.startswith("Type"):
                                     print(f"            -----", file=f)
+                    elif key == "SLP Find Attributes":
+                        plugin_output = get_plugin_output(key, z)
+                        if not plugin_output:
+                            continue
+                        matches = plugin_output.splitlines()
+                        for m in matches:
+                            print(f"            {m.strip()}", file=f)
+                    elif key == "DNP3 Detection of Device attributes":
+                        plugin_output = get_plugin_output(key, z)
+                        if not plugin_output:
+                            continue
+                        matches = plugin_output.splitlines()
+                        for m in matches:
+                            print(f"            {m.strip()}", file=f)
+
 
 
 

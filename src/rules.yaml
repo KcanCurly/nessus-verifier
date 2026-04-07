@@ -2868,6 +2868,48 @@
   plugin-regex: ["^(o|O)racle (w|W)eb(l|L)ogic (s|S)erver"]
   plugin-ids: []
 
+- name: Dropbear SSH Server
+  id: 95
+  should-group-total: true
+  plugin-regex: ["^(d|D)ropbear SSH Server"]
+  plugin-ids: []
+
+- name: Cisco Data Center Network Manager
+  id: 96
+  should-group-total: true
+  plugin-regex: ["^Cisco Data Center Network Manager"]
+  plugin-ids: []
+
+- name: Gitlab
+  id: 97
+  should-group-total: true
+  plugin-regex: ["^Gitlab"]
+  plugin-ids: []
+
+- name: HP Data Protector
+  id: 98
+  should-group-total: true
+  plugin-regex: ["^HP Data Protector"]
+  plugin-ids: []
+
+- name: ManageEngine ADAudit Plus
+  id: 99
+  should-group-total: true
+  plugin-regex: ["^ManageEngine ADAudit Plus"]
+  plugin-ids: []
+
+- name: ManageEngine ServiceDesk Plus
+  id: 100
+  should-group-total: true
+  plugin-regex: ["^ManageEngine ServiceDesk Plus"]
+  plugin-ids: []
+
+- name: DNP3 Detection of Device attributes
+  id: 101
+  should-group-total: true
+  plugin-regex: []
+  plugin-ids: [118711]
+
 - name: Service/Application Detection
   id: 1000000
   should-group-total: false
@@ -2892,7 +2934,16 @@
   51185, 40448, 35296, 103869, 169487, 31097, 165587, 10273, 31644, 52703, 11907, 149523, 
   61489, 29700, 56022, 67022, 67023, 131081, 45580, 217004, 93007, 119613, 67175, 25342, 
   11865, 53513, 57766, 17161, 45577, 139005, 72512, 66696, 47864, 91486, 118087, 234858,
-  15765, 15766, 29993, 138761, 51142]
+  15765, 15766, 29993, 138761, 51142, 20834, 69919, 67246, 19601, 67121, 69074, 69075, 55444,
+  ]
+  # 55444 - ManageEngine ServiceDesk Plus Detection
+  # 69074 - Cisco Email Security Appliance Web Detection
+  # 69075 - Cisco Email Security Appliance Version
+  # 67121	- HP Data Protector Components Version Detection
+  # 19601 - HP Data Protector Detection
+  # 67246 - Cisco Prime Data Center Network Manager Web Detection
+  # 69919 - Cisco Unified Computing System (UCS) Manager Version
+  # 20834 - Inter-Asterisk eXchange Protocol Detection
   # 51142 - Openfire Admin Console Detection
   # 138761 - Cisco IP Phone SIP Detection
   # 29993 - LANDesk Ping Discovery Service Detection
