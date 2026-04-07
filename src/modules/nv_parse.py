@@ -289,22 +289,22 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
         n = l[1:]
     
     with open(args.output_file, "w") as f:
-        for a in n:
-            if len(a.hosts) == 0: continue
-            print(a.name, file=f)
-            if a.should_group_total:
-                for h in a.hosts:
+        for single_output in n:
+            if len(single_output.hosts) == 0: continue
+            print(single_output.name, file=f)
+            if single_output.should_group_total:
+                for h in single_output.hosts:
                     print(f"    {h}", file=f)
-            if a.should_group_total:
+            if single_output.should_group_total:
                 print(file=f)
 
-            for key,value in a.sub_hosts.items():
+            for key,value in single_output.sub_hosts.items():
                 print(f"    {key}", file=f)
 
     
                 for z in value:
                     print(f"        {z}", file=f)
-                    if a.name == "Service/Application Detection": # type: ignore
+                    if single_output.name == "Service/Application Detection":
                         plugin_output = get_plugin_output(key, z)
                         if not plugin_output:
                             continue
