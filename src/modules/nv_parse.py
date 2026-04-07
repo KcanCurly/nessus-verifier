@@ -137,7 +137,7 @@ def parse_nessus_file(tree, include = None, exclude = None):
             # Add host IP to the service's list
             services[service_name].add(f"{host_ip}:{port}")
 
-            if f"{host_ip}:{port}" in services["unknown"]:
+            if "unknown" in services and f"{host_ip}:{port}" in services["unknown"]:
                 services["unknown"].remove(f"{host_ip}:{port}")
 
             if f"{host_ip}:{port}" not in plugin_shortcut:
