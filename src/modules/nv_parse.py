@@ -137,6 +137,9 @@ def parse_nessus_file(tree, include = None, exclude = None):
             # Add host IP to the service's list
             services[service_name].add(f"{host_ip}:{port}")
 
+            if f"{host_ip}:{port}" in services["unknown"]:
+                services["unknown"].remove(f"{host_ip}:{port}")
+
             if f"{host_ip}:{port}" not in plugin_shortcut:
                 plugin_shortcut[f"{host_ip}:{port}"] = {}
 
@@ -603,14 +606,18 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                             continue
                         matches = plugin_output.splitlines()
                         for m in matches:
-                            print(f"            {m.strip()}", file=f)
+                            m = m.strip()
+                            if m:
+                                print(f"            {m.strip()}", file=f)
                     elif key == "DNP3 Detection of Device attributes":
                         plugin_output = get_plugin_output(key, z)
                         if not plugin_output:
                             continue
                         matches = plugin_output.splitlines()
                         for m in matches:
-                            print(f"            {m.strip()}", file=f)
+                            m = m.strip()
+                            if m:
+                                print(f"            {m.strip()}", file=f)
 
 
 

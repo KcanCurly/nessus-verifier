@@ -2880,10 +2880,10 @@
   plugin-regex: ["^Cisco Data Center Network Manager"]
   plugin-ids: []
 
-- name: Gitlab
+- name: GitLab
   id: 97
   should-group-total: true
-  plugin-regex: ["^Gitlab"]
+  plugin-regex: ["^GitLab"]
   plugin-ids: []
 
 - name: HP Data Protector
@@ -2906,7 +2906,7 @@
 
 - name: DNP3 Detection of Device attributes
   id: 101
-  should-group-total: true
+  should-group-total: false
   plugin-regex: []
   plugin-ids: [118711]
 
