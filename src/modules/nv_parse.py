@@ -618,6 +618,15 @@ def write_to_file(l: list[GroupNessusScanOutput], args):
                             m = m.strip()
                             if m:
                                 print(f"            {m.strip()}", file=f)
+                    elif key == "Docker Remote API Detection":
+                        plugin_output = get_plugin_output(key, z)
+                        if not plugin_output:
+                            continue
+                        matches = plugin_output.splitlines()
+                        for m in matches:
+                            m = m.strip()
+                            if m:
+                                print(f"            {m.strip()}", file=f)
 
 
 
