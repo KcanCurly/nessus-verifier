@@ -29,6 +29,8 @@ def main():
     driver = webdriver.Firefox(options=options, service=service)
     driver.get(args.url)
     print(driver.page_source)
+    driver.implicitly_wait(3)
+    print(driver.page_source)
 
     # driver.save_screenshot(os.curdir + "/s.png")
 
