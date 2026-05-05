@@ -28,30 +28,8 @@ def main():
     # options.set_preference("permissions.default.image", 2)
     driver = webdriver.Firefox(options=options, service=service)
     driver.get(args.url)
-    # wait = WebDriverWait(driver, 10)
-    # input_field = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, "xterm-helper-textarea")))
-    # input_field.click()
-    # input_field = driver.find_element(By.CLASS_NAME, "xterm-helper-textarea")
-    # input_field.send_keys("whoami")
-    # input_field.send_keys(Keys.ENTER)
-    # Find all elements on the current page (or within the current iframe)
-    all_elements = driver.find_elements(By.XPATH, "//*")
+    print(driver.page_source)
 
-    print(f"{'TAG':<15} | {'ID':<20} | {'CLASSES'}")
-    print("-" * 60)
-
-    for element in all_elements:
-        try:
-            tag = element.tag_name
-            id_attr = element.get_attribute("id") or "N/A"
-            class_attr = element.get_attribute("class") or "N/A"
-            
-            # Only print if it's a visible or interactive-style element to save space
-            # Or remove this 'if' to see absolutely everything
-            if tag in ["div", "textarea", "iframe", "canvas", "span", "input"]:
-                print(f"{tag:<15} | {id_attr:<20} | {class_attr}")
-        except:
-            # Elements can become "stale" if the page refreshes while iterating
-            continue
+    # driver.save_screenshot(os.curdir + "/s.png")
 
     driver.quit()
