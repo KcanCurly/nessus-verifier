@@ -31,9 +31,9 @@ def main():
     # wait = WebDriverWait(driver, 10)
     # input_field = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, "xterm-helper-textarea")))
     # input_field.click()
-    input_field = driver.find_element(By.CLASS_NAME, "xterm-helper-textarea")
-    input_field.send_keys("whoami")
-    input_field.send_keys(Keys.ENTER)
+    # input_field = driver.find_element(By.CLASS_NAME, "xterm-helper-textarea")
+    # input_field.send_keys("whoami")
+    # input_field.send_keys(Keys.ENTER)
     time.sleep(1)
 
     driver.save_screenshot(os.curdir + "/s.png")
