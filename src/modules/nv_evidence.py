@@ -44,6 +44,6 @@ def main():
     full_img = Image.open(BytesIO(png))
     x, y = full_img.size
     full_img.crop((0, 0, x-100, y)).save(os.curdir + "/s.png")
-    full_img.save(os.curdir + "/full_s.png")
+    full_img.save(os.curdir + "/s.png")
 
     driver.quit()
