@@ -1,4 +1,5 @@
 import argparse, argcomplete
+from io import BytesIO
 import os
 import time
 from selenium import webdriver
@@ -9,6 +10,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
+import PIL
+from PIL import Image
 
 def main():
     parser = argparse.ArgumentParser(description="Takes screenshot via wetty for evidence.")
@@ -34,6 +37,10 @@ def main():
     input_field.send_keys(Keys.ENTER)
     time.sleep(1)
 
-    driver.save_screenshot(os.curdir + "/s.png")
+    png = driver.get_screenshot_as_png()
+    full_img = Image.open(BytesIO(png))
+    x, y = full_img.size
+    full_img.crop((0, 0, x-100, y)).save(os.curdir + "/s.png")
+    full_img.save(os.curdir + "/full_s.png")
 
     driver.quit()
