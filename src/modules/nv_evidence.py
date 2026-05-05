@@ -12,10 +12,10 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
 from PIL import Image
 
-def slow_type(driver, element, text, delay=0.1):
-    for character in text:
-        element.send_keys(character)
-        time.sleep(delay)  # Wait for the specified delay between keystrokes
+def send_clear(input_field, delay=0.5):
+    input_field.send_keys("clear")
+    input_field.send_keys(Keys.ENTER)
+    time.sleep(delay)
 
 def main():
     parser = argparse.ArgumentParser(description="Takes screenshot via wetty for evidence.")
@@ -37,6 +37,7 @@ def main():
     driver.get(args.url)
     wait = WebDriverWait(driver, timeout=30, poll_frequency=1)
     input_field = wait.until(EC.presence_of_element_located((By.CLASS_NAME, "xterm-helper-textarea")))
+    send_clear(input_field, delay=0.5)
     input_field.send_keys("whoami")
     input_field.send_keys(Keys.ENTER)
     time.sleep(0.5)
