@@ -7,8 +7,6 @@ class OracleSolverClass(BaseSolverClass):
     def __init__(self) -> None:
         super().__init__("Oracle Database", 27)
         self.output_filename_for_all = "old-oracle.txt"
-        self.output_png_for_action = "old-oracle.png"
-        self.action_title = "OldOracle"
 
     def solve(self, args):
         self.process_args(args)
@@ -33,7 +31,6 @@ class OracleSolverClass(BaseSolverClass):
                 self.print_output(f"{key}")
                 for v in value:
                     self.print_output(f"    {v}")
-            self.create_windowcatcher_action()
                 
     @error_handler(["host"])
     def solve_version_single(self, host, timeout, errors, verbose):

@@ -7,8 +7,6 @@ class NoPasswordDBSolverClass(BaseSolverClass):
     def __init__(self) -> None:
         super().__init__("Database usage without password", 9)
         self.output_filename_for_all = "nopasswddb.txt"
-        self.output_png_for_action = "nopasswddb.png"
-        self.action_title = "nopasswddb"
 
     def solve(self, args):
         self.process_args(args)
@@ -36,4 +34,3 @@ class NoPasswordDBSolverClass(BaseSolverClass):
             self.print_output(i18n.t('main.unauth_elasticsearch_access'))
             for r in results:
                 self.print_output(f"    {r}")
-            self.create_windowcatcher_action()

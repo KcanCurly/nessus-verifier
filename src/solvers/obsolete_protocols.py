@@ -7,9 +7,6 @@ class ObsoleteProtocolSolverClass(BaseSolverClass):
     def __init__(self) -> None:
         super().__init__("Obsolete Protocols", 18)
         self.output_filename_for_all = "obsolete-protocols.txt"
-        self.output_png_for_action = "obsolete-protocols.png"
-        self.action_title = "ObsoleteProtocols"
-        self.is_action_done = False
 
     @error_handler([])
     def solve(self, args):
@@ -55,47 +52,29 @@ class ObsoleteProtocolSolverClass(BaseSolverClass):
             self.print_output(i18n.t('main.usage_title', name="Echo"))
             for value in vuln_echo:
                 self.print_output(f"{value}")
-            if not self.is_action_done:
-                self.create_windowcatcher_action()
-                self.is_action_done = True
                 
         if vuln_discard:
             self.print_output(i18n.t('main.usage_title', name="Discard"))
             for value in vuln_discard:
                 self.print_output(f"{value}")
-            if not self.is_action_done:
-                self.create_windowcatcher_action()
-                self.is_action_done = True
                 
         if vuln_daytime:
             self.print_output(i18n.t('main.usage_title', name="Daytime"))
             for value in vuln_daytime:
                 self.print_output(f"{value}")
-            if not self.is_action_done:
-                self.create_windowcatcher_action()
-                self.is_action_done = True
                 
         if vuln_qotd:
             self.print_output(i18n.t('main.usage_title', name="QOTD"))
             for value in vuln_qotd:
                 self.print_output(f"{value}")
-            if not self.is_action_done:
-                self.create_windowcatcher_action()
-                self.is_action_done = True
                 
         if vuln_chargen:
             self.print_output(i18n.t('main.usage_title', name="Chargen"))
             for value in vuln_chargen:
                 self.print_output(f"{value}")
-            if not self.is_action_done:
-                self.create_windowcatcher_action()
-                self.is_action_done = True
                 
         if vuln_systat:
             self.print_output(i18n.t('main.usage_title', name="Systat"))
             self.print_output("Systat Protocol Detected:")
             for value in vuln_systat:
                 self.print_output(f"{value}")
-            if not self.is_action_done:
-                self.create_windowcatcher_action()
-                self.is_action_done = True

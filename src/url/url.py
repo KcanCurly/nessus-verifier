@@ -6,7 +6,7 @@ import requests
 from urllib3.exceptions import InsecureRequestWarning
 from urllib3 import disable_warnings
 import threading
-from concurrent.futures import ThreadPoolExecutor, as_completed, TimeoutError
+from concurrent.futures import ThreadPoolExecutor
 from bs4 import BeautifulSoup, XMLParsedAsHTMLWarning, Comment
 import re
 import warnings
@@ -949,6 +949,8 @@ def main():
             groupup(NV_MAYBE_SOMETHING)
             groupup(NV_LOGIN_PAGE)
             groupup(NV_NON_LOGIN_PAGE)
+
+        driver.quit()
 
     # If given url is simply a website, run the templates on the website
     else:

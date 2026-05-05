@@ -1,16 +1,10 @@
-from src.solvers.solverclass import BaseSolverClass, WindowCatcherData
+from src.solvers.solverclass import BaseSolverClass
 from src.services.apache import ApacheVersionSubServiceClass
-
-class ApacheVersionWindowCatcherData(WindowCatcherData):
-    def __init__(self, name, code, output) -> None:
-        super().__init__(name, code, output)
 
 class ApacheSolverClass(BaseSolverClass):
     def __init__(self) -> None:
         super().__init__("Apache", 11)
         self.output_filename_for_all = "apache.txt"
-        self.output_png_for_action = "old-apache.png"
-        self.action_title = "Apache"
         self.eol_product_name = "apache-http-server"
 
     def solve(self, args):

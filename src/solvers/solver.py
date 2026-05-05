@@ -54,10 +54,6 @@ def all_solver(args):
             shutil.rmtree(args.output_directory)
         os.makedirs(args.output_directory)
 
-    if args.create_actions:
-        if os.path.exists(args.create_actions):
-            os.remove(args.create_actions)
-
     for k,v in solver_dict.items():
         zz = v() # type: ignore
         zz.solve(args)
@@ -86,13 +82,12 @@ def main():
     parser_all = subparsers.add_parser("all", help="Runs all solvers from json file")
     parser_all.add_argument("-f", "--file", type=str, default="output.ndjson", help="json file name (Default = output.ndjson)")
     parser_all.add_argument("-c", "--config", type=str, default="nv-config.toml", help="Config file (default: nv-config.toml).")
-    parser_all.add_argument("-a", "--create-actions", type=str, default=None, help="Creates action toml file for windowcatcher with given name.")
     parser_all.add_argument("-od", "--output-directory", type=str, required=False, help="Output directory.")
     parser_all.add_argument("-s", "--space", type=str, default=4, help="Amount of spaces to prepend when printing affected hosts. (Default = 4)")    
     parser_all.add_argument("--nvd-api-key", type=str, help="NVD API Key for getting cves.")
-    parser_all.add_argument("--print-cve", action="store_true", help="Print CVEs of services if found")
-    parser_all.add_argument("--print-latest-version", action="store_true", help="Print latest versions if found")
-    parser_all.add_argument("--print-poc", action="store_true", help="Print POC of CVEs if found")
+    parser_all.add_argument("--no-print-cve", action="store_true", help="Do not print CVEs of services if found")
+    parser_all.add_argument("--no-print-latest-version", action="store_true", help="Do not print latest versions if found")
+    parser_all.add_argument("--no-print-poc", action="store_true", help="Do not print POC of CVEs if found")
     parser_all.add_argument("-l", "--language", type=str, default="en", help="Language")
     parser_all.add_argument("-th", "--threads", type=int, default=10, help="Amount of threads (Default = 10).")
     parser_all.add_argument("-ti", "--timeout", type=int, default=5, help="Amount of timeout (Default = 5).")

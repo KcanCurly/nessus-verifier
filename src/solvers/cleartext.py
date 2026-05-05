@@ -11,8 +11,6 @@ class CleartextSolverClass(BaseSolverClass):
     def __init__(self) -> None:
         super().__init__("Cleartext Protocol Detected", 7)
         self.output_filename_for_all = "cleartext.txt"
-        self.output_png_for_action = "cleartext.png"
-        self.action_title = "Cleartext"
         self.is_action_done = False
 
 
@@ -25,9 +23,7 @@ class CleartextSolverClass(BaseSolverClass):
         hosts = self.subhosts.get("Unencrypted Telnet Server", [])
         if hosts: 
             TelnetUsageSubServiceClass().nv(hosts, threads=args.threads, timeout=args.timeout, errors=args.errors, verbose=args.verbose, output=self.output)
-            if not self.is_action_done:
-                self.create_windowcatcher_action()
-                self.is_action_done = True
+
         hosts = self.subhosts.get("Basic Authentication Without HTTPS", [])
         if hosts: 
             self.solve_basic_http(hosts, args.threads, args.timeout, args.errors, args.verbose)
@@ -55,7 +51,6 @@ class CleartextSolverClass(BaseSolverClass):
                         if "mechanisms:" in line:
                             mech = line.split(":")[1].strip()
                             return (host, mech)
-                                        
     
     @error_handler([])
     def solve_amqp(self, hosts, threads, timeout, errors, verbose):
@@ -65,9 +60,6 @@ class CleartextSolverClass(BaseSolverClass):
             self.print_output(i18n.t('main.usage_title', name="AMQP"))
             for r in results:
                 self.print_output(f"{r[0]} - {r[1]}")
-            if not self.is_action_done:
-                self.create_windowcatcher_action()
-                self.is_action_done = True
 
     @error_handler(["host"])
     def solve_basic_http_single(self, host, timeout, errors, verbose):
@@ -84,9 +76,6 @@ class CleartextSolverClass(BaseSolverClass):
             self.print_output(i18n.t('main.usage_title', name="Basic Authentication Without HTTPS"))
             for value in results:
                 self.print_output(f"{value}")
-            if not self.is_action_done:
-                self.create_windowcatcher_action()
-                self.is_action_done = True
 
     @error_handler(["host"])
     def solve_ftp_single(self, host, timeout, errors, verbose):
@@ -110,9 +99,6 @@ class CleartextSolverClass(BaseSolverClass):
             self.print_output(i18n.t('main.usage_title', name="FTP Supporting Cleartext Authentication"))
             for value in results:
                 self.print_output(f"{value}")
-            if not self.is_action_done:
-                self.create_windowcatcher_action()
-                self.is_action_done = True
 
 
     """

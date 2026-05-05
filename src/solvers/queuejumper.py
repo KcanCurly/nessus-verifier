@@ -9,8 +9,6 @@ class QueueJumperSolverClass(BaseSolverClass):
     def __init__(self) -> None:
         super().__init__("Queuejumper", 28)
         self.output_filename_for_all = "queuejumper.txt"
-        self.output_png_for_action = "queuejumper.png"
-        self.action_title = "queuejumper"
 
     @error_handler([])
     def solve(self, args):
@@ -40,5 +38,4 @@ class QueueJumperSolverClass(BaseSolverClass):
             self.print_output(i18n.t('main.vulnerable_to', name='CVE-2023-21554 (QueueJumper)'))
             for v in vuln:
                 self.print_output(f"    {v}")
-            self.create_windowcatcher_action()
 

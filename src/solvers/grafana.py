@@ -8,8 +8,6 @@ class GrafanaSolverClass(BaseSolverClass):
     def __init__(self) -> None:
         super().__init__("Grafana", 22)
         self.output_filename_for_all = "grafana.txt"
-        self.output_png_for_action = "old-grafana.png"
-        self.action_title = "OldGrafana"
         self.eol_product_name = "grafana"
 
     def solve(self, args):
@@ -57,7 +55,7 @@ class GrafanaSolverClass(BaseSolverClass):
                 else: self.print_output(f"Grafana {key}:")
                 for v in value:
                     self.print_output(f"    {v}")
-            self.create_windowcatcher_action()
+
             self.print_latest_versions()
 
             for cve in all_cves:

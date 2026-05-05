@@ -46,10 +46,10 @@ dependencies = [
     "jmxquery",
     "openpyxl",
     "oracledb",
-    "prompt_toolkit",
     "pymodbus",
     "smpplib @ git+https://github.com/python-smpplib/python-smpplib.git",
     "tftpy",
+    "loguru",
 ]
 
 classifiers = [
@@ -71,6 +71,7 @@ nv-service = "src.services.nv_services:main"
 nv-url = "src.url.url:main"
 nv-nessus = "src.modules.nv_nessus:main"
 nv-misc = "src.modules.nv_misc:main"
+nv-evidence = "src.modules.nv_evidence:main"
 
 [tool.setuptools]
 packages = [

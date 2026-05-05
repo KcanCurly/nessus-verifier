@@ -9,8 +9,6 @@ class TerminalSolverClass(BaseSolverClass):
     def __init__(self) -> None:
         super().__init__("Terminal Services Misconfigurations", 8)
         self.output_filename_for_all = "terminal.txt"
-        self.output_png_for_action = "terminal.png"
-        self.action_title = "Terminal"
 
     @error_handler(["host"])
     def single(self, host, **kwargs):
@@ -44,4 +42,4 @@ class TerminalSolverClass(BaseSolverClass):
                     self.print_output(f"{key}")
                     for v in value:
                         self.print_output(f"    {v}")
-            self.create_windowcatcher_action()
+

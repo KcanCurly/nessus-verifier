@@ -9,8 +9,6 @@ class HPiLOSolverClass(BaseSolverClass):
     def __init__(self) -> None:
         super().__init__("HP iLO Version", 35)
         self.output_filename_for_all = "hpilo.txt"
-        self.output_png_for_action = "old-hpilo.png"
-        self.action_title = "OldHPilo"
 
     def solve(self, args):
         self.process_args(args)
@@ -63,7 +61,6 @@ class HPiLOSolverClass(BaseSolverClass):
                         self.print_output(f"HP iLO {key}:")
                 for v in value:
                     self.print_output(f"    {v}")
-            self.create_windowcatcher_action()
 
             for cve in all_cves:
                 links = get_poc_cve_github_link(cve)

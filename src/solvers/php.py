@@ -8,8 +8,6 @@ class PHPSolverClass(BaseSolverClass):
     def __init__(self) -> None:
         super().__init__("PHP", 21)
         self.output_filename_for_all = "old-php.txt"
-        self.output_png_for_action = "old-php.png"
-        self.action_title = "OldPHP"
         self.eol_product_name = "php"
 
     def solve(self, args):
@@ -62,7 +60,7 @@ class PHPSolverClass(BaseSolverClass):
                     self.print_output(f"PHP {key}:")
                 for v in value:
                     self.print_output(f"    {v}")
-            self.create_windowcatcher_action()
+
             for cve in all_cves:
                 links = get_poc_cve_github_link(cve)
                 if links:

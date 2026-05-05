@@ -7,8 +7,6 @@ class OpenSSLSolverClass(BaseSolverClass):
     def __init__(self) -> None:
         super().__init__("OpenSSL", 32)
         self.output_filename_for_all = "old-openssl.txt"
-        self.output_png_for_action = "old-openssl.png"
-        self.action_title = "OldOpenssl"
         self.eol_product_name = "openssl"
 
     def solve(self, args):
@@ -44,7 +42,6 @@ class OpenSSLSolverClass(BaseSolverClass):
                     self.print_output(f"OpenSSL {key}")
                 for v in value:
                     self.print_output(f"    {v}")
-            self.create_windowcatcher_action()
             
             for cve in all_cves:
                 links = get_poc_cve_github_link(cve)

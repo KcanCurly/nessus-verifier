@@ -5,8 +5,6 @@ class PSQLSolverClass(BaseSolverClass):
     def __init__(self) -> None:
         super().__init__("PostgreSQL", 30)
         self.output_filename_for_all = "postgresql-unauth.txt"
-        self.output_png_for_action = "postgresql-unauth.png"
-        self.action_title = "PSQLUnauth"
 
     def solve(self, args):
         self.process_args(args)

@@ -89,8 +89,6 @@ class VmwareSolverClass(BaseSolverClass):
     def __init__(self) -> None:
         super().__init__("VMWare Product Versions", 13)
         self.output_filename_for_all = "old-vmware.txt"
-        self.output_png_for_action = "old-vmware.png"
-        self.action_title = "OldVmware"
         self.eol_product_name = ""
 
     def print_latest_versions(self):
@@ -184,7 +182,7 @@ class VmwareSolverClass(BaseSolverClass):
                     self.print_output(f"{key}:")
                 for v in value:
                     self.print_output(f"{" " * 4}{v}")
-            self.create_windowcatcher_action()
+
             for cve in all_cves:
                 links = get_poc_cve_github_link(cve)
                 if links:

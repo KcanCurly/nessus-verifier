@@ -9,8 +9,6 @@ class IPMISolverClass(BaseSolverClass):
     def __init__(self) -> None:
         super().__init__("IPMI", 20)
         self.output_filename_for_all = "ipmi.txt"
-        self.output_png_for_action = "ipmi.png"
-        self.action_title = "IPMI"
 
     @error_handler([])
     def solve(self, args):
@@ -47,7 +45,6 @@ class IPMISolverClass(BaseSolverClass):
                 self.print_output(f"{key}:")
                 for v in value:
                     self.print_output(f"    {v}")
-            self.create_windowcatcher_action()
 
         if creds:
             self.print_output(i18n.t('main.ipmi_creds_found'))

@@ -7,8 +7,6 @@ class ElasticsearchSolverClass(BaseSolverClass):
     def __init__(self) -> None:
         super().__init__("Elasticsearch", 25)
         self.output_filename_for_all = "elastic.txt"
-        self.output_png_for_action = "elastic.png"
-        self.action_title = "Elastic"
         self.eol_product_name = "elasticsearch"
 
     def solve(self, args):
@@ -55,7 +53,7 @@ class ElasticsearchSolverClass(BaseSolverClass):
                 else: self.print_output(f"Elasticsearch {key}:")
                 for v in value:
                     self.print_output(f"    {v}")
-            self.create_windowcatcher_action()
+
             self.print_latest_versions()
 
             for cve in all_cves:

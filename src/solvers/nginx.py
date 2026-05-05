@@ -8,8 +8,6 @@ class NginxSolverClass(BaseSolverClass):
     def __init__(self) -> None:
         super().__init__("Nginx Version", 12)
         self.output_filename_for_all = "nginx.txt"
-        self.output_png_for_action = "nginx.png"
-        self.action_title = "Nginx"
         self.eol_product_name = "nginx"
 
     def solve(self, args):
@@ -60,7 +58,6 @@ class NginxSolverClass(BaseSolverClass):
                     self.print_output(f"Nginx {key}:")
                 for v in value:
                     self.print_output(f"    {v}")
-            self.create_windowcatcher_action()
 
             for cve in all_cves:
                 links = get_poc_cve_github_link(cve)

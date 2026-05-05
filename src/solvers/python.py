@@ -8,8 +8,6 @@ class PythonSolverClass(BaseSolverClass):
     def __init__(self) -> None:
         super().__init__("Python Unsupported Version", 23)
         self.output_filename_for_all = "old-python.txt"
-        self.output_png_for_action = "old-python.png"
-        self.action_title = "OldPython"
         self.eol_product_name = "python"
 
     def solve(self, args):
@@ -41,7 +39,7 @@ class PythonSolverClass(BaseSolverClass):
                     self.print_output(f"Python {key}:")
                 for v in value:
                     self.print_output(f"    {v}")
-            self.create_windowcatcher_action()
+
             for cve in all_cves:
                 links = get_poc_cve_github_link(cve)
                 if links:

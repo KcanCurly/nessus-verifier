@@ -8,8 +8,6 @@ class JenkinsSolverClass(BaseSolverClass):
     def __init__(self) -> None:
         super().__init__("Jenkins Version", 36)
         self.output_filename_for_all = "jenkins.txt"
-        self.output_png_for_action = "jenkins.png"
-        self.action_title = "Jenkins"
         self.eol_product_name = "jenkins"
 
     def solve(self, args):
@@ -61,7 +59,7 @@ class JenkinsSolverClass(BaseSolverClass):
                         self.print_output(f"Jenkins {key}:")
                 for v in value:
                     self.print_output(f"    {v}")
-            self.create_windowcatcher_action()
+
             for cve in all_cves:
                 links = get_poc_cve_github_link(cve)
                 if links:

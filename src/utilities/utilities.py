@@ -342,6 +342,17 @@ def add_default_solver_parser_arguments(parser):
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("-f", "--file", type=str, help="JSON file")
     group.add_argument("-lf", "--list-file", type=str, help="List file")
+    group.add_argument("-s", "--space", type=int, default=4, help="Amount of spaces to prepend when printing affected hosts. (Default = 4)")    
+    group.add_argument("-th", "--threads", type=int, default=10, help="Amount of threads (Default = 10).")
+    group.add_argument("-ti", "--timeout", type=int, default=5, help="Amount of timeout (Default = 5).")
+    group.add_argument("--no-print-latest-version", action="store_true", help="Do not print latest versions of services if found")
+    group.add_argument("--no-print-cve", action="store_true", help="Do not print CVEs of services if found")
+    group.add_argument("--nvd-api-key", type=str, help="NVD API Key for getting cves.")
+    group.add_argument("--no-print-poc", action="store_true", help="Do not print POCs for CVEs if found")
+    group.add_argument("-l", "--language",  type=str, default="en", help="Language of the output")
+    group.add_argument("-e", "--errors", type=int, choices=[1, 2], default = 0, help="1 - Print Errors\n2 - Print errors and prints stacktrace")
+    group.add_argument("-v", "--verbose", action="store_true", help="Print Verbose")
+
     
 def get_url_response(url, timeout=5, redirect = True, errors = False, verbose = False):
     try:

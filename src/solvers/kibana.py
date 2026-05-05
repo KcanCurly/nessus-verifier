@@ -9,8 +9,6 @@ class KibanaSolverClass(BaseSolverClass):
     def __init__(self) -> None:
         super().__init__("Kibana", 24)
         self.output_filename_for_all = "kibana.txt"
-        self.output_png_for_action = "kibana.png"
-        self.action_title = "Kibana"
         self.eol_product_name = "kibana"
 
     def solve(self, args):
@@ -61,8 +59,6 @@ class KibanaSolverClass(BaseSolverClass):
 
                 for v in value:
                     self.print_output(f"    {v}")
-
-            self.create_windowcatcher_action()
 
             for cve in all_cves:
                 links = get_poc_cve_github_link(cve)

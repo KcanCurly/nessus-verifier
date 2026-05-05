@@ -21,8 +21,6 @@ class TLSSolverClass(BaseSolverClass):
     def __init__(self) -> None:
         super().__init__("TLS Misconfigurations", 1)
         self.output_filename_for_all = "tls.txt"
-        self.output_png_for_action = "tls.png"
-        self.action_title = "TLS"
 
     def process_config(self, config: str) -> None:
         try:
@@ -51,7 +49,6 @@ class TLSSolverClass(BaseSolverClass):
         parser_task1 = subparser.add_parser(str(self.id), help="TLS Misconfigurations")
         add_default_solver_parser_arguments(parser_task1)
         parser_task1.add_argument("--allow-white-ciphers", action="store_true", required=False, help="White named ciphers are fine from sslscan output")
-        add_default_serviceclass_arguments(parser_task1, False)
         parser_task1.set_defaults(func=self.solve)
     
 

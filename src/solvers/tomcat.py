@@ -6,8 +6,6 @@ class TomcatSolverClass(BaseSolverClass):
     def __init__(self) -> None:
         super().__init__("Apache Tomcat Version", 10)
         self.output_filename_for_all = "old-tomcat.txt"
-        self.output_png_for_action = "old-tomcat.png"
-        self.action_title = "OldTomcat"
         self.eol_product_name = "tomcat"
         
     @error_handler([])

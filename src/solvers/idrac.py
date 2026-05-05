@@ -5,8 +5,6 @@ class IDRACSolverClass(BaseSolverClass):
     def __init__(self) -> None:
         super().__init__("iDRAC", 19)
         self.output_filename_for_all = "idrac.txt"
-        self.output_png_for_action = "old-idrac.png"
-        self.action_title = "OldIdrac"
 
     def solve(self, args):
         self.process_args(args)
@@ -15,4 +13,3 @@ class IDRACSolverClass(BaseSolverClass):
             return
 
         IDRACVersionSubServiceClass().nv(self.hosts, threads=args.threads, timeout=args.timeout, errors=args.errors, verbos=args.verbose, output=self.output, print_latest_version=args.print_latest_version, print_poc=args.print_poc, print_cve=args.print_cve)
-        self.create_windowcatcher_action()
