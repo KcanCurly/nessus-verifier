@@ -1,6 +1,7 @@
 import argparse, argcomplete
 from io import BytesIO
 import os
+import time
 from selenium import webdriver
 from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.firefox.service import Service
@@ -14,7 +15,7 @@ from PIL import Image
 def slow_type(driver, element, text, delay=0.1):
     for character in text:
         element.send_keys(character)
-        driver.implicitly_wait(delay)  # Wait for the specified delay between keystrokes
+        time.sleep(delay)  # Wait for the specified delay between keystrokes
 
 def main():
     parser = argparse.ArgumentParser(description="Takes screenshot via wetty for evidence.")
