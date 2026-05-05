@@ -1,7 +1,6 @@
 import argparse, argcomplete
 from io import BytesIO
 import os
-import time
 from selenium import webdriver
 from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.firefox.service import Service
@@ -10,8 +9,12 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
-import PIL
 from PIL import Image
+
+def slow_type(driver, element, text, delay=0.1):
+    for character in text:
+        element.send_keys(character)
+        driver.implicitly_wait(delay)  # Wait for the specified delay between keystrokes
 
 def main():
     parser = argparse.ArgumentParser(description="Takes screenshot via wetty for evidence.")
@@ -33,7 +36,7 @@ def main():
     driver.get(args.url)
     wait = WebDriverWait(driver, timeout=30, poll_frequency=1)
     input_field = wait.until(EC.presence_of_element_located((By.CLASS_NAME, "xterm-helper-textarea")))
-    input_field.send_keys("whoami")
+    slow_type(driver, input_field, "whoami", delay=0.1)
     input_field.send_keys(Keys.ENTER)
     driver.implicitly_wait(1)
 
