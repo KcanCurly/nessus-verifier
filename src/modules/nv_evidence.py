@@ -39,12 +39,11 @@ def main():
     input_field = wait.until(EC.presence_of_element_located((By.CLASS_NAME, "xterm-helper-textarea")))
     input_field.send_keys("whoami")
     input_field.send_keys(Keys.ENTER)
-    time.sleep(1)
+    time.sleep(0.5)
 
     png = driver.get_screenshot_as_png()
     full_img = Image.open(BytesIO(png))
     x, y = full_img.size
     full_img.crop((0, 0, x-100, y)).save(os.curdir + "/s.png")
-    full_img.save(os.curdir + "/s.png")
 
     driver.quit()
