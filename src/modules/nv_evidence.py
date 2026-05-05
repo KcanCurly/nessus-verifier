@@ -28,10 +28,12 @@ def main():
     # options.set_preference("permissions.default.image", 2)
     driver = webdriver.Firefox(options=options, service=service)
     driver.get(args.url)
-    print(driver.page_source)
-    driver.implicitly_wait(3)
-    print(driver.page_source)
+    driver.implicitly_wait(2)
+    input_field = driver.find_element(By.CLASS_NAME, "xterm-helper-textarea")
+    input_field.send_keys("whoami")
+    input_field.send_keys(Keys.ENTER)
+    time.sleep(1)
 
-    # driver.save_screenshot(os.curdir + "/s.png")
+    driver.save_screenshot(os.curdir + "/s.png")
 
     driver.quit()
