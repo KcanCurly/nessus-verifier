@@ -36,7 +36,7 @@ def main():
     driver.get(args.url)
     wait = WebDriverWait(driver, timeout=30, poll_frequency=1)
     input_field = wait.until(EC.presence_of_element_located((By.CLASS_NAME, "xterm-helper-textarea")))
-    slow_type(driver, input_field, "whoami", delay=0.1)
+    slow_type(driver, input_field, "whoami", delay=0.4)
     input_field.send_keys(Keys.ENTER)
     driver.implicitly_wait(1)
 
