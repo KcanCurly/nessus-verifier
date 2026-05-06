@@ -13,4 +13,4 @@ class MongoSolverClass(BaseSolverClass):
             return
 
         m = mongodb.MongoDBServiceClass()
-        m.subservices[0].nv(self.hosts, print_cve=args.print_cve, print_latest_version=args.print_latest_version, threads=args.threads, timeout=args.timeout, errors=args.errors, verbose=args.verbose, output=self.output)
+        m.subservices[0].nv(self.hosts, threads=args.threads, timeout=args.timeout, errors=args.errors, verbose=args.verbose, output=self.output, print_latest_version=not args.no_print_latest_version, print_poc=not args.no_print_poc, print_cve=not args.no_print_cve)
