@@ -21,6 +21,9 @@ class TLSSolverClass(BaseSolverClass):
     def __init__(self) -> None:
         super().__init__("TLS Misconfigurations", 1)
         self.output_filename_for_all = "tls.txt"
+        self.output_filename_for_all_version = "tls-versions.txt"
+        self.output_filename_for_all_ciphers = "tls-ciphers.txt"
+        self.output_filename_for_all_expired = "tls-expired.txt"
 
     def process_config(self, config: str) -> None:
         try:
@@ -155,24 +158,29 @@ class TLSSolverClass(BaseSolverClass):
                 wrong_hosts.append(r.host)
             if r.is_cert_expired:
                 expired_cert_hosts.append(f"{r.host} - {r.is_cert_expired}")
+
+        self.output = self.output.rsplit("/", 1)[0] + "/" + self.output_filename_for_all_ciphers
         
         if weak_ciphers:       
             self.print_output(i18n.t('main.tls_vulnerable_ciphers_title'))
             for key, value in weak_ciphers.items():
                 self.print_output(f"    {key} - {", ".join(value)}")
+
+        if weak_bits:
+            self.print_output(i18n.t('main.tls_short_key_length_title'))
+            for key, value in weak_bits.items():
+                self.print_output(f"    {key} - {", ".join(value)}")
+            self.print_output("")
+
+        self.output = self.output.rsplit("/", 1)[0] + "/" + self.output_filename_for_all_version
         
         if weak_versions: 
             self.print_output(i18n.t('main.tls_vulnerable_versions_title'))
             for key, value in weak_versions.items():
                 self.print_output(f"    {key} - {", ".join(value)}")
             self.print_output("")
-                
-        if weak_bits:
-            self.print_output(i18n.t('main.tls_short_key_length_title'))
-            for key, value in weak_bits.items():
-                self.print_output(f"    {key} - {", ".join(value)}")
-            self.print_output("")
         
+        self.output = self.output.rsplit("/", 1)[0] + "/" + self.output_filename_for_all_expired
                 
         if expired_cert_hosts:
             self.print_output(i18n.t('main.tls_expired_certificates_title'))
