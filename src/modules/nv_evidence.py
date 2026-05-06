@@ -15,8 +15,8 @@ from pathlib import Path
 
 from src.solvers.apache import APACHE_FILENAME_FOR_ALL
 
-def send_clear(input_field, delay=0.5):
-    input_field.send_keys("clear")
+def send_command(input_field, command, delay=0.5):
+    input_field.send_keys(command)
     input_field.send_keys(Keys.ENTER)
     time.sleep(delay)
 
@@ -45,7 +45,8 @@ def main():
     driver.get(args.url)
     wait = WebDriverWait(driver, timeout=30, poll_frequency=1)
     input_field = wait.until(EC.presence_of_element_located((By.CLASS_NAME, "xterm-helper-textarea")))
-    send_clear(input_field, delay=0.5)
+    send_command(input_field, "cd " + args.path, delay=0.5)
+    send_command(input_field, "clear", delay=0.5)
 
     directory = Path(args.path)
     if (directory / APACHE_FILENAME_FOR_ALL).is_file():
