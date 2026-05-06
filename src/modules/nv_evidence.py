@@ -74,6 +74,9 @@ def main():
     send_command(input_field, "clear", delay=0.5)
 
     directory = Path(args.path)
+    output_directory = Path(args.output_directory) if args.output_directory else None
+    if output_directory:
+        output_directory.mkdir(parents=True, exist_ok=True)
 
     for filename in requires_simple_command:
         if (directory / filename).is_file():
