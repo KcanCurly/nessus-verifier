@@ -76,7 +76,7 @@ def main():
 
     for filename in requires_simple_command:
         if (directory / filename).is_file():
-            send_command(input_field, "head -50 " + filename, delay=0.5)
+            send_command(input_field, "head -30 " + filename, delay=0.5)
             save_screenshot(driver, filename_to_png_name_mapping[filename])
             send_command(input_field, "clear", delay=0.5)
 
