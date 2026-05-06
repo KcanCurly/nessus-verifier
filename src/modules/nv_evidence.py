@@ -11,11 +11,20 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
 from PIL import Image
+from pathlib import Path
+
+from src.solvers.apache import APACHE_FILENAME_FOR_ALL
 
 def send_clear(input_field, delay=0.5):
     input_field.send_keys("clear")
     input_field.send_keys(Keys.ENTER)
     time.sleep(delay)
+
+def save_screenshot(driver, filename):
+    png = driver.get_screenshot_as_png()
+    full_img = Image.open(BytesIO(png))
+    x, y = full_img.size
+    full_img.crop((0, 0, x-100, y)).save(os.curdir + "/" + filename)
 
 def main():
     parser = argparse.ArgumentParser(description="Takes screenshot via wetty for evidence.")
@@ -25,7 +34,6 @@ def main():
     args = parser.parse_args()
     argcomplete.autocomplete(parser)
 
-    global driver
     options = Options()
     service = Service("/usr/local/bin/geckodriver")
     options.add_argument("--headless")
@@ -38,13 +46,12 @@ def main():
     wait = WebDriverWait(driver, timeout=30, poll_frequency=1)
     input_field = wait.until(EC.presence_of_element_located((By.CLASS_NAME, "xterm-helper-textarea")))
     send_clear(input_field, delay=0.5)
-    input_field.send_keys("whoami")
-    input_field.send_keys(Keys.ENTER)
-    time.sleep(0.5)
 
-    png = driver.get_screenshot_as_png()
-    full_img = Image.open(BytesIO(png))
-    x, y = full_img.size
-    full_img.crop((0, 0, x-100, y)).save(os.curdir + "/s.png")
+    directory = Path(args.path)
+    if (directory / APACHE_FILENAME_FOR_ALL).is_file():
+        input_field.send_keys("head -30 " + APACHE_FILENAME_FOR_ALL)
+        input_field.send_keys(Keys.ENTER)
+        time.sleep(0.5)
+        save_screenshot(driver, "apache.png")
 
     driver.quit()

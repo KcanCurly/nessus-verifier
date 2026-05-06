@@ -1,10 +1,12 @@
 from src.solvers.solverclass import BaseSolverClass
 from src.services.apache import ApacheVersionSubServiceClass
 
+APACHE_FILENAME_FOR_ALL = "apache.txt"
+
 class ApacheSolverClass(BaseSolverClass):
     def __init__(self) -> None:
         super().__init__("Apache", 11)
-        self.output_filename_for_all = "apache.txt"
+        self.output_filename_for_all = APACHE_FILENAME_FOR_ALL
         self.eol_product_name = "apache-http-server"
 
     def solve(self, args):
