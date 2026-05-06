@@ -48,11 +48,12 @@ def save_screenshot(driver, filename):
     png = driver.get_screenshot_as_png()
     full_img = Image.open(BytesIO(png))
     x, y = full_img.size
-    full_img.crop((0, 0, x-100, y)).save(os.curdir + "/" + filename)
+    full_img.crop((0, 0, x-100, y)).save(filename)
 
 def main():
     parser = argparse.ArgumentParser(description="Takes screenshot via wetty for evidence.")
     parser.add_argument('--path', type=str, help="Input directory path")
+    parser.add_argument('--output-directory', type=str, help="Output directory path")
     parser.add_argument('--url', type=str, default="http://localhost:3000/wetty", help="Wetty url (Default: http://localhost:3000/wetty)")
 
     args = parser.parse_args()
@@ -77,7 +78,7 @@ def main():
     for filename in requires_simple_command:
         if (directory / filename).is_file():
             send_command(input_field, "head -30 " + filename, delay=0.5)
-            save_screenshot(driver, filename_to_png_name_mapping[filename])
+            save_screenshot(driver, filename_to_png_name_mapping[filename] if not args.output_directory else os.path.join(args.output_directory, filename_to_png_name_mapping[filename]))
             send_command(input_field, "clear", delay=0.5)
 
     driver.quit()
