@@ -1,7 +1,7 @@
 from src.solvers.solverclass import BaseSolverClass
 from src.services.apache import ApacheVersionSubServiceClass
 
-APACHE_FILENAME_FOR_ALL = "apache.txt"
+APACHE_FILENAME_FOR_ALL = "old-apache.txt"
 
 class ApacheSolverClass(BaseSolverClass):
     def __init__(self) -> None:

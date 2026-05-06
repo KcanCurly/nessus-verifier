@@ -4,10 +4,12 @@ import re
 from packaging.version import parse
 from src.solvers.solverclass import BaseSolverClass
 
+OLD_PYTHON_FILENAME_FOR_ALL = "old-python.txt"
+
 class PythonSolverClass(BaseSolverClass):
     def __init__(self) -> None:
         super().__init__("Python Unsupported Version", 23)
-        self.output_filename_for_all = "old-python.txt"
+        self.output_filename_for_all = OLD_PYTHON_FILENAME_FOR_ALL
         self.eol_product_name = "python"
 
     def solve(self, args):

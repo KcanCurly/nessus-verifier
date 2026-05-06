@@ -8,6 +8,10 @@ from src.utilities.utilities import error_handler, find_scan, add_default_solver
 from src.modules.nv_parse import GroupNessusScanOutput
 from src.solvers.solverclass import BaseSolverClass
 
+TLS_CIPHER_FILENAME_FOR_ALL = "tls-ciphers.txt"
+TLS_VERSION_FILENAME_FOR_ALL = "tls-versions.txt"
+TLS_EXPIRED_FILENAME_FOR_ALL = "tls-expired.txt"
+
 class TLS_Vuln_Data():
     def __init__(self, host: Host, weak_versions: list[str], weak_ciphers: list[str], weak_bits: list[str], is_wrong_hostname: bool, is_cert_expired: str):
         self.host = host
@@ -21,9 +25,9 @@ class TLSSolverClass(BaseSolverClass):
     def __init__(self) -> None:
         super().__init__("TLS Misconfigurations", 1)
         self.output_filename_for_all = "tls.txt"
-        self.output_filename_for_all_version = "tls-versions.txt"
-        self.output_filename_for_all_ciphers = "tls-ciphers.txt"
-        self.output_filename_for_all_expired = "tls-expired.txt"
+        self.output_filename_for_all_version = TLS_VERSION_FILENAME_FOR_ALL
+        self.output_filename_for_all_ciphers = TLS_CIPHER_FILENAME_FOR_ALL
+        self.output_filename_for_all_expired = TLS_EXPIRED_FILENAME_FOR_ALL
 
     def process_config(self, config: str) -> None:
         try:

@@ -14,6 +14,30 @@ from PIL import Image
 from pathlib import Path
 
 from src.solvers.apache import APACHE_FILENAME_FOR_ALL
+from src.solvers.ssh import SSH_AUDIT_FILENAME_FOR_ALL
+from src.solvers.tls import TLS_CIPHER_FILENAME_FOR_ALL, TLS_VERSION_FILENAME_FOR_ALL, TLS_EXPIRED_FILENAME_FOR_ALL
+from src.solvers.openssh import OLD_OPENSSH_FILENAME_FOR_ALL
+from src.solvers.python import OLD_PYTHON_FILENAME_FOR_ALL
+
+filename_to_png_name_mapping = {
+    APACHE_FILENAME_FOR_ALL: "old-apache.png",
+    SSH_AUDIT_FILENAME_FOR_ALL: "ssh-audit.png",
+    TLS_CIPHER_FILENAME_FOR_ALL: "tls-ciphers.png",
+    TLS_VERSION_FILENAME_FOR_ALL: "tls-versions.png",
+    TLS_EXPIRED_FILENAME_FOR_ALL: "tls-expired.png",
+    OLD_OPENSSH_FILENAME_FOR_ALL: "old-openssh.png",
+    OLD_PYTHON_FILENAME_FOR_ALL: "old-python.png"
+}
+
+requires_simple_command = [
+    APACHE_FILENAME_FOR_ALL, 
+    SSH_AUDIT_FILENAME_FOR_ALL,
+    TLS_CIPHER_FILENAME_FOR_ALL,
+    TLS_VERSION_FILENAME_FOR_ALL,
+    TLS_EXPIRED_FILENAME_FOR_ALL,
+    OLD_OPENSSH_FILENAME_FOR_ALL,
+    OLD_PYTHON_FILENAME_FOR_ALL
+    ]
 
 def send_command(input_field, command, delay=0.5):
     input_field.send_keys(command)
@@ -49,10 +73,11 @@ def main():
     send_command(input_field, "clear", delay=0.5)
 
     directory = Path(args.path)
-    if (directory / APACHE_FILENAME_FOR_ALL).is_file():
-        input_field.send_keys("head -30 " + APACHE_FILENAME_FOR_ALL)
-        input_field.send_keys(Keys.ENTER)
-        time.sleep(0.5)
-        save_screenshot(driver, "apache.png")
+
+    for filename in requires_simple_command:
+        if (directory / filename).is_file():
+            send_command(input_field, "head -50 " + filename, delay=0.5)
+            save_screenshot(driver, filename_to_png_name_mapping[filename])
+            send_command(input_field, "clear", delay=0.5)
 
     driver.quit()

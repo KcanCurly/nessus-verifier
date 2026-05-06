@@ -2,10 +2,12 @@ from src.services import ssh
 from src.services.ssh import SSHAuditSubServiceClass
 from src.solvers.solverclass import BaseSolverClass
 
+SSH_AUDIT_FILENAME_FOR_ALL = "ssh-audit.txt"
+
 class SSHAuditSolverClass(BaseSolverClass):
     def __init__(self) -> None:
         super().__init__("SSH Service Misconfigurations", 3)
-        self.output_filename_for_all = "ssh-audit.txt"
+        self.output_filename_for_all = SSH_AUDIT_FILENAME_FOR_ALL
 
     def solve(self, args):
         self.process_args(args)

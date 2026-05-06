@@ -1,10 +1,12 @@
 from src.services.ssh import SSHVersionSubServiceClass
 from src.solvers.solverclass import BaseSolverClass
 
+OLD_OPENSSH_FILENAME_FOR_ALL = "old-openssh.txt"
+
 class OpenSSHSolverClass(BaseSolverClass):
     def __init__(self) -> None:
         super().__init__("OpenSSH Versions", 14)
-        self.output_filename_for_all = "old-openssh.txt"
+        self.output_filename_for_all = OLD_OPENSSH_FILENAME_FOR_ALL
 
     def solve(self, args):
         self.process_args(args)
